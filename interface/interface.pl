@@ -63,7 +63,7 @@ if ($pid) {
 }
 
 # child - catch key press events
-lse {
+else {
     while ($pty->is_active()) {
         my $key = ReadKey(0);
         $pty->write($key);
