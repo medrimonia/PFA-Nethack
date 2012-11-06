@@ -9,7 +9,7 @@ ReadMode(4);
 
 my $pty = IO::Pty::Easy->new();
 $pty->autoflush(1);
-$pty->spawn("nethack -X");
+$pty->spawn("nethack -X | tee log.txt");
 
 defined (my $pid = fork()) or die "fork: $!";
 
@@ -20,8 +20,6 @@ if ($pid) {
     my ($l, $c) = (0, 0);
     while ($pty->is_active()) {
         my $nh_msg = $pty->read();
-
-        say $log $nh_msg;
 
         foreach (split /\e/, $nh_msg) {
             # catch cursor positionning
