@@ -1,6 +1,6 @@
 In order to use this program, you need to install the following modules from
 the CPAN:
-	- IO::Tty
+	- IO::Pty
 	- IO::Pty::Easy
 	- Term::ReadKey
 
