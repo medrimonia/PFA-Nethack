@@ -181,7 +181,7 @@ Parse::ANSIScreen - Keep track of what would be displayed on a terminal
 supporting ANSI escape sequences.
 
 
-=head1 SYNOPSYS
+=head1 SYNOPSIS
 
 	my $scr = Parse::ANSIScreen->new();
 	my $str = "\e[5;3HAloha\e[3BAn example\e[2B\n";  # \e == ESC
