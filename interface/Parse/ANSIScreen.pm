@@ -11,12 +11,12 @@ sub new {
 	my $class = shift;
 	my ($CSI) = @_;
 
-	my %self = {
+	my %self = (
 		CSI     => $CSI // qr/\e\[/,
 		line    => 1,
 		column  => 1,
 		screen  => [],
-	};
+	);
 
 	return bless \%self, $class;
 }
@@ -29,6 +29,7 @@ sub parse {
 	chomp $str;
 
 	my @sequences = split($self->{CSI}, $str);
+	#print Dumper(\@sequences);
 
 	foreach (@sequences) {
 		my $s;
@@ -40,14 +41,15 @@ sub parse {
 		elsif (/^(\d*)D(.*)/) { $self->CUB($1); $s = $2; }
 
 		# Set absolute cursor position
-		elsif (/^\[H(.*)/)            { $self->CUP();       $s = $3; }
-		elsif (/^\[(\d*);(\d*)H(.*)/) { $self->CUP($1, $2); $s = $3; }
+		elsif (/^H(.*)/)            { $self->CUP();       $s = $3; }
+		elsif (/^(\d*);(\d*)H(.*)/) { $self->CUP($1, $2); $s = $3; }
 
 		# Delete data
-		elsif (/^\[(\d*)J/) { $self->ED($1); }
+		elsif (/^(\d*)J(.*)/) { $self->ED($1); $s = $2; }
+		elsif (/^(\d*)K(.*)/) { $self->EL($1); $s = $2; }
 
 		# Sequences not yet caught
-		else { print "Uncaught: $_\n"; continue; }
+		else { print "Uncaught: $_\n"; $s = $_; }
 
 		$self->wr_screen($s) if (defined $s);
 	}
@@ -94,6 +96,8 @@ sub CUU {
 	my $self = shift;
 	my ($n) = @_;
 
+	$n ||= 1;
+
 	$self->{line} > $n+1 ? $self->{line} -= $n : $self->{line} = 1;
 }
 
@@ -102,6 +106,8 @@ sub CUD {
 	# Move cursor down
 	my $self = shift;
 	my ($n) = @_;
+
+	$n ||= 1;
 
 	$self->{line} += $n;
 }
@@ -112,6 +118,8 @@ sub CUF {
 	my $self = shift;
 	my ($n) = @_;
 
+	$n ||= 1;
+
 	$self->{column} += $n;
 }
 
@@ -120,6 +128,8 @@ sub CUB {
 	# Move cursor backward
 	my $self = shift;
 	my ($n) = @_;
+
+	$n ||= 1;
 
 	$self->{column} > $n+1 ? $self->{column} -= $n : $self->{column} = 1;
 }
@@ -130,8 +140,8 @@ sub CUP {
 	my $self = shift;
 	my ($l, $c) = @_;
 
-	$l //= 1;
-	$c //= 1;
+	$l ||= 1;
+	$c ||= 1;
 
 	carp "Invalid values" if ($l < 1 || $c < 1);
 
@@ -162,8 +172,13 @@ sub ED {
 	elsif ($n == 2) {
 		$self->{line}   = 1;
 		$self->{column} = 1;
-		$self->screen   = [];
+		$self->{screen} = [];
 	}
+}
+
+
+sub EL {
+	my $self = shift;
 }
 
 
