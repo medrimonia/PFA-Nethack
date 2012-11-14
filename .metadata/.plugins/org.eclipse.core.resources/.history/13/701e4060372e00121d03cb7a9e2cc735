@@ -1,0 +1,8 @@
+import java.io.BufferedReader;
+
+class Parser{
+	
+	public static void parseNextTurn(){
+		BufferedReader input = new BufferedReader(System.in); 
+	}
+}

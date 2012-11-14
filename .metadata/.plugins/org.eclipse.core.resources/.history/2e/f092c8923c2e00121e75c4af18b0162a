@@ -1,0 +1,35 @@
+package bot;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+class Parser{
+	
+	private BufferedReader input;
+	
+	public Parser(){
+		input = new BufferedReader(new InputStreamReader(System.in));
+	}
+	
+	public void parseNextTurn(Bot b) throws IOException{
+		// Verify start of message
+		if (!input.readLine().equals(Protocole.START_TOKEN))
+			throw new RuntimeException("Invalid start");
+		String line;
+		while ((line = input.readLine()).equals(Protocole.END_TOKEN)){
+			// Multi-line message
+			if (line.startsWith(Protocole.START_TOKEN)){
+				String varName = line.split(' ')[1];
+			}
+			// Mono-line message
+			else
+				b.treatInformation(parseMonoLine(line));
+		}
+	}
+	
+	private Information parseMonoLine(String line){
+		//TODO
+		return null
+	}
+}

@@ -1,0 +1,20 @@
+package bot;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+class Parser{
+	
+	BufferedReader input;
+	
+	public Parser(){
+		input = new BufferedReader(new InputStreamReader(System.in));
+	}
+	
+	public void parseNextTurn(Bot b) throws IOException{
+		if (!input.readLine().equals(Protocole.START_TOKEN))
+			throw new RuntimeException("Invalid start");
+		
+	}
+}

@@ -1,0 +1,20 @@
+package bot;
+
+import java.util.HashMap;
+
+public enum Variable {
+	MAP("MAP"),
+	MAP_HEIGHT("MAP_HEIGHT"),
+	MAP_WIDTH("MAP_WIDTH"),
+	ACTION_RESULT("ACTION_RESULT"),
+	DUNGEON_LEVEL("DUNGEON_LEVEL"),
+	UNKNOWN("?");
+	
+	private String token;
+	private HashMap<Variable> myVariables;
+	
+	Variable(String token){
+		this.token = token;		
+	}
+
+}

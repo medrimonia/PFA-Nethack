@@ -1,0 +1,7 @@
+package bot;
+
+public class Map {
+	
+	private Square[][] content;
+
+}

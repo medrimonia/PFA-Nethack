@@ -1,0 +1,9 @@
+package bot;
+
+public class Information {
+	
+	private Variables var;
+	
+	private Object value;
+
+}

@@ -1,0 +1,14 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
+class Parser{
+	
+	BufferedReader input;
+	
+	public Parser(){
+	}
+	
+	public void parseNextTurn(){
+		input = new BufferedReader(new InputStreamReader(System.in)); 
+	}
+}
