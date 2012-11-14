@@ -1,0 +1,33 @@
+package bot;
+
+import java.util.HashMap;
+
+public enum SquareType {
+	UNKNOWN(' '),
+	EMPTY('.'),
+	PASSAGE('#'),
+	CLOSED_DOOR('+');
+	
+	private char token;
+	private static HashMap<Character,SquareType> myVariables;
+	
+	SquareType(char c){
+		this.token = c;
+	}
+	
+	public char getToken(){
+		return token;
+	}
+	
+	static{
+		myVariables = new HashMap<Character,SquareType>();
+		for (SquareType t : SquareType.values()){
+			myVariables.put(t.token, t);
+		}
+	}
+	
+	public String toString(){
+		return String.valueOf(token);
+	}
+
+}

@@ -1,0 +1,25 @@
+package bot;
+
+public class Bot {
+	
+	int dungeonLevel;
+	Map map;
+	
+	public Bot(){
+		dungeonLevel = 0;
+		map = null;
+	}
+
+	public void treatInformation(Information i) {
+		switch (i.getVariable()){
+		case DUNGEON_LEVEL: dungeonLevel = (int)i.getValue(); break;
+		case
+		}
+	}
+	
+	@Override
+	public String toString(){
+		//TODO 
+		return null;
+	}
+}

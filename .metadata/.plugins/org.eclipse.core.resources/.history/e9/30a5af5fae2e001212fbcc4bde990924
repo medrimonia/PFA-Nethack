@@ -1,0 +1,15 @@
+package bot;
+
+public class Map {
+
+	private Square[][] content;
+	
+	public Map(char[][] map) {
+		content = new Square[map.length][map[0].length];{
+		for (int line = 0; line < map.length ; line++){
+			
+		}
+		}
+	}
+
+}

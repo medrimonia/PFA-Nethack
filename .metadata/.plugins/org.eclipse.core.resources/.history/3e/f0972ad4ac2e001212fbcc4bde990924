@@ -1,0 +1,22 @@
+package bot;
+
+public class Bot {
+	
+	int dungeonLevel;
+	Map map;
+	
+	public Bot(){
+		Map = null;
+	}
+
+	public void treatInformation(Information i) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public String toString(){
+		//TODO 
+		return null;
+	}
+}

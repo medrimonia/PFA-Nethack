@@ -19,7 +19,7 @@ class Parser{
 		if (!input.readLine().equals(Protocole.START_TOKEN))
 			throw new RuntimeException("Invalid start");
 		String line;
-		while ((line = input.readLine()).equals(Protocole.END_TOKEN)){
+		while (!(line = input.readLine()).equals(Protocole.END_TOKEN)){
 			// Multi-line message
 			Information i = null;
 			if (line.startsWith(Protocole.START_TOKEN))
@@ -38,6 +38,7 @@ class Parser{
 		switch (v){
 		case MAP :
 				o = parseMap();
+				break;
 		default ://TODO should throw Exception
 		}
 		return new Information(v,o);
@@ -45,11 +46,11 @@ class Parser{
 
 	private Map parseMap() throws IOException{
 		String line;
-		char map[][] = new char[mapHeight][mapWidth];
+		char[][] map = new char[mapHeight][mapWidth];
 		int lineNumber = 0;
-		while ((line = input.readLine()).equals(Protocole.END_TOKEN +
-												" " +
-												Variable.MAP.getToken())){
+		while (!(line = input.readLine()).equals(Protocole.END_TOKEN +
+												 " " +
+												 Variable.MAP.getToken())){
 			for (int colNumber = 0; colNumber < mapWidth; colNumber++){
 				if (colNumber >= line.length())
 					map[lineNumber][colNumber] = ' ';//TODO notation en dur à éviter
@@ -61,8 +62,20 @@ class Parser{
 		return new Map(map);
 	}
 
-	private static Information parseMonoLineVar(String line){
-		//TODO
-		return null;
+	private Information parseMonoLineVar(String line){
+		String[] splitedLine = line.split(" ");
+		Variable v = Variable.tokenToVariables(splitedLine[0]);
+		Object o = null;
+		switch (v){
+		case MAP_HEIGHT: mapHeight = Integer.parseInt(splitedLine[1]);
+		case MAP_WIDTH: mapWidth = Integer.parseInt(splitedLine[1]);
+		case DUNGEON_LEVEL:
+			o = Integer.parseInt(splitedLine[1]);
+			break;
+		default :
+		}
+		if (o == null)
+			return null;
+		return new Information(v,o);
 	}
 }

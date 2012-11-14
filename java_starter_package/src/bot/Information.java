@@ -9,6 +9,14 @@ public class Information {
 	public Information(Variable var, Object value){
 		this.var = var;
 		this.value = value;
-	}	
+	}
+	
+	public Variable getVariable(){
+		return var;
+	}
+	
+	public Object getValue(){
+		return value;
+	}
 
 }
