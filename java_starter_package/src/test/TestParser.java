@@ -8,6 +8,7 @@ public class TestParser {
 		Bot b = new Bot();
 		b.nextTurn();
 		System.out.println(b);
+		b.doTurn();
 	}
 
 }

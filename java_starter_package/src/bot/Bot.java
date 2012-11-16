@@ -1,23 +1,40 @@
 package bot;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class Bot {
 	
-	Parser myParser;
+	InputOutputUnit myParser;
 	int dungeonLevel;
 	Map map;
 	
 	public Bot(){
 		dungeonLevel = 0;
 		map = null;
-		myParser = new Parser();
+		myParser = new InputOutputUnit();
 	}
 
 	public void treatInformation(Information i) {
 		switch (i.getVariable()){
 		case DUNGEON_LEVEL: dungeonLevel = (Integer)i.getValue(); break;
 		case MAP: map = (Map)i.getValue(); break;
+		}
+	}
+	
+	public void doTurn(){
+		randomMove();		
+	}
+	
+	public void randomMove(){
+		Direction[] myDirs = Direction.values();
+		Collections.shuffle(Arrays.asList(myDirs));
+		for (Direction d : myDirs){
+			if (map.isAllowedMove(d)){
+				myParser.broadcastMove(d);
+				return;
+			}
 		}
 	}
 	
