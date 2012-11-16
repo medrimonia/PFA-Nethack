@@ -91,14 +91,21 @@ sub dump {
 }
 
 
+sub cursor {
+	my $self = shift;
+	return ($self->{line}, $self->{column});
+}
+
+
 sub CUU {
 	# Move cursor up
 	my $self = shift;
 	my ($n) = @_;
 
-	$n ||= 1;
+	$n //= 1;
+	return if ($n < 1);
 
-	$self->{line} > $n+1 ? $self->{line} -= $n : $self->{line} = 1;
+	$self->{line} > $n ? ($self->{line} -= $n) : ($self->{line} = 1);
 }
 
 
@@ -107,7 +114,8 @@ sub CUD {
 	my $self = shift;
 	my ($n) = @_;
 
-	$n ||= 1;
+	$n //= 1;
+	return if ($n < 1);
 
 	$self->{line} += $n;
 }
@@ -118,7 +126,8 @@ sub CUF {
 	my $self = shift;
 	my ($n) = @_;
 
-	$n ||= 1;
+	$n //= 1;
+	return if ($n < 1);
 
 	$self->{column} += $n;
 }
@@ -129,9 +138,10 @@ sub CUB {
 	my $self = shift;
 	my ($n) = @_;
 
-	$n ||= 1;
+	$n //= 1;
+	return if ($n < 1);
 
-	$self->{column} > $n+1 ? $self->{column} -= $n : $self->{column} = 1;
+	$self->{column} > $n ? ($self->{column} -= $n) : ($self->{column} = 1);
 }
 
 
@@ -140,10 +150,10 @@ sub CUP {
 	my $self = shift;
 	my ($l, $c) = @_;
 
-	$l ||= 1;
-	$c ||= 1;
-
-	carp "Invalid values" if ($l < 1 || $c < 1);
+	$l //= 1;
+	return if ($l < 1);
+	$c //= 1;
+	return if ($c < 1);
 
 	$self->{line}   = $l;
 	$self->{column} = $c;
@@ -160,13 +170,25 @@ sub ED {
 	# Screen coordinates start from 1, not 0
 
 	if ($n == 0) {
-		# TODO
-		;
+		my $l = $self->{line} - 1;
+		my $c = $self->{column} - 1;
+
+		my $scr = $self->{screen};
+
+		$scr       = \(@{ $scr       }[0 .. $l]);
+		$scr->[$l] = \(@{ $scr->[$l] }[0 .. $c]);
 	}
 
 	elsif ($n == 1) {
-		# TODO
-		;
+		my $l = $self->{line};
+		my $c = $self->{column};
+
+		my $scr      = $self->{screen};
+		my $nlines   = scalar @{ $scr       } - 1;
+		my $ncolumns = scalar @{ $scr->[$l] } - 1;
+
+		$scr       = \(@{ $scr       }[$l .. $nlines  ]);
+		$scr->[$l] = \(@{ $scr->[$l] }[$c .. $ncolumns]);
 	}
 
 	elsif ($n == 2) {
