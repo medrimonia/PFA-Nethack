@@ -93,6 +93,15 @@ sub dump {
 
 sub cursor {
 	my $self = shift;
+	my ($l, $c) = @_;
+
+	if (defined $l && defined $c) {
+		if ($l > 0 && $c > 0) {
+			$self->{line}   = $l;
+			$self->{column} = $c;
+		}
+	}
+
 	return ($self->{line}, $self->{column});
 }
 
@@ -155,8 +164,7 @@ sub CUP {
 	$c //= 1;
 	return if ($c < 1);
 
-	$self->{line}   = $l;
-	$self->{column} = $c;
+	$self->cursor($l, $c);
 }
 
 
@@ -165,7 +173,7 @@ sub ED {
 	my $self = shift;
 	my ($n) = @_;
 
-	$n //= 0;
+	$n //= 0; # default behavior if no argument
 
 	# Screen coordinates start from 1, not 0
 
@@ -173,27 +181,35 @@ sub ED {
 		my $l = $self->{line} - 1;
 		my $c = $self->{column} - 1;
 
-		my $scr = $self->{screen};
-
-		$scr       = \(@{ $scr       }[0 .. $l]);
-		$scr->[$l] = \(@{ $scr->[$l] }[0 .. $c]);
-	}
-
-	elsif ($n == 1) {
-		my $l = $self->{line};
-		my $c = $self->{column};
-
 		my $scr      = $self->{screen};
 		my $nlines   = scalar @{ $scr       } - 1;
 		my $ncolumns = scalar @{ $scr->[$l] } - 1;
 
-		$scr       = \(@{ $scr       }[$l .. $nlines  ]);
-		$scr->[$l] = \(@{ $scr->[$l] }[$c .. $ncolumns]);
+		if ($c <= $ncolumns) {
+			$self->{screen}->[$l]->[$_] = undef for ($c .. $ncolumns);
+		}
+
+		if ($l < $nlines) {
+			$self->{screen}->[$_] = undef for ($l+1 .. $nlines);
+		}
+	}
+
+	elsif ($n == 1) {
+		my $l = $self->{line} - 1;
+		my $c = $self->{column} - 1;
+
+		my $scr = $self->{screen};
+
+		if ($c >= 0) {
+			$self->{screen}->[$l]->[$_] = undef for (0 .. $c);
+		}
+
+		if ($l > 0) {
+			$self->{screen}->[$_] = undef for (0 .. $l-1);
+		}
 	}
 
 	elsif ($n == 2) {
-		$self->{line}   = 1;
-		$self->{column} = 1;
 		$self->{screen} = [];
 	}
 }
