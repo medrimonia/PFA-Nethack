@@ -29,27 +29,32 @@ sub parse {
 	chomp $str;
 
 	my @sequences = split($self->{CSI}, $str);
-	#print Dumper(\@sequences);
 
 	foreach (@sequences) {
 		my $s;
 
+		next unless $_;
+
 		# Move cursor
-		if    (/^(\d*)A(.*)/) { $self->CUU($1); $s = $2; }
-		elsif (/^(\d*)B(.*)/) { $self->CUD($1); $s = $2; }
-		elsif (/^(\d*)C(.*)/) { $self->CUF($1); $s = $2; }
-		elsif (/^(\d*)D(.*)/) { $self->CUB($1); $s = $2; }
+		if    (/^(\d*)A(.*)/) { $self->CUU($1 || 1); $s = $2; }
+		elsif (/^(\d*)B(.*)/) { $self->CUD($1 || 1); $s = $2; }
+		elsif (/^(\d*)C(.*)/) { $self->CUF($1 || 1); $s = $2; }
+		elsif (/^(\d*)D(.*)/) { $self->CUB($1 || 1); $s = $2; }
 
 		# Set absolute cursor position
-		elsif (/^H(.*)/)            { $self->CUP();       $s = $3; }
-		elsif (/^(\d*);(\d*)H(.*)/) { $self->CUP($1, $2); $s = $3; }
+		elsif (/^H(.*)/)            { $self->CUP();                 $s = $3; }
+		elsif (/^(\d*);(\d*)H(.*)/) { $self->CUP($1 || 1, $2 || 1); $s = $3; }
 
 		# Delete data
-		elsif (/^(\d*)J(.*)/) { $self->ED($1); $s = $2; }
-		elsif (/^(\d*)K(.*)/) { $self->EL($1); $s = $2; }
+		elsif (/^(\d*)J(.*)/) { $self->ED($1 || 0); $s = $2; }
+		elsif (/^(\d*)K(.*)/) { $self->EL($1 || 0); $s = $2; }
+
+		# xterm extensions ...
+		elsif (/^\?(\d+)h/) { print STDERR "Screen save: $_\n"; next; }
+		elsif (/^\?(\d+)l/) { print STDERR "Screen restore: $_\n"; next; }
 
 		# Sequences not yet caught
-		else { print "Uncaught: $_\n"; $s = $_; }
+		else { print STDERR "Uncaught: $_\n"; $s = $_; }
 
 		$self->wr_screen($s) if (defined $s);
 	}
@@ -100,9 +105,13 @@ sub cursor {
 			$self->{line}   = $l;
 			$self->{column} = $c;
 		}
+		
+		else {
+			return undef;
+		}
 	}
 
-	return ($self->{line}, $self->{column});
+	return $self->{line}, $self->{column};
 }
 
 
@@ -173,39 +182,30 @@ sub ED {
 	my $self = shift;
 	my ($n) = @_;
 
-	$n //= 0; # default behavior if no argument
+	my $scr = $self->{screen};
 
 	# Screen coordinates start from 1, not 0
+	my $l = $self->{line} - 1;
+	my $c = $self->{column} - 1;
+
+	$n ||= 0; # default behavior if no argument
+
 
 	if ($n == 0) {
-		my $l = $self->{line} - 1;
-		my $c = $self->{column} - 1;
+		$self->EL(0);
 
-		my $scr      = $self->{screen};
-		my $nlines   = scalar @{ $scr       } - 1;
-		my $ncolumns = scalar @{ $scr->[$l] } - 1;
-
-		if ($c <= $ncolumns) {
-			$self->{screen}->[$l]->[$_] = undef for ($c .. $ncolumns);
-		}
+		my $nlines = scalar @{ $scr } - 1;
 
 		if ($l < $nlines) {
-			$self->{screen}->[$_] = undef for ($l+1 .. $nlines);
+			$scr->[$_] = undef for ($l+1 .. $nlines);
 		}
 	}
 
 	elsif ($n == 1) {
-		my $l = $self->{line} - 1;
-		my $c = $self->{column} - 1;
-
-		my $scr = $self->{screen};
-
-		if ($c >= 0) {
-			$self->{screen}->[$l]->[$_] = undef for (0 .. $c);
-		}
+		$self->EL(1);
 
 		if ($l > 0) {
-			$self->{screen}->[$_] = undef for (0 .. $l-1);
+			$scr->[$_] = undef for (0 .. $l-1);
 		}
 	}
 
@@ -217,6 +217,33 @@ sub ED {
 
 sub EL {
 	my $self = shift;
+	my ($n) = @_;
+
+	my $scr = $self->{screen};
+
+	# Screen coordinates start from 1, not 0
+	my $l = $self->{line} - 1;
+	my $c = $self->{column} - 1;
+
+	$n ||= 0; # default behavior if no argument
+
+	if ($n == 0) {
+		my $ncolumns = scalar @{ $scr->[$l] // [] } - 1;
+
+		if ($c <= $ncolumns) {
+			$scr->[$l]->[$_] = undef for ($c .. $ncolumns);
+		}
+	}
+
+	elsif ($n == 1) {
+		if ($c >= 0) {
+			$scr->[$l]->[$_] = undef for (0 .. $c);
+		}
+	}
+
+	elsif ($n == 2) {
+		$scr->[$l] = [];
+	}
 }
 
 
