@@ -8,8 +8,6 @@ use Term::ReadKey;
 use Parse::ANSIScreen;
 
 
-ReadMode(4);
-
 my $pty = IO::Pty::Easy->new();
 $pty->autoflush(1);
 $pty->spawn("nethack -X | tee log.txt");
@@ -31,7 +29,8 @@ if ($pid) {
 
 # child - catch key press events
 else {
-    while ($pty->is_active()) {
+	ReadMode(4);
+	while ($pty->is_active()) {
         my $key = ReadKey(0);
         $pty->write($key);
     }

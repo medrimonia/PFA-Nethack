@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Carp;
-
+use Data::Dumper;
 
 sub new {
 	my $class = shift;
@@ -42,21 +42,27 @@ sub parse {
 		elsif (/^(\d*)D(.*)/) { $self->CUB($1 || 1); $s = $2; }
 
 		# Set absolute cursor position
-		elsif (/^H(.*)/)            { $self->CUP();                 $s = $3; }
-		elsif (/^(\d*);(\d*)H(.*)/) { $self->CUP($1 || 1, $2 || 1); $s = $3; }
+		elsif (/^(\d*);?[Hf](.*)/) {
+			$self->CUP($1 || 1, 1);
+			$s = $2;
+		}
+		elsif (/^(\d*);(\d*)[Hf](.*)/) {
+			$self->CUP($1 || 1, $2 || 1);
+			$s = $3;
+		}
 
 		# Delete data
 		elsif (/^(\d*)J(.*)/) { $self->ED($1 || 0); $s = $2; }
 		elsif (/^(\d*)K(.*)/) { $self->EL($1 || 0); $s = $2; }
 
 		# xterm extensions ...
-		elsif (/^\?(\d+)h/) { print STDERR "Screen save: $_\n"; next; }
-		elsif (/^\?(\d+)l/) { print STDERR "Screen restore: $_\n"; next; }
+		elsif (/^\?(\d+)h/) { next; }
+		elsif (/^\?(\d+)l/) { next; }
 
 		# Sequences not yet caught
-		else { print STDERR "Uncaught: $_\n"; $s = $_; }
+		else { $s = $_; }
 
-		$self->wr_screen($s) if (defined $s);
+		$self->wr_screen($s);
 	}
 
 	return 1;
@@ -67,15 +73,17 @@ sub wr_screen {
 	my $self = shift;
 	my ($str) = @_;
 
-	return unless (defined $str);
+	return unless ($str);
 
-	my $l = $self->{line};
+	my ($l, $c) = $self->cursor();
 
 	for (split(//, $str)) {
-		my $c = $self->{column}++;
 		# Screen coordinates start from 1, not 0
 		$self->{screen}->[$l-1]->[$c-1] = $_;
+		$c++;
 	}
+
+	$self->cursor($l, $c);
 }
 
 
@@ -100,16 +108,10 @@ sub cursor {
 	my $self = shift;
 	my ($l, $c) = @_;
 
-	if (defined $l && defined $c) {
-		if ($l > 0 && $c > 0) {
-			$self->{line}   = $l;
-			$self->{column} = $c;
-		}
-		
-		else {
-			return undef;
-		}
-	}
+	return undef if ((defined $l && $l < 0) || (defined $c && $c < 0));
+
+	$self->{line}   = $l if ($l);
+	$self->{column} = $c if ($c);
 
 	return $self->{line}, $self->{column};
 }
@@ -188,7 +190,7 @@ sub ED {
 	my $l = $self->{line} - 1;
 	my $c = $self->{column} - 1;
 
-	$n ||= 0; # default behavior if no argument
+	$n //= 0; # default behavior if no argument
 
 
 	if ($n == 0) {
@@ -210,6 +212,7 @@ sub ED {
 	}
 
 	elsif ($n == 2) {
+		# $self->cursor(1, 1);
 		$self->{screen} = [];
 	}
 }
@@ -225,7 +228,7 @@ sub EL {
 	my $l = $self->{line} - 1;
 	my $c = $self->{column} - 1;
 
-	$n ||= 0; # default behavior if no argument
+	$n //= 0; # default behavior if no argument
 
 	if ($n == 0) {
 		my $ncolumns = scalar @{ $scr->[$l] // [] } - 1;

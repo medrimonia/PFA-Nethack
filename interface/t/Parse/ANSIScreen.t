@@ -129,19 +129,23 @@ use Parse::ANSIScreen;
 
 {	# Test of screen manipulation functions
 	
-	use Data::Dumper;
 	use Storable qw(dclone);
 
 	my ($l, $c);
 	my $scr = Parse::ANSIScreen->new();
 
 
-	($l, $c) = $scr->cursor(3, 5); # cursor on letter q
+	$scr->cursor(3, 5); # cursor on letter q
+	($l, $c) = $scr->cursor();
 	ok($l == 3 && $c == 5, "Set cursor position 1");	
-	($l, $c) = $scr->cursor(-2, 5);
+
+	$scr->cursor(-2, 5);
+	($l, $c) = $scr->cursor();
 	ok($l == 3 && $c == 5, "Set cursor position 2");	
-	($l, $c) = $scr->cursor(7);
-	ok($l == 3 && $c == 5, "Set cursor position 3");	
+
+	$scr->cursor(7);
+	($l, $c) = $scr->cursor();
+	ok($l == 7 && $c == 5, "Set cursor position 3");	
 
 
 	my $testscreen = [
@@ -226,6 +230,65 @@ use Parse::ANSIScreen;
 	$scr->{screen} = dclone($testscreen);
 	$scr->ED(2);
 	is_deeply($scr->{screen}, [], "Test ED(2) 1");
+}
+
+
+
+{	# Test escape sequences
+	use Data::Dumper;
+
+	my ($l, $c);
+	my $scr = Parse::ANSIScreen->new();
+
+
+	$scr->parse("\e[2;5H");
+	($l, $c) = $scr->cursor();
+	ok($l == 2 && $c == 5, "Parse cursor position 1");
+
+	$scr->parse("\e[2;5HHi");
+	($l, $c) = $scr->cursor();
+	ok($l == 2 && $c == 7, "Parse cursor position 2");
+
+	$scr->parse("\e[H");
+	($l, $c) = $scr->cursor();
+	ok($l == 1 && $c == 1, "Parse cursor position 3");
+	
+	$scr->parse("\e[2H");
+	($l, $c) = $scr->cursor();
+	ok($l == 2 && $c == 1, "Parse cursor position 4");
+
+	$scr->parse("\e[;2H");
+	($l, $c) = $scr->cursor();
+	ok($l == 1 && $c == 2, "Parse cursor position 5");
+
+
+	my $testscreen = [
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . + . . . . + . . . . + ) ] , 
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . + . . . . + . . . . + ) ] , 
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . . . . . . . . . . . . ) ] , 
+ 	 	 [ qw( . . . . + . . . . + . . . . + ) ] , 
+	];
+
+	$scr->{screen} = dclone($testscreen);
+
+	$scr->parse("\e[2;2HHello");
+	$scr->print_screen();
+
+	print "=======\n";
+
+	$scr->parse("\e[2;2HHi World!");
+	$scr->print_screen();
 }
 
 
