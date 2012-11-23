@@ -3,8 +3,6 @@ use strict;
 use warnings;
 
 use IO::Pty::Easy;
-use Term::ReadKey;
-
 use Parse::ANSIScreen;
 
 
@@ -21,19 +19,31 @@ if ($pid) {
 
     while ($pty->is_active()) {
         my $nh_msg = $pty->read();
-		chomp $nh_msg;
+		
+		$nh_msg =~ s/\010/\e[D/g; # replace \b by the CUB command.
+
 		$scr->parse($nh_msg);
+		system("clear");
 		$scr->print_screen();
 	}
 }
 
-# child - catch key press events
+# child - catch commands
 else {
-	ReadMode(4);
-	while ($pty->is_active()) {
-        my $key = ReadKey(0);
-        $pty->write($key);
-    }
+	require IO::Socket::INET;
+
+	my $sock = IO::Socket::INET->new(
+		LocalAddr => '127.0.0.1',
+		LocalPort => 9999,
+		Proto => 'udp',
+		Reuse => 1,
+	) || die "Can't create socket: $!";
+	
+	while ($sock->recv(my $cmd, 1, 0)) {
+		warn "Can't write!" if ($pty->write($cmd, 0) < 1);
+	}
+
+	close $sock;
 }
 
 $pty->close();

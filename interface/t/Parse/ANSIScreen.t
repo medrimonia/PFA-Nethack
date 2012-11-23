@@ -282,12 +282,11 @@ use Parse::ANSIScreen;
 
 	$scr->{screen} = dclone($testscreen);
 
-	$scr->parse("\e[2;2HHello");
-	$scr->print_screen();
-
-	print "=======\n";
-
-	$scr->parse("\e[2;2HHi World!");
+	my $str = "Hi World!";
+	$scr->parse("\e[2;2H".$str);
+	($l, $c) = $scr->cursor();
+	ok($l == 2 && $c == 2 + length($str), "wr_screen 1");
+	$scr->parse("\e[K#");
 	$scr->print_screen();
 }
 

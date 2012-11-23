@@ -26,14 +26,17 @@ sub parse {
 	my $self = shift;
 	my ($str) = @_;
 
-	chomp $str;
-
 	my @sequences = split($self->{CSI}, $str);
+
+	# DEBUG
+	print Dumper(\@sequences);
 
 	foreach (@sequences) {
 		my $s;
 
 		next unless $_;
+
+		#print 'Processing ' . $_ . ': ';
 
 		# Move cursor
 		if    (/^(\d*)A(.*)/) { $self->CUU($1 || 1); $s = $2; }
@@ -63,6 +66,8 @@ sub parse {
 		else { $s = $_; }
 
 		$self->wr_screen($s);
+		my ($li, $co) = $self->cursor();
+		print " new cursor position is $li:$co\n";
 	}
 
 	return 1;
