@@ -1,0 +1,5 @@
+nethack-343-src.tgz
+*~
+*.o
+*.lev
+nethack-3.4.3/src/nethack
