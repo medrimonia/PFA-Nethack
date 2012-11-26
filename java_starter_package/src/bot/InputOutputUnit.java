@@ -3,15 +3,33 @@ package bot;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 class InputOutputUnit{
 	
 	private BufferedReader input;
 	private int mapHeight = -1;
 	private int mapWidth = -1;
+	private Socket mySocket;
+	private PrintWriter output;
 	
 	public InputOutputUnit(){
 		input = new BufferedReader(new InputStreamReader(System.in));
+		output = new PrintWriter(System.out);
+	}
+	
+	public InputOutputUnit(String hostname)
+			throws UnknownHostException, IOException{
+		this(hostname, Protocole.DEFAULT_PORT);
+	}
+	
+	public InputOutputUnit(String hostname, int portNo)
+			throws UnknownHostException, IOException{
+		mySocket = new Socket(hostname, portNo);
+		input = new BufferedReader(new InputStreamReader(mySocket.getInputStream()));
+		output = new PrintWriter(mySocket.getOutputStream());
 	}
 	
 	public void parseNextTurn(Bot b) throws IOException{
@@ -80,6 +98,12 @@ class InputOutputUnit{
 	}
 	
 	public void broadcastMove(Direction d){
-		System.out.println(Protocole.MOVE_TOKEN + ' ' + d.getValue());
+		output.println(Protocole.MOVE_TOKEN + ' ' + d.getValue());
+		output.flush();
+	}
+	
+	public void broadcastSearch(){
+		output.println(Protocole.SEARCH_TOKEN);
+		output.flush();
 	}
 }
