@@ -33,20 +33,27 @@ class InputOutputUnit{
 	}
 	
 	public void parseNextTurn(Bot b) throws IOException{
-		// Verify start of message
-		if (!input.readLine().equals(Protocole.START_TOKEN))
-			throw new RuntimeException("Invalid start");
-		String line;
-		while (!(line = input.readLine()).equals(Protocole.END_TOKEN)){
-			// Multi-line message
-			Information i = null;
-			if (line.startsWith(Protocole.START_TOKEN))
-				i = parseMultiLineVar(line);
-			// Mono-line message
-			else
-				i = parseMonoLineVar(line);
-			if (i != null)
-				b.treatInformation(i);
+		try{
+			// Verify start of message
+			if (!input.readLine().equals(Protocole.START_TOKEN))
+				throw new RuntimeException("Invalid start");
+			String line;
+			while (!(line = input.readLine()).equals(Protocole.END_TOKEN)){
+				// Multi-line message
+				Information i = null;
+				if (line.startsWith(Protocole.START_TOKEN))
+					i = parseMultiLineVar(line);
+				// Mono-line message
+				else
+					i = parseMonoLineVar(line);
+				if (i != null)
+					b.treatInformation(i);
+			}
+		}catch(IOException e){
+			output.close();
+			input.close();
+			mySocket.close();
+			throw e;
 		}
 	}
 	

@@ -34,6 +34,19 @@ public class Bot {
 		case MAP: map = (Map)i.getValue(); break;
 		}
 	}
+
+	public void start(){
+		try{
+			while(true){
+				nextTurn();
+				doTurn();
+			}
+
+		}catch(IOException e){
+			e.printStackTrace();
+			return;
+		}
+	}
 	
 	public void doTurn(){
 		randomMove();		
@@ -50,12 +63,8 @@ public class Bot {
 		}
 	}
 	
-	public void nextTurn(){
-		try{
-			myParser.parseNextTurn(this);
-		}catch(IOException e){
-			e.printStackTrace();
-		}
+	public void nextTurn() throws IOException{
+		myParser.parseNextTurn(this);
 	}
 	
 	@Override

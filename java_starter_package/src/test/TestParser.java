@@ -13,7 +13,6 @@ public class TestParser {
 			else
 				b = new Bot();
 			b.nextTurn();
-			System.out.println(b);
 			b.doTurn();
 		}catch(Exception e){
 			e.printStackTrace();

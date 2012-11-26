@@ -11,9 +11,11 @@ import bot.Protocole;
 public class TestServer {
 	
 	public static void main(String[] args){
+		ServerSocket serverSocket = null;
+		Socket clientSocket = null;
 		try{
-			ServerSocket serveurSocket = new ServerSocket(Protocole.DEFAULT_PORT);
-			Socket clientSocket = serveurSocket.accept();
+			serverSocket = new ServerSocket(Protocole.DEFAULT_PORT);
+			clientSocket = serverSocket.accept();
 			
 			PrintWriter toClient = new PrintWriter(clientSocket.getOutputStream(), true);
 			BufferedReader fromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -30,6 +32,10 @@ public class TestServer {
 			while ((line = fromClient.readLine()) != null){
 				System.out.println(line);
 			}
+			
+			// Closing sockets
+			clientSocket.close();
+			serverSocket.close();
 			
 		}catch(Exception e){
 			e.printStackTrace();
