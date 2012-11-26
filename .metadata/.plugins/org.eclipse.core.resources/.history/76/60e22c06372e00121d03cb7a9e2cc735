@@ -1,6 +1,0 @@
-class Parser{
-	
-	public static void parseNextTurn(){
-		BufferedReader input = new BufferedReader(System.in); 
-	}
-}

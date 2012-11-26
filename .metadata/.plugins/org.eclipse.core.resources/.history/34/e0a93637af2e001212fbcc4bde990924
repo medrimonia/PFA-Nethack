@@ -1,5 +1,0 @@
-package bot;
-
-public enum SquareType {
-
-}

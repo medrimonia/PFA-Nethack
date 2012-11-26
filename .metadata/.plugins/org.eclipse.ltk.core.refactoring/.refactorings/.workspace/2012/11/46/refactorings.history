@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Delete resource &apos;java_starter_package&apos;" deleteContents="false" description="Delete resource &apos;java_starter_package&apos;" element1="/java_starter_package" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1352882845509"/>
-</session>

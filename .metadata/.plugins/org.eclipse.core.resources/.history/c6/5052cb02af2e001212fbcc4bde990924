@@ -1,9 +1,0 @@
-package bot;
-
-public class Square {
-	
-	public Square(char c){
-		
-	}
-
-}
