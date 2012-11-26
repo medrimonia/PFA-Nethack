@@ -1188,7 +1188,9 @@ register int aflag;
 		if(x != u.ux || y != u.uy) {
 		    if (Blind && !aflag) feel_location(x,y);
 		    if(levl[x][y].typ == SDOOR) {
-			if(rnl(7-fund)) continue;
+			/*if(rnl(7-fund)) continue;*/
+			/* A secret door is found from at the first search*/
+			if(0) continue;
 			cvt_sdoor_to_door(&levl[x][y]);	/* .typ = DOOR */
 			exercise(A_WIS, TRUE);
 			nomul(0);
@@ -1197,7 +1199,9 @@ register int aflag;
 			else
 			    newsym(x,y);
 		    } else if(levl[x][y].typ == SCORR) {
-			if(rnl(7-fund)) continue;
+			/*if(rnl(7-fund)) continue;*/
+			/* A secret corridor is found from at the first search*/
+			if(0) continue;
 			levl[x][y].typ = CORR;
 			unblock_point(x,y);	/* vision */
 			exercise(A_WIS, TRUE);
