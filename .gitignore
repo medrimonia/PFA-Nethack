@@ -1,1 +1,3 @@
-java_starter_package/.*
+java_starter_package/.classpath
+java_starter_package/.project
+.metadata
