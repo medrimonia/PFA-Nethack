@@ -1,6 +1,7 @@
 package bot;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -14,6 +15,17 @@ public class Bot {
 		dungeonLevel = 0;
 		map = null;
 		myParser = new InputOutputUnit();
+	}
+	
+	public Bot(String hostname)
+			throws UnknownHostException, IOException{
+		this(hostname, Protocole.DEFAULT_PORT);
+	}
+
+	public Bot(String hostname, int port)
+			throws UnknownHostException, IOException{
+		this();
+		myParser = new InputOutputUnit(hostname, port);
 	}
 
 	public void treatInformation(Information i) {
