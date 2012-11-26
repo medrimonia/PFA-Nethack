@@ -18,8 +18,6 @@ public class Map {
 	}
 	
 	public boolean isAllowedMove(Direction d){
-		System.out.println("direction : " + d);
-		System.out.println("\tdest : " + Position.add(myPosition, d));
 		Square dest = getSquare(Position.add(myPosition, d));
 		// if dest is out of map, is a door or is out of sight, move is forbidden
 		if (dest == null ||
@@ -29,7 +27,6 @@ public class Map {
 		switch (d){
 		case NORTH:
 		case SOUTH:
-			System.out.println("dest type : " + dest.getType());
 			return (dest.getType() != SquareType.HORIZONTAL_WALL);
 		case EAST:
 		case WEST:
