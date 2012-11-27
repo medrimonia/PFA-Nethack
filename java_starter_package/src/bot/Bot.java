@@ -49,7 +49,16 @@ public class Bot {
 	}
 	
 	public void doTurn(){
-		randomMove();		
+		randomAction();		
+	}
+	
+	public void randomAction(){
+		double dice = Math.random();
+		if (dice > 0.7)
+			myParser.broadcastSearch();
+		else
+			randomMove();
+			
 	}
 	
 	public void randomMove(){
