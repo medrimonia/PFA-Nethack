@@ -21,4 +21,6 @@ while (my $key = ReadKey(0)) {
 	$sock->send($key);
 }
 
+ReadMode(0); # reset to default
+
 close $sock;

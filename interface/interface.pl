@@ -3,12 +3,23 @@ use strict;
 use warnings;
 
 use Term::VT102;
+use Term::ReadKey;
 use IO::Pty::Easy;
 
 
+use constant {
+	TERMCOLS => 200,
+	TERMLINS => 100,
+};
+
+
 my $pty = IO::Pty::Easy->new();
+
+SetTerminalSize(TERMCOLS, TERMLINS, TERMCOLS*10, TERMLINS*10, $pty)
+	or die "Can't set terminal size : $!";
+
 $pty->autoflush(1);
-$pty->spawn("nethack -X | tee log.txt");
+$pty->spawn("nethack -X");
 
 
 defined (my $pid = fork()) or die "fork: $!";
@@ -23,8 +34,9 @@ if ($pid) {
 		
 		$scr->process($nh_msg);
 
-		for my $row (1 .. 24) {
-			print $scr->row_plaintext($row) . "\n";
+		for my $row (0 .. TERMLINS-1) {
+			my $str = $scr->row_plaintext($row);
+			print "$str\n" if (defined $str);
 		}
 	}
 }
