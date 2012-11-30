@@ -2,15 +2,15 @@
 
 In order to use this program, you need to install the following modules from
 the CPAN:
-* IO::Pty
+* Term::VT102
 * IO::Pty::Easy
 * Term::ReadKey
 
-Installation can be done using the 'cpan -i module_name' command after you've
+Installation can be done using the 'cpan -i module' command after you've
 properly configured your cpan.
 
 Alternatively, you can install cpanminus (a zero-conf CPAN client) and run
-'cpanm module_name'. See https://metacpan.org/module/cpanm for more details.
+'cpanm module'. See https://metacpan.org/module/cpanm for more details.
 
 In order to install these modules without root privileges, you can use
 local::lib. See https://metacpan.org/module/local::lib.

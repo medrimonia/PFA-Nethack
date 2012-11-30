@@ -2,8 +2,8 @@ use 5.014;
 use strict;
 use warnings;
 
+use Term::VT102;
 use IO::Pty::Easy;
-use Parse::ANSIScreen;
 
 
 my $pty = IO::Pty::Easy->new();
@@ -15,16 +15,17 @@ defined (my $pid = fork()) or die "fork: $!";
 
 # parent - show the game
 if ($pid) {
-	my $scr = Parse::ANSIScreen->new();
+	$|++;
+	my $scr = Term::VT102->new();
 
     while ($pty->is_active()) {
         my $nh_msg = $pty->read();
 		
-		$nh_msg =~ s/\010/\e[D/g; # replace \b by the CUB command.
+		$scr->process($nh_msg);
 
-		$scr->parse($nh_msg);
-		system("clear");
-		$scr->print_screen();
+		for my $row (1 .. 24) {
+			print $scr->row_plaintext($row) . "\n";
+		}
 	}
 }
 
