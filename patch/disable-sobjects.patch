@@ -1,0 +1,47 @@
+diff --git a/nh-setup/nethack-3.4.3/include/config.h b/nh-setup/nethack-3.4.3/include/config.h
+index 3efbfa2..e5d4c80 100644
+--- a/nh-setup/nethack-3.4.3/include/config.h
++++ b/nh-setup/nethack-3.4.3/include/config.h
+@@ -316,7 +316,7 @@ typedef unsigned char	uchar;
+  */
+ 
+ /* dungeon features */
+-#define SINKS		/* Kitchen sinks - Janet Walz */
++/* #define SINKS */		/* Kitchen sinks - Janet Walz */
+ /* dungeon levels */
+ #define WALLIFIED_MAZE	/* Fancy mazes - Jean-Christophe Collet */
+ #define REINCARNATION	/* Special Rogue-like levels */
+diff --git a/nh-setup/nethack-3.4.3/src/mklev.c b/nh-setup/nethack-3.4.3/src/mklev.c
+index c1fb7cc..0a3cd08 100644
+--- a/nh-setup/nethack-3.4.3/src/mklev.c
++++ b/nh-setup/nethack-3.4.3/src/mklev.c
+@@ -1307,6 +1307,9 @@ mkfount(mazeflag,croom)
+ register int mazeflag;
+ register struct mkroom *croom;
+ {
++	/* Disable fountains */
++	return;
++
+ 	coord m;
+ 	register int tryct = 0;
+ 
+@@ -1353,6 +1356,9 @@ STATIC_OVL void
+ mkaltar(croom)
+ register struct mkroom *croom;
+ {
++	/* Disable altars */
++	return;
++
+ 	coord m;
+ 	register int tryct = 0;
+ 	aligntyp al;
+@@ -1377,6 +1383,9 @@ static void
+ mkgrave(croom)
+ struct mkroom *croom;
+ {
++	/* Disable graves */
++	return;
++
+ 	coord m;
+ 	register int tryct = 0;
+ 	register struct obj *otmp;
