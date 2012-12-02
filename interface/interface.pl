@@ -6,17 +6,28 @@ use Term::VT102;
 use Term::ReadKey;
 use IO::Pty::Easy;
 
+# Messages line ................ --more--
+# ----------------------------------------
+# |                   |                  |
+# |                   |                  |
+# |      MAP 21x80    |   MENU 21x80     |
+# |                   |                  |
+# |                   |                  |
+# ----------------------------------------
+# Status line 1
+# Status line 2
 
 use constant {
-	TERMCOLS => 200,
-	TERMLINS => 100,
+	TERMCOLS => 160,
+	TERMLINS => 24, # nethack won't use more lines
 };
 
 
 my $pty = IO::Pty::Easy->new();
 
-SetTerminalSize(TERMCOLS, TERMLINS, TERMCOLS*10, TERMLINS*10, $pty)
-	or die "Can't set terminal size : $!";
+my (undef, undef, $xpix, $ypix) = GetTerminalSize();
+(SetTerminalSize(TERMCOLS, TERMLINS, $xpix, $ypix, $pty)
+	== -1) && die "Can't set terminal size";
 
 $pty->autoflush(1);
 $pty->spawn("nethack -X");
@@ -26,8 +37,11 @@ defined (my $pid = fork()) or die "fork: $!";
 
 # parent - show the game
 if ($pid) {
-	$|++;
-	my $scr = Term::VT102->new();
+
+	open (my $log, ">", "log.txt");
+	select($log); $|++;
+
+	my $scr = Term::VT102->new('rows' => TERMLINS, 'cols' => TERMCOLS);
 
     while ($pty->is_active()) {
         my $nh_msg = $pty->read();
