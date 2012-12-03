@@ -5,22 +5,31 @@ use warnings;
 use Term::ReadKey;
 use IO::Socket::INET;
 
-ReadMode(3);
 
 my $sock = IO::Socket::INET->new(
 	PeerAddr => '127.0.0.1',
-	PeerPort => 9999,
-	Proto => 'udp'
+	PeerPort => 4242,
+	Proto => 'tcp'
 ) || die "Can't connect: $!";
 
+$sock->autoflush(1);
 
-$| = 1;
 
-while (my $key = ReadKey(0)) {
-	print $key;
-	$sock->send($key);
+defined (my $pid = fork()) or die "fork: $!";
+
+if ($pid) {
+	ReadMode(3);
+
+	while (my $key = ReadKey(0)) {
+		print $sock $key;
+	}
+
+	ReadMode(0); # reset to default
 }
 
-ReadMode(0); # reset to default
+else {
+	$| = 1;
+	print while(<$sock>);
+}
 
 close $sock;

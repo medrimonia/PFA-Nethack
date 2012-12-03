@@ -1,10 +1,14 @@
-use 5.014;
+use 5.010;
 use strict;
 use warnings;
 
 use Term::VT102;
 use Term::ReadKey;
 use IO::Pty::Easy;
+use IO::Socket;
+use IO::Select;
+
+use Data::Dumper;
 
 # Messages line ................ --more--
 # ----------------------------------------
@@ -23,54 +27,87 @@ use constant {
 };
 
 
-my $pty = IO::Pty::Easy->new();
 
-my (undef, undef, $xpix, $ypix) = GetTerminalSize();
-(SetTerminalSize(TERMCOLS, TERMLINS, $xpix, $ypix, $pty)
+{	# SERVER SCOPE
+
+	# setup socket
+	my $server = IO::Socket::INET->new(
+		LocalAddr => '127.0.0.1',
+		LocalPort => 4242,
+		Proto => 'tcp',
+		Listen => 1,
+		Reuse => 1,
+	) || die "Can't create socket: $!";
+
+	# setup PTY
+	my $pty = IO::Pty::Easy->new();
+
+	(SetTerminalSize(TERMCOLS, TERMLINS, 0, 0, $pty)
 	== -1) && die "Can't set terminal size";
 
-$pty->autoflush(1);
-$pty->spawn("nethack -X");
+	$pty->autoflush(1);
+	$pty->spawn("nethack -X");
 
 
-defined (my $pid = fork()) or die "fork: $!";
-
-# parent - show the game
-if ($pid) {
-
-	open (my $log, ">", "log.txt");
-	select($log); $|++;
-
+	# create virtual screen
 	my $scr = Term::VT102->new('rows' => TERMLINS, 'cols' => TERMCOLS);
 
-    while ($pty->is_active()) {
-        my $nh_msg = $pty->read();
-		
-		$scr->process($nh_msg);
 
-		for my $row (0 .. TERMLINS-1) {
+	# wait for a first client before starting the whole thing
+	my @clients;
+	my $client = $server->accept();
+	$client->autoflush(1);
+	push @clients, $client;
+
+	my $s = IO::Select->new($pty, $server, $client);
+
+	# IO loop
+	while ($pty->is_active()) {
+
+		for my $handle ($s->can_read()) {
+
+			if ($handle == $pty) {
+				my $nh_msg = $pty->read();
+				$scr->process($nh_msg);
+				send_scr($scr, @clients);
+			}
+
+			elsif ($handle == $server) {
+				$client = $server->accept();
+				$client->autoflush(1);
+				push @clients, $client;
+				$s->add($client);
+				say "New client";
+			}
+
+			else {
+				my $rv = $handle->recv(my $cmd, 1, 0);
+
+				unless (defined $rv) {
+					warn "unexpected disconnect: $!";
+					# TODO : handle this cleanly
+					exit;
+				}
+
+				say $cmd;
+				defined ($pty->write($cmd, 0)) or warn "pty_write: $!";
+			}
+		}
+	}
+
+	close($_) foreach ($s->handles());
+	$server->close();
+	$pty->close();
+}
+
+
+sub send_scr {
+	my ($scr, @clients) = @_;
+
+	foreach my $client (@clients) {
+		foreach my $row (0 .. $scr->rows()-1) {
 			my $str = $scr->row_plaintext($row);
-			print "$str\n" if (defined $str);
+			print $client "$str\n" if (defined $str);
 		}
 	}
 }
-
-# child - catch commands
-else {
-	require IO::Socket::INET;
-
-	my $sock = IO::Socket::INET->new(
-		LocalAddr => '127.0.0.1',
-		LocalPort => 9999,
-		Proto => 'udp',
-		Reuse => 1,
-	) || die "Can't create socket: $!";
-	
-	while ($sock->recv(my $cmd, 1, 0)) {
-		warn "Can't write!" if ($pty->write($cmd, 0) < 1);
-	}
-
-	close $sock;
-}
-
-$pty->close();
