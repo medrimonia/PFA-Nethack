@@ -41,17 +41,13 @@ use constant {
 
 	# setup PTY
 	my $pty = IO::Pty::Easy->new();
+	$pty->autoflush(1);
 
 	(SetTerminalSize(TERMCOLS, TERMLINS, 0, 0, $pty)
-	== -1) && die "Can't set terminal size";
-
-	$pty->autoflush(1);
-	$pty->spawn("nethack -X");
-
+		== -1) && die "Can't set terminal size";
 
 	# create virtual screen
 	my $scr = Term::VT102->new('rows' => TERMLINS, 'cols' => TERMCOLS);
-
 
 	# wait for a first client before starting the whole thing
 	my @clients;
@@ -59,9 +55,10 @@ use constant {
 	$client->autoflush(1);
 	push @clients, $client;
 
-	my $s = IO::Select->new($pty, $server, $client);
+	my $s = IO::Select->new($pty, $server, @clients);
 
 	# IO loop
+	$pty->spawn("nethack -X");
 	while ($pty->is_active()) {
 
 		for my $handle ($s->can_read()) {
