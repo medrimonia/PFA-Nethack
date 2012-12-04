@@ -96,18 +96,19 @@ use constant {
 	}
 
 	close($_) foreach ($s->handles());
-	$server->close();
-	$pty->close();
 }
 
 
 sub send_scr {
 	my ($scr, @clients) = @_;
 
+	my $msg = "";
+
+	foreach my $row (0 .. $scr->rows()-1) {
+		$msg .= ($scr->row_plaintext($row) // "") . "\n";
+	}
+
 	foreach my $client (@clients) {
-		foreach my $row (0 .. $scr->rows()-1) {
-			my $str = $scr->row_plaintext($row);
-			print $client "$str\n" if (defined $str);
-		}
+		$client->send($msg, 0);
 	}
 }
