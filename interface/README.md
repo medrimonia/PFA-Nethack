@@ -19,6 +19,6 @@ local::lib. See https://metacpan.org/module/local::lib.
 # Usage
 
 The program interface.pl spawns the NetHack game found in your PATH. It
-accepts connections on port 9999 (likely to change in the near future) using
-UDP. The dummy-client.pl program connects to this port on localhost, reads
+accepts connections on port 4242 (likely to change in the near future) using
+TCP. The dummy-client.pl program connects to this port on localhost, reads
 input from the keyboard and sends them to the interface.
