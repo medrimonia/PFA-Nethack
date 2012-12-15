@@ -50,14 +50,15 @@ use constant {
 	my $scr = Term::VT102->new('rows' => TERMLINS, 'cols' => TERMCOLS);
 
 	# wait for a first client before starting the whole thing
-	my @clients;
+	my %clients;
 	my $client = $server->accept();
 	$client->autoflush(1);
-	push @clients, $client;
+	$clients{$client} = $client;
 
-	my $s = IO::Select->new($pty, $server, @clients);
+	my $s = IO::Select->new($pty, $server, values %clients);
 
 	# IO loop
+	$|++;
 	$pty->spawn("nethack -X");
 	while ($pty->is_active()) {
 
@@ -66,27 +67,40 @@ use constant {
 			if ($handle == $pty) {
 				my $nh_msg = $pty->read();
 				$scr->process($nh_msg);
-				send_scr($scr, @clients);
+
+				my $msg_ref = scr2txt($scr, 1, 1);
+				my $map_ref = scr2txt($scr, 2, -3);
+				my $status_ref = scr2txt($scr, -2);
+
+				foreach my $sock (values %clients) {
+					$sock->send("START\n", 0);
+					send_map($map_ref, $sock);
+					$sock->send("END\n", 0);
+				}
 			}
 
 			elsif ($handle == $server) {
 				$client = $server->accept();
 				$client->autoflush(1);
-				push @clients, $client;
+				$clients{$client} = $client;
 				$s->add($client);
 				say "New client";
+
+				my $map_ref = scr2txt($scr, 2, -3);
+				send_map($map_ref, $client);
 			}
 
 			else {
 				my $rv = $handle->recv(my $cmd, 1, 0);
 
-				unless (defined $rv) {
-					warn "unexpected disconnect: $!";
-					# TODO : handle this cleanly
-					exit;
+				unless (defined $rv && $cmd) {
+					warn "recv error: closing socket";
+					delete $clients{$handle};
+					$s->remove($handle);
+					close $handle;
 				}
 
-				say $cmd;
+				print $cmd;
 				defined ($pty->write($cmd, 0)) or warn "pty_write: $!";
 			}
 		}
@@ -96,16 +110,37 @@ use constant {
 }
 
 
-sub send_scr {
-	my ($scr, @clients) = @_;
+sub send_init {
+}
+
+
+sub send_map {
+	my ($map_ref, $sock) = @_;
+
+	$sock->send("START MAP\n", 0);
+	$sock->send($$map_ref, 0);
+	$sock->send("END MAP\n", 0);
+}
+
+
+sub scr2txt {
+	my ($scr, $firstl, $lastl) = @_;
 
 	my $msg = "";
+	my $lastr = $scr->rows();
 
-	foreach my $row (0 .. $scr->rows()-1) {
+	$firstl = 1      unless ($firstl && abs($firstl) <=  $lastr);
+	$lastl  = $lastr unless ($lastl  && abs($lastl ) <=  $lastr);
+
+	# offset from bottom of screen
+	$firstl = $lastr + $firstl if ($firstl < 0);
+	$lastl  = $lastr + $lastl  if ($lastl  < 0);
+
+	say "lines $firstl to $lastl";
+
+	foreach my $row ($firstl .. $lastl) {
 		$msg .= ($scr->row_plaintext($row) // "") . "\n";
 	}
 
-	foreach my $client (@clients) {
-		$client->send($msg, 0);
-	}
+	return \$msg;
 }
