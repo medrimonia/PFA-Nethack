@@ -68,15 +68,7 @@ use constant {
 				my $nh_msg = $pty->read();
 				$scr->process($nh_msg);
 
-				my $msg_ref = scr2txt($scr, 1, 1);
-				my $map_ref = scr2txt($scr, 2, -3);
-				my $status_ref = scr2txt($scr, -2);
-
-				foreach my $sock (values %clients) {
-					$sock->send("START\n", 0);
-					send_map($map_ref, $sock);
-					$sock->send("END\n", 0);
-				}
+				send_map($scr, $_) foreach (values %clients);
 			}
 
 			elsif ($handle == $server) {
@@ -86,8 +78,7 @@ use constant {
 				$s->add($client);
 				say "New client";
 
-				my $map_ref = scr2txt($scr, 2, -3);
-				send_map($map_ref, $client);
+				send_init($scr, $client);
 			}
 
 			else {
@@ -111,17 +102,54 @@ use constant {
 
 
 sub send_init {
+	my ($scr, $sock) = @_;
+
+	my @msgs = ("START",
+	            "MAP_HEIGHT 22",
+	            "MAP_WIDTH 80",
+	            "START MAP",
+	            ${ get_map($scr) },
+	            "END MAP",
+	            "START STATUS",
+	            ${ get_status($scr) },
+	            "END STATUS",
+				"",
+			);
+
+	$sock->send(join("\n", @msgs), 0);
 }
 
 
 sub send_map {
-	my ($map_ref, $sock) = @_;
+	my ($scr, $sock) = @_;
 
-	$sock->send("START MAP\n", 0);
-	$sock->send($$map_ref, 0);
-	$sock->send("END MAP\n", 0);
+	my @msgs = ("START MAP",
+	            ${ get_map($scr) },
+	            "END MAP",
+	            "START STATUS",
+	            ${ get_status($scr) },
+	            "END STATUS",
+				"",
+			);
+
+	$sock->send(join("\n", @msgs), 0);
 }
 
+
+sub get_map {
+	my ($scr) = @_;
+	return scr2txt($scr, 2, -3);
+}
+
+sub get_nhmsg {
+	my ($scr) = @_;
+	return scr2txt($scr, 1, 1);
+}
+
+sub get_status {
+	my ($scr) = @_;
+	return scr2txt($scr, -2);
+}
 
 sub scr2txt {
 	my ($scr, $firstl, $lastl) = @_;
