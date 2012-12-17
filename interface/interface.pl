@@ -68,6 +68,7 @@ use constant {
 				my $nh_msg = $pty->read();
 				$scr->process($nh_msg);
 
+				print ${ scr2txt($scr) };
 				send_map($scr, $_) foreach (values %clients);
 			}
 
@@ -112,9 +113,7 @@ sub send_init {
 	            "START MAP",
 	            ${ get_map($scr) },
 	            "END MAP",
-	            "START STATUS",
-	            ${ get_status($scr) },
-	            "END STATUS",
+	            "END",
 				"",
 			);
 
@@ -125,12 +124,11 @@ sub send_init {
 sub send_map {
 	my ($scr, $sock) = @_;
 
-	my @msgs = ("START MAP",
+	my @msgs = ("START",
+	            "START MAP",
 	            ${ get_map($scr) },
 	            "END MAP",
-	            "START STATUS",
-	            ${ get_status($scr) },
-	            "END STATUS",
+	            "END",
 				"",
 			);
 
