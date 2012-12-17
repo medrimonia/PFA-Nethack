@@ -179,8 +179,8 @@ sub scr2txt {
 BEGIN {
 	my %dirs = (
 		NORTH      => "k",
-		NORTH_WEST => "u",
-		NORTH_EAST => "i",
+		NORTH_WEST => "y",
+		NORTH_EAST => "u",
 		SOUTH      => "j",
 		SOUTH_WEST => "b",
 		SOUTH_EAST => "n",
@@ -200,6 +200,13 @@ BEGIN {
 		elsif ($botcmd =~ /^OPEN (\w+)$/) {
 			if (exists $dirs{$1}) {
 				return "o" . $dirs{$1};
+			}
+		}
+
+		elsif ($botcmd =~ /^FORCE (\w+)$/) {
+			if (exists $dirs{$1}) {
+				# \4 = ^D
+				return "\4" . $dirs{$1};
 			}
 		}
 
