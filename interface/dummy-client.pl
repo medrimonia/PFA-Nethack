@@ -17,11 +17,28 @@ $sock->autoflush(1);
 
 defined (my $pid = fork()) or die "fork: $!";
 
+my %dirs = (
+	"k" => "NORTH",
+	"u" => "NORTH_WEST",
+	"i" => "NORTH_EAST",
+	"j" => "SOUTH",
+	"b" => "SOUTH_WEST",
+	"n" => "SOUTH_EAST",
+	"h" => "WEST",
+	"l" => "EAST",
+);
+
 if ($pid) {
 	ReadMode(3);
 
 	while (my $key = ReadKey(0)) {
-		print $sock $key;
+		if (exists $dirs{$key}) {
+			print $sock "MOVE $dirs{$key}";
+		}
+
+		else {
+			print $sock $key;
+		}
 	}
 
 	ReadMode(0); # reset to default

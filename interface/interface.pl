@@ -82,17 +82,19 @@ use constant {
 			}
 
 			else {
-				my $rv = $handle->recv(my $cmd, 1, 0);
+				my $rv = $handle->recv(my $botcmd, 64);
 
-				unless (defined $rv && $cmd) {
+				if (defined $rv && $botcmd) {
+					my $nhcmd = botcmd2nhcmd($botcmd);
+					defined ($pty->write($nhcmd, 0)) or warn "pty_write: $!";
+				}
+
+				else {
 					warn "recv error: closing socket";
 					delete $clients{$handle};
 					$s->remove($handle);
 					close $handle;
 				}
-
-				print $cmd;
-				defined ($pty->write($cmd, 0)) or warn "pty_write: $!";
 			}
 		}
 	}
@@ -171,4 +173,37 @@ sub scr2txt {
 	}
 
 	return \$msg;
+}
+
+
+BEGIN {
+	my %dirs = (
+		NORTH      => "k",
+		NORTH_WEST => "u",
+		NORTH_EAST => "i",
+		SOUTH      => "j",
+		SOUTH_WEST => "b",
+		SOUTH_EAST => "n",
+		WEST       => "h",
+		EAST       => "l",
+	);
+
+	sub botcmd2nhcmd {
+		my ($botcmd) = @_;
+
+		if ($botcmd =~ /MOVE (\w+)/) {
+			if (exists $dirs{$1}) {
+				return $dirs{$1};
+			}
+		}
+
+		elsif ($botcmd =~ /OPEN (\w+)/) {
+			if (exists $dirs{$1}) {
+				return "o" . $dirs{$1};
+			}
+		}
+
+		# default
+		return $botcmd;
+	}
 }
