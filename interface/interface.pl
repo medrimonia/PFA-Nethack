@@ -191,13 +191,13 @@ BEGIN {
 	sub botcmd2nhcmd {
 		my ($botcmd) = @_;
 
-		if ($botcmd =~ /MOVE (\w+)/) {
+		if ($botcmd =~ /^MOVE (\w+)$/) {
 			if (exists $dirs{$1}) {
 				return $dirs{$1};
 			}
 		}
 
-		elsif ($botcmd =~ /OPEN (\w+)/) {
+		elsif ($botcmd =~ /^OPEN (\w+)$/) {
 			if (exists $dirs{$1}) {
 				return "o" . $dirs{$1};
 			}
