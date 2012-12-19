@@ -27,6 +27,8 @@ use constant {
 };
 
 
+$|++;
+
 socketpair(my $s1, my $s2, AF_UNIX, SOCK_STREAM, 0)
 	or die "socketpair: $!";
 $s1->autoflush(1);
@@ -35,7 +37,7 @@ $s2->autoflush(1);
 defined (my $pid = fork())
 	or die "fork: $!";
 
-# keyboard handling
+# key presses handling
 if ($pid) {
 	close $s2;
 	ReadMode(3);
@@ -46,9 +48,9 @@ if ($pid) {
 
 	close $s1;
 	ReadMode(0);
-	exit;
 }
 
+# server
 else {
 	close $s1;
 
@@ -71,28 +73,26 @@ else {
 	# create virtual screen
 	my $scr = Term::VT102->new('rows' => TERMLINS, 'cols' => TERMCOLS);
 
-	# wait for a first client before starting the whole thing
-	my %clients;
-	my $s = IO::Select->new($pty, $server, $s2);
+	# spawn NetHack
+	my $nhexec = $ARGV[0] // "nethack";
+	$pty->spawn($nhexec . " -X") or die "pty_spawn: $!";
 
 	# IO loop
-	$|++;
-	$pty->spawn("nethack -X");
+	my %clients;
+	my $s = IO::Select->new($pty, $server, $s2);
 	while ($pty->is_active()) {
 
 		for my $handle ($s->can_read()) {
 
-			if ($handle == $pty) {
+			if ($handle == $pty) { # update from the game
 				my $nh_msg = $pty->read();
 				$scr->process($nh_msg);
 
 				print ${ scr2txt($scr) };
 				send_map($scr, $_) foreach (values %clients);
-
-				#skip_messages($scr, $pty); #doesn't work ... yet!
 			}
 
-			elsif ($handle == $s2) {
+			elsif ($handle == $s2) { # Keyboard event
 				if (my $key = getc($s2)) {
 					$pty->write($key, 0);
 				} else {
@@ -100,7 +100,7 @@ else {
 				}
 			}
 
-			elsif ($handle == $server) {
+			elsif ($handle == $server) { # new client
 				my $client = $server->accept();
 				$client->autoflush(1);
 				$clients{$client} = $client;
@@ -110,7 +110,7 @@ else {
 				send_init($scr, $client);
 			}
 
-			else {
+			else { # client/bot talking
 				my $rv = $handle->recv(my $botcmd, 64);
 
 				if (defined $rv && $botcmd) {
@@ -247,13 +247,3 @@ BEGIN {
 	}
 }
 
-
-sub skip_messages {
-	my ($scr, $pty) = @_;
-
-	my $msg = ${ get_nhmsg($scr) };
-
-	if ($msg =~ /--more--/) {
-		$pty->write("\n");
-	}
-}
