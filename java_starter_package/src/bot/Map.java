@@ -5,7 +5,7 @@ public class Map {
 	private Position myPosition;
 	private Square[][] content;
 
-	public Map(char[][] map) {
+	public Map(char[][] map) throws UnknownPositionException{
 		content = new Square[map.length][map[0].length];
 		for (int line = 0; line < map.length ; line++){
 			for (int column = 0; column < map[line].length; column++){

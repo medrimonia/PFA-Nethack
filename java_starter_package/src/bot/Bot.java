@@ -49,6 +49,8 @@ public class Bot {
 		}catch(IOException e){
 			e.printStackTrace();
 			return;
+		}catch(UnknownPositionException e){
+			System.out.println("The player location has not been found, game has ended");
 		}
 	}
 	
@@ -76,7 +78,7 @@ public class Bot {
 		}
 	}
 	
-	public void nextTurn() throws IOException{
+	public void nextTurn() throws IOException, UnknownPositionException{
 		myParser.parseNextTurn(this);
 	}
 	

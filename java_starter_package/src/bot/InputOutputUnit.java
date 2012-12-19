@@ -34,7 +34,7 @@ class InputOutputUnit{
 		output = new PrintWriter(mySocket.getOutputStream());
 	}
 	
-	public void parseNextTurn(Bot b) throws IOException{
+	public void parseNextTurn(Bot b) throws IOException, UnknownPositionException{
 		try{
 			// Verify start of message
 			String line = input.readLine();
@@ -66,7 +66,7 @@ class InputOutputUnit{
 		Logger.println("Informations Parsed");
 	}
 	
-	private Information parseMultiLineVar(String line) throws IOException{
+	private Information parseMultiLineVar(String line) throws IOException, UnknownPositionException{
 		Variable v = Variable.tokenToVariables(line.split(" ")[1]);
 		Object o = null;
 		switch (v){
@@ -78,7 +78,7 @@ class InputOutputUnit{
 		return new Information(v,o);
 	}
 
-	private Map parseMap() throws IOException{
+	private Map parseMap() throws IOException,UnknownPositionException{
 		Logger.println("Parsing map");
 		String line;
 		char[][] map = new char[mapHeight][mapWidth];
