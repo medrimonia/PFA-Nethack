@@ -49,17 +49,28 @@ use constant {
 	# create virtual screen
 	my $scr = Term::VT102->new('rows' => TERMLINS, 'cols' => TERMCOLS);
 
+	# IO loop
+	$pty->spawn("nethack -X");
+
+	defined (my $pid = fork()) or die "fork: $!";
+
+	# keyboard handling
+	if ($pid) {
+		ReadMode(3);
+
+		while (my $key = ReadKey(0)) {
+			$pty->write($key, 0);
+		}
+
+		ReadMode(0);
+		exit;
+	}
+
 	# wait for a first client before starting the whole thing
 	my %clients;
-	my $client = $server->accept();
-	$client->autoflush(1);
-	$clients{$client} = $client;
+	my $s = IO::Select->new($pty, $server);
 
-	my $s = IO::Select->new($pty, $server, values %clients);
-
-	# IO loop
 	$|++;
-	$pty->spawn("nethack -X");
 	while ($pty->is_active()) {
 
 		for my $handle ($s->can_read()) {
@@ -69,17 +80,19 @@ use constant {
 				$scr->process($nh_msg);
 
 				print ${ scr2txt($scr) };
-				send_map($scr, $_) foreach (values %clients);
+				#send_map($scr, $_) foreach (values %clients);
+
+				#skip_messages($scr, $pty);
 			}
 
 			elsif ($handle == $server) {
-				$client = $server->accept();
+				my $client = $server->accept();
 				$client->autoflush(1);
 				$clients{$client} = $client;
 				$s->add($client);
 				say "New client";
 
-				send_init($scr, $client);
+				#send_init($scr, $client);
 			}
 
 			else {
@@ -88,6 +101,14 @@ use constant {
 				if (defined $rv && $botcmd) {
 					my $nhcmd = botcmd2nhcmd($botcmd);
 					defined ($pty->write($nhcmd, 0)) or warn "pty_write: $!";
+
+					# wait for an update of the game
+					my $nh_msg = $pty->read(1/10); # 0.1s timeout
+					$scr->process($nh_msg) if (defined $nh_msg);
+
+					print ${ scr2txt($scr) };
+					# send the result of the command
+					send_map($scr, $_) foreach (values %clients);
 				}
 
 				else {
@@ -164,8 +185,6 @@ sub scr2txt {
 	$firstl = $lastr + $firstl if ($firstl < 0);
 	$lastl  = $lastr + $lastl  if ($lastl  < 0);
 
-	say "lines $firstl to $lastl";
-
 	foreach my $row ($firstl .. $lastl) {
 		$msg .= ($scr->row_plaintext($row) // "") . "\n";
 	}
@@ -210,5 +229,16 @@ BEGIN {
 
 		# default
 		return $botcmd;
+	}
+}
+
+
+sub skip_messages {
+	my ($scr, $pty) = @_;
+
+	my $msg = ${ get_nhmsg($scr) };
+
+	if ($msg =~ /--more--/) {
+		$pty->write("\n");
 	}
 }
