@@ -1,5 +1,4 @@
-# Setup
-
+# Setup 
 In order to use this program, you need to install the following modules from
 the CPAN:
 * Term::VT102
@@ -18,7 +17,7 @@ local::lib. See https://metacpan.org/module/local::lib.
 
 # Usage
 
-The program interface.pl spawns the NetHack game found in your PATH. It
-accepts connections on port 4242 (likely to change in the near future) using
-TCP. The dummy-client.pl program connects to this port on localhost, reads
-input from the keyboard and sends them to the interface.
+The program interface.pl spawns the NetHack game found in your PATH. It is
+possible to play the game from the terminal window used by the interface with
+the same key bindings used in nethack. The program accepts bots connections on
+TCP port 4242.
