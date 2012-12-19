@@ -95,8 +95,10 @@ class InputOutputUnit{
 			}
 			lineNumber++;
 		}
-		Logger.println("Map parsed");
-		return new Map(map);
+		Map m = new Map(map);
+		Logger.println("Map parsed : result");
+		Logger.println(m.toString());	
+		return m;
 	}
 
 	private Information parseMonoLineVar(String line){

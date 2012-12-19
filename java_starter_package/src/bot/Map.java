@@ -59,6 +59,7 @@ public class Map {
 	
 	public String toString(){
 		StringBuffer sb = new StringBuffer();
+		sb.append("myPosition : " + myPosition);
 		for (int line = 0; line < content.length ; line++){
 			for (int column = 0; column < content[line].length; column++)
 				sb.append(content[line][column].toString());
