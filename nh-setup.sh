@@ -4,7 +4,7 @@ nh="$HOME/games/nethack"
 nhdir="nethack-3.4.3/"
 nharchive="nethack-343-src.tgz"
 dlurl="http://downloads.sourceforge.net/project/nethack/nethack/3.4.3/nethack-343-src.tgz"
-patchdir="../patch/"
+patchdir="patch"
 
 apply_patch () {
     for i in `ls $patchdir`; do
@@ -19,7 +19,7 @@ apply_patch () {
 
 dl_nethack () {
     if [ ! -e $nharchive ]; then
-        read -p "$nharchive not found, automaticaly download it now? [Y/n]" yn
+        read -p "$nharchive not found, automatically download it now? [Y/n]" yn
 
         case $yn in
             Y|y|"" ) wget $dlurl;;
@@ -63,7 +63,7 @@ if [ $reuse = 0 ]; then
     cd $nhdir
     sh sys/unix/setup.sh
     cd ..
-    patch -p0 < linux_install.patch
+    patch -p0 < $patchdir/linux_install.patch
 fi
 
 if [ -d $patchdir ]; then
