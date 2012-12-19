@@ -5,6 +5,8 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
 
+import util.Logger;
+
 public class Bot {
 	
 	InputOutputUnit myParser;
@@ -38,7 +40,9 @@ public class Bot {
 	public void start(){
 		try{
 			while(true){
+				Logger.println("READING FROM SOCKET");
 				nextTurn();
+				Logger.println("DOING TURN");
 				doTurn();
 			}
 

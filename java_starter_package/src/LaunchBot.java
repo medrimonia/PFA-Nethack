@@ -1,3 +1,4 @@
+import util.Logger;
 import bot.Bot;
 
 public class LaunchBot{

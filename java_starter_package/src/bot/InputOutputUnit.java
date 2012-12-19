@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import util.Logger;
+
 class InputOutputUnit{
 	
 	private BufferedReader input;
@@ -35,10 +37,14 @@ class InputOutputUnit{
 	public void parseNextTurn(Bot b) throws IOException{
 		try{
 			// Verify start of message
-			if (!input.readLine().equals(Protocole.START_TOKEN))
-				throw new RuntimeException("Invalid start");
-			String line;
+			String line = input.readLine();
+			if (!line.equals(Protocole.START_TOKEN))
+				throw new RuntimeException("Invalid start Token. Expected \"" +
+										   Protocole.START_TOKEN + "\" received \"" +
+										   line + "\"");
+			Logger.println("Parsing informations");
 			while (!(line = input.readLine()).equals(Protocole.END_TOKEN)){
+				Logger.println(line);
 				// Multi-line message
 				Information i = null;
 				if (line.startsWith(Protocole.START_TOKEN))
@@ -53,8 +59,11 @@ class InputOutputUnit{
 			output.close();
 			input.close();
 			mySocket.close();
-			throw e;
+			String message = "Connection with the server has been closed";
+			System.out.println(message);
+			//throw e;
 		}
+		Logger.println("Informations Parsed");
 	}
 	
 	private Information parseMultiLineVar(String line) throws IOException{
@@ -70,12 +79,14 @@ class InputOutputUnit{
 	}
 
 	private Map parseMap() throws IOException{
+		Logger.println("Parsing map");
 		String line;
 		char[][] map = new char[mapHeight][mapWidth];
 		int lineNumber = 0;
 		while (!(line = input.readLine()).equals(Protocole.END_TOKEN +
 												 " " +
 												 Variable.MAP.getToken())){
+			Logger.println("Read : " + line);
 			for (int colNumber = 0; colNumber < mapWidth; colNumber++){
 				if (colNumber >= line.length())
 					map[lineNumber][colNumber] = ' ';//TODO notation en dur à éviter
@@ -84,6 +95,7 @@ class InputOutputUnit{
 			}
 			lineNumber++;
 		}
+		Logger.println("Map parsed");
 		return new Map(map);
 	}
 
@@ -105,12 +117,15 @@ class InputOutputUnit{
 	}
 	
 	public void broadcastMove(Direction d){
-		output.println(Protocole.MOVE_TOKEN + ' ' + d.getValue());
+		String action = Protocole.MOVE_TOKEN + ' ' + d.getValue();
+		Logger.println("ACTION : " + action);
+		output.println(action);
 		output.flush();
 	}
 	
 	public void broadcastSearch(){
 		output.println(Protocole.SEARCH_TOKEN);
+		Logger.println("ACTION : " + Protocole.SEARCH_TOKEN);
 		output.flush();
 	}
 }
