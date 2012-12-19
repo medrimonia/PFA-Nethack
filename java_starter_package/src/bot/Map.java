@@ -15,6 +15,8 @@ public class Map {
 				content[line][column] = new Square(map[line][column]);
 			}
 		}
+		if (myPosition == null)
+			throw new UnknownPositionException("Position not specified in message");
 	}
 	
 	public boolean isAllowedMove(Direction d){
@@ -62,7 +64,11 @@ public class Map {
 		sb.append("myPosition : " + myPosition);
 		for (int line = 0; line < content.length ; line++){
 			for (int column = 0; column < content[line].length; column++)
-				sb.append(content[line][column].toString());
+				if (myPosition.getLine() == line &&
+					myPosition.getColumn() == column)
+					sb.append("@");
+				else
+					sb.append(content[line][column].toString());
 			sb.append('\n');
 		}
 		return sb.toString();
