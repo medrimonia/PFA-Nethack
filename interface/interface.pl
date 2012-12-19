@@ -27,8 +27,30 @@ use constant {
 };
 
 
+socketpair(my $s1, my $s2, AF_UNIX, SOCK_STREAM, 0)
+	or die "socketpair: $!";
+$s1->autoflush(1);
+$s2->autoflush(1);
 
-{	# SERVER SCOPE
+defined (my $pid = fork())
+	or die "fork: $!";
+
+# keyboard handling
+if ($pid) {
+	close $s2;
+	ReadMode(3);
+
+	while (my $key = ReadKey(0)) {
+		print $s1 $key;
+	}
+
+	close $s1;
+	ReadMode(0);
+	exit;
+}
+
+else {
+	close $s1;
 
 	# setup socket
 	my $server = IO::Socket::INET->new(
@@ -49,28 +71,13 @@ use constant {
 	# create virtual screen
 	my $scr = Term::VT102->new('rows' => TERMLINS, 'cols' => TERMCOLS);
 
-	# IO loop
-	$pty->spawn("nethack -X");
-
-	defined (my $pid = fork()) or die "fork: $!";
-
-	# keyboard handling
-	if ($pid) {
-		ReadMode(3);
-
-		while (my $key = ReadKey(0)) {
-			$pty->write($key, 0);
-		}
-
-		ReadMode(0);
-		exit;
-	}
-
 	# wait for a first client before starting the whole thing
 	my %clients;
-	my $s = IO::Select->new($pty, $server);
+	my $s = IO::Select->new($pty, $server, $s2);
 
+	# IO loop
 	$|++;
+	$pty->spawn("nethack -X");
 	while ($pty->is_active()) {
 
 		for my $handle ($s->can_read()) {
@@ -80,9 +87,17 @@ use constant {
 				$scr->process($nh_msg);
 
 				print ${ scr2txt($scr) };
-				#send_map($scr, $_) foreach (values %clients);
+				send_map($scr, $_) foreach (values %clients);
 
-				#skip_messages($scr, $pty);
+				#skip_messages($scr, $pty); #doesn't work ... yet!
+			}
+
+			elsif ($handle == $s2) {
+				if (my $key = getc($s2)) {
+					$pty->write($key, 0);
+				} else {
+					warn "getc: $!";
+				}
 			}
 
 			elsif ($handle == $server) {
@@ -92,7 +107,7 @@ use constant {
 				$s->add($client);
 				say "New client";
 
-				#send_init($scr, $client);
+				send_init($scr, $client);
 			}
 
 			else {
