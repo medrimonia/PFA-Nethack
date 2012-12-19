@@ -1,6 +1,5 @@
 #!/bin/sh
 
-nh="$HOME/games/nethack"
 nhdir="nethack-3.4.3/"
 nharchive="nethack-343-src.tgz"
 dlurl="http://downloads.sourceforge.net/project/nethack/nethack/3.4.3/nethack-343-src.tgz"
@@ -47,15 +46,15 @@ else
 fi
 
 
-if [ -e $nh ]; then
-    read -p "previous nethack installation found at $nh, overwrite? [y/n]" yn
-
-    case $yn in
-        Y|y ) ;;
-        N|n ) exit;;
-        * ) echo "please answer 'y' or 'n'"; exit;;
-    esac
-fi
+#if [ -e $nh ]; then
+#    read -p "previous nethack installation found at $nh, overwrite? [y/n]" yn
+#
+#    case $yn in
+#        Y|y ) ;;
+#        N|n ) exit;;
+#        * ) echo "please answer 'y' or 'n'"; exit;;
+#    esac
+#fi
 
 
 if [ $reuse = 0 ]; then
@@ -63,7 +62,7 @@ if [ $reuse = 0 ]; then
     cd $nhdir
     sh sys/unix/setup.sh
     cd ..
-    patch -p0 < $patchdir/linux_install.patch
+    patch -p0 < linux_install.patch
 fi
 
 if [ -d $patchdir ]; then
@@ -74,5 +73,5 @@ fi
 cd $nhdir && make && make install
 
 if [ $? = 0 ]; then
-    echo "Nethack run script installed at $nh"
+    echo "Nethack run script installed in $nhdir"
 fi
