@@ -8,5 +8,6 @@ nethack-343-src.tgz
 !nethack-3.4.3/game_simulator_src/
 java_starter_package/.classpath
 java_starter_package/.project
+*.jar
 *.class
 .metadata
