@@ -7,8 +7,8 @@ nh-setup.sh script.
 The folder 'interface-perl' contains the perl interface. It has it's own README
 which explains how to use it.
 
-The folder 'patches' contains some patches allowing to disable hunger,
-monsters or other features of nethack.
+The folder 'patches' contains some patches that disable hunger,
+monsters or other features of nethack. nh-setup.sh will ask you if you want to use them before compiling.
 
 The folder 'java\_starter\_package' contains the source code of a bot written
 in java, a script called build\_starter\_package.sh builds a Bot.jar file.
