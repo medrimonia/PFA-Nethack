@@ -29,7 +29,7 @@ The perl interface requires some dependencies in order to run
 
 The interface needs to be started first, from the root directory :
 
-	perl interface-perl/interface.pl nethack\_binary\_path
+	perl interface-perl/interface.pl path/to/nethack
 
 Neither the bot nor the interface handle the game start automatically, you have
 to choose the character class and press enter once or twice in order to skip the
@@ -37,4 +37,4 @@ initial message before starting the bot.
 
 Once the game is properly started and the map is shown, it's possible to launch the bot.
 
-	java -jar java_starter_package.jar
+	java -jar java_starter_package/Bot.jar
