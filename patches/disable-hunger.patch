@@ -1,0 +1,24 @@
+diff --git a/nh-setup/nethack-3.4.3/src/eat.c b/nh-setup/nethack-3.4.3/src/eat.c
+index 12e8d9b..bc90f7c 100644
+--- a/nh-setup/nethack-3.4.3/src/eat.c
++++ b/nh-setup/nethack-3.4.3/src/eat.c
+@@ -2125,6 +2125,9 @@ bite()
+ void
+ gethungry()	/* as time goes by - called by moveloop() and domove() */
+ {
++	/* Disable hunger as time goes by */
++	return;
++
+ 	if (u.uinvulnerable) return;	/* you don't feel hungrier */
+ 
+ 	if ((!u.usleep || !rn2(10))	/* slow metabolic rate while asleep */
+@@ -2170,6 +2173,9 @@ void
+ morehungry(num)	/* called after vomiting and after performing feats of magic */
+ register int num;
+ {
++	/* Disable hunger because of special events */
++	return;
++
+ 	u.uhunger -= num;
+ 	newuhs(TRUE);
+ }

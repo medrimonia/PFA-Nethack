@@ -73,6 +73,7 @@ fi
 cd $nhdir && make && make install
 
 if [ $? = 0 ]; then
-	echo "\n ================================================ "
+	echo ""
+	echo "************************************************"
     echo "Nethack run script installed in $nhdir"
 fi
