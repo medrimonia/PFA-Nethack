@@ -1,0 +1,14 @@
+diff --git a/nh-setup/nethack-3.4.3/src/makemon.c b/nh-setup/nethack-3.4.3/src/makemon.c
+index 89098dd..514adc6 100644
+--- a/nh-setup/nethack-3.4.3/src/makemon.c
++++ b/nh-setup/nethack-3.4.3/src/makemon.c
+@@ -826,6 +826,9 @@ register struct permonst *ptr;
+ register int	x, y;
+ register int	mmflags;
+ {
++	/* Disable monsters */
++	return ((struct monst *)0);
++
+ 	register struct monst *mtmp;
+ 	int mndx, mcham, ct, mitem, xlth;
+ 	boolean anymon = (!ptr);

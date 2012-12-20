@@ -3,14 +3,14 @@
 nhdir="nethack-3.4.3/"
 nharchive="nethack-343-src.tgz"
 dlurl="http://downloads.sourceforge.net/project/nethack/nethack/3.4.3/nethack-343-src.tgz"
-patchdir="patch"
+patchdir="patches"
 
 apply_patch () {
     for i in `ls $patchdir`; do
         read -p "Apply $i? [Y/n]" yn
 
         case $yn in
-            Y|y|"" ) patch -p2 < $patchdir$i;;
+            Y|y|"" ) patch -p2 < $patchdir/$i;;
             * ) ;;
         esac
     done
@@ -73,5 +73,6 @@ fi
 cd $nhdir && make && make install
 
 if [ $? = 0 ]; then
+	echo "\n ================================================ "
     echo "Nethack run script installed in $nhdir"
 fi
