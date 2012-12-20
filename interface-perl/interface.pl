@@ -174,7 +174,12 @@ sub send_map {
 
 sub get_map {
 	my ($scr) = @_;
-	return scr2txt($scr, 2, -3);
+	return scr2txt($scr, 2, -3, 1, 80);
+}
+
+sub get_menu {
+	my ($scr) = @_;
+	return scr2txt($scr, 2, -3, -80);
 }
 
 sub get_nhmsg {
@@ -188,20 +193,29 @@ sub get_status {
 }
 
 sub scr2txt {
-	my ($scr, $firstl, $lastl) = @_;
+	# screen, first line, last line, first column, last column
+	my ($scr, $firstl, $lastl, $firstc, $lastc) = @_;
 
 	my $msg = "";
-	my $lastr = $scr->rows();
+	my $nrows = $scr->rows();
+	my $ncols = $scr->cols();
 
-	$firstl = 1      unless ($firstl && abs($firstl) <=  $lastr);
-	$lastl  = $lastr unless ($lastl  && abs($lastl ) <=  $lastr);
+	$firstl = 1      unless ($firstl && abs($firstl) <=  $nrows);
+	$lastl  = $nrows unless ($lastl  && abs($lastl ) <=  $nrows);
+
+	$firstc = 1      unless ($firstc && abs($firstc) <=  $ncols);
+	$lastc  = $ncols unless ($lastc  && abs($lastc ) <=  $ncols);
 
 	# offset from bottom of screen
-	$firstl = $lastr + $firstl if ($firstl < 0);
-	$lastl  = $lastr + $lastl  if ($lastl  < 0);
+	$firstl = $nrows + $firstl if ($firstl < 0);
+	$lastl  = $nrows + $lastl  if ($lastl  < 0);
+
+	# offset from right end of screen
+	$firstc = $ncols + $firstc if ($firstc < 0);
+	$lastc  = $ncols + $lastc  if ($lastc  < 0);
 
 	foreach my $row ($firstl .. $lastl) {
-		$msg .= ($scr->row_plaintext($row) // "") . "\n";
+		$msg .= ($scr->row_plaintext($row, $firstc, $lastc) // "") . "\n";
 	}
 
 	return \$msg;
