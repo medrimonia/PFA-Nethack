@@ -130,4 +130,11 @@ class InputOutputUnit{
 		Logger.println("ACTION : " + Protocole.SEARCH_TOKEN);
 		output.flush();
 	}
+	
+	public void broadcastOpeningDoor(Direction d){
+		String action = Protocole.OPEN_TOKEN + ' ' + d.getValue();
+		Logger.println("ACTION : " + action);
+		output.println(action);
+		output.flush();
+	}
 }

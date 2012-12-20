@@ -9,6 +9,8 @@ public final class Protocole {
 	public static String MOVE_TOKEN = "MOVE";
 	
 	public static String SEARCH_TOKEN = "SEARCH";
+	
+	public static String OPEN_TOKEN = "OPEN";
 
 	public static int DEFAULT_PORT = 4242;
 }
