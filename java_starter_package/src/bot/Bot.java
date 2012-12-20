@@ -63,7 +63,7 @@ public class Bot {
 		if (dice > 0.7)
 			myParser.broadcastSearch();
 		else
-			randomMove();
+			randomMoveOrOpen();
 			
 	}
 	
@@ -73,6 +73,21 @@ public class Bot {
 		for (Direction d : myDirs){
 			if (map.isAllowedMove(d)){
 				myParser.broadcastMove(d);
+				return;
+			}
+		}
+	}
+	
+	public void randomMoveOrOpen(){
+		Direction[] myDirs = Direction.values();
+		Collections.shuffle(Arrays.asList(myDirs));
+		for (Direction d : myDirs){
+			if (map.isAllowedMove(d)){
+				myParser.broadcastMove(d);
+				return;
+			}
+			if (map.isAllowedOpen(d)){
+				myParser.broadcastOpeningDoor(d);
 				return;
 			}
 		}
