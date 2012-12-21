@@ -47,7 +47,7 @@ First, cd into the project's root directory and execute the nh-setup.sh script
 	$ ./nh-setup.sh
 	nethack-343-src.tgz not found, automatically download it now? [Y/n]y
 
-	-- wget stuff --
+	-- download --
 	
 	Extracting... 
 	Running NetHack's setup script... 
