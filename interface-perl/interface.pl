@@ -65,6 +65,8 @@ else {
 
 	# setup PTY
 	my $pty = IO::Pty::Easy->new();
+	$SIG{INT}  = sub { $pty->close() };
+	$SIG{TERM} = sub { $pty->close() };
 	$pty->autoflush(1);
 
 	(SetTerminalSize(TERMCOLS, TERMLINS, 0, 0, $pty)
