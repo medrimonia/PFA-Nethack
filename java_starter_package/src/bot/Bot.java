@@ -40,17 +40,20 @@ public class Bot {
 	public void start(){
 		try{
 			while(true){
-				Logger.println("READING FROM SOCKET");
-				nextTurn();
-				Logger.println("DOING TURN");
-				doTurn();
+				try{
+					Logger.println("READING FROM SOCKET");
+					nextTurn();
+					Logger.println("DOING TURN");
+					doTurn();
+				}catch(UnknownPositionException e){
+					System.out.println("The player location has not been found, Skipping turn");
+				}
 			}
 
 		}catch(IOException e){
-			e.printStackTrace();
+			String message = "Connection with the server has been lost";
+			System.out.println(message);
 			return;
-		}catch(UnknownPositionException e){
-			System.out.println("The player location has not been found, game has ended");
 		}
 	}
 	

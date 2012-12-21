@@ -59,9 +59,7 @@ class InputOutputUnit{
 			output.close();
 			input.close();
 			mySocket.close();
-			String message = "Connection with the server has been closed";
-			System.out.println(message);
-			//throw e;
+			throw e;
 		}
 		Logger.println("Informations Parsed");
 	}
