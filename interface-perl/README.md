@@ -7,7 +7,7 @@ the CPAN:
 
 The 'cpan' script is part of the Perl standard distribution. It uses tools available on the user's computer to automatically download, unpack, compile, test, and install modules and their dependencies after a very short and almost fully automated configuration process. The first time cpan is run, it will ask a few questions to configure itself and the 'o conf init' command from the cpan shell may be used to reconfigure it if necessary. On most recent Linux distribution, cpan is installed along with local::lib which allows installation of modules without root privileges. See https://metacpan.org/module/local::lib for further information.
 
-Installation of the above mentioned modules can be done using the 'cpan -i module\_name' command after you have properly configured your cpan. 
+Installation of the above mentioned modules can be done using the `setup.pl` script or manualy using the 'cpan -i module\_name' command after you have properly configured your cpan. 
 
 
 # Usage
