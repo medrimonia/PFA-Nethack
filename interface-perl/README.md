@@ -16,4 +16,4 @@ Installation of the above mentioned modules can be done using the 'cpan -i modul
 
 # Notes
 
-This program makes NetHack believe the terminal size is 24x160 to prevent the menu from overlapping the map. This means that if your terminal window is smaller, lines will be wrapped and the map will appear to have empty lines in the middle which are in fact the lines used by the (possibly empty) menu.
+This program makes NetHack believe the terminal size is 24x160 to prevent the menu and the map to overlap. This means that if your terminal window is smaller, lines will be wrapped and the map will appear to have empty lines in the middle which are in fact the lines used by the (possibly empty) menu.
