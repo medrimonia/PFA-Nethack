@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
 
+import util.InvalidMessageException;
 import util.Logger;
 
 public class Bot {
@@ -53,7 +54,8 @@ public class Bot {
 		}catch(IOException e){
 			String message = "Connection with the server has been lost";
 			System.out.println(message);
-			return;
+		}catch(InvalidMessageException e){
+			System.out.println(e.getMessage());
 		}
 	}
 	
@@ -96,7 +98,7 @@ public class Bot {
 		}
 	}
 	
-	public void nextTurn() throws IOException, UnknownPositionException{
+	public void nextTurn() throws IOException, UnknownPositionException, InvalidMessageException{
 		myParser.parseNextTurn(this);
 	}
 	

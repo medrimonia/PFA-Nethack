@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import util.InvalidMessageException;
 import util.Logger;
 
 class InputOutputUnit{
@@ -34,7 +35,7 @@ class InputOutputUnit{
 		output = new PrintWriter(mySocket.getOutputStream());
 	}
 	
-	public void parseNextTurn(Bot b) throws IOException, UnknownPositionException{
+	public void parseNextTurn(Bot b) throws IOException, UnknownPositionException, InvalidMessageException{
 		try{
 			// Verify start of message
 			String line = input.readLine();
