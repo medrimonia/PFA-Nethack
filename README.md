@@ -80,6 +80,11 @@ You now have to choose the adventurer's characteristics and skip the intro by pr
 	$ java -jar java_starter_package/Bot.jar
 
 	
+## Further development
 
-
+If you wish to develop something for this project, please checkout the branch
+"dev" before. Once on this branch, you can create another branch to write your
+own code. You may want sometimes to merge your branch with the branch "dev" so
+that other contributors can test your code. Then, once everything is ready and
+tested, "dev" can be merged with master.
 
