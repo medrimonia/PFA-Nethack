@@ -1,0 +1,3 @@
+This module is used to translate orders between Nethack's kernel language and
+bots' language. It also provides a point of connection for bots.
+
