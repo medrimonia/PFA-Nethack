@@ -8,10 +8,17 @@ The folder 'interface-perl' contains the perl interface. It has it's own README
 which explains how to use it.
 
 The folder 'patches' contains some patches that disable hunger,
-monsters or other features of nethack. nh-setup.sh will ask you if you want to use them before compiling.
+monsters or other features of nethack. nh-setup.sh will ask you if you want to
+use them before compiling.
 
 The folder 'java\_starter\_package' contains the source code of a bot written
 in java, a script called build\_starter\_package.sh builds a Bot.jar file.
+
+The folder 'include' contains the headers of the used in addition to the basic
+nethack version.
+
+The folder 'src' contains the implementation of the additionnal functionalities
+provided by our PFA.
 
 
 ## Compiling
@@ -35,7 +42,8 @@ Neither the bot nor the interface handle the game start automatically, you have
 to choose the character class and press enter once or twice in order to skip the
 initial message before starting the bot.
 
-Once the game is properly started and the map is shown, it's possible to launch the bot.
+Once the game is properly started and the map is shown, it's possible to launch 
+the bot.
 
 	java -jar java_starter_package/Bot.jar
 
