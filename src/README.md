@@ -14,3 +14,7 @@ $ make run_test
 and a valgrind test with:
 $ make run_valgrind
 
+## DATABASE MANAGER
+
+This module require the installation of the sqlite3 headers and library.
+Both are contained in the package: libsqlite3-dev

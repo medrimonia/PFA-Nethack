@@ -1,9 +1,22 @@
 CC=gcc
 
 CFLAGS=-Wall -Wextra
-LFLAGS=
+LFLAGS= -lsqlite3
+
+HEADER_DIR= ../include
+
+TESTS=
+
+# N
 
 all: test
+
+%.o: %.c
+	${CC} ${CFLAGS} -I ${HEADER_DIR} -o $@ -c $<
+
+# MODULE SPECIFIC RULES
+
+# BOT HANDLER
 
 test: test_bot_handler.o bot_handler.o
 	${CC} -o $@ $^ ${LFLAGS}
@@ -19,6 +32,15 @@ run_test: test
 
 run_valgrind: test
 	valgrind ./test
+
+# DATABASE MANAGER
+
+TESTS+= test_db
+
+test_db: test_database.o database_manager.o
+	${CC} -o $@ $^ ${LFLAGS}
+
+database_manager.c: ${HEADER_DIR}/database_manager.h
 
 clean:
 	@rm -f *~ *.o test
