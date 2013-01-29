@@ -72,6 +72,29 @@ struct window_procs middleman = {
 };
 
 
+static FILE *log = NULL;
+
+void mmlog(const char *func, const char *msg)
+{
+	static int failed = 0;
+
+	if (log == NULL && !failed) {
+		log = fopen("mm.log", "a");
+		if (log == NULL) {
+			failed = 1;
+			perror("fopen");
+		}
+	}
+
+	else if (log != NULL) {
+		fprintf(log, "%s: %s\n", func, msg);
+		fflush(log);
+	}
+
+	// Todo: open/close the file in the game launcher
+}
+
+
 void
 mm_init_nhwindows(argcp,argv)
 	int* argcp;
@@ -83,18 +106,21 @@ mm_init_nhwindows(argcp,argv)
 void
 mm_player_selection()
 {
+	mmlog("mm_player_selection", "");
 	real_winprocs.win_player_selection();
 }
 
 void
 mm_askname()
 {
+	mmlog("mm_askname", "");
 	real_winprocs.win_askname();
 }
 
 void
 mm_get_nh_event()
 {
+	mmlog("mm_get_nh_event", "");
 	real_winprocs.win_get_nh_event();
 }
 
@@ -102,12 +128,14 @@ void
 mm_suspend_nhwindows(str)
     const char *str;
 {
+	mmlog("mm_suspend_nhwindows", "");
 	real_winprocs.win_suspend_nhwindows(str);
 }
 
 void
 mm_resume_nhwindows()
 {
+	mmlog("mm_resume_nhwindows", "");
 	real_winprocs.win_resume_nhwindows();
 }
 
@@ -115,6 +143,7 @@ void
 mm_exit_nhwindows(str)
     const char *str;
 {
+	mmlog("mm_exit_nhwindows", "");
 	real_winprocs.win_exit_nhwindows(str);
 }
 
@@ -122,6 +151,7 @@ winid
 mm_create_nhwindow(type)
     int type;
 {
+	mmlog("mm_create_nhwindow", "");
 	real_winprocs.win_create_nhwindow(type);
 }
 
@@ -129,6 +159,7 @@ void
 mm_clear_nhwindow(window)
     winid window;
 {
+	mmlog("mm_clear_nhwindow", "");
 	real_winprocs.win_clear_nhwindow(window);
 }
 
@@ -137,6 +168,7 @@ mm_display_nhwindow(window, blocking)
     winid window;
     boolean blocking;	/* with ttys, all windows are blocking */
 {
+	mmlog("mm_display_nhwindow", "");
 	real_winprocs.win_display_nhwindow(window, blocking);
 }
 
@@ -144,6 +176,7 @@ void
 mm_destroy_nhwindow(window)
     winid window;
 {
+	mmlog("mm_destroy_nhwindow", "");
 	real_winprocs.win_destroy_nhwindow(window);
 }
 
@@ -152,6 +185,7 @@ mm_curs(window, x, y)
 	winid window;
 	register int x, y;
 {
+	mmlog("mm_curs", "");
 	real_winprocs.win_curs(window, x, y);
 }
 
@@ -161,6 +195,7 @@ mm_putstr(window, attr, str)
     int attr;
     const char *str;
 {
+	mmlog("mm_putstr", str);
 	real_winprocs.win_putstr(window, attr, str);
 }
 
@@ -169,6 +204,7 @@ mm_display_file(fname, complain)
 	const char *fname;
 	boolean complain;
 {
+	mmlog("mm_display_file", "");
 	real_winprocs.win_display_file(fname, complain);
 }
 
@@ -176,6 +212,7 @@ void
 mm_start_menu(window)
     winid window;
 {
+	mmlog("mm_start_menu", "");
 	real_winprocs.win_start_menu(window);
 }
 
@@ -190,6 +227,7 @@ mm_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
     const char *str;	/* menu string */
     boolean preselected; /* item is marked as selected */
 {
+	mmlog("mm_add_menu", "");
 	real_winprocs.win_add_menu(window, glyph, identifier, ch, gch, attr, str,
 			preselected);
 }
@@ -199,6 +237,7 @@ mm_end_menu(window, prompt)
     winid window;	/* menu to use */
     const char *prompt;	/* prompt to for menu */
 {
+	mmlog("mm_end_menu", "");
 	real_winprocs.win_end_menu(window, prompt);
 }
 
@@ -208,6 +247,7 @@ mm_select_menu(window, how, menu_list)
     int how;
     menu_item **menu_list;
 {
+	mmlog("mm_select_menu", "");
 	return real_winprocs.win_select_menu(window, how, menu_list);
 }
 
@@ -218,24 +258,28 @@ mm_message_menu(let, how, mesg)
 	int how;
 	const char *mesg;
 {
+	mmlog("mm_message_menu", "");
 	real_winprocs.win_message_menu(let, how, mesg);
 }
 
 void
 mm_update_inventory()
 {
+	mmlog("mm_update_inventory", "");
 	real_winprocs.win_update_inventory();
 }
 
 void
 mm_mark_synch()
 {
+	mmlog("mm_mark_synch", "");
 	real_winprocs.win_mark_synch();
 }
 
 void
 mm_wait_synch()
 {
+	mmlog("mm_wait_synch", "");
 	real_winprocs.win_wait_synch();
 }
 
@@ -244,6 +288,7 @@ void
 mm_cliparound(x, y)
 	int x, y;
 {
+	mmlog("mm_cliparound", "");
 	real_winprocs.win_cliparound(x, y);
 }
 #endif /* CLIPPING */
@@ -254,6 +299,17 @@ mm_print_glyph(window, x, y, glyph)
     xchar x, y;
     int glyph;
 {
+	int ochar, ocolor;
+	unsigned ospecial;
+
+	mmlog("mm_print_glyph", "");
+	mapglyph(glyph, &ochar, &ocolor, &ospecial, x, y);
+
+	if (log != NULL) {
+		fprintf(log, "glyph %d:%d %c\n", x, y, ochar);
+		fflush(log);
+	}
+
 	real_winprocs.win_print_glyph(window, x, y, glyph);
 }
 
@@ -261,6 +317,7 @@ void
 mm_raw_print(str)
     const char *str;
 {
+	mmlog("mm_raw_print", "");
 	real_winprocs.win_raw_print(str);
 }
 
@@ -268,24 +325,28 @@ void
 mm_raw_print_bold(str)
     const char *str;
 {
+	mmlog("mm_raw_print_bold", "");
 	real_winprocs.win_raw_print_bold(str);
 }
 
 int
 mm_nhgetch()
 {
+	mmlog("mm_nhgetch", "");
 	return real_winprocs.win_nhgetch();
 }
 
 void
 mm_nhbell()
 {
+	mmlog("mm_nhbell", "");
 	real_winprocs.win_nhbell();
 }
 
 int
 mm_doprev_message()
 {
+	mmlog("mm_doprev_message", "");
 	return real_winprocs.win_doprev_message();
 }
 
@@ -294,6 +355,7 @@ mm_yn_function(query,resp, def)
 	const char *query,*resp;
 	char def;
 {
+	mmlog("mm_yn_function", "");
 	return real_winprocs.win_yn_function(query, resp, def);
 }
 
@@ -302,12 +364,14 @@ mm_getlin(query, bufp)
 	const char *query;
 	register char *bufp;
 {
+	mmlog("mm_getlin", "");
 	real_winprocs.win_getlin(query, bufp);
 }
 
 int
 mm_get_ext_cmd()
 {
+	mmlog("mm_get_ext_cmd", "");
 	return real_winprocs.win_get_ext_cmd();
 }
 
@@ -315,12 +379,14 @@ void
 mm_number_pad(state)
 	int state;
 {
+	mmlog("mm_number_pad", "");
 	real_winprocs.win_number_pad(state);
 }
 
 void
 mm_delay_output()
 {
+	mmlog("mm_delay_output", "");
 	real_winprocs.win_delay_output();
 }
 
@@ -328,6 +394,7 @@ int
 mm_nh_poskey(x, y, mod)
     int *x, *y, *mod;
 {
+	mmlog("mm_nh_poskey", "");
 	return real_winprocs.win_nh_poskey(x, y, mod);
 }
 
@@ -336,6 +403,7 @@ void
 mm_update_positionbar(posbar)
 	char *posbar;
 {
+	mmlog("mm_update_positionbar", "");
 	real_winprocs.win_update_positionbar(posbar);
 }
 #endif
@@ -343,11 +411,13 @@ mm_update_positionbar(posbar)
 void
 mm_start_screen()
 {
+	mmlog("mm_start_screen", "");
 	real_winprocs.win_start_screen();
 }
 
 void
 mm_end_screen()
 {
+	mmlog("mm_end_screen", "");
 	real_winprocs.win_end_screen();
 }
