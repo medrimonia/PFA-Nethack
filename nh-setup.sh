@@ -62,7 +62,8 @@ if [ $reuse = 0 ]; then
     cd $nhdir
     sh sys/unix/setup.sh
     cd ..
-    patch -p0 < linux_install.patch
+    patch -p0 < install/linux_install.patch
+    patch -p0 < install/pfa-sources.patch
 fi
 
 if [ -d $patchdir ]; then
