@@ -8,8 +8,24 @@
 #define DATABASE_NAME "pfa.db"
 
 #define REQUEST_SIZE 200
+#define NB_COLUMNS 7
 
-sqlite3 * db = NULL;
+// SPECIFIC STRUCTURES
+
+struct column_descriptor{
+	const char * name;
+	const char * type;
+};
+
+typedef struct column_descriptor * column_descriptor_p;
+
+struct table_descriptor{
+	column_descriptor_p * columns;
+	int nb_columns;
+	const char * table_name;
+};
+
+typedef struct table_descriptor * table_descriptor_p;
 
 struct get_result{
 	char ** result;
@@ -19,6 +35,12 @@ struct get_result{
 };
 
 typedef struct get_result * get_result_p;
+
+// GLOBAL VARIABLES
+
+sqlite3 * db = NULL;
+
+table_descriptor_p table_descriptor = NULL;
 
 get_result_p new_get_result(){
 	get_result_p new = malloc(sizeof(struct get_result));
@@ -35,9 +57,6 @@ void free_get_result(get_result_p r){
 	free(r);
 }
 
-// It seems that this is needed
-//int fake_callback
-
 // The result must be free by the receiver
 get_result_p get_request(const char * request){
 	
@@ -52,7 +71,36 @@ get_result_p get_request(const char * request){
 	return r;
 }
 
+void initialize_table_descriptor(){
+	
+	table_descriptor = malloc(sizeof(struct column_descriptor));
+	table_descriptor->nb_columns = NB_COLUMNS;
+	
+	table_descriptor->columns = malloc(table_descriptor->nb_columns *
+																		 sizeof(column_descriptor_p));
+	for (int i = 0; i < table_descriptor->nb_columns; i++){
+		table_descriptor->columns[i] = malloc(sizeof(struct column_descriptor));
+	}
+	table_descriptor->columns[0]->name = "id";
+	table_descriptor->columns[0]->type = "int";
+	table_descriptor->columns[1]->name = "nb squares explored";
+	table_descriptor->columns[1]->type = "int";
+	table_descriptor->columns[2]->name = "nb squares reachable";
+	table_descriptor->columns[2]->type = "int";
+	table_descriptor->columns[3]->name = "nb sdoors found";
+	table_descriptor->columns[3]->type = "int";
+	table_descriptor->columns[4]->name = "nb sdoors reachable";
+	table_descriptor->columns[4]->type = "int";
+	table_descriptor->columns[5]->name = "nb scorrs found";
+	table_descriptor->columns[5]->type = "int";
+	table_descriptor->columns[6]->name = "nb scorrs reachable";
+	table_descriptor->columns[6]->type = "int";
+}
+
 int init_db_manager(){
+
+	initialize_table_descriptor();
+
 	int result;
 
 	result = sqlite3_open_v2(DATABASE_NAME,
@@ -67,6 +115,12 @@ int init_db_manager(){
 	}
 	printf("Database opened\n");
 	return 0;
+}
+
+void free_table_descriptor(table_descriptor_p td){
+	for (int i = 0; i < table_descriptor->nb_columns; i++)
+		free(td->columns[i]);
+	free(td);
 }
 
 bool exist_table(const char * table_name){
@@ -98,7 +152,7 @@ void create_table(const char * table_name){
 	char request[REQUEST_SIZE];
 
 	sprintf(request,
-					"create table %s",
+					"create table %s (id int)",
 					table_name);
 	
 	char * err_msg;
@@ -145,6 +199,8 @@ int close_db_manager(){
 						sqlite3_errmsg(db));
 		return 1;
 	}
+	free(table_descriptor->columns);
+	free_table_descriptor(table_descriptor);
 	printf("Database closed\n");
 	return 0;
 }

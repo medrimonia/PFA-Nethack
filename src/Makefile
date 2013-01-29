@@ -1,6 +1,6 @@
 CC=gcc
 
-CFLAGS=-Wall -Wextra
+CFLAGS= -g -std=c99 -Wall -Wextra
 LFLAGS= -lsqlite3
 
 HEADER_DIR= ../include
