@@ -1,8 +1,8 @@
-diff --git p2/a/nethack-3.4.3/include/game_statistics.h p2/b/nethack-3.4.3/include/game_statistics.h
+diff --git nethack-3.4.3.b/include/game_statistics.h nethack-3.4.3/include/game_statistics.h
 new file mode 100644
 index 0000000..36921bf
 --- /dev/null
-+++ p2/b/nethack-3.4.3/include/game_statistics.h
++++ nethack-3.4.3/include/game_statistics.h
 @@ -0,0 +1,58 @@
 +#ifndef GAME_STATISTICS_H
 +#define GAME_STATISTICS_H
@@ -62,10 +62,10 @@ index 0000000..36921bf
 +
 +
 +#endif
-diff --git p2/a/nethack-3.4.3/src/Makefile p2/b/nethack-3.4.3/src/Makefile
+diff --git nethack-3.4.3.b/src/Makefile nethack-3.4.3/src/Makefile
 index bd77fab..2b6a300 100644
---- p2/a/nethack-3.4.3/src/Makefile
-+++ p2/b/nethack-3.4.3/src/Makefile
+--- nethack-3.4.3.b/src/Makefile
++++ nethack-3.4.3/src/Makefile
 @@ -328,6 +328,8 @@ HACKCSRC = allmain.c alloc.c apply.c artifact.c attrib.c ball.c bones.c \
  	   u_init.c uhitm.c vault.c version.c vision.c weapon.c were.c wield.c \
  	   windows.c wizard.c worm.c worn.c write.c zap.c
@@ -94,10 +94,10 @@ index bd77fab..2b6a300 100644
  	touch $(HACK_H)
  #
  tos.o: ../sys/atari/tos.c $(HACK_H) ../include/tcap.h
-diff --git p2/a/nethack-3.4.3/src/allmain.c p2/b/nethack-3.4.3/src/allmain.c
+diff --git nethack-3.4.3/src/allmain.c nethack-3.4.3/src/allmain.c
 index d624a2f..8955b71 100644
---- p2/a/nethack-3.4.3/src/allmain.c
-+++ p2/b/nethack-3.4.3/src/allmain.c
+--- nethack-3.4.3.b/src/allmain.c
++++ nethack-3.4.3/src/allmain.c
 @@ -6,6 +6,8 @@
  
  #include "hack.h"
@@ -128,10 +128,10 @@ index d624a2f..8955b71 100644
  	get_nh_event();
  #ifdef POSITIONBAR
  	do_positionbar();
-diff --git p2/a/nethack-3.4.3/src/detect.c p2/b/nethack-3.4.3/src/detect.c
+diff --git nethack-3.4.3.b/src/detect.c nethack-3.4.3/src/detect.c
 index 5da025f..0cae139 100644
---- p2/a/nethack-3.4.3/src/detect.c
-+++ p2/b/nethack-3.4.3/src/detect.c
+--- nethack-3.4.3.b/src/detect.c
++++ nethack-3.4.3/src/detect.c
 @@ -921,6 +921,9 @@ register int x, y;
      /* Secret corridors are found, but not secret doors. */
      if (lev->typ == SCORR) {
@@ -181,10 +181,10 @@ index 5da025f..0cae139 100644
  			levl[x][y].typ = CORR;
  			unblock_point(x,y);	/* vision */
  			exercise(A_WIS, TRUE);
-diff --git p2/a/nethack-3.4.3/src/do.c p2/b/nethack-3.4.3/src/do.c
+diff --git nethack-3.4.3.b/src/do.c nethack-3.4.3/src/do.c
 index 858777f..67a9ea4 100644
---- p2/a/nethack-3.4.3/src/do.c
-+++ p2/b/nethack-3.4.3/src/do.c
+--- nethack-3.4.3.b/src/do.c
++++ nethack-3.4.3/src/do.c
 @@ -7,6 +7,8 @@
  #include "hack.h"
  #include "lev.h"
@@ -206,10 +206,10 @@ index 858777f..67a9ea4 100644
  	} else {
  		/* returning to previously visited level; reload it */
  		fd = open_levelfile(new_ledger, whynot);
-diff --git p2/a/nethack-3.4.3/src/end.c p2/b/nethack-3.4.3/src/end.c
+diff --git nethack-3.4.3.b/src/end.c nethack-3.4.3/src/end.c
 index 58d47e0..d888edc 100644
---- p2/a/nethack-3.4.3/src/end.c
-+++ p2/b/nethack-3.4.3/src/end.c
+--- nethack-3.4.3.b/src/end.c
++++ nethack-3.4.3/src/end.c
 @@ -11,6 +11,8 @@
  #endif
  #include "dlb.h"
@@ -242,11 +242,11 @@ index 58d47e0..d888edc 100644
  	if (!done_stopprint) {
  	    Sprintf(pbuf,
  	     "You were level %d with a maximum of %d hit point%s when you %s.",
-diff --git p2/a/nethack-3.4.3/src/game_statistics.c p2/b/nethack-3.4.3/src/game_statistics.c
+diff --git nethack-3.4.3.b/src/game_statistics.c nethack-3.4.3/src/game_statistics.c
 new file mode 100644
 index 0000000..fa1c27b
 --- /dev/null
-+++ p2/b/nethack-3.4.3/src/game_statistics.c
++++ nethack-3.4.3/src/game_statistics.c
 @@ -0,0 +1,96 @@
 +#include "game_statistics.h"
 +
@@ -344,10 +344,10 @@ index 0000000..fa1c27b
 +int get_nb_squares_reached(){
 +	return nb_squares_reached;
 +}
-diff --git p2/a/nethack-3.4.3/src/sp_lev.c p2/b/nethack-3.4.3/src/sp_lev.c
+diff --git nethack-3.4.3.b/src/sp_lev.c nethack-3.4.3/src/sp_lev.c
 index 435609f..78d6e97 100644
---- p2/a/nethack-3.4.3/src/sp_lev.c
-+++ p2/b/nethack-3.4.3/src/sp_lev.c
+--- nethack-3.4.3.b/src/sp_lev.c
++++ nethack-3.4.3/src/sp_lev.c
 @@ -11,6 +11,9 @@
  
  #include "hack.h"

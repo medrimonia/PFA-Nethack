@@ -6,11 +6,11 @@ dlurl="http://downloads.sourceforge.net/project/nethack/nethack/3.4.3/nethack-34
 patchdir="patches"
 
 apply_patch () {
-    for i in `ls $patchdir`; do
+    for i in `ls $patchdir/*.patch`; do
         read -p "Apply $i? [Y/n]" yn
 
         case $yn in
-            Y|y|"" ) patch -p2 < $patchdir/$i;;
+            Y|y|"" ) patch -p0 < $i;;
             * ) ;;
         esac
     done
@@ -62,7 +62,8 @@ if [ $reuse = 0 ]; then
     cd $nhdir
     sh sys/unix/setup.sh
     cd ..
-    patch -p0 < linux_install.patch
+    patch -p0 < install/linux_install.patch
+    patch -p0 < install/pfa-sources.patch
 fi
 
 if [ -d $patchdir ]; then
