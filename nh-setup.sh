@@ -6,11 +6,11 @@ dlurl="http://downloads.sourceforge.net/project/nethack/nethack/3.4.3/nethack-34
 patchdir="patches"
 
 apply_patch () {
-    for i in `ls $patchdir`; do
+    for i in `ls $patchdir/*.patch`; do
         read -p "Apply $i? [Y/n]" yn
 
         case $yn in
-            Y|y|"" ) patch -p0 < $patchdir/$i;;
+            Y|y|"" ) patch -p0 < $i;;
             * ) ;;
         esac
     done

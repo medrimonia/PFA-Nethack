@@ -6,14 +6,14 @@ diff -Naur nethack-3.4.3.b/src/Makefile nethack-3.4.3/src/Makefile
  GNOMEINC=-I/usr/lib/glib/include -I/usr/lib/gnome-libs/include -I../win/gnome
  
 +# PFA
-+PFACSRC = ../../src
-+PFACINC = ../../include
++PFASRC = ../../src
++PFAINC = ../../include
 +
  # flags for debugging:
  # CFLAGS = -g -I../include
  
  CFLAGS = -O -I../include
-+CFLAGS += -I$(PFACINC) -L$(PFACSRC)
++CFLAGS += -I$(PFAINC) -L$(PFASRC)
  LFLAGS = 
  
  # The Qt and Be window systems are written in C++, while the rest of
