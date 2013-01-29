@@ -25,6 +25,7 @@ int main(int argc, char ** argv){
 
 	add_game_result(gr);
 
+	destroy_game_result(gr);
 	close_db_manager();
 	return 0;
 }

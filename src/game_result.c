@@ -58,6 +58,17 @@ game_result_p create_actual_game_result(const char * mode){
 	return gr;
 }
 
+void destroy_game_result(game_result_p gr){
+	for (int i = 0; i < gr->nb_properties; i++){
+		if (gr->properties[i]->value != NULL)
+			free(gr->properties[i]->value);
+		free(gr->properties[i]);
+	}
+	free(gr->properties);
+	free(gr);
+}
+
+
 void gr_set_property_name(game_result_p gr,
 													int index,
 													char * name){

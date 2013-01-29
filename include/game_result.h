@@ -14,6 +14,9 @@ game_result_p new_game_result(const char * mode);
  */
 game_result_p create_actual_game_result(const char * mode);
 
+/* Free all the property values, but not property names neither mode */
+void destroy_game_result(game_result_p gr);
+
 // If an old value is found, it's overwritten
 void gr_set_property_name(game_result_p gr,
 													int index,
@@ -39,6 +42,5 @@ const char * gr_get_property_value(game_result_p gr,
 const char * gr_get_mode(game_result_p gr);
 
 int gr_get_nb_properties(game_result_p gr);
-
 
 #endif
