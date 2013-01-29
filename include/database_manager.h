@@ -3,16 +3,7 @@
 
 #include <stdbool.h>
 
-struct database_entry{
-	char * mode;
-	int nb_sdoors;
-	int nb_sdoors_discovered;
-	int nb_scorrs;
-	int nb_scorrs_discovered;
-};
-
-typedef struct database_entry * database_entry_p;
-
+#include "game_result.h"
 
 /* Create or open the database with the default name
  * return 0 on success
@@ -24,9 +15,9 @@ bool exist_table(const char * table_name);
 
 void create_table(const char * table_name);
 
-/* Add the specified entry to the current database
+/* Add the specified game result to the current database
  */
-int add_entry(database_entry_p e);
+int add_game_result(game_result_p e);
 
 /* Free all ressources associated to the database manager
  * return 0 on success

@@ -37,10 +37,12 @@ run_valgrind: test
 
 TESTS+= test_db
 
-test_db: test_database.o database_manager.o
+test_db: test_database.o database_manager.o game_result.o
 	${CC} -o $@ $^ ${LFLAGS}
 
-database_manager.c: ${HEADER_DIR}/database_manager.h
+database_manager.o: ${HEADER_DIR}/database_manager.h
+
+game_result.o: ${HEADER_DIR}/game_result.h
 
 clean:
 	@rm -f *~ *.o test

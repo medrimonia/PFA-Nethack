@@ -7,7 +7,7 @@
 
 #define DATABASE_NAME "pfa.db"
 
-#define REQUEST_SIZE 200
+#define REQUEST_SIZE 400
 #define NB_COLUMNS 7
 
 // SPECIFIC STRUCTURES
@@ -83,17 +83,17 @@ void initialize_table_descriptor(){
 	}
 	table_descriptor->columns[0]->name = "id";
 	table_descriptor->columns[0]->type = "int";
-	table_descriptor->columns[1]->name = "nb squares explored";
+	table_descriptor->columns[1]->name = "nb_squares_explored";
 	table_descriptor->columns[1]->type = "int";
-	table_descriptor->columns[2]->name = "nb squares reachable";
+	table_descriptor->columns[2]->name = "nb_squares_reachable";
 	table_descriptor->columns[2]->type = "int";
-	table_descriptor->columns[3]->name = "nb sdoors found";
+	table_descriptor->columns[3]->name = "nb_sdoors_found";
 	table_descriptor->columns[3]->type = "int";
-	table_descriptor->columns[4]->name = "nb sdoors reachable";
+	table_descriptor->columns[4]->name = "nb_sdoors_reachable";
 	table_descriptor->columns[4]->type = "int";
-	table_descriptor->columns[5]->name = "nb scorrs found";
+	table_descriptor->columns[5]->name = "nb_scorrs_found";
 	table_descriptor->columns[5]->type = "int";
-	table_descriptor->columns[6]->name = "nb scorrs reachable";
+	table_descriptor->columns[6]->name = "nb_scorrs_reachable";
 	table_descriptor->columns[6]->type = "int";
 }
 
@@ -117,10 +117,11 @@ int init_db_manager(){
 	return 0;
 }
 
-void free_table_descriptor(table_descriptor_p td){
+void free_table_descriptor(){
 	for (int i = 0; i < table_descriptor->nb_columns; i++)
-		free(td->columns[i]);
-	free(td);
+		free(table_descriptor->columns[i]);
+	free(table_descriptor->columns);
+	free(table_descriptor);
 }
 
 bool exist_table(const char * table_name){
@@ -151,9 +152,27 @@ bool exist_table(const char * table_name){
 void create_table(const char * table_name){
 	char request[REQUEST_SIZE];
 
-	sprintf(request,
-					"create table %s (id int)",
-					table_name);
+	int index = 0;
+	index += sprintf(request,
+									 "create table %s (id int primary key, ",
+									 table_name);
+	
+	int i = 1;
+	while(true){
+		index += sprintf(request + index,
+										 "%s %s",
+										 table_descriptor->columns[i]->name,
+										 table_descriptor->columns[i]->type);
+		i++;
+		if ( i >= table_descriptor->nb_columns)
+			break;
+		index += sprintf(request + index, ", ");
+	}
+	
+	index += sprintf(request + index,
+									 ")");
+
+	printf("Request : %s\n", request);
 	
 	char * err_msg;
 
@@ -170,21 +189,56 @@ void create_table(const char * table_name){
 	}
 }
 
-int add_entry(database_entry_p e){
+int add_game_result(game_result_p gr){
 	//TODO just test inside, must be cleared
 	char request[REQUEST_SIZE];
-
-	sprintf(request,"select * from %s", e->mode);
-
-	get_result_p r = get_request(request);
 	
-	if (r->err_msg != NULL){//error treatment
-		fprintf(stderr, "Failed to get the specified table\n");
-		fprintf(stderr, "Error : %s\n", r->err_msg);
-		sqlite3_free(r->err_msg);
+	int index = 0;
+	
+	index += sprintf(request, "insert into %s ( ", gr_get_mode(gr));
+
+	int i = 0;
+
+	// printing columns name
+	while(true){
+		index += sprintf(request + index, "%s", gr_get_property_name(gr, i));
+		i++;
+		if (i >= gr_get_nb_properties(gr))
+			break;
+		index += sprintf(request + index, ", ");
 	}
 	
-	free_get_result(r);
+	index += sprintf(request + index, ") values ( ");
+
+	i=0;
+
+	// printing columns values
+	while(true){
+		index += sprintf(request + index, "%s", gr_get_property_value(gr, i));
+		i++;
+		if (i >= gr_get_nb_properties(gr))
+			break;
+		index += sprintf(request + index, ", ");
+	}
+	
+	index += sprintf(request + index, ")");
+	
+	printf("REQUEST: %s\n", request);
+
+	char * err_msg;
+
+	sqlite3_exec(db,
+							 request,
+							 NULL,
+							 NULL,
+							 &err_msg);
+	
+	if (err_msg != NULL){//error treatment
+		fprintf(stderr, "Failed to insert the game\n");
+		fprintf(stderr, "Error : %s\n", err_msg);
+		sqlite3_free(err_msg);
+	}
+
 	return 0;
 }
 
@@ -199,7 +253,6 @@ int close_db_manager(){
 						sqlite3_errmsg(db));
 		return 1;
 	}
-	free(table_descriptor->columns);
 	free_table_descriptor(table_descriptor);
 	printf("Database closed\n");
 	return 0;

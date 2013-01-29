@@ -17,6 +17,14 @@ int main(int argc, char ** argv){
 		create_table("seek_secret");
 	}
 
+	//Try to insert a game
+	game_result_p gr = create_actual_game_result("seek_secret");
+	for (int i = 0; i < 6; i++){
+		gr_set_property_int_value(gr, i, i + 1);
+	}
+
+	add_game_result(gr);
+
 	close_db_manager();
 	return 0;
 }
