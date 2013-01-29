@@ -1,7 +1,7 @@
-diff --git a/nh-setup/nethack-3.4.3/src/eat.c b/nh-setup/nethack-3.4.3/src/eat.c
+diff --git nethack-3.4.3.b/src/eat.c nethack-3.4.3/src/eat.c
 index 12e8d9b..bc90f7c 100644
---- a/nh-setup/nethack-3.4.3/src/eat.c
-+++ b/nh-setup/nethack-3.4.3/src/eat.c
+--- nethack-3.4.3.b/src/eat.c
++++ nethack-3.4.3/src/eat.c
 @@ -2125,6 +2125,9 @@ bite()
  void
  gethungry()	/* as time goes by - called by moveloop() and domove() */
