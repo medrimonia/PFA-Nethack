@@ -335,7 +335,7 @@ HACKCSRC = allmain.c alloc.c apply.c artifact.c attrib.c ball.c bones.c \
 	   u_init.c uhitm.c vault.c version.c vision.c weapon.c were.c wield.c \
 	   windows.c wizard.c worm.c worn.c write.c zap.c
 # PFA additions
-#HACKCSRC += game_statistics.c
+HACKCSRC += $(PFASRC)/game_statistics.c
 
 # all operating-system-dependent .c (for dependencies and such)
 SYSCSRC = ../sys/atari/tos.c ../sys/share/pcmain.c ../sys/share/pcsys.c \
@@ -394,6 +394,8 @@ HOBJ = $(FIRSTOBJ) allmain.o alloc.o apply.o artifact.o attrib.o ball.o \
 	uhitm.o vault.o vision.o vis_tab.o weapon.o were.o wield.o windows.o \
 	wizard.o worm.o worn.o write.o zap.o \
 	$(RANDOBJ) $(SYSOBJ) $(WINOBJ) version.o
+# PFA addition
+HOBJ += game_statistics.o
 # the .o files from the HACKCSRC, SYSSRC, and WINSRC lists
 
 $(GAME):	$(SYSTEM)
@@ -577,13 +579,14 @@ $(HACK_H): ../include/hack.h $(CONFIG_H) ../include/align.h \
 		../include/trap.h ../include/flag.h ../include/rm.h \
 		../include/vision.h ../include/display.h ../include/engrave.h \
 		../include/rect.h ../include/region.h ../include/winprocs.h \
-		../include/wintty.h ../include/trampoli.h
+		../include/wintty.h ../include/trampoli.h \
+		$(PFAINC)/game_statistics.h
 	touch $(HACK_H)
 #
 middleman.o: $(PFASRC)/middleman.c $(PFAINC)/middleman.h
 	$(CC) $(CFLAGS) -c $<
-#game_statistics.o: $(PFASRC)/game_statistics.c $(PFAINC)/game_statistics.h
-#	$(CC) $(CFLAGS) -c $<
+game_statistics.o: $(PFASRC)/game_statistics.c $(PFAINC)/game_statistics.h
+	$(CC) $(CFLAGS) -c $<
 #
 tos.o: ../sys/atari/tos.c $(HACK_H) ../include/tcap.h
 	$(CC) $(CFLAGS) -c ../sys/atari/tos.c
