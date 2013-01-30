@@ -1,0 +1,15 @@
+### NOW
+* Update java sp in order to handle modifications
+   * Reading from stdin, writing to stdout
+   * Change parsing orders
+   * Change output orders
+* Update game_statistics patch
+   * Remove modifications to Makefile (to handle in the tracked Makefile)
+   * Remove modifications in end.c (to replace my submit_game_result())
+   * Remove file additions
+* Verify that nethack and each test is working with the new Makefile feature
+* Handle most of the install patches with call to a specific pfa_file
+* Handle seed
+   * Add get_seed and set_seed in game_statistics
+
+### LATER
