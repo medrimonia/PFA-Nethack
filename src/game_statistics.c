@@ -1,6 +1,11 @@
 #include "game_statistics.h"
 
+#ifdef NETHACK_ACCESS
 #include "hack.h"
+#else
+#include <stdlib.h>
+#include <time.h>
+#endif
 
 int nb_sdoors = 0;
 int nb_sdoors_found = 0;
@@ -11,7 +16,21 @@ int nb_scorrs_found = 0;
 int nb_squares_reached = 0;
 int nb_squares_reachable = 0;
 
+#ifndef NETHACK_ACCESS
+void make_random_stats(){
+	srand(time(NULL));
+	nb_sdoors = rand() % 20;
+  nb_sdoors_found = rand() % 20;
+  nb_scorrs = rand() % 20;
+  nb_scorrs_found = rand() % 20;
+  nb_squares_reached = rand() % 20;
+  nb_squares_reachable = rand() % 20;
+}
+#endif
+
+#ifdef NETHACK_ACCESS
 static char visited_square [MAXDUNGEON][MAXLEVEL][COLNO][ROWNO];
+#endif
 
 void statistic_add_sdoor(){
 	nb_sdoors++;
@@ -30,6 +49,7 @@ void statistic_add_scorr_discovery(){
 }
 
 void update_nb_sdoors() {
+#ifdef NETHACK_ACCESS
 	int col;
 	int row;
 	for (col = 0; col < COLNO; col++){
@@ -38,9 +58,11 @@ void update_nb_sdoors() {
 	    nb_sdoors++;
 	  }
 	}
+#endif
 }
 
 void update_nb_scorrs() {
+#ifdef NETHACK_ACCESS
 	int col;
 	int row;
 	for (col = 0; col < COLNO; col++){
@@ -49,9 +71,11 @@ void update_nb_scorrs() {
 	    nb_scorrs++;
 	  }
 	}
+#endif
 }
 
 void update_reachable_squares(){
+#ifdef NETHACK_ACCESS
 	int c;
 	int r;
 	for (c = 0; c < COLNO ; c++){
@@ -60,15 +84,16 @@ void update_reachable_squares(){
 				nb_squares_reachable++;
 		}
 	}
+#endif
 }
 
 void update_reached_squares(){
+#ifdef NETHACK_ACCESS
 	if (!visited_square[u.uz.dnum][u.uz.dlevel][u.ux][u.uy]){
 		visited_square[u.uz.dnum][u.uz.dlevel][u.ux][u.uy] = 1;
 		nb_squares_reached++;
 	}
-
-
+#endif
 }
 
 int get_nb_sdoors() {

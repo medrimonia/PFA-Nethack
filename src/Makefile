@@ -33,14 +33,19 @@ run_test: test
 run_valgrind: test
 	valgrind ./test
 
+# GAME STATISTICS
+
+game_statistics.o: ${HEADER_DIR}/game_statistics.h
+
 # DATABASE MANAGER
 
 TESTS+= test_db
 
-test_db: test_database.o database_manager.o game_result.o
+test_db: test_database.o database_manager.o game_result.o game_statistics.o
 	${CC} -o $@ $^ ${LFLAGS}
 
-database_manager.o: ${HEADER_DIR}/database_manager.h
+database_manager.o: ${HEADER_DIR}/database_manager.h \
+										${HEADER_DIR}/game_result.h
 
 game_result.o: ${HEADER_DIR}/game_result.h
 
