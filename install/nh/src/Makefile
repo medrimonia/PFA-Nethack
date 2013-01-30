@@ -342,6 +342,8 @@ SYSCSRC = ../sys/atari/tos.c ../sys/share/pcmain.c ../sys/share/pcsys.c \
 	../sys/share/pctty.c ../sys/share/pcunix.c ../sys/share/random.c \
 	../sys/share/ioctl.c ../sys/share/unixtty.c ../sys/unix/unixmain.c \
 	../sys/unix/unixunix.c ../sys/unix/unixres.c ../sys/be/bemain.c
+# PFA additions
+SYSCSRC += $(PFASRC)/pfamain.c
 
 # generated source files (tile.c is handled separately via WINxxxSRC)
 GENCSRC = monstr.c vis_tab.c	#tile.c
@@ -395,7 +397,7 @@ HOBJ = $(FIRSTOBJ) allmain.o alloc.o apply.o artifact.o attrib.o ball.o \
 	wizard.o worm.o worn.o write.o zap.o \
 	$(RANDOBJ) $(SYSOBJ) $(WINOBJ) version.o
 # PFA addition
-HOBJ += game_statistics.o
+HOBJ += pfamain.o game_statistics.o
 # the .o files from the HACKCSRC, SYSSRC, and WINSRC lists
 
 $(GAME):	$(SYSTEM)
@@ -579,10 +581,11 @@ $(HACK_H): ../include/hack.h $(CONFIG_H) ../include/align.h \
 		../include/trap.h ../include/flag.h ../include/rm.h \
 		../include/vision.h ../include/display.h ../include/engrave.h \
 		../include/rect.h ../include/region.h ../include/winprocs.h \
-		../include/wintty.h ../include/trampoli.h \
-		$(PFAINC)/game_statistics.h
+		../include/wintty.h ../include/trampoli.h
 	touch $(HACK_H)
 #
+pfamain.o: $(PFASRC)/pfamain.c $(PFAINC)/pfamain.h
+	$(CC) $(CFLAGS) -c $<
 middleman.o: $(PFASRC)/middleman.c $(PFAINC)/middleman.h
 	$(CC) $(CFLAGS) -c $<
 game_statistics.o: $(PFASRC)/game_statistics.c $(PFAINC)/game_statistics.h
