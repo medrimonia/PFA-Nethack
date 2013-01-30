@@ -1,11 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #include <sqlite3.h>
 
 #include "database_manager.h"
 
 int main(int argc, char ** argv){
+	// Initializing random generator
+	srand(time(NULL));
+	//
 	init_db_manager();
 
 	// check if a table named seek_secret exists

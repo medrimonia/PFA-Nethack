@@ -4,7 +4,6 @@
 #include "hack.h"
 #else
 #include <stdlib.h>
-#include <time.h>
 #endif
 
 int nb_sdoors = 0;
@@ -18,7 +17,6 @@ int nb_squares_reachable = 0;
 
 #ifndef NETHACK_ACCESS
 void make_random_stats(){
-	srand(time(NULL));
 	nb_sdoors = rand() % 20;
   nb_sdoors_found = rand() % 20;
   nb_scorrs = rand() % 20;

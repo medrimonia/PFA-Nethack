@@ -6,6 +6,9 @@
 //#define NETHACKACCESS
 
 #ifndef NETHACK_ACCESS
+/* srand initialization is not provided by game_statistics, it should be done
+ * by the caller.
+ */
 void make_random_stats();
 #endif
 
