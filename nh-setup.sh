@@ -1,6 +1,6 @@
 #!/bin/sh
 
-nhdir="nethack-3.4.3/"
+nhdir="nethack-3.4.3"
 nharchive="nethack-343-src.tgz"
 dlurl="http://downloads.sourceforge.net/project/nethack/nethack/3.4.3/nethack-343-src.tgz"
 patchdir="patches"
@@ -63,7 +63,9 @@ if [ $reuse = 0 ]; then
     sh sys/unix/setup.sh
     cd ..
     patch -p0 < install/linux_install.patch
-    patch -p0 < install/pfa-sources.patch
+	patch -p0 < install/middleman.patch
+	echo "Replacing $nhdir/src/Makefile..."
+	cp -r install/nh/* $nhdir
 fi
 
 if [ -d $patchdir ]; then

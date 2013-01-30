@@ -41,17 +41,3 @@ diff -ur nethack-3.4.3.back/include/unixconf.h nethack-3.4.3/include/unixconf.h
  /* #define CYGWIN32 */	/* Unix on Win32 -- use with case sensitive defines */
  /* #define GENIX */	/* Yet Another Unix Clone */
  /* #define HISX */	/* Bull Unix for XPS Machines */
-diff -ur nethack-3.4.3.back/src/Makefile nethack-3.4.3/src/Makefile
---- nethack-3.4.3.back/src/Makefile	2012-10-27 16:03:27.199363834 +0200
-+++ nethack-3.4.3/src/Makefile	2012-10-27 16:05:03.215523749 +0200
-@@ -230,8 +230,8 @@
- # WINTTYLIB = -ltermcap
- # WINTTYLIB = -lcurses
- # WINTTYLIB = -lcurses16
--# WINTTYLIB = -lncurses
--WINTTYLIB = -ltermlib
-+WINTTYLIB = -lncurses
-+# WINTTYLIB = -ltermlib
- #
- # libraries for X11
- # If USE_XPM is defined in config.h, you will also need -lXpm here.
