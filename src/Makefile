@@ -48,6 +48,7 @@ database_manager.o: ${HEADER_DIR}/database_manager.h \
 										${HEADER_DIR}/game_result.h
 
 game_result.o: ${HEADER_DIR}/game_result.h
+							 ${HEADER_DIR}/game_statistics.h
 
 clean:
 	@rm -f *~ *.o test
