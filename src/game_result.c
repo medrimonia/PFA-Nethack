@@ -4,7 +4,7 @@
 
 #include "game_result.h"
 
-#include "game_statistics.h"
+//#include "game_statistics.h"
 
 struct property{
 	char * name;
@@ -41,6 +41,15 @@ game_result_p new_game_result(const char * mode){
 	return new;
 }
 
+/* Including game_statistics imply to include all the nethack kernel,
+ * That doesn't seems to be a good idea, maybe there's something to do
+ * with '#if'?
+ * A solution might be to move the code of new_game_result in game_statistics,
+ * but then game_statistics dependance to database_manager should be
+ * facultative.
+ * Best solution might be to get the initialisation code inside of the
+ * middle_man
+ */
 game_result_p create_actual_game_result(const char * mode){
 	game_result_p gr = new_game_result(mode);
 	gr_set_property_name(gr, 0, "nb_squares_explored");
