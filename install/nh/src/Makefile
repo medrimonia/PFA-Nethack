@@ -291,6 +291,8 @@ WINLIB = $(WINTTYLIB)
 #
 LIBS =
 
+LIBS += -lsqlite3
+
 # make NetHack
 GAME     = nethack
 # GAME     = nethack.prg
@@ -397,7 +399,7 @@ HOBJ = $(FIRSTOBJ) allmain.o alloc.o apply.o artifact.o attrib.o ball.o \
 	wizard.o worm.o worn.o write.o zap.o \
 	$(RANDOBJ) $(SYSOBJ) $(WINOBJ) version.o
 # PFA addition
-HOBJ += pfamain.o game_statistics.o
+HOBJ += pfamain.o game_statistics.o database_manager.o game_result.o
 # the .o files from the HACKCSRC, SYSSRC, and WINSRC lists
 
 $(GAME):	$(SYSTEM)
@@ -584,12 +586,19 @@ $(HACK_H): ../include/hack.h $(CONFIG_H) ../include/align.h \
 		../include/wintty.h ../include/trampoli.h
 	touch $(HACK_H)
 #
+$(PFAINC)/database_manager.h: $(PFAINC)/game_result.h
+
 pfamain.o: $(PFASRC)/pfamain.c $(PFAINC)/pfamain.h
-	$(CC) $(CFLAGS) -c $<
+	$(CC) -o $@ $(CFLAGS) -c $<
 middleman.o: $(PFASRC)/middleman.c $(PFAINC)/middleman.h
-	$(CC) $(CFLAGS) -c $<
+	$(CC) -o $@ $(CFLAGS) -c $<
 game_statistics.o: $(PFASRC)/game_statistics.c $(PFAINC)/game_statistics.h
-	$(CC) $(CFLAGS) -c $<
+	$(CC) -o $@ $(CFLAGS) -c $<
+game_result.o: $(PFASRC)/game_result.c $(PFAINC)/game_result.h \
+               $(PFAINC)/database_manager.h $(PFAINC)/game_statistics.h
+	$(CC) -o $@ $(CFLAGS) -c $<
+database_manager.o: $(PFASRC)/database_manager.c $(PFAINC)/database_manager.h
+	$(CC) -o $@ $(CFLAGS) -c $<
 #
 tos.o: ../sys/atari/tos.c $(HACK_H) ../include/tcap.h
 	$(CC) $(CFLAGS) -c ../sys/atari/tos.c

@@ -29,8 +29,9 @@ void pfa_end()
 {
 	// do things when the game ends
 
+	// game statistics
+	gs_submit_game();
+
 	// middleman
 	mm_cleanup();
-
-	// game statistics
 }
