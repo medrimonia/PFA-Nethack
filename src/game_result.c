@@ -35,7 +35,8 @@ game_result_p new_game_result(const char * mode){
 		new->nb_properties = 6;
 	}
 	new->properties = malloc(new->nb_properties * sizeof(property_p));
-	for (int i = 0; i < new->nb_properties; i++){
+	int i;
+	for (i = 0; i < new->nb_properties; i++){
 		new->properties[i] = new_property();
 	}
 	return new;
@@ -71,7 +72,8 @@ game_result_p create_actual_game_result(const char * mode){
 }
 
 void destroy_game_result(game_result_p gr){
-	for (int i = 0; i < gr->nb_properties; i++){
+	int i;
+	for (i = 0; i < gr->nb_properties; i++){
 		if (gr->properties[i]->value != NULL)
 			free(gr->properties[i]->value);
 		free(gr->properties[i]);

@@ -16,10 +16,10 @@ int main(int argc, char ** argv){
 	if (exist_table("seek_secret")){
 		printf("Seek_secret table found\n");
 	}
-	else{
+	/*else{
 		printf("Creating seek_secret table\n");
 		create_table("seek_secret");
-	}
+		}*/
 	
 	//Try to insert a game
 	game_result_p gr = create_actual_game_result("seek_secret");

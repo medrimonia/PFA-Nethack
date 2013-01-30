@@ -78,7 +78,8 @@ void initialize_table_descriptor(){
 	
 	table_descriptor->columns = malloc(table_descriptor->nb_columns *
 																		 sizeof(column_descriptor_p));
-	for (int i = 0; i < table_descriptor->nb_columns; i++){
+	int i;
+	for (i = 0; i < table_descriptor->nb_columns; i++){
 		table_descriptor->columns[i] = malloc(sizeof(struct column_descriptor));
 	}
 	table_descriptor->columns[0]->name = "id";
@@ -118,7 +119,8 @@ int init_db_manager(){
 }
 
 void free_table_descriptor(){
-	for (int i = 0; i < table_descriptor->nb_columns; i++)
+	int i;
+	for (i = 0; i < table_descriptor->nb_columns; i++)
 		free(table_descriptor->columns[i]);
 	free(table_descriptor->columns);
 	free(table_descriptor);
@@ -192,6 +194,10 @@ void create_table(const char * table_name){
 int add_game_result(game_result_p gr){
 	//TODO just test inside, must be cleared
 	char request[REQUEST_SIZE];
+
+	if (!exist_table(gr_get_mode(gr)))
+		create_table(gr_get_mode(gr));
+			
 	
 	int index = 0;
 	
