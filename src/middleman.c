@@ -1,5 +1,3 @@
-#include "hack.h"
-
 #include "middleman.h"
 
 #include <stdio.h>

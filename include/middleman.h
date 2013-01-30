@@ -1,6 +1,8 @@
 #ifndef MIDDLEMAN_H
 #define MIDDLEMAN_H
 
+#include "hack.h"
+
 #include "wintype.h"
 #include "winprocs.h"
 
