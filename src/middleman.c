@@ -2,7 +2,11 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <sys/un.h>
+#include <sys/socket.h>
 
+#define BUFSIZE  64
+#define SOCKPATH "/tmp/mmsock"
 
 struct window_procs real_winprocs;
 
@@ -73,12 +77,49 @@ struct window_procs middleman = {
 
 static FILE *log = NULL;
 
+static int mmsock = -1, client = -1;
+static struct sockaddr_un local;
+
 void mm_init()
 {
+	int rv;
+	socklen_t len;
+
+	/* open log file */
 	log = fopen("mm.log", "a");
 
 	if (log == NULL) {
 		perror("fopen");
+	}
+
+	/* open unix socket */
+	//unlink(SOCKPATH);
+	local.sun_family = AF_UNIX;
+	strcpy(local.sun_path, SOCKPATH);
+	len = strlen(SOCKPATH) + sizeof local.sun_family;
+
+	mmsock = socket(AF_UNIX, SOCK_STREAM, 0);
+
+	if (mmsock == -1) {
+		perror("socket");
+		mm_log("socket()", "Could not open middleman socket.");
+		return;
+	}
+
+	if (-1 == bind(mmsock, (struct sockaddr *) &local, len)) {
+		perror("bind");
+		unlink(SOCKPATH);
+		close(mmsock);
+		mmsock = -1;
+		return;
+	}
+
+	if (-1 == listen(mmsock, 1)) {
+		perror("listen");
+		unlink(SOCKPATH);
+		close(mmsock);
+		mmsock = -1;
+		return;
 	}
 }
 
@@ -88,6 +129,12 @@ void mm_cleanup()
 		fflush(log);
 		fclose(log);
 	}
+
+	if (mmsock != -1) {
+		close(mmsock);
+	}
+
+	unlink(SOCKPATH);
 }
 
 void mm_vlog(const char *format, ...)
@@ -321,9 +368,17 @@ mm_print_glyph(window, x, y, glyph)
 	int ochar, ocolor;
 	unsigned ospecial;
 
+	char buf[BUFSIZE];
+	ssize_t size;
+
 	mm_log("mm_print_glyph", "");
 
 	mapglyph(glyph, &ochar, &ocolor, &ospecial, x, y);
+
+	if (client != -1) {
+		size = sprintf(buf, "%d:%d:%c\n", x, y, ochar);
+		send(client, buf, size, 0);
+	}
 
 	mm_vlog("glyph %d:%d %c\n", x, y, ochar);
 
@@ -334,7 +389,7 @@ void
 mm_raw_print(str)
     const char *str;
 {
-	mm_log("mm_raw_print", "");
+	mm_log("mm_raw_print", str);
 	real_winprocs.win_raw_print(str);
 }
 
@@ -342,7 +397,7 @@ void
 mm_raw_print_bold(str)
     const char *str;
 {
-	mm_log("mm_raw_print_bold", "");
+	mm_log("mm_raw_print_bold", str);
 	real_winprocs.win_raw_print_bold(str);
 }
 
@@ -407,11 +462,34 @@ mm_delay_output()
 	real_winprocs.win_delay_output();
 }
 
+/* This function returns a key or 0 if a mouse button was used.
+ * x and y are used with interfaces suporting the mouse. */
 int
 mm_nh_poskey(x, y, mod)
     int *x, *y, *mod;
 {
+	char buf[BUFSIZE];
+	ssize_t size;
+
 	mm_log("mm_nh_poskey", "");
+
+	if (client == -1 && mmsock != -1) {
+		client = accept(mmsock, NULL, NULL);
+		if (client == -1) {
+			perror("accept");
+		}
+	}
+
+	if (client != -1) {
+		size = recv(client, buf, BUFSIZE, 0);
+		
+		if (size > 0) {
+			buf[size-1] = '\0'; // remove \n for now
+			mm_log("recv",  buf);
+			return buf[0];
+		}
+	}
+
 	return real_winprocs.win_nh_poskey(x, y, mod);
 }
 
