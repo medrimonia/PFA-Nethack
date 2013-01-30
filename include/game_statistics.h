@@ -1,6 +1,17 @@
 #ifndef GAME_STATISTICS_H
 #define GAME_STATISTICS_H
 
+// Comment if there's no access to nethack files
+// This is used typically for test outside of nethack kernel
+//#define NETHACKACCESS
+
+#ifndef NETHACK_ACCESS
+/* srand initialization is not provided by game_statistics, it should be done
+ * by the caller.
+ */
+void make_random_stats();
+#endif
+
 /* Add a door to the number of secret doors that can be found. This function
  * must be called for the doors which haven't been added in an update_nb_sdoor()
  */

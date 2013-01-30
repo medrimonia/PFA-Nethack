@@ -41,20 +41,32 @@ game_result_p new_game_result(const char * mode){
 	return new;
 }
 
+/* Including game_statistics imply to include all the nethack kernel,
+ * That doesn't seems to be a good idea, maybe there's something to do
+ * with '#if'?
+ * A solution might be to move the code of new_game_result in game_statistics,
+ * but then game_statistics dependance to database_manager should be
+ * facultative.
+ * Best solution might be to get the initialisation code inside of the
+ * middle_man
+ */
 game_result_p create_actual_game_result(const char * mode){
+	#ifndef NETHACK_ACCESS
+	make_random_stats();
+	#endif
 	game_result_p gr = new_game_result(mode);
 	gr_set_property_name(gr, 0, "nb_squares_explored");
-	//gr_set_property_int_value(gr, 0, get_nb_squares_reachable());
+	gr_set_property_int_value(gr, 0, get_nb_squares_reachable());
 	gr_set_property_name(gr, 1, "nb_squares_reachable");
-	//gr_set_property_int_value(gr, 1, get_nb_squares_reached());
+	gr_set_property_int_value(gr, 1, get_nb_squares_reached());
 	gr_set_property_name(gr, 2, "nb_sdoors_found");
-	//gr_set_property_int_value(gr, 2, get_nb_sdoors_found());
+	gr_set_property_int_value(gr, 2, get_nb_sdoors_found());
 	gr_set_property_name(gr, 3, "nb_sdoors_reachable");
-	//gr_set_property_int_value(gr, 3, get_nb_sdoors());
+	gr_set_property_int_value(gr, 3, get_nb_sdoors());
 	gr_set_property_name(gr, 4, "nb_scorrs_found");
-	//gr_set_property_int_value(gr, 4, get_nb_scorrs_found());
+	gr_set_property_int_value(gr, 4, get_nb_scorrs_found());
 	gr_set_property_name(gr, 5, "nb_scorrs_reachable");
-	//gr_set_property_int_value(gr, 5, get_nb_scorrs());
+	gr_set_property_int_value(gr, 5, get_nb_scorrs());
 	return gr;
 }
 
