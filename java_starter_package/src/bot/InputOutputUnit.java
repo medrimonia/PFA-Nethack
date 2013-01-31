@@ -40,11 +40,14 @@ class InputOutputUnit{
 	
 	public void parseNextTurn(Bot b) throws InvalidMessageException, IOException{
 		try{
+			Logger.println("Parsing Next Turn");
 			char buffer[] = new char[1];
 			// Verify start of message :
 			// All middle_man communications must starts with a precise char
 			int nb_read;
 			nb_read = input.read(buffer, 0, 1);
+			Logger.println(nb_read + " chars read");
+			Logger.println("first char received : '" + buffer[0] + "'");
 			if (buffer[0] != Protocole.START_TOKEN)
 			    throw new InvalidMessageException("Invalid start Token. Expected \"" +
 			    								  Protocole.START_TOKEN + "\" received \"" +
