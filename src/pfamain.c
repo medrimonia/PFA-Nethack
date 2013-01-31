@@ -6,7 +6,6 @@ void pfa_init()
 	// do things when the game is initializing
 
 	// middleman stuff
-	mm_init();
 
 	// game statistics stuff
 	update_nb_sdoors();
