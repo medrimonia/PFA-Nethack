@@ -20,9 +20,9 @@ public class Bot {
 		myParser = new InputOutputUnit();
 	}
 	
-	public Bot(String hostname)
+	public Bot(String unixSocketName)
 			throws UnknownHostException, IOException{
-		this(hostname, Protocole.DEFAULT_PORT);
+		myParser = new InputOutputUnit(unixSocketName);
 	}
 
 	public Bot(String hostname, int port)

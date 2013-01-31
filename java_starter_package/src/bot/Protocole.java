@@ -2,6 +2,8 @@ package bot;
 
 public final class Protocole {
 	
+	public static String UNIX_SOCKET_NAME = "/tmp/mmsock";
+	
 	public static final char PLAYER_TOKEN = '@';
 	
 	
