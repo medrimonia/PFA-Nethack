@@ -1,26 +1,26 @@
 package bot;
 
 public enum Direction {
-	NORTH("NORTH",-1,0),
-	NORTH_EAST("NORTH_EAST",-1,1),
-	EAST("EAST",0,1),
-	SOUTH_EAST("SOUTH_EAST",1,1),
-	SOUTH("SOUTH",1,0),
-	SOUTH_WEST("SOUTH_WEST",1,-1),
-	WEST("WEST",0,-1),
-	NORTH_WEST("NORTH_WEST",-1,-1);
+	NORTH('k',-1,0),
+	NORTH_EAST('u',-1,1),
+	EAST('l',0,1),
+	SOUTH_EAST('n',1,1),
+	SOUTH('j',1,0),
+	SOUTH_WEST('b',1,-1),
+	WEST('h',0,-1),
+	NORTH_WEST('y',-1,-1);
 	
-	private String value;
+	private char value;
 	private int deltaLine;
 	private int deltaColumn;
 	
-	Direction(String s, int deltaLine, int deltaColumn){
-		value = s;
+	Direction(char c, int deltaLine, int deltaColumn){
+		value = c;
 		this.deltaLine = deltaLine;
 		this.deltaColumn = deltaColumn;
 	}
 	
-	public String getValue(){
+	public char getValue(){
 		return value;
 	}
 	

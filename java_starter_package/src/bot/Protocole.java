@@ -2,15 +2,29 @@ package bot;
 
 public final class Protocole {
 	
-	public static String START_TOKEN = "START";
+	public static final char PLAYER_TOKEN = '@';
 	
-	public static String END_TOKEN = "END";
 	
-	public static String MOVE_TOKEN = "MOVE";
+	// INPUT TOKENS
 	
-	public static String SEARCH_TOKEN = "SEARCH";
+	public static final char START_TOKEN = 'S';
 	
-	public static String OPEN_TOKEN = "OPEN";
+	public static final char END_TOKEN = 'E';
+	
+	public static final char SEED_TOKEN = 's';
+	
+	public static final char MAP_SIZE_TOKEN = 'm';
+	
+	public static final char GLYPH_TOKEN = 'g';
+	
+	
+	// OUTPUT TOKENS
+	
+	//public static String MOVE_TOKEN = "MOVE";
+	
+	public static final char SEARCH_TOKEN = 's';
+	
+	public static final char OPEN_TOKEN = 'o';
 
-	public static int DEFAULT_PORT = 4242;
+	public static final int DEFAULT_PORT = 4242;
 }
