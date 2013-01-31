@@ -90,6 +90,7 @@ void mm_vlog(const char *format, ...)
 	va_start(va, format);
 	if (log != NULL) {
 		vfprintf(log, format, va);
+		fprintf(log, "\n");
 		fflush(log);
 	}
 	va_end(va);
@@ -98,7 +99,7 @@ void mm_vlog(const char *format, ...)
 
 void mm_log(const char *func, const char *msg)
 {
-	mm_vlog("%s: %s\n", func, msg);
+	mm_vlog("%s: %s", func, msg);
 }
 
 
@@ -107,14 +108,17 @@ void mm_cleanup()
 	if (log != NULL) {
 		fflush(log);
 		fclose(log);
+		log = NULL;
 	}
 
 	if (mmsock != -1) {
 		close(mmsock);
+		mmsock = -1;
 	}
 
 	if (client != -1) {
 		close(mmsock);
+		client = -1;
 	}
 
 	unlink(SOCKPATH);
@@ -159,7 +163,6 @@ void mm_init()
 	if (-1 == bind(mmsock, (struct sockaddr *) &local, len)) {
 		perror("bind");
 		mm_vlog("bind(): Could not bind %s to middleman socket.", SOCKPATH);
-		mm_cleanup();
 		terminate(EXIT_FAILURE);
 		return;
 	}
@@ -168,7 +171,6 @@ void mm_init()
 		perror("listen");
 		mm_log("listen()",
 		       "Could not listen for connections on mmiddleman socket.");
-		mm_cleanup();
 		terminate(EXIT_FAILURE);
 		return;
 	}
@@ -263,7 +265,7 @@ mm_clear_nhwindow(window)
 void
 mm_display_nhwindow(window, blocking)
     winid window;
-    boolean blocking;	/* with ttys, all windows are blocking */
+    boolean blocking;
 {
 	mm_log("mm_display_nhwindow", "");
 	real_winprocs.win_display_nhwindow(window, blocking);
@@ -403,7 +405,7 @@ mm_print_glyph(window, x, y, glyph)
 	ssize_t size;
 
 	mapglyph(glyph, &ochar, &ocolor, &ospecial, x, y);
-	mm_vlog("mm_print_glyph: window %d - %d:%d:%c\n", window, x, y, ochar);
+	mm_vlog("mm_print_glyph: window %d - %d:%d:%c", window, x, y, ochar);
 
 	if (client != -1) {
 		size = sprintf(buf, "g%c%c%c\0", x, y, ochar);
@@ -513,7 +515,6 @@ mm_nh_poskey(x, y, mod)
 	} else {
 		close(client);
 		mm_log("recv()", "Client disconnected.");
-		mm_cleanup();
 		terminate(EXIT_FAILURE);
 	}
 
