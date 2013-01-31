@@ -16,13 +16,14 @@ public class Bot {
 	
 	public Bot(){
 		dungeonLevel = 0;
-		map = null;
+		map = new Map();
 		myParser = new InputOutputUnit();
 	}
 	
-	public Bot(String hostname)
+	public Bot(String unixSocketName)
 			throws UnknownHostException, IOException{
-		this(hostname, Protocole.DEFAULT_PORT);
+		this();		
+		myParser = new InputOutputUnit(unixSocketName);
 	}
 
 	public Bot(String hostname, int port)

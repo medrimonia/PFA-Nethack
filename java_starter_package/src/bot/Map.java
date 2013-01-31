@@ -3,20 +3,51 @@ package bot;
 public class Map {
 
 	private Position myPosition;
+	private int height;
+	private int width;
 	private Square[][] content;
+	
+	public Map(){
+		content = null;
+		myPosition = null;
+		height = -1;
+		width = -1;
+	}
 
 	public Map(char[][] map) throws UnknownPositionException{
 		content = new Square[map.length][map[0].length];
 		for (int line = 0; line < map.length ; line++){
 			for (int column = 0; column < map[line].length; column++){
 				char c = map[line][column];
-				if (c == '@')
+				if (c == Protocole.PLAYER_TOKEN)
 					myPosition = new Position(line, column);
 				content[line][column] = new Square(map[line][column]);
 			}
 		}
 		if (myPosition == null)
 			throw new UnknownPositionException("Position not specified in message");
+	}
+
+	public Map(int height, int width) throws UnknownPositionException{
+		this.height = height;
+		this.width = width;
+		initMap();
+	}
+	
+	// initialize the Map according to a lazy mechanism
+	private void initMap(){
+		if (height < 0 || width < 0)
+			throw new RuntimeException("Map size indicators are not valid");
+		if (content != null)
+			return;
+		content = new Square[height][width];
+		for (int line = 0; line < height ; line++){
+			for (int column = 0; column < width; column++){
+				content[line][column] = new Square(SquareType.UNKNOWN.getToken());
+			}
+		}
+		myPosition = null;
+		
 	}
 	
 	public boolean isAllowedMove(Direction d){
@@ -63,6 +94,22 @@ public class Map {
 	
 	public Position getPlayerPosition(){
 		return myPosition;
+	}
+	
+	public void updateSquare(int line, int col, char newVal){
+		if (newVal == Protocole.PLAYER_TOKEN)
+			myPosition = new Position(line, col);
+		content[line][col] = new Square(newVal);
+	}
+	
+	public void updateSize(int height, int width){
+		this.width = width;
+		this.height = height;
+		initMap();
+	}
+	
+	public boolean isKnownPosition(){
+		return myPosition != null;
 	}
 	
 	public String toString(){
