@@ -78,6 +78,8 @@ struct window_procs middleman = {
 };
 
 
+static winid winmapid;
+
 static FILE *log = NULL;
 
 static int mmsock = -1;
@@ -263,8 +265,14 @@ winid
 mm_create_nhwindow(type)
     int type;
 {
-	mm_log("mm_create_nhwindow", "");
-	real_winprocs.win_create_nhwindow(type);
+	mm_vlog("mm_create_nhwindow: type %d", type);
+	winid id = real_winprocs.win_create_nhwindow(type);
+
+	if (type == NHW_MAP) {
+		winmapid = id;
+	}
+
+	return id;
 }
 
 void
@@ -280,8 +288,12 @@ mm_display_nhwindow(window, blocking)
     winid window;
     boolean blocking;
 {
-	mm_log("mm_display_nhwindow", "");
-	real_winprocs.win_display_nhwindow(window, blocking);
+	mm_vlog("mm_display_nhwindow: %d", window);
+
+	if (window == winmapid) {
+		// only show the map for now
+		real_winprocs.win_display_nhwindow(window, blocking);
+	}
 }
 
 void
