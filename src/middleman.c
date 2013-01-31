@@ -1,6 +1,7 @@
 #include "middleman.h"
 
 #include <stdio.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <sys/un.h>
 #include <sys/socket.h>
@@ -101,53 +102,6 @@ void mm_log(const char *func, const char *msg)
 }
 
 
-void mm_init()
-{
-	int rv;
-	socklen_t len;
-
-	/* open log file */
-	log = fopen("mm.log", "a");
-
-	if (log == NULL) {
-		perror("fopen");
-	}
-
-	/* open unix socket */
-	//unlink(SOCKPATH);
-	local.sun_family = AF_UNIX;
-	strcpy(local.sun_path, SOCKPATH);
-	len = strlen(SOCKPATH) + sizeof local.sun_family;
-
-	mmsock = socket(AF_UNIX, SOCK_STREAM, 0);
-
-	if (mmsock == -1) {
-		perror("socket");
-		mm_log("socket()", "Could not open middleman socket.");
-		return;
-	}
-
-	if (-1 == bind(mmsock, (struct sockaddr *) &local, len)) {
-		perror("bind");
-		mm_vlog("bind(): Could not bind %s to middleman socket.", SOCKPATH);
-		unlink(SOCKPATH);
-		close(mmsock);
-		mmsock = -1;
-		return;
-	}
-
-	if (-1 == listen(mmsock, 1)) {
-		perror("listen");
-		mm_log("listen()",
-		       "Could not listen for connections on mmiddleman socket.");
-		unlink(SOCKPATH);
-		close(mmsock);
-		mmsock = -1;
-		return;
-	}
-}
-
-
 void mm_cleanup()
 {
 	if (log != NULL) {
@@ -159,7 +113,75 @@ void mm_cleanup()
 		close(mmsock);
 	}
 
+	if (client != -1) {
+		close(mmsock);
+	}
+
 	unlink(SOCKPATH);
+}
+
+
+void mm_init()
+{
+	int rv;
+	socklen_t len;
+
+	/* unlink SOCKPATH in case the came wasn't terminated cleanly */
+	if (EBUSY == unlink(SOCKPATH)) {
+		fprintf(
+			stderr,
+			"%s is busy, is another middleman running?\n",
+			SOCKPATH
+		);
+		terminate(EXIT_FAILURE);
+	}
+
+	/* open log file */
+	log = fopen("mm.log", "a");
+
+	if (log == NULL) {
+		perror("fopen");
+	}
+
+	/* open unix socket */
+	local.sun_family = AF_UNIX;
+	strcpy(local.sun_path, SOCKPATH);
+	len = strlen(SOCKPATH) + sizeof local.sun_family;
+
+	mmsock = socket(AF_UNIX, SOCK_STREAM, 0);
+
+	if (mmsock == -1) {
+		perror("socket");
+		mm_log("socket()", "Could not open middleman socket.");
+		terminate(EXIT_FAILURE);
+	}
+
+	if (-1 == bind(mmsock, (struct sockaddr *) &local, len)) {
+		perror("bind");
+		mm_vlog("bind(): Could not bind %s to middleman socket.", SOCKPATH);
+		mm_cleanup();
+		terminate(EXIT_FAILURE);
+		return;
+	}
+
+	if (-1 == listen(mmsock, 1)) {
+		perror("listen");
+		mm_log("listen()",
+		       "Could not listen for connections on mmiddleman socket.");
+		mm_cleanup();
+		terminate(EXIT_FAILURE);
+		return;
+	}
+
+	// loop until a client is connected
+	puts("Waiting for a bot to connect...");
+	while (client == -1) {
+		client = accept(mmsock, NULL, NULL);
+		if (client == -1) {
+			perror("accept");
+			mm_log("accept", "error");
+		}
+	}
 }
 
 
@@ -203,7 +225,7 @@ void
 mm_suspend_nhwindows(str)
     const char *str;
 {
-	mm_log("mm_suspend_nhwindows", "");
+	mm_log("mm_suspend_nhwindows", str);
 	real_winprocs.win_suspend_nhwindows(str);
 }
 
@@ -218,7 +240,7 @@ void
 mm_exit_nhwindows(str)
     const char *str;
 {
-	mm_log("mm_exit_nhwindows", "");
+	mm_log("mm_exit_nhwindows", str);
 	real_winprocs.win_exit_nhwindows(str);
 }
 
@@ -279,7 +301,7 @@ mm_display_file(fname, complain)
 	const char *fname;
 	boolean complain;
 {
-	mm_log("mm_display_file", "");
+	mm_log("mm_display_file", fname);
 	real_winprocs.win_display_file(fname, complain);
 }
 
@@ -302,7 +324,7 @@ mm_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
     const char *str;	/* menu string */
     boolean preselected; /* item is marked as selected */
 {
-	mm_log("mm_add_menu", "");
+	mm_log("mm_add_menu", str);
 	real_winprocs.win_add_menu(window, glyph, identifier, ch, gch, attr, str,
 			preselected);
 }
@@ -312,7 +334,7 @@ mm_end_menu(window, prompt)
     winid window;	/* menu to use */
     const char *prompt;	/* prompt to for menu */
 {
-	mm_log("mm_end_menu", "");
+	mm_log("mm_end_menu", prompt);
 	real_winprocs.win_end_menu(window, prompt);
 }
 
@@ -333,7 +355,7 @@ mm_message_menu(let, how, mesg)
 	int how;
 	const char *mesg;
 {
-	mm_log("mm_message_menu", "");
+	mm_log("mm_message_menu", mesg);
 	real_winprocs.win_message_menu(let, how, mesg);
 }
 
@@ -384,7 +406,7 @@ mm_print_glyph(window, x, y, glyph)
 	mm_vlog("mm_print_glyph: window %d - %d:%d:%c\n", window, x, y, ochar);
 
 	if (client != -1) {
-		size = sprintf(buf, "%c%c%c\0", x, y, ochar);
+		size = sprintf(buf, "g%c%c%c\0", x, y, ochar);
 		send(client, buf, size, 0);
 	}
 
@@ -433,7 +455,7 @@ mm_yn_function(query,resp, def)
 	const char *query,*resp;
 	char def;
 {
-	mm_log("mm_yn_function", "");
+	mm_log("mm_yn_function", query);
 	return real_winprocs.win_yn_function(query, resp, def);
 }
 
@@ -442,7 +464,7 @@ mm_getlin(query, bufp)
 	const char *query;
 	register char *bufp;
 {
-	mm_log("mm_getlin", "");
+	mm_log("mm_getlin", query);
 	real_winprocs.win_getlin(query, bufp);
 }
 
@@ -479,30 +501,20 @@ mm_nh_poskey(x, y, mod)
 
 	mm_log("mm_nh_poskey", "");
 
-	// loop until a recv is successful
-	while(mmsock != -1) {
-		// loop until a client is connected
-		while (client == -1) {
-			client = accept(mmsock, NULL, NULL);
-			if (client == -1) {
-				perror("accept");
-				mm_log("accept", "error");
-			}
-		}
-
-		size = recv(client, buf, BUFSIZE, 0);
-		
-		if (size == 1) {
-			return buf[0];
-		} else if (size > 0) {
-			buf[size-1] = '\0'; // remove \n for now
-			mm_log("received",  buf);
-			return buf[0];
-		} else {
-			close(client);
-			mm_log("recv()", "Client disconnected.");
-			client = -1;
-		}
+	send(client, "E", 1, 0);
+	size = recv(client, buf, BUFSIZE, 0);
+	
+	if (size == 1) {
+		return buf[0];
+	} else if (size > 0) {
+		buf[size-1] = '\0'; // remove \n for now
+		mm_log("received",  buf);
+		return buf[0];
+	} else {
+		close(client);
+		mm_log("recv()", "Client disconnected.");
+		mm_cleanup();
+		terminate(EXIT_FAILURE);
 	}
 
 	// use interface's default if mmsock couldn't be initialized
