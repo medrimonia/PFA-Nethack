@@ -46,24 +46,15 @@ else
 fi
 
 
-#if [ -e $nh ]; then
-#    read -p "previous nethack installation found at $nh, overwrite? [y/n]" yn
-#
-#    case $yn in
-#        Y|y ) ;;
-#        N|n ) exit;;
-#        * ) echo "please answer 'y' or 'n'"; exit;;
-#    esac
-#fi
-
-
 if [ $reuse = 0 ]; then
     echo "Running NetHack's setup script... "
     cd $nhdir
     sh sys/unix/setup.sh
     cd ..
     patch -p0 < install/linux_install.patch
+	patch -p0 < install/pfamain.patch
 	patch -p0 < install/middleman.patch
+	patch -p0 < install/game_statistics.patch
 	echo "Replacing $nhdir/src/Makefile..."
 	cp -r install/nh/* $nhdir
 fi

@@ -114,7 +114,6 @@ int init_db_manager(){
 						sqlite3_errmsg(db));
 		exit(EXIT_FAILURE);
 	}
-	printf("Database opened\n");
 	return 0;
 }
 

@@ -1,5 +1,7 @@
 #include "game_statistics.h"
 
+#include "database_manager.h"
+
 #ifdef NETHACK_ACCESS
 #include "hack.h"
 #else
@@ -116,4 +118,12 @@ int get_nb_squares_reachable(){
 
 int get_nb_squares_reached(){
 	return nb_squares_reached;
+}
+
+void gs_submit_game(){
+	init_db_manager();
+	game_result_p gr = create_actual_game_result("seek_secret");
+	add_game_result(gr);
+	destroy_game_result(gr);
+	close_db_manager();
 }

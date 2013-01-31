@@ -65,5 +65,7 @@ int get_nb_squares_reachable();
 /* Return the number of square reached during the game. */
 int get_nb_squares_reached();
 
+/* Add result of current game to database */
+void gs_submit_game();
 
 #endif
