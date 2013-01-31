@@ -23,7 +23,7 @@ provided by our PFA.
 ## Used package
 
 Here's the list of the package needed in order to compile properly :
-* libunixsocket-java _The java bot use UnixSockets_
+* libunixsocket-java _The package might also be named libmatthew-java_
 
 ## Compiling
 
