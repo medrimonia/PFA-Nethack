@@ -1,15 +1,16 @@
 ### NOW
-* Update java sp in order to handle modifications
-   * Reading from stdin, writing to stdout
-   * Change parsing orders
-   * Change output orders
-* Update game_statistics patch
-   * Remove modifications to Makefile (to handle in the tracked Makefile)
-   * Remove modifications in end.c (to replace my submit_game_result())
-   * Remove file additions
-* Verify that nethack and each test is working with the new Makefile feature
-* Handle most of the install patches with call to a specific pfa_file
 * Handle seed
    * Add get_seed and set_seed in game_statistics
+   * Save seed with database_manager
+* Solve the issue with bot and doors
+   * Try with buffer, if it's still not working, slowmotion
+* Handle game end after n turns
 
 ### LATER
+* Choose what kind of analysis we want to do
+* Start producing statistiques
+   * Disabling all outputs
+   * Getting datas direclty by sqlite3 or with a c interface?
+   * How to plot graphs needed
+* Write other bots
+   * A bot with a memory, trying to reach the less reached square
