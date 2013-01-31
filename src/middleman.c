@@ -1,5 +1,7 @@
 #include "middleman.h"
 
+#include "global.h" // nethack's globals (map size etc)
+
 #include <stdio.h>
 #include <errno.h>
 #include <stdarg.h>
@@ -176,12 +178,23 @@ void mm_init()
 	}
 
 	// loop until a client is connected
+	ssize_t size;
+	char buf[BUFSIZE];
 	puts("Waiting for a bot to connect...");
 	while (client == -1) {
 		client = accept(mmsock, NULL, NULL);
 		if (client == -1) {
 			perror("accept");
 			mm_log("accept", "error");
+		} else {
+			// COLNO and ROWNO are from nethack's global.h
+			sprintf(buf, "m%c%c", COLNO, ROWNO);
+			size = send(client, buf, strlen(buf), 0);
+			if (size < 1) {
+				perror("send");
+				close(client);
+				client = -1;
+			}
 		}
 	}
 }
@@ -408,7 +421,7 @@ mm_print_glyph(window, x, y, glyph)
 	mm_vlog("mm_print_glyph: window %d - %d:%d:%c", window, x, y, ochar);
 
 	if (client != -1) {
-		size = sprintf(buf, "g%c%c%c\0", x, y, ochar);
+		size = sprintf(buf, "g%c%c%c", x, y, ochar);
 		send(client, buf, size, 0);
 	}
 
@@ -503,7 +516,7 @@ mm_nh_poskey(x, y, mod)
 
 	mm_log("mm_nh_poskey", "");
 
-	send(client, "E", 1, 0);
+	send(client, "ES", 2, 0);
 	size = recv(client, buf, BUFSIZE, 0);
 	
 	if (size == 1) {
