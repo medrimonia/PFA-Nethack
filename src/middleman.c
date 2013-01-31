@@ -352,8 +352,8 @@ mm_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
     boolean preselected; /* item is marked as selected */
 {
 	mm_log("mm_add_menu", str);
-	real_winprocs.win_add_menu(window, glyph, identifier, ch, gch, attr, str,
-			preselected);
+	//real_winprocs.win_add_menu(window, glyph, identifier, ch, gch, attr, str,
+	//		preselected);
 }
 
 void
@@ -445,7 +445,7 @@ mm_raw_print(str)
     const char *str;
 {
 	mm_log("mm_raw_print", str);
-	real_winprocs.win_raw_print(str);
+	//real_winprocs.win_raw_print(str);
 }
 
 void
