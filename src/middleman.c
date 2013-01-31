@@ -548,7 +548,7 @@ mm_nh_poskey(x, y, mod)
 			mm_log("received",  buf);
 
 			// put extra chars in a buffer
-			for (i = 1; i < strlen(buf) - 1; i++) {
+			for (i = 1; i < strlen(buf); i++) {
 				cmdbuf[++last % BUFSIZE] = buf[i];
 			}
 
