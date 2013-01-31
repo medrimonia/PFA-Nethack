@@ -188,7 +188,7 @@ void mm_init()
 			mm_log("accept", "error");
 		} else {
 			// COLNO and ROWNO are from nethack's global.h
-			sprintf(buf, "m%c%c", COLNO, ROWNO);
+			sprintf(buf, "Sm%c%c", COLNO, ROWNO);
 			size = send(client, buf, strlen(buf), 0);
 			if (size < 1) {
 				perror("send");
@@ -308,7 +308,7 @@ mm_putstr(window, attr, str)
     const char *str;
 {
 	mm_log("mm_putstr", str);
-	real_winprocs.win_putstr(window, attr, str);
+	//real_winprocs.win_putstr(window, attr, str);
 }
 
 void
@@ -516,8 +516,9 @@ mm_nh_poskey(x, y, mod)
 
 	mm_log("mm_nh_poskey", "");
 
-	send(client, "ES", 2, 0);
+	send(client, "E", 1, 0);
 	size = recv(client, buf, BUFSIZE, 0);
+	send(client, "S", 1, 0);
 	
 	if (size == 1) {
 		return buf[0];
