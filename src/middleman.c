@@ -77,8 +77,29 @@ struct window_procs middleman = {
 
 static FILE *log = NULL;
 
-static int mmsock = -1, client = -1;
+static int mmsock = -1;
+static int client = -1;
 static struct sockaddr_un local;
+
+
+void mm_vlog(const char *format, ...)
+{
+	va_list va;
+
+	va_start(va, format);
+	if (log != NULL) {
+		vfprintf(log, format, va);
+		fflush(log);
+	}
+	va_end(va);
+}
+
+
+void mm_log(const char *func, const char *msg)
+{
+	mm_vlog("%s: %s\n", func, msg);
+}
+
 
 void mm_init()
 {
@@ -108,6 +129,7 @@ void mm_init()
 
 	if (-1 == bind(mmsock, (struct sockaddr *) &local, len)) {
 		perror("bind");
+		mm_vlog("bind(): Could not bind %s to middleman socket.", SOCKPATH);
 		unlink(SOCKPATH);
 		close(mmsock);
 		mmsock = -1;
@@ -116,12 +138,15 @@ void mm_init()
 
 	if (-1 == listen(mmsock, 1)) {
 		perror("listen");
+		mm_log("listen()",
+		       "Could not listen for connections on mmiddleman socket.");
 		unlink(SOCKPATH);
 		close(mmsock);
 		mmsock = -1;
 		return;
 	}
 }
+
 
 void mm_cleanup()
 {
@@ -137,22 +162,6 @@ void mm_cleanup()
 	unlink(SOCKPATH);
 }
 
-void mm_vlog(const char *format, ...)
-{
-	va_list va;
-
-	va_start(va, format);
-	if (log != NULL) {
-		vfprintf(log, format, va);
-		fflush(log);
-	}
-	va_end(va);
-}
-
-void mm_log(const char *func, const char *msg)
-{
-	mm_vlog("%s: %s\n", func, msg);
-}
 
 void mm_send_update()
 {
@@ -371,16 +380,13 @@ mm_print_glyph(window, x, y, glyph)
 	char buf[BUFSIZE];
 	ssize_t size;
 
-	mm_log("mm_print_glyph", "");
-
 	mapglyph(glyph, &ochar, &ocolor, &ospecial, x, y);
+	mm_vlog("mm_print_glyph: window %d - %d:%d:%c\n", window, x, y, ochar);
 
 	if (client != -1) {
-		size = sprintf(buf, "%d:%d:%c\n", x, y, ochar);
+		size = sprintf(buf, "%c%c%c\0", x, y, ochar);
 		send(client, buf, size, 0);
 	}
-
-	mm_vlog("glyph %d:%d %c\n", x, y, ochar);
 
 	real_winprocs.win_print_glyph(window, x, y, glyph);
 }
@@ -473,23 +479,33 @@ mm_nh_poskey(x, y, mod)
 
 	mm_log("mm_nh_poskey", "");
 
-	if (client == -1 && mmsock != -1) {
-		client = accept(mmsock, NULL, NULL);
-		if (client == -1) {
-			perror("accept");
+	// loop until a recv is successful
+	while(mmsock != -1) {
+		// loop until a client is connected
+		while (client == -1) {
+			client = accept(mmsock, NULL, NULL);
+			if (client == -1) {
+				perror("accept");
+				mm_log("accept", "error");
+			}
 		}
-	}
 
-	if (client != -1) {
 		size = recv(client, buf, BUFSIZE, 0);
 		
-		if (size > 0) {
-			buf[size-1] = '\0'; // remove \n for now
-			mm_log("recv",  buf);
+		if (size == 1) {
 			return buf[0];
+		} else if (size > 0) {
+			buf[size-1] = '\0'; // remove \n for now
+			mm_log("received",  buf);
+			return buf[0];
+		} else {
+			close(client);
+			mm_log("recv()", "Client disconnected.");
+			client = -1;
 		}
 	}
 
+	// use interface's default if mmsock couldn't be initialized
 	return real_winprocs.win_nh_poskey(x, y, mod);
 }
 
