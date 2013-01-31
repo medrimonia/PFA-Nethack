@@ -83,13 +83,14 @@ class InputOutputUnit{
 			throw new InvalidMessageException("Expected 3 chars, received " + nb_read);
 		int line = (int)buffer[0];
 		int col = (int)buffer[1];
+		Logger.println("Update glyph " + buffer[2] + " in [" + line +','+col+"]");
 		b.map.updateSquare(line, col, buffer[2]);
 	}
 	
 	public void parseMapSize(Bot b) throws IOException, InvalidMessageException{
 		char buffer[] = new char[2];
 		int nb_read;
-		Logger.println("Reading Glyph");
+		Logger.println("Reading Map Size");
 		// All mapSize message are formatted with <#c><#l>
 		nb_read = input.read(buffer, 0, 2);
 		if (nb_read != 2)
@@ -97,6 +98,8 @@ class InputOutputUnit{
 		int width = buffer[0];
 		int height = buffer[1];
 		b.map.updateSize(height, width);
+		
+		output.write("y");
 	}
 	
 	public void parseSeed(Bot b){
