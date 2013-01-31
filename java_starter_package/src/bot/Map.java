@@ -105,6 +105,11 @@ public class Map {
 	public void updateSize(int height, int width){
 		this.width = width;
 		this.height = height;
+		initMap();
+	}
+	
+	public boolean isKnownPosition(){
+		return myPosition != null;
 	}
 	
 	public String toString(){

@@ -57,10 +57,17 @@ class InputOutputUnit{
 			while (true){
 				// each message is prefixed by a char
 				nb_read = input.read(buffer, 0, 1);
+				Logger.println("Token read : " + buffer[0]);
 				switch(buffer[0]){
-				case Protocole.END_TOKEN : 
+				case Protocole.END_TOKEN :{
+					if (!b.map.isKnownPosition()){
+						Logger.println("Position unknown at end of message, parsing again");
+						parseNextTurn(b);
+						return;
+					}
 					Logger.println("Informations Parsed");
 					return;
+				}
 				case Protocole.GLYPH_TOKEN: parseGlyph(b); break;
 				case Protocole.SEED_TOKEN: parseSeed(b); break;
 				case Protocole.MAP_SIZE_TOKEN: parseMapSize(b); break;
@@ -81,8 +88,8 @@ class InputOutputUnit{
 		nb_read = input.read(buffer, 0, 3);
 		if (nb_read != 3)
 			throw new InvalidMessageException("Expected 3 chars, received " + nb_read);
-		int line = (int)buffer[0];
-		int col = (int)buffer[1];
+		int line = (int)buffer[1];
+		int col = (int)buffer[0];
 		Logger.println("Update glyph " + buffer[2] + " in [" + line +','+col+"]");
 		b.map.updateSquare(line, col, buffer[2]);
 	}
@@ -97,9 +104,12 @@ class InputOutputUnit{
 			throw new InvalidMessageException("Expected 2 chars, received " + nb_read);
 		int width = buffer[0];
 		int height = buffer[1];
+		Logger.println("Reading map Size : [" + height + "," + width +"]");
 		b.map.updateSize(height, width);
 		
-		output.write("y");
+		Logger.println("Sending message to pass the class choice");
+		output.write('\n');
+		output.flush();
 	}
 	
 	public void parseSeed(Bot b){
