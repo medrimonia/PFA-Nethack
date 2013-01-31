@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import cx.ath.matthew.unix.*;
+
 import util.InvalidMessageException;
 import util.Logger;
 
@@ -16,6 +18,7 @@ class InputOutputUnit{
 	private int mapHeight = -1;
 	private int mapWidth = -1;
 	private Socket mySocket;
+	private UnixSocket myUnixSocket;
 	private PrintWriter output;
 	
 	public InputOutputUnit(){
@@ -23,9 +26,11 @@ class InputOutputUnit{
 		output = new PrintWriter(System.out);
 	}
 	
-	public InputOutputUnit(String hostname)
-			throws UnknownHostException, IOException{
-		this(hostname, Protocole.DEFAULT_PORT);
+	public InputOutputUnit(String unixSocketAddress)
+			throws IOException{
+		myUnixSocket = new UnixSocket(unixSocketAddress);//Connection is done in the builder
+		input = new BufferedReader(new InputStreamReader(myUnixSocket.getInputStream()));
+		output = new PrintWriter(myUnixSocket.getOutputStream());
 	}
 	
 	public InputOutputUnit(String hostname, int portNo)
