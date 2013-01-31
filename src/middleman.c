@@ -362,7 +362,7 @@ mm_end_menu(window, prompt)
     const char *prompt;	/* prompt to for menu */
 {
 	mm_log("mm_end_menu", prompt);
-	real_winprocs.win_end_menu(window, prompt);
+	//real_winprocs.win_end_menu(window, prompt);
 }
 
 int
@@ -523,29 +523,46 @@ int
 mm_nh_poskey(x, y, mod)
     int *x, *y, *mod;
 {
-	char buf[BUFSIZE];
+	int i, cmd;
 	ssize_t size;
+	char buf[BUFSIZE];
+
+	static int cmdbuf[BUFSIZE];
+	static unsigned int first = 0;
+	static unsigned int last = 0;
 
 	mm_log("mm_nh_poskey", "");
 
-	send(client, "E", 1, 0);
-	size = recv(client, buf, BUFSIZE, 0);
-	send(client, "S", 1, 0);
-	
-	if (size == 1) {
-		return buf[0];
-	} else if (size > 0) {
-		buf[size-1] = '\0'; // remove \n for now
-		mm_log("received",  buf);
-		return buf[0];
-	} else {
-		close(client);
-		mm_log("recv()", "Client disconnected.");
-		terminate(EXIT_FAILURE);
-	}
+	if (first == last) { // buffer empty
 
-	// use interface's default if mmsock couldn't be initialized
-	return real_winprocs.win_nh_poskey(x, y, mod);
+		send(client, "E", 1, 0);
+		size = recv(client, buf, BUFSIZE, 0);
+		send(client, "S", 1, 0);
+
+		if (size < 1) {
+			mm_log("recv()", "Client disconnected.");
+			terminate(EXIT_FAILURE);
+		}
+		
+		else {
+			mm_log("received",  buf);
+
+			// put extra chars in a buffer
+			for (i = 1; i < strlen(buf) - 1; i++) {
+				cmdbuf[++last % BUFSIZE] = buf[i];
+			}
+
+			cmd = buf[0];
+		}
+	}
+	
+	else {
+		cmd = cmdbuf[++first % BUFSIZE];
+	}
+	
+	return cmd;
+
+	//return real_winprocs.win_nh_poskey(x, y, mod);
 }
 
 #ifdef POSITIONBAR
