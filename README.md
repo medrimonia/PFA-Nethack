@@ -20,11 +20,15 @@ nethack version.
 The folder 'src' contains the implementation of the additionnal functionalities
 provided by our PFA.
 
+## Used package
+
+Here's the list of the package needed in order to compile properly :
+* libunixsocket-java _The java bot use UnixSockets_
 
 ## Compiling
 
 It's necessary to run the script nh-setup.sh in order to build the nethack
-binary with patches
+binary with patches.
 
 The bot must be built by using the appropriate script.
 
