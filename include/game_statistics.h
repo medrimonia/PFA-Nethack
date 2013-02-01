@@ -3,7 +3,7 @@
 
 // Comment if there's no access to nethack files
 // This is used typically for test outside of nethack kernel
-#define NETHACK_ACCESS
+//#define NETHACK_ACCESS
 
 #ifndef NETHACK_ACCESS
 /* srand initialization is not provided by game_statistics, it should be done

@@ -14,7 +14,7 @@ int main(int argc, char ** argv){
 
 	// check if a table named seek_secret exists
 	if (exist_table("seek_secret")){
-		printf("Seek_secret table found\n");
+		//printf("Seek_secret table found\n");
 	}
 	/*else{
 		printf("Creating seek_secret table\n");
@@ -22,15 +22,15 @@ int main(int argc, char ** argv){
 		}*/
 	
 	//Try to insert a game
-	game_result_p gr = create_actual_game_result("seek_secret");
+	/*game_result_p gr = create_actual_game_result("seek_secret");
 	int i;
 	for (i = 0; i < 6; i++){
 		gr_set_property_int_value(gr, i, i + 1);
 	}
-	add_game_result(gr);
+	add_game_result(gr);*/
 
 	//Try to insert a random game
-	gr = create_actual_game_result("seek_secret");
+	game_result_p gr = create_actual_game_result("seek_secret");
 	add_game_result(gr);
 
 	destroy_game_result(gr);

@@ -173,7 +173,7 @@ void create_table(const char * table_name){
 	index += sprintf(request + index,
 									 ")");
 
-	printf("Request : %s\n", request);
+	//printf("Request : %s\n", request);
 	
 	char * err_msg;
 
@@ -228,7 +228,7 @@ int add_game_result(game_result_p gr){
 	
 	index += sprintf(request + index, ")");
 	
-	printf("REQUEST: %s\n", request);
+	//printf("REQUEST: %s\n", request);
 
 	char * err_msg;
 
@@ -259,6 +259,6 @@ int close_db_manager(){
 		return 1;
 	}
 	free_table_descriptor(table_descriptor);
-	printf("Database closed\n");
+	//printf("Database closed\n");
 	return 0;
 }
