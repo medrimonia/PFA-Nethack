@@ -4,7 +4,8 @@
    * Save seed with database_manager
 * Solve the issue with bot and doors
    * Try with buffer, if it's still not working, slowmotion
-* Handle game end after n turns
+* Handle properly game end after n turns
+   * Actually, there's the issue with "too many hacks running now"
 
 ### LATER
 * Choose what kind of analysis we want to do
