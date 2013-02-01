@@ -1,6 +1,8 @@
 #include "middleman.h"
 #include "game_statistics.h"
 
+#include "extern.h" // from nethack
+
 void pfa_init()
 {
 	// do things when the game is initializing
@@ -33,4 +35,7 @@ void pfa_end()
 
 	// middleman
 	mm_cleanup();
+
+	// nethack stuff
+	clearlocks();
 }
