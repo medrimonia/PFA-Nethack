@@ -6,6 +6,20 @@
    * Try with buffer, if it's still not working, slowmotion
 * Handle properly game end after n turns
    * Actually, there's the issue with "too many hacks running now"
+   * Some ideas :
+       * See in detail how is nethack working and exit with the proper way.
+       * Clean appropriated data after/before each game via a script
+* Handle bot name
+   * Two Possibilities :
+       * Bot name given as a parameter
+       * Bot name given by the bot.
+   * Ensure a table bot is created
+   * If bot is not in the database : add it
+   * Get bot id
+   * Add bot id to game result
+* Verify Makefile dependency
+   * If we modify a pfa src file, nethack should be rebuilt partially
+   * If we modify a pfa header file, some nethack files should rebuilt too.
 
 ### LATER
 * Choose what kind of analysis we want to do
