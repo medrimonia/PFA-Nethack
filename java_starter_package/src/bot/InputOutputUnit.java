@@ -108,7 +108,7 @@ class InputOutputUnit{
 		b.map.updateSize(height, width);
 		
 		Logger.println("Sending message to pass the class choice");
-		output.write('\n');
+		output.write("\n");
 		output.flush();
 	}
 	

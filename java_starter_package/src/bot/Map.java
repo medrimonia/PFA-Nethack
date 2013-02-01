@@ -77,7 +77,8 @@ public class Map {
 	public boolean isAllowedOpen(Direction d){
 		Square dest = getSquare(Position.add(myPosition, d));
 		// if dest is out of map, is a door or is out of sight, move is forbidden
-		return dest.getType() == SquareType.CLOSED_DOOR;
+		return (dest == null ||
+						dest.getType() == SquareType.CLOSED_DOOR);
 	}
 	
 	public Square getSquare(Position p){
