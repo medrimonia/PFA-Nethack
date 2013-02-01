@@ -2,13 +2,6 @@
 * Handle seed
    * Add get_seed and set_seed in game_statistics
    * Save seed with database_manager
-* Solve the issue with bot and doors
-   * Try with buffer, if it's still not working, slowmotion
-* Handle properly game end after n turns
-   * Actually, there's the issue with "too many hacks running now"
-   * Some ideas :
-       * See in detail how is nethack working and exit with the proper way.
-       * Clean appropriated data after/before each game via a script
 * Handle bot name
    * Two Possibilities :
        * Bot name given as a parameter
