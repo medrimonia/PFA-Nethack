@@ -538,10 +538,17 @@ mm_nh_poskey(x, y, mod)
 
 	if (first == last) { // buffer empty
 
-		send(client, "E", 1, 0);
+		size = send(client, "E", 1, 0);
+		if (size < 1) {
+			mm_log("recv()", "Client disconnected.");
+			terminate(EXIT_FAILURE);
+		}
 		size = recv(client, buf, BUFSIZE, 0);
-		send(client, "S", 1, 0);
-
+		if (size < 1) {
+			mm_log("recv()", "Client disconnected.");
+			terminate(EXIT_FAILURE);
+		}
+		size = send(client, "S", 1, 0);
 		if (size < 1) {
 			mm_log("recv()", "Client disconnected.");
 			terminate(EXIT_FAILURE);
