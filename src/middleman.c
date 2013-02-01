@@ -201,7 +201,7 @@ void mm_init()
 	}
 }
 
-#define MAX_MOVES 2000
+#define MAX_MOVES 20000
 
 void mm_send_update()
 {
