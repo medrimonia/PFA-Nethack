@@ -526,7 +526,7 @@ int
 mm_nh_poskey(x, y, mod)
     int *x, *y, *mod;
 {
-	int i, cmd;
+	int i, cmd, nb_received;
 	ssize_t size;
 	char buf[BUFSIZE];
 
@@ -537,14 +537,17 @@ mm_nh_poskey(x, y, mod)
 	mm_log("mm_nh_poskey", "");
 
 	if (first == last) { // buffer empty
+		
+		first = 0;
+		last = 0;
 
 		size = send(client, "E", 1, 0);
 		if (size < 1) {
 			mm_log("recv()", "Client disconnected.");
 			terminate(EXIT_FAILURE);
 		}
-		size = recv(client, buf, BUFSIZE, 0);
-		if (size < 1) {
+		nb_received = recv(client, buf, BUFSIZE, 0);
+		if (nb_received < 1) {
 			mm_log("recv()", "Client disconnected.");
 			terminate(EXIT_FAILURE);
 		}
@@ -558,7 +561,7 @@ mm_nh_poskey(x, y, mod)
 			mm_log("received",  buf);
 
 			// put extra chars in a buffer
-			for (i = 1; i < strlen(buf); i++) {
+			for (i = 1; i < nb_received; i++) {
 				cmdbuf[++last % BUFSIZE] = buf[i];
 			}
 
