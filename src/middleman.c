@@ -191,6 +191,7 @@ void mm_init()
 		} else {
 			// COLNO and ROWNO are from nethack's global.h
 			sprintf(buf, "Sm%c%c", COLNO, ROWNO);
+			mm_log("send()", buf);
 			size = send(client, buf, strlen(buf), 0);
 			if (size < 1) {
 				perror("send");
@@ -282,8 +283,11 @@ void
 mm_clear_nhwindow(window)
     winid window;
 {
-	mm_log("mm_clear_nhwindow", "");
-	real_winprocs.win_clear_nhwindow(window);
+	mm_vlog("mm_clear_nhwindow: %d", window);
+	if (window == winmapid) {
+		// only show the map for now
+		real_winprocs.win_clear_nhwindow(window);
+	}
 }
 
 void
@@ -437,6 +441,7 @@ mm_print_glyph(window, x, y, glyph)
 
 	if (client != -1) {
 		size = sprintf(buf, "g%c%c%c", x, y, ochar);
+		mm_log("send()", buf);
 		send(client, buf, size, 0);
 	}
 
@@ -538,25 +543,27 @@ mm_nh_poskey(x, y, mod)
 
 	if (first == last) { // buffer empty
 
+		mm_log("send()", "E");
 		size = send(client, "E", 1, 0);
 		if (size < 1) {
-			mm_log("recv()", "Client disconnected.");
+			mm_log("send()", "Client disconnected.");
 			terminate(EXIT_FAILURE);
 		}
+
 		size = recv(client, buf, BUFSIZE, 0);
 		if (size < 1) {
 			mm_log("recv()", "Client disconnected.");
 			terminate(EXIT_FAILURE);
+		} else {
+			mm_log("recv()", buf);
 		}
+
+		mm_log("send()", "S");
 		size = send(client, "S", 1, 0);
 		if (size < 1) {
-			mm_log("recv()", "Client disconnected.");
+			mm_log("send()", "Client disconnected.");
 			terminate(EXIT_FAILURE);
-		}
-		
-		else {
-			mm_log("received",  buf);
-
+		} else {
 			// put extra chars in a buffer
 			for (i = 1; i < strlen(buf); i++) {
 				cmdbuf[++last % BUFSIZE] = buf[i];
