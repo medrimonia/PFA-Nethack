@@ -46,6 +46,7 @@ class InputOutputUnit{
 			// All middle_man communications must starts with a precise char
 			int nb_read;
 			nb_read = input.read(buffer, 0, 1);
+			if (nb_read < 0) throw new IOException("Connection closed by server");
 			Logger.println(nb_read + " chars read");
 			Logger.println("first char received : '" + buffer[0] + "'");
 			if (buffer[0] != Protocole.START_TOKEN)
@@ -57,6 +58,8 @@ class InputOutputUnit{
 			while (true){
 				// each message is prefixed by a char
 				nb_read = input.read(buffer, 0, 1);
+				if (nb_read < 0) throw new IOException("Connection closed by server");
+				Logger.println("NbChars read : " + nb_read);
 				Logger.println("Token read : " + buffer[0]);
 				switch(buffer[0]){
 				case Protocole.END_TOKEN :{
@@ -86,6 +89,7 @@ class InputOutputUnit{
 		Logger.println("Reading Glyph");
 		// All glyph message are formatted with g<l><c><g>
 		nb_read = input.read(buffer, 0, 3);
+		if (nb_read < 0) throw new IOException("Connection closed by server");
 		if (nb_read != 3)
 			throw new InvalidMessageException("Expected 3 chars, received " + nb_read);
 		int line = (int)buffer[1];
@@ -100,6 +104,7 @@ class InputOutputUnit{
 		Logger.println("Reading Map Size");
 		// All mapSize message are formatted with <#c><#l>
 		nb_read = input.read(buffer, 0, 2);
+		if (nb_read < 0) throw new IOException("Connection closed by server");
 		if (nb_read != 2)
 			throw new InvalidMessageException("Expected 2 chars, received " + nb_read);
 		int width = buffer[0];
