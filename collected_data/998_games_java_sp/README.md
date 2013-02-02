@@ -2,6 +2,7 @@
 * Number of games : 998
 * Bots involved : java_starter_package
 * Max moves allowed : 20000
+* Processing time : ~ 2 hours
 
 Remarks : 
 There should have been 1000 games, but two failed, one due to being stucked at
