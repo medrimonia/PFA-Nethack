@@ -366,7 +366,8 @@ mm_select_menu(window, how, menu_list)
     menu_item **menu_list;
 {
 	mm_log("mm_select_menu", "");
-	return real_winprocs.win_select_menu(window, how, menu_list);
+	return -1; // just cancel for now
+	//return real_winprocs.win_select_menu(window, how, menu_list);
 }
 
 /* special hack for treating top line --More-- as a one item menu */
