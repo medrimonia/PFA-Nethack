@@ -299,7 +299,7 @@ mm_display_nhwindow(window, blocking)
 
 	if (window == winmapid) {
 		// only show the map for now
-		real_winprocs.win_display_nhwindow(window, blocking);
+		real_winprocs.win_display_nhwindow(window, 0); // non-blocking
 	}
 }
 
