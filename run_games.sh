@@ -1,8 +1,8 @@
 #!/bin/bash
 
-rm nethack-3.4.3/nethackdir/pfa.db
+rm -f nethack-3.4.3/nethackdir/pfa.db
 
-for ((i = 1; i <= 100; i++))
+for ((i = 1; i <= 1000; i++))
 do
 		rm -f nethack-3.4.3/nethackdir/mm.log
 		nethack-3.4.3/nethack >nh_log &
