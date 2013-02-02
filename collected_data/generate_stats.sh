@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #TO CHANGE FOR EACH EXPERIMENT (use as parameter, or detect later maybe)
-FOLDER="99_games_java_sp"
+FOLDER="998_games_java_sp"
 DATABASE="games_result.db"
 
 # DATAS DEPENDING OF COLUMNS
@@ -11,12 +11,12 @@ FIELDS[2]="nb_sdoors_found"
 FIELDS[3]="nb_sdoors_reachable"
 FIELDS[4]="nb_scorrs_found"
 FIELDS[5]="nb_scorrs_reachable"
-YMAX[0]=6
-YMAX[1]=4
-YMAX[2]=25
-YMAX[3]=20
-YMAX[4]=40
-YMAX[5]=30
+YMAX[0]=12
+YMAX[1]=15
+YMAX[2]=250
+YMAX[3]=250
+YMAX[4]=400
+YMAX[5]=300
 
 
 for ((i = 0; i < 6 ; i++))
