@@ -56,10 +56,10 @@ game_result_p create_actual_game_result(const char * mode){
 	make_random_stats();
 	#endif
 	game_result_p gr = new_game_result(mode);
-	gr_set_property_name(gr, 0, "nb_squares_explored");
-	gr_set_property_int_value(gr, 0, get_nb_squares_reachable());
+	gr_set_property_name(gr, 0, "nb_squares_explorable");
+	gr_set_property_int_value(gr, 0, get_nb_squares_reached());
 	gr_set_property_name(gr, 1, "nb_squares_reachable");
-	gr_set_property_int_value(gr, 1, get_nb_squares_reached());
+	gr_set_property_int_value(gr, 1, get_nb_squares_reachable());
 	gr_set_property_name(gr, 2, "nb_sdoors_found");
 	gr_set_property_int_value(gr, 2, get_nb_sdoors_found());
 	gr_set_property_name(gr, 3, "nb_sdoors_reachable");
