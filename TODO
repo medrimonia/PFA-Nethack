@@ -13,6 +13,7 @@
 * Verify Makefile dependency
    * If we modify a pfa src file, nethack should be rebuilt partially
    * If we modify a pfa header file, some nethack files should rebuilt too.
+* Handle mm_select_menu after a mm_start_menu
 
 ### LATER
 * Choose what kind of analysis we want to do
