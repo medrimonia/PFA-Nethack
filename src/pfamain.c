@@ -20,7 +20,6 @@ void pfa_newloop()
 	// do things when a new game loop starts
 
 	// middleman stuff
-	mm_send_update();
 
 	// game statistics stuff
 	update_reached_squares();

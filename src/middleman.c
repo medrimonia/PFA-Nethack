@@ -11,6 +11,8 @@
 #define BUFSIZE  64
 #define SOCKPATH "/tmp/mmsock"
 
+#define MAX_MOVES 20000
+
 struct window_procs real_winprocs;
 
 struct window_procs middleman = {
@@ -202,16 +204,6 @@ void mm_init()
 	}
 }
 
-#define MAX_MOVES 20000
-
-void mm_send_update()
-{
-	if (moves >= MAX_MOVES){
-		terminate(EXIT_SUCCESS);
-	}
-}
-
-
 void
 mm_init_nhwindows(argcp,argv)
 	int* argcp;
@@ -284,10 +276,7 @@ mm_clear_nhwindow(window)
     winid window;
 {
 	mm_vlog("mm_clear_nhwindow: %d", window);
-	if (window == winmapid) {
-		// only show the map for now
-		real_winprocs.win_clear_nhwindow(window);
-	}
+	real_winprocs.win_clear_nhwindow(window);
 }
 
 void
@@ -336,7 +325,7 @@ mm_display_file(fname, complain)
 	boolean complain;
 {
 	mm_log("mm_display_file", fname);
-	real_winprocs.win_display_file(fname, complain);
+	//real_winprocs.win_display_file(fname, complain);
 }
 
 void
@@ -344,7 +333,7 @@ mm_start_menu(window)
     winid window;
 {
 	mm_log("mm_start_menu", "");
-	real_winprocs.win_start_menu(window);
+	//real_winprocs.win_start_menu(window);
 }
 
 void
@@ -390,21 +379,21 @@ mm_message_menu(let, how, mesg)
 	const char *mesg;
 {
 	mm_log("mm_message_menu", mesg);
-	real_winprocs.win_message_menu(let, how, mesg);
+	//real_winprocs.win_message_menu(let, how, mesg);
 }
 
 void
 mm_update_inventory()
 {
 	mm_log("mm_update_inventory", "");
-	real_winprocs.win_update_inventory();
+	//real_winprocs.win_update_inventory();
 }
 
 void
 mm_mark_synch()
 {
 	mm_log("mm_mark_synch", "");
-	real_winprocs.win_mark_synch();
+	//real_winprocs.win_mark_synch();
 }
 
 void
@@ -461,7 +450,7 @@ mm_raw_print_bold(str)
     const char *str;
 {
 	mm_log("mm_raw_print_bold", str);
-	real_winprocs.win_raw_print_bold(str);
+	//real_winprocs.win_raw_print_bold(str);
 }
 
 int
@@ -491,7 +480,8 @@ mm_yn_function(query,resp, def)
 	char def;
 {
 	mm_log("mm_yn_function", query);
-	return real_winprocs.win_yn_function(query, resp, def);
+	return def;
+	//return real_winprocs.win_yn_function(query, resp, def);
 }
 
 void
