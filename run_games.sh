@@ -2,8 +2,9 @@
 
 rm nethack-3.4.3/nethackdir/pfa.db
 
-for ((i = 0; i < 100; i++))
+for ((i = 1; i <= 100; i++))
 do
+		rm -f nethack-3.4.3/nethackdir/mm.log
 		nethack-3.4.3/nethack >nh_log &
 		java -jar java_starter_package/Bot.jar >bot_log
 		if [ $(($i % 10)) == 0 ]
