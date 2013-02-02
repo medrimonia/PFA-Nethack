@@ -11,8 +11,6 @@
 #define BUFSIZE  64
 #define SOCKPATH "/tmp/mmsock"
 
-#define MAX_MOVES 20000
-
 struct window_procs real_winprocs;
 
 struct window_procs middleman = {

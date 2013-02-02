@@ -23,6 +23,7 @@ void pfa_newloop()
 
 	// game statistics stuff
 	update_reached_squares();
+	gs_end_game_if_needed();
 }
 
 void pfa_end()

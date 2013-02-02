@@ -127,3 +127,10 @@ void gs_submit_game(){
 	destroy_game_result(gr);
 	close_db_manager();
 }
+
+#define MAX_MOVES 20000
+void gs_end_game_if_needed(){
+	if (moves >= MAX_MOVES){
+		terminate(EXIT_SUCCESS);
+	}
+}
