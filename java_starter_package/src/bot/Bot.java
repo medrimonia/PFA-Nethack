@@ -97,6 +97,10 @@ public class Bot {
 				return;
 			}
 		}
+		/* No valid action has been found, in this case, move
+		 * try to move in a random direction
+		 */
+		myParser.broadcastMove(myDirs[0]);
 	}
 	
 	public void nextTurn() throws IOException, UnknownPositionException, InvalidMessageException{
