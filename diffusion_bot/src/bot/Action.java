@@ -25,5 +25,17 @@ public class Action implements Scoreable {
 	public double getScore() {
 		return score;
 	}
+	
+	public String toString(){
+		StringBuffer sb = new StringBuffer();
+		sb.append("Action : [");
+		sb.append(type);
+		sb.append(',');
+		sb.append(dir);
+		sb.append(',');
+		sb.append(score);
+		sb.append(']');
+		return sb.toString();
+	}
 
 }

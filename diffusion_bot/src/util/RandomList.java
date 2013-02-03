@@ -20,12 +20,18 @@ public class RandomList<A extends Scoreable> {
 	
 	public A getRandomItem(){
 		double rand = Math.random() * sum;
+		//System.out.println("GetRandomItem : rand = " + rand);
 		double val = 0;
 		for (int i = 0; i < l.size(); i++){
 			val += l.get(i).getScore();
-			if (rand >= val)
+			//System.out.println("\tValue = " + val);
+			if (rand <= val)
 				return l.get(i);
 		}
 		return null;
+	}
+	
+	public int nbElements(){
+		return l.size();
 	}
 }
