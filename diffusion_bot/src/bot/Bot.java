@@ -72,6 +72,8 @@ public class Bot {
 		for (Direction dir : Direction.values()){
 			Action toAdd = null;
 			Square dest = map.getDest(dir);
+			if (dest == null)
+				continue;
 			if (map.isAllowedMove(dir))
 				toAdd = new Action(ActionType.MOVE,
 							       dir,
