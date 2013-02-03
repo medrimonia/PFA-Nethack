@@ -81,9 +81,9 @@ public class Map {
 	
 	public boolean isAllowedOpen(Direction d){
 		Square dest = getSquare(Position.add(myPosition, d));
-		// if dest is out of map, is a door or is out of sight, move is forbidden
-		return (dest == null ||
-						dest.getType() == SquareType.CLOSED_DOOR);
+		// if dest must not be out of the map and must be a door
+		return (dest != null &&
+				dest.getType() == SquareType.CLOSED_DOOR);
 	}
 	
 	public Square getSquare(Position p){
@@ -92,10 +92,10 @@ public class Map {
 	
 	public Square getSquare(int line, int col){
 		if (line >= content.length ||
-				line < 0)
+		    line < 0)
 			return null;
 		if (col >= content[line].length ||
-				col < 0)
+			col < 0)
 			return null;
 		return content[line][col];
 	}

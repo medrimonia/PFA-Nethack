@@ -41,30 +41,61 @@ public class Square {
 	
 	public void addVisit(){
 		nbVisits++;
+		updateInternScore();
 	}
 	
 	public void addSearch(){
 		nbSearch++;
+		updateInternScore();
 	}
 	
 	public void addOpenTry(){
 		nbOpenTries++;
+		updateInternScore();
 	}
 	
 	private void updateInternScore(){
-		if (type != SquareType.CLOSED_DOOR)
-			internScore = (getSearchScore() +
-			 		       Scoring.visitScore(nbVisits)) / 2;
-		else
-			internScore = Scoring.openScore(nbOpenTries);
+		internScore = 0;
+		internScore += getVisitScore();
+		internScore += getSearchScore();
+		internScore += getOpenScore();
+	}
+	
+	public double getVisitScore(){
+		switch (type){
+		case EMPTY:
+		case PASSAGE:
+		case WAY_UP:
+		case WAY_DOWN:
+			return Scoring.visitScore(nbVisits);
+		default: return 0;
+		}
+	}
+	
+	/*TODO might be improved (search has a range, value of search on a square
+	 * should be affected by neighboors.
+	 */
+	
+	public double getSearchScore(){
+		switch (type){
+		case UNKNOWN:
+		case VERTICAL_WALL:
+		case HORIZONTAL_WALL:
+			return Scoring.searchScore(nbSearch);
+		default: return 0;
+		}
+	}
+	
+	public double getOpenScore(){
+		switch (type){
+		case CLOSED_DOOR:
+			return Scoring.openScore(nbOpenTries);
+		default: return 0;
+		}
 	}
 	
 	public void setScore(double d){
 		score = d;
-	}
-	
-	public double getSearchScore(){
-		return Scoring.searchScore(nbSearch);
 	}
 	
 	public double getScore(){

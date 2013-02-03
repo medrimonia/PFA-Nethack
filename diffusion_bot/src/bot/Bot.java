@@ -68,7 +68,14 @@ public class Bot {
 	public void randomAction(){
 		RandomList<Action> l = new RandomList<Action>();
 		// Search is always available
-		l.add(new Action(ActionType.SEARCH, null, map.actualSquare().getSearchScore()));
+		double searchScore = map.actualSquare().getSearchScore();
+		for (Direction dir : Direction.values()){
+			Square dest = map.getDest(dir);
+			if (dest != null)
+				searchScore += dest.getSearchScore();
+		}
+		searchScore = searchScore / 3;// 9 squares taken into account
+		l.add(new Action(ActionType.SEARCH, null, searchScore));
 		for (Direction dir : Direction.values()){
 			Action toAdd = null;
 			Square dest = map.getDest(dir);
@@ -78,10 +85,12 @@ public class Bot {
 				toAdd = new Action(ActionType.MOVE,
 							       dir,
 							       dest.getScore());
-			if (map.isAllowedOpen(dir))
+			if (map.isAllowedOpen(dir)){
+				Logger.println("Opening to " + dir + " is allowed.");
 				toAdd = new Action(ActionType.OPEN,
 							       dir,
-							       dest.getScore());
+							       dest.getOpenScore() * 1000);
+			}
 			if (toAdd != null)
 				l.add(toAdd);
 		}
@@ -98,6 +107,7 @@ public class Bot {
 			myParser.broadcastSearch();
 			return;
 		case OPEN:
+			Logger.println("Trying to open a door!");
 			map.getDest(a.getDirection()).addOpenTry();
 			myParser.broadcastOpeningDoor(a.getDirection());
 			return;
