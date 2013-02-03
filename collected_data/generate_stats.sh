@@ -1,7 +1,13 @@
 #!/bin/bash
 
-#TO CHANGE FOR EACH EXPERIMENT (use as parameter, or detect later maybe)
-FOLDER="5000_games_java_sp"
+if [ $# -lt 1 ]
+then
+		echo ""
+		echo "Usage : $0 <db_folder>"
+		kill -SIGINT $$
+fi
+
+FOLDER=$1
 DATABASE="games_result.db"
 
 # DATAS DEPENDING OF COLUMNS
@@ -11,12 +17,14 @@ FIELDS[2]="nb_sdoors_found"
 FIELDS[3]="nb_sdoors_reachable"
 FIELDS[4]="nb_scorrs_found"
 FIELDS[5]="nb_scorrs_reachable"
-YMAX[0]=40
-YMAX[1]=50
-YMAX[2]=1500
-YMAX[3]=1000
-YMAX[4]=3500
-YMAX[5]=1500
+XAXIS[0]="Number of squares explored"
+XAXIS[1]="Number of squares reachable"
+XAXIS[2]="Number of secret doors found"
+XAXIS[3]="Number of secret doors in the game"
+XAXIS[4]="Number of secret corridors found"
+XAXIS[5]="Number of secret corridors in the game"
+
+NB_GAMES=`sqlite3 ${FOLDER}/${DATABASE} 'select count(*) from seek_secret'`
 
 
 for ((i = 0; i < 6 ; i++))
@@ -24,17 +32,23 @@ do
 		sqlite3 ${FOLDER}/${DATABASE} "select ${FIELDS[i]}, count(*) from seek_secret group by ${FIELDS[$i]}" > ${FOLDER}/${FIELDS[i]}_result.txt
 
 		gnuplot -persist <<PLOT
-set yrange [0:${YMAX[i]}]
+
+set title "Distribution of collected data over ${NB_GAMES} games"
+
+set yrange [0:*]
 set xrange [-1:*]
 
-set title "distribution of random data"
+set xlabel "${XAXIS[i]}"
+
+set ylabel "Number of games with this result"
+
 set datafile separator "|"
 
 #In case for building an eps-file ...
 set terminal postscript enhanced color solid eps 15
 set output "${FOLDER}/${FIELDS[i]}.eps"
 
-plot '${FOLDER}/${FIELDS[i]}_result.txt' with impulses
+plot '${FOLDER}/${FIELDS[i]}_result.txt' with impulses notitle
 
 #replot
 
