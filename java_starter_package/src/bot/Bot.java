@@ -2,10 +2,11 @@ package bot;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Collections;
 
 import util.InvalidMessageException;
 import util.Logger;
-import util.RandomList;
 
 public class Bot {
 	
@@ -60,47 +61,46 @@ public class Bot {
 	}
 	
 	public void doTurn(){
-		map.actualSquare().addVisit();
-		map.updateScores();
-		randomAction();
+		randomAction();		
 	}
 	
 	public void randomAction(){
-		RandomList<Action> l = new RandomList<Action>();
-		// Search is always available
-		l.add(new Action(ActionType.SEARCH, null, map.actualSquare().getSearchScore()));
-		for (Direction dir : Direction.values()){
-			Action toAdd = null;
-			Square dest = map.getDest(dir);
-			if (map.isAllowedMove(dir))
-				toAdd = new Action(ActionType.MOVE,
-							       dir,
-							       dest.getScore());
-			if (map.isAllowedOpen(dir))
-				toAdd = new Action(ActionType.OPEN,
-							       dir,
-							       dest.getScore());
-			if (toAdd != null)
-				l.add(toAdd);
-		}
-		Action choice = l.getRandomItem();
-		applyAction(choice);
+		double dice = Math.random();
+		if (dice > 0.7)
+			myParser.broadcastSearch();
+		else
+			randomMoveOrOpen();
+			
 	}
 	
-	public void applyAction(Action a){
-		switch(a.getType()){
-		case SEARCH:
-			map.actualSquare().addSearch();
-			myParser.broadcastSearch();
-			return;
-		case OPEN:
-			map.getDest(a.getDirection()).addOpenTry();
-			myParser.broadcastOpeningDoor(a.getDirection());
-			return;
-		case MOVE:
-			myParser.broadcastMove(a.getDirection());
-			return;
+	public void randomMove(){
+		Direction[] myDirs = Direction.values();
+		Collections.shuffle(Arrays.asList(myDirs));
+		for (Direction d : myDirs){
+			if (map.isAllowedMove(d)){
+				myParser.broadcastMove(d);
+				return;
+			}
 		}
+	}
+	
+	public void randomMoveOrOpen(){
+		Direction[] myDirs = Direction.values();
+		Collections.shuffle(Arrays.asList(myDirs));
+		for (Direction d : myDirs){
+			if (map.isAllowedMove(d)){
+				myParser.broadcastMove(d);
+				return;
+			}
+			if (map.isAllowedOpen(d)){
+				myParser.broadcastOpeningDoor(d);
+				return;
+			}
+		}
+		/* No valid action has been found, in this case, move
+		 * try to move in a random direction
+		 */
+		myParser.broadcastMove(myDirs[0]);
 	}
 	
 	public void nextTurn() throws IOException, UnknownPositionException, InvalidMessageException{

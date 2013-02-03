@@ -1,7 +1,5 @@
 package bot;
 
-import util.Scoring;
-
 public class Map {
 
 	private Position myPosition;
@@ -49,14 +47,11 @@ public class Map {
 			}
 		}
 		myPosition = null;
-	}
-	
-	public Square getDest(Direction d){
-		return getSquare(Position.add(myPosition, d));
+		
 	}
 	
 	public boolean isAllowedMove(Direction d){
-		Square dest = getDest(d);
+		Square dest = getSquare(Position.add(myPosition, d));
 		// if dest is out of map, is a door or is out of sight, move is forbidden
 		if (dest == null ||
 			dest.getType() == SquareType.CLOSED_DOOR ||
@@ -87,15 +82,13 @@ public class Map {
 	}
 	
 	public Square getSquare(Position p){
-		return getSquare(p.getLine(), p.getColumn());
-	}
-	
-	public Square getSquare(int line, int col){
+		int line = p.getLine();
 		if (line >= content.length ||
-				line < 0)
+			line < 0)
 			return null;
+		int col = p.getColumn();
 		if (col >= content[line].length ||
-				col < 0)
+			col < 0)
 			return null;
 		return content[line][col];
 	}
@@ -116,30 +109,6 @@ public class Map {
 		initMap();
 	}
 	
-	/**
-	 * Just run one iteration on the map
-	 */
-	public void updateScores(){
-		for (int line = 0; line < height; line++){
-			for (int col = 0; col < width; col++){
-				Square s = getSquare(line, col);
-				double bestScore = s.getInternScore();
-				for (Direction d : Direction.values()){
-					Square dest = getSquare(line + d.getDeltaLine(),
-									        col + d.getDeltaColumn());
-					if (dest == null)
-						continue;
-					
-					double newScore = dest.getScore() * Scoring.DISTANCE_FACTOR;
-					if (newScore > bestScore)
-						bestScore = newScore;
-				}
-				s.setScore(bestScore);
-			}
-		}
-		
-	}
-	
 	public boolean isKnownPosition(){
 		return myPosition != null;
 	}
@@ -158,8 +127,5 @@ public class Map {
 		}
 		return sb.toString();
 	}
-	
-	public Square actualSquare(){
-		return getSquare(myPosition);
-	}
+
 }
