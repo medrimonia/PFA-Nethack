@@ -1,0 +1,13 @@
+START
+DUNGEON_LEVEL 1
+MAP_HEIGHT 6
+MAP_WIDTH 10
+START MAP
+          
+   ----   
+  |...@+  
+  |....|  
+   ----   
+          
+END MAP
+END
