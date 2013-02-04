@@ -29,3 +29,10 @@ done
 mkdir $DEST_FOLDER
 
 mv nethack-3.4.3/nethackdir/pfa.db $DEST_FOLDER/games_result.db
+
+README=$DEST_FOLDER/README.md
+
+echo "## Source Data" >$README
+echo "Number of games : $1" >>$README
+echo "Bot : $3" >>$README
+echo "Processing time : TODO" >>$README
