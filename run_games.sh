@@ -36,3 +36,7 @@ echo "## Source Data" >$README
 echo "Number of games : $1" >>$README
 echo "Bot : $3" >>$README
 echo "Processing time : TODO" >>$README
+
+SCRIPT=$DATA_FOLDER/generate_stats.sh
+
+$SCRIPT $DEST_FOLDER
