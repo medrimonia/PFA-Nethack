@@ -2,12 +2,6 @@
 
 STARTM=$(date -u "+%s")
 
-DATA_FOLDER="collected_data"
-DEST_FOLDER=$DATA_FOLDER/$(date +%y-%m-%d-%Hh%M)-$3-$1
-
-export NH_MM_LOGGING=0
-export NH_MM_SOCKPATH="/tmp/mmsock"
-
 if [ $# -lt 3 ]
 then
 		echo "Usage : $0 <nb_games> <launching_bot_cmd> <bot_name>"
@@ -15,9 +9,32 @@ then
 		exit
 fi
 
+# Options for env. variables
+NH_MM_LOGGING=0
+NH_MM_SOCKPATH="/tmp/mmsock"
+
+while getopts "s:l" opt; do
+	case $opt in
+		s)
+			NH_MM_SOCKPATH=$OPTARG;
+			;;
+		l)
+			NH_MM_LOGGING=1;
+			;;
+	esac
+done
+shift $(( $OPTIND-1 ))
+export NH_MM_LOGGING
+export NH_MM_SOCKPATH
+
+
+# Destionation folder for collected data
+DATA_FOLDER="collected_data"
+DEST_FOLDER=$DATA_FOLDER/$(date +%y-%m-%d-%Hh%M)-$3-$1
 
 echo $DEST_FOLDER
 
+# Cleanup
 rm -f nethack-3.4.3/nethackdir/pfa.db
 
 for ((i = 1; i <= $1; i++))
