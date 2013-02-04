@@ -93,9 +93,9 @@ public class Bot {
 			if (toAdd != null)
 				l.add(toAdd);
 		}
-		System.out.println("NbValidActions : " + l.nbElements());
+		Logger.println("NbValidActions : " + l.nbElements());
 		Action choice = l.getRandomItem();
-		System.out.println("Choice : " + choice);
+		Logger.println("Choice : " + choice);
 		applyAction(choice);
 	}
 	
