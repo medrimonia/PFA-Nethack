@@ -50,7 +50,7 @@ set datafile separator "|"
 set terminal postscript enhanced color solid eps 15
 set output "${FOLDER}/${FIELDS[i]}.eps"
 
-plot '${FOLDER}/${FIELDS[i]}_result.txt' with impulses, '${FOLDER}/average.txt' with impulses notitle
+plot '${FOLDER}/${FIELDS[i]}_result.txt' with impulses title "games results", '${FOLDER}/average.txt' with impulses title "average"
 
 #replot
 
