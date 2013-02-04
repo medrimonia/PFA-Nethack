@@ -2,11 +2,11 @@ package util;
 
 public class Scoring {
 	
-	public final static double DISTANCE_FACTOR = 0.6;
+	public final static double DISTANCE_FACTOR = 0.8;
 	
-	private final static double SEARCH_VALUE = 0.9;
-	private final static double VISIT_VALUE = 0.4;
-	private final static double OPEN_VALUE = 0.8;
+	private final static double SEARCH_VALUE = 0.98;
+	private final static double VISIT_VALUE = 0.004;
+	private final static double OPEN_VALUE = 0.85;
 	
 	public static double searchScore(int nbSearch){
 		return Math.pow(SEARCH_VALUE, nbSearch);
