@@ -2,22 +2,45 @@
 
 STARTM=$(date -u "+%s")
 
+# Options for env. variables
+NH_MM_LOGGING=0
+NH_MM_SOCKPATH="/tmp/mmsock"
+
+while getopts "s:l" opt; do
+	case $opt in
+		s)
+			NH_MM_SOCKPATH=$OPTARG;
+			;;
+		l)
+			NH_MM_LOGGING=1;
+			;;
+	esac
+done
+shift $(( $OPTIND-1 ))
+export NH_MM_LOGGING
+export NH_MM_SOCKPATH
+
+
 if [ $# -lt 3 ]
 then
 		echo "Usage : $0 <nb_games> <launching_bot_cmd> <bot_name> <details_script (optional)>"
-		echo "Exemple : $0 100 \"java -jar java_starter_package/Bot.jar\"" java_sp
-		kill -SIGINT $$
+		echo "Usage: $0 [options] <nb_games> <launching_bot_cmd> <bot_name>"
+		echo "Options:"
+		echo -e "\t-l        enable middleman logging"
+		echo -e "\t-s <path> set an alternative path for IPC"
+		echo "Exemple: $0 100 \"java -jar java_starter_package/Bot.jar\"" java_sp
+		exit
 fi
 
 MAX_MOVES=$(grep "#define MAX_MOVES" src/game_statistics.c | grep -o [0-9]*)
 
-
+# Destionation folder for collected data
 DATA_FOLDER="collected_data"
-
 DEST_FOLDER=$DATA_FOLDER/$(date +%y-%m-%d-%Hh%M)-$3-$1
 
 echo "Output will be send to $DEST_FOLDER"
 
+# Cleanup
 rm -f nethack-3.4.3/nethackdir/pfa.db
 
 for ((i = 1; i <= $1; i++))
