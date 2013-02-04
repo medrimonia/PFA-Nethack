@@ -17,6 +17,9 @@
 * OS type : 64 bits
 * Memory : 8 Go
 
+## Known bugs during the tests
+* Doors cannot be opened due to an issue with yn question
+
 Remarks : 
 There should have been 1000 games, but some game crashed due to the fact that
 this bot hasn't been really tested at this time.
