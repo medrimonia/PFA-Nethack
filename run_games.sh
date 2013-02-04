@@ -4,16 +4,19 @@ STARTM=$(date -u "+%s")
 
 if [ $# -lt 3 ]
 then
-		echo "Usage : $0 <nb_games> <launching_bot_cmd> <bot_name>"
+		echo "Usage : $0 <nb_games> <launching_bot_cmd> <bot_name> <details_script (optional)>"
 		echo "Exemple : $0 100 \"java -jar java_starter_package/Bot.jar\"" java_sp
 		kill -SIGINT $$
 fi
+
+MAX_MOVES=$(grep "#define MAX_MOVES" src/game_statistics.c | grep -o [0-9]*)
+
 
 DATA_FOLDER="collected_data"
 
 DEST_FOLDER=$DATA_FOLDER/$(date +%y-%m-%d-%Hh%M)-$3-$1
 
-echo $DEST_FOLDER
+echo "Output will be send to $DEST_FOLDER"
 
 rm -f nethack-3.4.3/nethackdir/pfa.db
 
@@ -22,11 +25,9 @@ do
 		rm -f nethack-3.4.3/nethackdir/mm.log
 		nethack-3.4.3/nethack >nh_log &
 		$2 >bot_log
-		if [ $(($i % 10)) == 0 ]
-		then
-				echo $i
-		fi
+		printf "\033[80DRunning tests : %d/%d" $i $1
 done
+echo
 
 mkdir $DEST_FOLDER
 
@@ -35,9 +36,10 @@ mv nethack-3.4.3/nethackdir/pfa.db $DEST_FOLDER/games_result.db
 README=$DEST_FOLDER/README.md
 
 echo "## Source Data" >$README
-echo "Number of games : $1" >>$README
-echo "Bot : $3" >>$README
-echo "CurrentCommit : $(git log -1 --format="%H")" >>$README
+echo "* Number of games : $1" >>$README
+echo "* Bot : $3" >>$README
+echo "* Max moves : $MAX_MOVES" >>$README
+echo "* Current Commit : $(git log -1 --format="%H")" >>$README
 
 SCRIPT=$DATA_FOLDER/generate_stats.sh
 
@@ -54,4 +56,11 @@ else
 TTIMEM=$(printf "%ds\n" $((RUNTIMEM)))
 fi
 
-echo "Processing time: $TTIMEM" >>$README
+echo "* Processing time: $TTIMEM" >>$README
+
+if [ $# -ge 4 ]
+then
+		echo >>$README
+		echo "##Bot details" >>$README
+		$4 >>$README	
+fi
