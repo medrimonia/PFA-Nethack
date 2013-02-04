@@ -2,13 +2,6 @@
 
 STARTM=$(date -u "+%s")
 
-if [ $# -lt 3 ]
-then
-		echo "Usage : $0 <nb_games> <launching_bot_cmd> <bot_name>"
-		echo "Exemple : $0 100 \"java -jar java_starter_package/Bot.jar\"" java_sp
-		exit
-fi
-
 # Options for env. variables
 NH_MM_LOGGING=0
 NH_MM_SOCKPATH="/tmp/mmsock"
@@ -26,6 +19,17 @@ done
 shift $(( $OPTIND-1 ))
 export NH_MM_LOGGING
 export NH_MM_SOCKPATH
+
+
+if [ $# -lt 3 ]
+then
+		echo "Usage: $0 [options] <nb_games> <launching_bot_cmd> <bot_name>"
+		echo "Options:"
+		echo -e "\t-l        enable middleman logging"
+		echo -e "\t-s <path> set an alternative path for IPC"
+		echo "Exemple: $0 100 \"java -jar java_starter_package/Bot.jar\"" java_sp
+		exit
+fi
 
 
 # Destionation folder for collected data
