@@ -86,7 +86,6 @@ public class Bot {
 							       dir,
 							       dest.getScore());
 			if (map.isAllowedOpen(dir)){
-				Logger.println("Opening to " + dir + " is allowed.");
 				toAdd = new Action(ActionType.OPEN,
 							       dir,
 							       dest.getOpenScore() * 1000);
@@ -107,7 +106,6 @@ public class Bot {
 			myParser.broadcastSearch();
 			return;
 		case OPEN:
-			Logger.println("Trying to open a door!");
 			map.getDest(a.getDirection()).addOpenTry();
 			myParser.broadcastOpeningDoor(a.getDirection());
 			return;
