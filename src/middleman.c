@@ -86,9 +86,14 @@ static int mmsock = -1;
 static int client = -1;
 static struct sockaddr_un local;
 
+static int cmdbuf[BUFSIZE];
+static unsigned int first = 0;
+static unsigned int last = 0;
+
 
 void mm_vlog(const char *format, ...)
 {
+#ifdef MMLOG
 	va_list va;
 
 	va_start(va, format);
@@ -98,12 +103,15 @@ void mm_vlog(const char *format, ...)
 		fflush(log);
 	}
 	va_end(va);
+#endif
 }
 
 
 void mm_log(const char *func, const char *msg)
 {
+#ifdef MMLOG
 	mm_vlog("%s: %s", func, msg);
+#endif
 }
 
 
@@ -144,12 +152,14 @@ void mm_init()
 		terminate(EXIT_FAILURE);
 	}
 
+#ifdef MMLOG
 	/* open log file */
 	log = fopen("mm.log", "a");
 
 	if (log == NULL) {
 		perror("fopen");
 	}
+#endif
 
 	/* open unix socket */
 	local.sun_family = AF_UNIX;
@@ -208,28 +218,24 @@ mm_init_nhwindows(argcp,argv)
 	char** argv;
 {
 	mm_log("mm_init_nhwindows", "");
-	real_winprocs.win_init_nhwindows(argcp,argv);
 }
 
 void
 mm_player_selection()
 {
 	mm_log("mm_player_selection", "");
-	real_winprocs.win_player_selection();
 }
 
 void
 mm_askname()
 {
 	mm_log("mm_askname", "");
-	real_winprocs.win_askname();
 }
 
 void
 mm_get_nh_event()
 {
 	mm_log("mm_get_nh_event", "");
-	real_winprocs.win_get_nh_event();
 }
 
 void
@@ -237,14 +243,12 @@ mm_suspend_nhwindows(str)
     const char *str;
 {
 	mm_log("mm_suspend_nhwindows", str);
-	real_winprocs.win_suspend_nhwindows(str);
 }
 
 void
 mm_resume_nhwindows()
 {
 	mm_log("mm_resume_nhwindows", "");
-	real_winprocs.win_resume_nhwindows();
 }
 
 void
@@ -252,21 +256,20 @@ mm_exit_nhwindows(str)
     const char *str;
 {
 	mm_log("mm_exit_nhwindows", str);
-	real_winprocs.win_exit_nhwindows(str);
 }
 
 winid
 mm_create_nhwindow(type)
     int type;
 {
+	static winid id = 1;
 	mm_vlog("mm_create_nhwindow: type %d", type);
-	winid id = real_winprocs.win_create_nhwindow(type);
 
 	if (type == NHW_MAP) {
 		winmapid = id;
 	}
 
-	return id;
+	return id++;
 }
 
 void
@@ -274,7 +277,6 @@ mm_clear_nhwindow(window)
     winid window;
 {
 	mm_vlog("mm_clear_nhwindow: %d", window);
-	real_winprocs.win_clear_nhwindow(window);
 }
 
 void
@@ -283,11 +285,6 @@ mm_display_nhwindow(window, blocking)
     boolean blocking;
 {
 	mm_vlog("mm_display_nhwindow: %d", window);
-
-	if (window == winmapid) {
-		// only show the map for now
-		real_winprocs.win_display_nhwindow(window, 0); // non-blocking
-	}
 }
 
 void
@@ -295,7 +292,6 @@ mm_destroy_nhwindow(window)
     winid window;
 {
 	mm_log("mm_destroy_nhwindow", "");
-	real_winprocs.win_destroy_nhwindow(window);
 }
 
 void
@@ -304,7 +300,6 @@ mm_curs(window, x, y)
 	register int x, y;
 {
 	mm_log("mm_curs", "");
-	real_winprocs.win_curs(window, x, y);
 }
 
 void
@@ -314,7 +309,6 @@ mm_putstr(window, attr, str)
     const char *str;
 {
 	mm_log("mm_putstr", str);
-	//real_winprocs.win_putstr(window, attr, str);
 }
 
 void
@@ -323,7 +317,6 @@ mm_display_file(fname, complain)
 	boolean complain;
 {
 	mm_log("mm_display_file", fname);
-	//real_winprocs.win_display_file(fname, complain);
 }
 
 void
@@ -331,7 +324,6 @@ mm_start_menu(window)
     winid window;
 {
 	mm_log("mm_start_menu", "");
-	//real_winprocs.win_start_menu(window);
 }
 
 void
@@ -346,8 +338,6 @@ mm_add_menu(window, glyph, identifier, ch, gch, attr, str, preselected)
     boolean preselected; /* item is marked as selected */
 {
 	mm_log("mm_add_menu", str);
-	//real_winprocs.win_add_menu(window, glyph, identifier, ch, gch, attr, str,
-	//		preselected);
 }
 
 void
@@ -356,7 +346,6 @@ mm_end_menu(window, prompt)
     const char *prompt;	/* prompt to for menu */
 {
 	mm_log("mm_end_menu", prompt);
-	//real_winprocs.win_end_menu(window, prompt);
 }
 
 int
@@ -367,7 +356,6 @@ mm_select_menu(window, how, menu_list)
 {
 	mm_log("mm_select_menu", "");
 	return -1; // just cancel for now
-	//return real_winprocs.win_select_menu(window, how, menu_list);
 }
 
 /* special hack for treating top line --More-- as a one item menu */
@@ -378,28 +366,24 @@ mm_message_menu(let, how, mesg)
 	const char *mesg;
 {
 	mm_log("mm_message_menu", mesg);
-	//real_winprocs.win_message_menu(let, how, mesg);
 }
 
 void
 mm_update_inventory()
 {
 	mm_log("mm_update_inventory", "");
-	//real_winprocs.win_update_inventory();
 }
 
 void
 mm_mark_synch()
 {
 	mm_log("mm_mark_synch", "");
-	//real_winprocs.win_mark_synch();
 }
 
 void
 mm_wait_synch()
 {
 	mm_log("mm_wait_synch", "");
-	real_winprocs.win_wait_synch();
 }
 
 #ifdef CLIPPING
@@ -408,7 +392,6 @@ mm_cliparound(x, y)
 	int x, y;
 {
 	mm_log("mm_cliparound", "");
-	real_winprocs.win_cliparound(x, y);
 }
 #endif /* CLIPPING */
 
@@ -433,7 +416,6 @@ mm_print_glyph(window, x, y, glyph)
 		send(client, buf, size, 0);
 	}
 
-	real_winprocs.win_print_glyph(window, x, y, glyph);
 }
 
 void
@@ -441,7 +423,6 @@ mm_raw_print(str)
     const char *str;
 {
 	mm_log("mm_raw_print", str);
-	//real_winprocs.win_raw_print(str);
 }
 
 void
@@ -449,28 +430,24 @@ mm_raw_print_bold(str)
     const char *str;
 {
 	mm_log("mm_raw_print_bold", str);
-	//real_winprocs.win_raw_print_bold(str);
 }
 
 int
 mm_nhgetch()
 {
 	mm_log("mm_nhgetch", "");
-	return real_winprocs.win_nhgetch();
 }
 
 void
 mm_nhbell()
 {
 	mm_log("mm_nhbell", "");
-	real_winprocs.win_nhbell();
 }
 
 int
 mm_doprev_message()
 {
 	mm_log("mm_doprev_message", "");
-	return real_winprocs.win_doprev_message();
 }
 
 char
@@ -478,9 +455,17 @@ mm_yn_function(query,resp, def)
 	const char *query,*resp;
 	char def;
 {
+	char cmd;
+
 	mm_log("mm_yn_function", query);
-	return def;
-	//return real_winprocs.win_yn_function(query, resp, def);
+
+	if (first == last) { // buffer empty
+		cmd = def;
+	} else {
+		cmd = cmdbuf[++first % BUFSIZE];
+	}
+
+	return cmd;
 }
 
 void
@@ -489,14 +474,12 @@ mm_getlin(query, bufp)
 	register char *bufp;
 {
 	mm_log("mm_getlin", query);
-	real_winprocs.win_getlin(query, bufp);
 }
 
 int
 mm_get_ext_cmd()
 {
 	mm_log("mm_get_ext_cmd", "");
-	return real_winprocs.win_get_ext_cmd();
 }
 
 void
@@ -504,14 +487,12 @@ mm_number_pad(state)
 	int state;
 {
 	mm_log("mm_number_pad", "");
-	real_winprocs.win_number_pad(state);
 }
 
 void
 mm_delay_output()
 {
 	mm_log("mm_delay_output", "");
-	real_winprocs.win_delay_output();
 }
 
 /* This function returns a key or 0 if a mouse button was used.
@@ -523,10 +504,6 @@ mm_nh_poskey(x, y, mod)
 	int i, cmd, nb_received;
 	ssize_t size;
 	char buf[BUFSIZE];
-
-	static int cmdbuf[BUFSIZE];
-	static unsigned int first = 0;
-	static unsigned int last = 0;
 
 	mm_log("mm_nh_poskey", "");
 
@@ -571,7 +548,6 @@ mm_nh_poskey(x, y, mod)
 	
 	return cmd;
 
-	//return real_winprocs.win_nh_poskey(x, y, mod);
 }
 
 #ifdef POSITIONBAR
@@ -580,7 +556,6 @@ mm_update_positionbar(posbar)
 	char *posbar;
 {
 	mm_log("mm_update_positionbar", "");
-	real_winprocs.win_update_positionbar(posbar);
 }
 #endif
 
@@ -588,12 +563,10 @@ void
 mm_start_screen()
 {
 	mm_log("mm_start_screen", "");
-	real_winprocs.win_start_screen();
 }
 
 void
 mm_end_screen()
 {
 	mm_log("mm_end_screen", "");
-	real_winprocs.win_end_screen();
 }
