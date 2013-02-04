@@ -14,8 +14,6 @@
    * If we modify a pfa src file, nethack should be rebuilt partially
    * If we modify a pfa header file, some nethack files should rebuilt too.
 * Update run_games.sh (will make launching tests in ssh easier)
-   * Add run bot command as a parameter
-   * Add folder name and place data in the appropriated folder
    * Add elapsed time tracking
    * Add automatic creation of README.md
 * Update doc
