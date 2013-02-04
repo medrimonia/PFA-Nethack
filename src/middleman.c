@@ -93,6 +93,7 @@ static unsigned int last = 0;
 
 void mm_vlog(const char *format, ...)
 {
+#ifdef MMLOG
 	va_list va;
 
 	va_start(va, format);
@@ -102,12 +103,15 @@ void mm_vlog(const char *format, ...)
 		fflush(log);
 	}
 	va_end(va);
+#endif
 }
 
 
 void mm_log(const char *func, const char *msg)
 {
+#ifdef MMLOG
 	mm_vlog("%s: %s", func, msg);
+#endif
 }
 
 
@@ -148,12 +152,14 @@ void mm_init()
 		terminate(EXIT_FAILURE);
 	}
 
+#ifdef MMLOG
 	/* open log file */
 	log = fopen("mm.log", "a");
 
 	if (log == NULL) {
 		perror("fopen");
 	}
+#endif
 
 	/* open unix socket */
 	local.sun_family = AF_UNIX;
