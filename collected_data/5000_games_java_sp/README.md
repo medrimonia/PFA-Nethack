@@ -9,6 +9,9 @@
 * OS type : 64 bits
 * Memory : 8 Go
 
+## Known bugs during the tests
+* Doors cannot be opened due to an issue with yn question
+
 Remarks:
 Because we were still trying to track bugs, all logs were activated, another try
 should be done with all logs and main interface disabled. This should allow us

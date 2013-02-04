@@ -30,6 +30,8 @@ NB_GAMES=`sqlite3 ${FOLDER}/${DATABASE} 'select count(*) from seek_secret'`
 for ((i = 0; i < 6 ; i++))
 do
 		sqlite3 ${FOLDER}/${DATABASE} "select ${FIELDS[i]}, count(*) from seek_secret group by ${FIELDS[$i]}" > ${FOLDER}/${FIELDS[i]}_result.txt
+		sqlite3 ${FOLDER}/${DATABASE} "select AVG, MAX from (select max(NB) as MAX from (select count(*) as NB from seek_secret group by ${FIELDS[i]}) A) A, (select avg(${FIELDS[i]}) as AVG from seek_secret) B" >${FOLDER}/average.txt
+
 
 		gnuplot -persist <<PLOT
 
@@ -48,11 +50,12 @@ set datafile separator "|"
 set terminal postscript enhanced color solid eps 15
 set output "${FOLDER}/${FIELDS[i]}.eps"
 
-plot '${FOLDER}/${FIELDS[i]}_result.txt' with impulses notitle
+plot '${FOLDER}/${FIELDS[i]}_result.txt' with impulses title "games results", '${FOLDER}/average.txt' with impulses title "average"
 
 #replot
 
 quit
 PLOT
 		rm ${FOLDER}/${FIELDS[i]}_result.txt
+		rm ${FOLDER}/average.txt
 done

@@ -9,6 +9,11 @@ nethack-343-src.tgz
 java_starter_package/.classpath
 java_starter_package/.project
 java_starter_package/Bot.jar
+diffusion_bot/.classpath
+diffusion_bot/.project
+diffusion_bot/Bot.jar
+bot_log
+nh_log
 tags
 *.class
 .metadata
