@@ -15,7 +15,6 @@
    * If we modify a pfa header file, some nethack files should rebuilt too.
 * Update run_games.sh (will make launching tests in ssh easier)
    * Add elapsed time tracking
-   * Add automatic creation of README.md
 * Update doc
    * Everywhere
 
