@@ -2,16 +2,19 @@
 
 STARTM=$(date -u "+%s")
 
+DATA_FOLDER="collected_data"
+DEST_FOLDER=$DATA_FOLDER/$(date +%y-%m-%d-%Hh%M)-$3-$1
+
+export NH_MM_LOGGING=0
+export NH_MM_SOCKPATH="/tmp/mmsock"
+
 if [ $# -lt 3 ]
 then
 		echo "Usage : $0 <nb_games> <launching_bot_cmd> <bot_name>"
 		echo "Exemple : $0 100 \"java -jar java_starter_package/Bot.jar\"" java_sp
-		kill -SIGINT $$
+		exit
 fi
 
-DATA_FOLDER="collected_data"
-
-DEST_FOLDER=$DATA_FOLDER/$(date +%y-%m-%d-%Hh%M)-$3-$1
 
 echo $DEST_FOLDER
 

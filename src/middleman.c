@@ -8,8 +8,8 @@
 #include <sys/un.h>
 #include <sys/socket.h>
 
-#define BUFSIZE  64
-#define SOCKPATH "/tmp/mmsock"
+#define BUFSIZE         64
+#define DEFAULTSOCKPATH "/tmp/mmsock"
 
 struct window_procs real_winprocs;
 
@@ -81,7 +81,9 @@ struct window_procs middleman = {
 static winid winmapid;
 
 static FILE *log = NULL;
+static char use_logging = 0;
 
+static char *sockpath;
 static int mmsock = -1;
 static int client = -1;
 static struct sockaddr_un local;
@@ -93,25 +95,23 @@ static unsigned int last = 0;
 
 void mm_vlog(const char *format, ...)
 {
-#ifdef MMLOG
 	va_list va;
 
-	va_start(va, format);
-	if (log != NULL) {
-		vfprintf(log, format, va);
-		fprintf(log, "\n");
-		fflush(log);
+	if (use_logging) {
+		va_start(va, format);
+		if (log != NULL) {
+			vfprintf(log, format, va);
+			fprintf(log, "\n");
+			fflush(log);
+		}
+		va_end(va);
 	}
-	va_end(va);
-#endif
 }
 
 
 void mm_log(const char *func, const char *msg)
 {
-#ifdef MMLOG
 	mm_vlog("%s: %s", func, msg);
-#endif
 }
 
 
@@ -133,38 +133,54 @@ void mm_cleanup()
 		client = -1;
 	}
 
-	unlink(SOCKPATH);
+	unlink(sockpath);
 }
 
 
 void mm_init()
 {
 	int rv;
+	char *str;
 	socklen_t len;
 
-	/* unlink SOCKPATH in case the came wasn't terminated cleanly */
-	if (EBUSY == unlink(SOCKPATH)) {
+	str = getenv("NH_MM_SOCKPATH");
+	if (str == NULL) {
+		sockpath = DEFAULTSOCKPATH;
+	} else {
+		sockpath = str;
+	}
+
+	str = getenv("NH_MM_LOGGING");
+	if (str == NULL) {
+		use_logging = 0;
+	} else {
+		use_logging = atoi(str);
+	}
+
+	/* unlink sockpath in case the came wasn't terminated cleanly */
+	if (EBUSY == unlink(sockpath)) {
 		fprintf(
 			stderr,
 			"%s is busy, is another middleman running?\n",
-			SOCKPATH
+			sockpath
 		);
 		terminate(EXIT_FAILURE);
 	}
 
-#ifdef MMLOG
-	/* open log file */
-	log = fopen("mm.log", "a");
 
-	if (log == NULL) {
-		perror("fopen");
+	/* open log file if logging enabled */
+	if (use_logging) {
+		log = fopen("mm.log", "a");
+
+		if (log == NULL) {
+			perror("fopen");
+		}
 	}
-#endif
 
 	/* open unix socket */
 	local.sun_family = AF_UNIX;
-	strcpy(local.sun_path, SOCKPATH);
-	len = strlen(SOCKPATH) + sizeof local.sun_family;
+	strcpy(local.sun_path, sockpath);
+	len = strlen(sockpath) + sizeof local.sun_family;
 
 	mmsock = socket(AF_UNIX, SOCK_STREAM, 0);
 
@@ -176,7 +192,7 @@ void mm_init()
 
 	if (-1 == bind(mmsock, (struct sockaddr *) &local, len)) {
 		perror("bind");
-		mm_vlog("bind(): Could not bind %s to middleman socket.", SOCKPATH);
+		mm_vlog("bind(): Could not bind %s to middleman socket.", sockpath);
 		terminate(EXIT_FAILURE);
 		return;
 	}
