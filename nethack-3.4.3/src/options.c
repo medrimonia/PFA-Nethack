@@ -494,7 +494,8 @@ initoptions()
 	int i;
 
 	/* initialize the random number generator */
-	setrandom();
+	/* using determined seed, if given */
+	setseed(nh_getenv("SEED"));
 
 	/* for detection of configfile options specified multiple times */
 	iflags.opt_booldup = iflags.opt_compdup = (int *)0;

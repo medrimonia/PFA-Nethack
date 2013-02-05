@@ -458,6 +458,54 @@ extern struct tm *FDECL(localtime,(time_t *));
 static struct tm *NDECL(getlt);
 
 void
+setseed(const char * seed_s)
+{
+	int seed;
+	if (seed_s == NULL) {
+#ifdef RANDOM	/* srandom() from sys/share/random.c */
+		seed = time((time_t *)0);
+	}
+	else {
+		seed = atoi(seed_s);
+	}
+	srandom((unsigned int) seed);
+#else
+# if defined(__APPLE__) || defined(BSD) || defined(LINUX) || defined(ULTRIX) || defined(CYGWIN32) /* system srandom() */
+#  if defined(BSD) && !defined(POSIX_TYPES)
+#   if defined(SUNOS4)
+		(void)
+#   endif
+			seed = time((long *)0);
+#  else
+			seed = time((time_t *)0);
+#  endif
+		}
+		else {
+			seed = atoi(seed_s);
+		}
+		srandom(seed);
+# else
+#  ifdef UNIX	/* system srand48() */
+		seed = time((time_t *)0);
+	}
+	else {
+		seed = atoi(seed_s);
+	}
+	srand48((long) seed);
+#  else		/* poor quality system routine */
+		seed = time((time_t *)0);
+	}
+	else {
+		seed = atoi(seed_s);
+	}
+	srand(seed);
+#  endif
+# endif
+#endif
+	gs_set_seed(seed);
+}
+
+void
 setrandom()
 {
 	/* the types are different enough here that sweeping the different
