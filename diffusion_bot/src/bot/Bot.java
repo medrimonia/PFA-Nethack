@@ -9,9 +9,9 @@ import util.RandomList;
 
 public class Bot {
 	
-	InputOutputUnit myParser;
-	int dungeonLevel;
-	Map map;
+	private InputOutputUnit myParser;
+	private int dungeonLevel;
+	public Map map;
 	
 	public Bot(){
 		dungeonLevel = 0;
@@ -69,12 +69,6 @@ public class Bot {
 		RandomList<Action> l = new RandomList<Action>();
 		// Search is always available
 		double searchScore = map.actualSquare().getSearchScore();
-		for (Direction dir : Direction.values()){
-			Square dest = map.getDest(dir);
-			if (dest != null)
-				searchScore += dest.getSearchScore();
-		}
-		searchScore = searchScore / 3;// 9 squares taken into account
 		l.add(new Action(ActionType.SEARCH, null, searchScore));
 		for (Direction dir : Direction.values()){
 			Action toAdd = null;
@@ -102,7 +96,7 @@ public class Bot {
 	public void applyAction(Action a){
 		switch(a.getType()){
 		case SEARCH:
-			map.actualSquare().addSearch();
+			map.actualSquare().addSearch(map, map.getPlayerPosition());
 			myParser.broadcastSearch();
 			return;
 		case OPEN:

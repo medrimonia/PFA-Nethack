@@ -33,7 +33,37 @@ public enum SquareType {
 	public static SquareType tokenToVariables(char token){
 		if (mySquareTypes.containsKey(token))
 			return mySquareTypes.get(token);
+		// Special cases which are supposed to be handled in patches later
+		if (token == '$' ||
+				token == '?' ||
+				token == '@')
+			return EMPTY;
 		return UNKNOWN;
+	}
+	
+	public boolean openable(){
+		return this == CLOSED_DOOR;
+	}
+	
+	public boolean searchable(){
+		switch (this){
+		case UNKNOWN:
+		case VERTICAL_WALL:
+		case HORIZONTAL_WALL:
+			return true;
+		default: return false;
+		}
+	}
+	
+	public boolean reachable(){
+		switch (this){
+		case EMPTY:
+		case PASSAGE:
+		case WAY_UP:
+		case WAY_DOWN:
+			return true;
+		default: return false;
+		}		
 	}
 	
 	public String toString(){

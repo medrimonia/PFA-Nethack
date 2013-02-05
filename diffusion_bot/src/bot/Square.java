@@ -16,6 +16,16 @@ public class Square {
 	 */
 	private double internScore;
 	/**
+	 * Calculate a score in [0,1] representing the probability
+	 * that something is hidden in this square (SCORR, SDOOR) 
+	 */
+	private double localSearchScore;
+	/**
+	 * A score in [0,1] specifying the probability of finding something
+	 * hidden in the neighborhood when performing a search on this square
+	 */
+	private double searchScore;
+	/**
 	 * Each time a search is done in a nearbySquare, this value is incremented.
 	 */
 	private int nbSearch;
@@ -28,6 +38,11 @@ public class Square {
 	 * Number of time the player tried to open the door
 	 */
 	private int nbOpenTries;
+	/**
+	 * Secret probability describe the probability according to the 
+	 * neighborhood, it must be updated	
+	 */
+	private double internProbability;
 	
 	public Square(char c){
 		type = SquareType.tokenToVariables(c);
@@ -35,6 +50,9 @@ public class Square {
 		nbSearch = 0;
 		nbVisits = 0;
 		nbOpenTries = 0;
+		internProbability = 0.01;
+		localSearchScore = 0;
+		searchScore = 0;
 		updateInternScore();
 		score = internScore;
 	}
@@ -44,14 +62,41 @@ public class Square {
 		updateInternScore();
 	}
 	
-	public void addSearch(){
+	public void addSearch(Map m, Position p){
 		nbSearch++;
+		updateLocalSearchScore(m, p);
+	}
+	
+	public void updateLocalSearchScore(Map m, Position p){
+		double oldScore = localSearchScore;
+		localSearchScore = Scoring.localSearchScore(this);
+		if (localSearchScore != oldScore)
+			m.updateNeighboorsSearchScore(p);
+	}
+	
+	public void updateSearchScore(Map m, Position p){
+		searchScore = Scoring.environmentalSearchScore(m, p);
 		updateInternScore();
 	}
 	
 	public void addOpenTry(){
 		nbOpenTries++;
 		updateInternScore();
+	}
+	
+	public int getNbOpenTries(){
+		return nbOpenTries;
+	}
+	
+	public void setInternProbability(Map m, Position p, double newProbability){
+		double oldProbability = internProbability;
+		internProbability = newProbability;
+		if (oldProbability != internProbability)
+			updateLocalSearchScore(m, p);
+	}
+	
+	public double getInternProbability(){
+		return internProbability;
 	}
 	
 	private void updateInternScore(){
@@ -62,40 +107,27 @@ public class Square {
 	}
 	
 	public double getVisitScore(){
-		switch (type){
-		case EMPTY:
-		case PASSAGE:
-		case WAY_UP:
-		case WAY_DOWN:
-			return Scoring.visitScore(nbVisits);
-		default: return 0;
-		}
+		if (type.reachable())
+			return Scoring.visitScore(nbVisits) * Scoring.VISIT_SCORE;
+		return 0;
 	}
 	
-	/*TODO might be improved (search has a range, value of search on a square
-	 * should be affected by neighboors.
-	 */
-	
 	public double getSearchScore(){
-		switch (type){
-		case UNKNOWN:
-		case VERTICAL_WALL:
-		case HORIZONTAL_WALL:
-			return Scoring.searchScore(nbSearch);
-		default: return 0;
-		}
+		return searchScore * Scoring.FOUND_SCORE;
 	}
 	
 	public double getOpenScore(){
-		switch (type){
-		case CLOSED_DOOR:
-			return Scoring.openScore(nbOpenTries);
-		default: return 0;
-		}
+		if (type.openable())
+			return Scoring.openScore(this) * Scoring.OPEN_SCORE;
+		return 0;
 	}
 	
-	public void setScore(double d){
-		score = d;
+	public double getLocalSearchScore(){
+		return localSearchScore; 
+	}
+	
+	public void setScore(double newScore){
+		score = newScore;
 	}
 	
 	public double getScore(){
@@ -104,6 +136,10 @@ public class Square {
 	
 	public double getInternScore(){
 		return internScore;
+	}
+	
+	public int getNbSearch(){
+		return nbSearch;
 	}
 
 	public SquareType getType(){

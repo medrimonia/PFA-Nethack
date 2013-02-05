@@ -23,7 +23,7 @@ public class Map {
 				char c = map[line][column];
 				if (c == Protocole.PLAYER_TOKEN)
 					myPosition = new Position(line, column);
-				content[line][column] = new Square(map[line][column]);
+				addNewSquare(map[line][column], new Position(line, column));
 			}
 		}
 		if (myPosition == null)
@@ -36,6 +36,13 @@ public class Map {
 		initMap();
 	}
 	
+	public Square addNewSquare(char c, Position p){
+		Square s = new Square(c);
+		content[p.getLine()][p.getColumn()] = s;
+		s.updateSearchScore(this,p);
+		return s;
+	}
+	
 	// initialize the Map according to a lazy mechanism
 	private void initMap(){
 		if (height < 0 || width < 0)
@@ -45,7 +52,7 @@ public class Map {
 		content = new Square[height][width];
 		for (int line = 0; line < height ; line++){
 			for (int column = 0; column < width; column++){
-				content[line][column] = new Square(SquareType.UNKNOWN.getToken());
+				addNewSquare(SquareType.UNKNOWN.getToken(), new Position(line, column));
 			}
 		}
 		myPosition = null;
@@ -105,15 +112,44 @@ public class Map {
 	}
 	
 	public void updateSquare(int line, int col, char newVal){
+		Position p = new Position(line, col);
 		if (newVal == Protocole.PLAYER_TOKEN)
-			myPosition = new Position(line, col);
-		content[line][col] = new Square(newVal);
+			myPosition = p;
+		addNewSquare(newVal, p);
+		updateNearbyInternProbabilities(p);
 	}
 	
 	public void updateSize(int height, int width){
 		this.width = width;
 		this.height = height;
 		initMap();
+	}
+	
+	private void updateNearbyInternProbabilities(Position p){
+		updateInternProbability(p);
+		for (Direction d : Direction.values())
+			updateInternProbability(Position.add(p, d));
+	}
+	
+	private void updateInternProbability(Position p){
+		Square s = getSquare(p);
+		if (s == null) return;
+		if (!s.getType().searchable()){
+			s.setInternProbability(this, p, 0);
+			return;
+		}
+		// Contain the number of Passage in the neighborhood
+		int nbPassages = 0;
+		for (Direction d : Direction.values()){
+			Square dest = getSquare(Position.add(p, d));
+			if (dest != null &&
+				dest.getType() == SquareType.PASSAGE)
+				nbPassages += 1;
+		}
+		if (nbPassages == 1)
+			s.setInternProbability(this, p, 1);
+		else
+			s.setInternProbability(this, p, 0.1);
 	}
 	
 	/**
@@ -130,7 +166,7 @@ public class Map {
 					if (dest == null)
 						continue;
 					
-					double newScore = dest.getScore() * Scoring.DISTANCE_FACTOR;
+					double newScore = dest.getScore() - Scoring.MOVE_COST;
 					if (newScore > bestScore)
 						bestScore = newScore;
 				}
@@ -146,7 +182,7 @@ public class Map {
 	
 	public String toString(){
 		StringBuffer sb = new StringBuffer();
-		sb.append("myPosition : " + myPosition);
+		sb.append("myPosition : " + myPosition + '\n');
 		for (int line = 0; line < content.length ; line++){
 			for (int column = 0; column < content[line].length; column++)
 				if (myPosition.getLine() == line &&
@@ -161,5 +197,14 @@ public class Map {
 	
 	public Square actualSquare(){
 		return getSquare(myPosition);
+	}
+
+	public void updateNeighboorsSearchScore(Position p) {
+		for (Direction d : Direction.values()){
+			Position neighborPosition = Position.add(p, d);
+			Square neighbor = getSquare(neighborPosition);
+			if (neighbor != null)
+				neighbor.updateSearchScore(this, neighborPosition);
+		}
 	}
 }

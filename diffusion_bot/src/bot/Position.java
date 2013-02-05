@@ -26,4 +26,11 @@ public class Position {
 		return "(" + line + " " + column + ")";
 	}
 	
+	public boolean equals(Object o){
+		if (!(o instanceof Position))
+			return false;
+		Position p = (Position)o;
+		return (p.line == line && p.column == column);
+	}
+	
 }
