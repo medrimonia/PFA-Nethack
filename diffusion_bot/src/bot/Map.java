@@ -1,5 +1,7 @@
 package bot;
 
+import java.util.HashSet;
+
 import util.Scoring;
 
 public class Map {
@@ -8,39 +10,35 @@ public class Map {
 	private int height;
 	private int width;
 	private Square[][] content;
-	
-	public Map(){
-		content = null;
-		myPosition = null;
-		height = -1;
-		width = -1;
-	}
 
+	public Map(){
+		this.height = 0;
+		this.width = 0;
+		myPosition = null;
+		content = null;
+	}
+	
 	public Map(char[][] map) throws UnknownPositionException{
+		this(map.length, map[0].length);
 		content = new Square[map.length][map[0].length];
 		for (int line = 0; line < map.length ; line++){
 			for (int column = 0; column < map[line].length; column++){
 				char c = map[line][column];
+				Position p = new Position(line,column);
 				if (c == Protocole.PLAYER_TOKEN)
-					myPosition = new Position(line, column);
-				addNewSquare(map[line][column], new Position(line, column));
+					myPosition = p;
+				content[line][column] = new Square(c, p);
 			}
 		}
 		if (myPosition == null)
 			throw new UnknownPositionException("Position not specified in message");
 	}
 
-	public Map(int height, int width) throws UnknownPositionException{
+	public Map(int height, int width){
 		this.height = height;
 		this.width = width;
+		myPosition = null;
 		initMap();
-	}
-	
-	public Square addNewSquare(char c, Position p){
-		Square s = new Square(c);
-		content[p.getLine()][p.getColumn()] = s;
-		s.updateSearchScore(this,p);
-		return s;
 	}
 	
 	// initialize the Map according to a lazy mechanism
@@ -52,42 +50,113 @@ public class Map {
 		content = new Square[height][width];
 		for (int line = 0; line < height ; line++){
 			for (int column = 0; column < width; column++){
-				addNewSquare(SquareType.UNKNOWN.getToken(), new Position(line, column));
+				Position p = new Position(line, column);
+				content[line][column] = new Square(SquareType.UNKNOWN.getToken(), p);
 			}
 		}
+		linkMap();
 		myPosition = null;
 	}
 	
-	public Square getDest(Direction d){
-		return getSquare(Position.add(myPosition, d));
+	private void linkMap(){
+		for (int line = 0; line < height ; line++){
+			for (int column = 0; column < width; column++){
+				Square s = content[line][column];
+				for (Direction d : Direction.values()){
+					Square neighbor = getDest(s.getPosition(), d);
+					// null case is handled in addNeighbor
+					s.addNeighbor(neighbor);
+				}
+			}
+		}		
 	}
 	
-	public boolean isAllowedMove(Direction d){
-		Square dest = getDest(d);
+	public Square getDest(Direction d){
+		return getDest(myPosition, d);
+	}
+		
+	public Square getDest(Position p, Direction d){	
+		return getSquare(Position.add(p, d));
+	}
+	
+	public boolean isAllowedMove(Position src, Direction d){
+		Square s = getSquare(src);
+		Square dest = getDest(src, d);
 		// if dest is out of map, is a door or is out of sight, move is forbidden
 		if (dest == null ||
+		    s.getType() == SquareType.CLOSED_DOOR ||
+			s.getType() == SquareType.UNKNOWN ||
 			dest.getType() == SquareType.CLOSED_DOOR ||
 			dest.getType() == SquareType.UNKNOWN)
 			return false;
 		switch (d){
 		case NORTH:
 		case SOUTH:
-			return (dest.getType() != SquareType.HORIZONTAL_WALL);
+			if (s.getType() == SquareType.VERTICAL_WALL){
+				Square left = getDest(s.getPosition(), Direction.WEST);
+				Square right = getDest(s.getPosition(), Direction.EAST);
+				if (left == null || right == null)
+					return false;
+				if (left.getType() != SquareType.HORIZONTAL_WALL ||
+					right.getType() != SquareType.HORIZONTAL_WALL)
+					return false;
+			}//TODO
+			if (dest.getType() == SquareType.VERTICAL_WALL){
+				Square left = getDest(dest.getPosition(), Direction.WEST);
+				Square right = getDest(dest.getPosition(), Direction.EAST);
+				if (left == null || right == null)
+					return false;
+				if (left.getType() != SquareType.HORIZONTAL_WALL ||
+					right.getType() != SquareType.HORIZONTAL_WALL)
+					return false;
+			}
+			return (s.getType() != SquareType.HORIZONTAL_WALL &&
+					dest.getType() != SquareType.HORIZONTAL_WALL);
 		case EAST:
 		case WEST:
-			return (dest.getType() != SquareType.VERTICAL_WALL);
+			if (s.getType() == SquareType.HORIZONTAL_WALL){
+				Square top = getDest(s.getPosition(), Direction.NORTH);
+				Square bot = getDest(s.getPosition(), Direction.SOUTH);
+				if (top == null || bot == null)
+					return false;
+				if (top.getType() != SquareType.VERTICAL_WALL ||
+					bot.getType() != SquareType.VERTICAL_WALL)
+					return false;
+			}
+			if (dest.getType() == SquareType.HORIZONTAL_WALL){
+				Square top = getDest(dest.getPosition(), Direction.NORTH);
+				Square bot = getDest(dest.getPosition(), Direction.SOUTH);
+				if (top == null || bot == null)
+					return false;
+				if (top.getType() != SquareType.VERTICAL_WALL ||
+					bot.getType() != SquareType.VERTICAL_WALL)
+					return false;
+			}
+			return (s.getType() != SquareType.VERTICAL_WALL &&
+					dest.getType() != SquareType.VERTICAL_WALL);
+			//TODO double horizontal!
 		case NORTH_EAST:
 		case NORTH_WEST:
 		case SOUTH_WEST:
 		case SOUTH_EAST:
-			return (dest.getType() != SquareType.VERTICAL_WALL &&
+			return (s.getType() != SquareType.VERTICAL_WALL &&
+					s.getType() != SquareType.HORIZONTAL_WALL &&
+					dest.getType() != SquareType.VERTICAL_WALL &&
 					dest.getType() != SquareType.HORIZONTAL_WALL);
 		default: return false;
-		}
+		}		
+	}
+	
+	public boolean isAllowedMove(Direction d){
+		return isAllowedMove(myPosition,d);
 	}
 	
 	public boolean isAllowedOpen(Direction d){
-		Square dest = getSquare(Position.add(myPosition, d));
+		return isAllowedOpen(myPosition, d);
+	}
+	
+	public boolean isAllowedOpen(Position src, Direction d){
+		Square dest = getDest(src, d);
 		// if dest must not be out of the map and must be a door
 		return (dest != null &&
 				dest.getType() == SquareType.CLOSED_DOOR);
@@ -113,10 +182,18 @@ public class Map {
 	
 	public void updateSquare(int line, int col, char newVal){
 		Position p = new Position(line, col);
-		if (newVal == Protocole.PLAYER_TOKEN)
+		SquareType newType;
+		if (newVal == Protocole.PLAYER_TOKEN){
 			myPosition = p;
-		addNewSquare(newVal, p);
-		updateNearbyInternProbabilities(p);
+			if (actualSquare().getType() == SquareType.UNKNOWN)
+				newType = SquareType.EMPTY;
+			else
+				newType = actualSquare().getType();
+		}
+		else{
+			newType = SquareType.tokenToVariables(newVal);
+		}
+		getSquare(p).setType(newType, this);
 	}
 	
 	public void updateSize(int height, int width){
@@ -125,53 +202,39 @@ public class Map {
 		initMap();
 	}
 	
-	private void updateNearbyInternProbabilities(Position p){
-		updateInternProbability(p);
-		for (Direction d : Direction.values())
-			updateInternProbability(Position.add(p, d));
-	}
-	
-	private void updateInternProbability(Position p){
-		Square s = getSquare(p);
-		if (s == null) return;
-		if (!s.getType().searchable()){
-			s.setInternProbability(this, p, 0);
-			return;
-		}
-		// Contain the number of Passage in the neighborhood
-		int nbPassages = 0;
-		for (Direction d : Direction.values()){
-			Square dest = getSquare(Position.add(p, d));
-			if (dest != null &&
-				dest.getType() == SquareType.PASSAGE)
-				nbPassages += 1;
-		}
-		if (nbPassages == 1)
-			s.setInternProbability(this, p, 1);
-		else
-			s.setInternProbability(this, p, 0.1);
-	}
-	
-	/**
-	 * Just run one iteration on the map
-	 */
+
 	public void updateScores(){
+		// Screwing it, now getting on O(n^2), should be improved with a priority queue
+		// Reseting score and adding all the Squares.
+		HashSet<Square> toTreat = new HashSet<Square>();
 		for (int line = 0; line < height; line++){
 			for (int col = 0; col < width; col++){
 				Square s = getSquare(line, col);
-				double bestScore = s.getInternScore();
-				for (Direction d : Direction.values()){
-					Square dest = getSquare(line + d.getDeltaLine(),
-									        col + d.getDeltaColumn());
-					if (dest == null)
-						continue;
-					
-					double newScore = dest.getScore() - Scoring.MOVE_COST;
-					if (newScore > bestScore)
-						bestScore = newScore;
-				}
-				s.setScore(bestScore);
+				s.setScore(s.getInternScore());
+				toTreat.add(getSquare(line, col));
 			}
+		}
+		while(!toTreat.isEmpty()){
+			// finding best square
+			Square bestSquare = null;
+			double bestScore = Double.NEGATIVE_INFINITY;
+			for (Square s : toTreat){
+				if (s.getScore() > bestScore){
+					bestSquare = s;
+					bestScore = s.getScore();
+				}
+			}
+			// updating neighbors
+			double newScore = bestScore - Scoring.MOVE_COST;
+			if (newScore < Scoring.MINIMAL_CONSERVATION)
+				newScore = bestScore * 0.999;//Avoiding that all squares get the same score
+			for (Direction d : Direction.values()){
+				Square neighbor = getDest(bestSquare.getPosition(), d);
+				if (isAllowedMove(bestSquare.getPosition(), d) &&
+				    neighbor.getScore() < newScore)
+					neighbor.setScore(newScore);
+			}
+			toTreat.remove(bestSquare);
 		}
 		
 	}
@@ -199,12 +262,12 @@ public class Map {
 		return getSquare(myPosition);
 	}
 
-	public void updateNeighboorsSearchScore(Position p) {
+	public void updateNeighborsSearchScore(Position p) {
 		for (Direction d : Direction.values()){
 			Position neighborPosition = Position.add(p, d);
 			Square neighbor = getSquare(neighborPosition);
 			if (neighbor != null)
-				neighbor.updateSearchScore(this, neighborPosition);
+				neighbor.updateSearchScore(this);
 		}
 	}
 }

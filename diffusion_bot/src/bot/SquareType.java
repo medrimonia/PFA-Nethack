@@ -55,7 +55,7 @@ public enum SquareType {
 		}
 	}
 	
-	public boolean reachable(){
+	/*public boolean reachable(){
 		switch (this){
 		case EMPTY:
 		case PASSAGE:
@@ -64,7 +64,7 @@ public enum SquareType {
 			return true;
 		default: return false;
 		}		
-	}
+	}*/
 	
 	public String toString(){
 		return String.valueOf(token);

@@ -1,8 +1,21 @@
 package bot;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import util.Scoring;
 
-public class Square {
+public class Square{
+	
+	/**
+	 * Save the position in the map, used for convenience
+	 */
+	private Position p;
+	
+	/**
+	 * Neighbors are used so frequently that it's better to use a list like that
+	 */
+	private Collection<Square> neighbors;
 	
 	private SquareType type;
 	/**
@@ -16,7 +29,16 @@ public class Square {
 	 */
 	private double internScore;
 	/**
-	 * Calculate a score in [0,1] representing the probability
+	 * score in [0,1] representing the importance of visiting
+	 * the square.
+	 */
+	private double visitScore;
+	/**
+	 * score in [0,1] representing the importance of trying to open the square
+	 */
+	private double openScore;
+	/**
+	 * score in [0,1] representing the probability
 	 * that something is hidden in this square (SCORR, SDOOR) 
 	 */
 	private double localSearchScore;
@@ -39,77 +61,58 @@ public class Square {
 	 */
 	private int nbOpenTries;
 	/**
-	 * Secret probability describe the probability according to the 
-	 * neighborhood, it must be updated	
+	 * Keep track of if the Square might be reached.
 	 */
-	private double internProbability;
+	private boolean reachable;
 	
-	public Square(char c){
+	public Square(char c, Position p){
+		this.p = p;
+		neighbors = new HashSet<Square>();
 		type = SquareType.tokenToVariables(c);
 		score = 0;
+		internScore = 0;
+		visitScore = 0;
+		openScore = 0;
+		localSearchScore = 0;
+		searchScore = 0;
 		nbSearch = 0;
 		nbVisits = 0;
 		nbOpenTries = 0;
-		internProbability = 0.01;
-		localSearchScore = 0;
-		searchScore = 0;
-		updateInternScore();
-		score = internScore;
+		reachable = false;
 	}
 	
-	public void addVisit(){
-		nbVisits++;
-		updateInternScore();
+	// GETTERS
+
+	public SquareType getType(){
+		return type;
 	}
 	
-	public void addSearch(Map m, Position p){
-		nbSearch++;
-		updateLocalSearchScore(m, p);
+	public Position getPosition(){
+		return p;
 	}
 	
-	public void updateLocalSearchScore(Map m, Position p){
-		double oldScore = localSearchScore;
-		localSearchScore = Scoring.localSearchScore(this);
-		if (localSearchScore != oldScore)
-			m.updateNeighboorsSearchScore(p);
+	public Collection<Square> getNeighbors(){
+		return neighbors;
 	}
 	
-	public void updateSearchScore(Map m, Position p){
-		searchScore = Scoring.environmentalSearchScore(m, p);
-		updateInternScore();
-	}
-	
-	public void addOpenTry(){
-		nbOpenTries++;
-		updateInternScore();
+	public boolean isReachable(){
+		return reachable;
 	}
 	
 	public int getNbOpenTries(){
 		return nbOpenTries;
 	}
 	
-	public void setInternProbability(Map m, Position p, double newProbability){
-		double oldProbability = internProbability;
-		internProbability = newProbability;
-		if (oldProbability != internProbability)
-			updateLocalSearchScore(m, p);
+	public int getNbSearch(){
+		return nbSearch;
 	}
 	
-	public double getInternProbability(){
-		return internProbability;
-	}
-	
-	private void updateInternScore(){
-		internScore = 0;
-		internScore += getVisitScore();
-		internScore += getSearchScore();
-		internScore += getOpenScore();
+	public int getNbVisits(){
+		return nbVisits;
 	}
 	
 	public double getVisitScore(){
-		if (type.reachable())
-			return Scoring.visitScore(nbVisits) * Scoring.VISIT_SCORE;
-		return 0;
+		return visitScore * Scoring.VISIT_SCORE;
 	}
 	
 	public double getSearchScore(){
@@ -117,33 +120,142 @@ public class Square {
 	}
 	
 	public double getOpenScore(){
-		if (type.openable())
-			return Scoring.openScore(this) * Scoring.OPEN_SCORE;
-		return 0;
+		return openScore * Scoring.OPEN_SCORE;
 	}
 	
 	public double getLocalSearchScore(){
 		return localSearchScore; 
 	}
 	
-	public void setScore(double newScore){
-		score = newScore;
+	public double getInternScore(){
+		return internScore;
 	}
 	
 	public double getScore(){
 		return score;
 	}
 	
-	public double getInternScore(){
-		return internScore;
+	// SETTERS
+	
+	public void addNeighbor(Square n){
+		if (n == null ||
+			neighbors.contains(n))
+			return;
+		neighbors.add(n);
 	}
 	
-	public int getNbSearch(){
-		return nbSearch;
+	public void setType(SquareType t, Map m){
+		if (t == type)
+			return;
+		type = t;
+		//Update Reachable for square and neighbors
+		updateReachable(m);
+		for (Square n : neighbors){
+			n.updateReachable(m);
+		}
+		//Update scores for square and neighbors
+		updateOpenScore();
+		updateVisitScore(m);
+		updateLocalSearchScore(m);
+		for (Square n : neighbors){
+			n.updateOpenScore();
+			n.updateVisitScore(m);
+			n.updateLocalSearchScore(m);
+		}
+	}
+	
+	public void addVisit(Map m){
+		nbVisits++;
+		updateVisitScore(m);
+		updateInternScore();
+	}
+	
+	public void addSearch(Map m){
+		nbSearch++;
+		updateLocalSearchScore(m);
+	}
+	
+	public void addOpenTry(){
+		nbOpenTries++;
+		updateOpenScore();
+	}
+	
+	public void setScore(double newScore){
+		score = newScore;
+	}
+	
+	// UPDATERS
+	
+	/**
+	 * Reachable must only be updated when the type of a neighbor has changed
+	 * @param m
+	 */
+	private void updateReachable(Map m){
+		boolean oldValue = reachable;
+		reachable = false;
+		for (Direction d : Direction.values()){
+			if (m.isAllowedMove(p, d))
+				reachable = true;
+		}
+		// if reachable has changed, a lot of things must change
+		if (oldValue != reachable){
+			
+		}
+	}
+	
+	/**
+	 * Assume that all the score functions return the appropriated values
+	 */
+	private void updateInternScore(){
+		internScore = 0;
+		internScore += getVisitScore();
+		internScore += getSearchScore();
+		internScore += getOpenScore();
+	}
+	
+	/**
+	 * Assume neighborhood types are up to date
+	 */
+	private void updateOpenScore() {
+		//TODO openScore should be lower if both sides are opened
+		double oldScore = openScore;
+		openScore = Scoring.openScore(this);
+		if (oldScore != openScore)
+			updateInternScore();
 	}
 
-	public SquareType getType(){
-		return type;
+	/**
+	 * Assume that the neighborhood types and square reachable values
+	 * have been updated.
+	 */
+	public void updateVisitScore(Map m){
+		double oldValue = visitScore;
+		if (isReachable())
+			visitScore = Scoring.visitScore(m, p);
+		if (oldValue != visitScore)
+			updateInternScore();
+	}
+	
+	/**
+	 * Assume all neighborhood types are up to date
+	 * @param m
+	 */
+	public void updateLocalSearchScore(Map m){
+		double oldScore = localSearchScore;
+		localSearchScore = Scoring.localSearchScore(this);
+		if (localSearchScore != oldScore)
+			m.updateNeighborsSearchScore(p);
+	}
+	
+	/**
+	 * Assume all neighborhood localSearchScores are up to date
+	 * @param m
+	 */
+	public void updateSearchScore(Map m){
+		double oldScore = searchScore;
+		searchScore = Scoring.environmentalSearchScore(m, p);
+		if (oldScore != searchScore)
+			updateInternScore();
 	}
 	
 	public String toString(){

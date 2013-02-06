@@ -3,12 +3,12 @@ package util;
 import java.util.LinkedList;
 import java.util.List;
 
-public class RandomList<A extends Scoreable> {
+public class ScoredList<A extends Scoreable> {
 	
 	private List<A> l;
 	private double sum;
 	
-	public RandomList(){
+	public ScoredList(){
 		l = new LinkedList<A>();
 		sum = 0;
 	}
@@ -16,6 +16,18 @@ public class RandomList<A extends Scoreable> {
 	public void add(A item){
 		l.add(item);
 		sum += item.getScore();
+	}
+	
+	public A getBestItem(){
+		double bestScore = Double.MIN_VALUE;
+		A bestItem = null;
+		for (A item : l){
+			if (item.getScore() > bestScore){
+				bestScore = item.getScore();
+				bestItem = item;
+			}		
+		}
+		return bestItem;
 	}
 	
 	public A getRandomItem(){

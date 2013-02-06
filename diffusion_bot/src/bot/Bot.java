@@ -5,13 +5,15 @@ import java.net.UnknownHostException;
 
 import util.InvalidMessageException;
 import util.Logger;
-import util.RandomList;
+import util.ScoredList;
+import util.Scoring;
 
 public class Bot {
 	
 	private InputOutputUnit myParser;
 	private int dungeonLevel;
 	public Map map;
+	int turn;
 	
 	public Bot(){
 		dungeonLevel = 0;
@@ -60,13 +62,16 @@ public class Bot {
 	}
 	
 	public void doTurn(){
-		map.actualSquare().addVisit();
+		Logger.println("Starting Turn : " + turn);
+		map.actualSquare().addVisit(map);
 		map.updateScores();
-		randomAction();
+		Logger.println(map.toString());
+		bestAction();
+		turn++;
 	}
 	
-	public void randomAction(){
-		RandomList<Action> l = new RandomList<Action>();
+	private ScoredList<Action> getPossibleActions(){
+		ScoredList<Action> l = new ScoredList<Action>();
 		// Search is always available
 		double searchScore = map.actualSquare().getSearchScore();
 		l.add(new Action(ActionType.SEARCH, null, searchScore));
@@ -78,16 +83,28 @@ public class Bot {
 			if (map.isAllowedMove(dir))
 				toAdd = new Action(ActionType.MOVE,
 							       dir,
-							       dest.getScore());
+							       dest.getScore() - Scoring.MOVE_COST);
 			if (map.isAllowedOpen(dir)){
 				toAdd = new Action(ActionType.OPEN,
 							       dir,
-							       dest.getOpenScore() * 1000);
+							       dest.getScore());
 			}
 			if (toAdd != null)
 				l.add(toAdd);
 		}
-		Logger.println("NbValidActions : " + l.nbElements());
+		Logger.println("Nb valid choices : " + l.nbElements());
+		return l;
+	}
+	
+	public void bestAction(){
+		ScoredList<Action> l = getPossibleActions();
+		Action choice = l.getBestItem();
+		Logger.println("Choice : " + choice);
+		applyAction(choice);
+	}
+	
+	public void randomAction(){
+		ScoredList<Action> l = getPossibleActions();
 		Action choice = l.getRandomItem();
 		Logger.println("Choice : " + choice);
 		applyAction(choice);
@@ -96,7 +113,8 @@ public class Bot {
 	public void applyAction(Action a){
 		switch(a.getType()){
 		case SEARCH:
-			map.actualSquare().addSearch(map, map.getPlayerPosition());
+			for (Square neighbor : map.actualSquare().getNeighbors())
+				neighbor.addSearch(map);
 			myParser.broadcastSearch();
 			return;
 		case OPEN:
