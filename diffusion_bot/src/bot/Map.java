@@ -90,18 +90,19 @@ public class Map {
 			dest.getType() == SquareType.UNKNOWN)
 			return false;
 		switch (d){
-		case NORTH:
-		case SOUTH:
-			return (s.getType() != SquareType.HORIZONTAL_WALL &&
-					dest.getType() != SquareType.HORIZONTAL_WALL);
-		case EAST:
-		case WEST:
-			return (s.getType() != SquareType.VERTICAL_WALL &&
-					dest.getType() != SquareType.VERTICAL_WALL);
 		case NORTH_EAST:
 		case NORTH_WEST:
 		case SOUTH_WEST:
 		case SOUTH_EAST:
+			Square alt1 = getSquare(src.getLine(), src.getColumn() + d.getDeltaColumn());
+			Square alt2 = getSquare(src.getLine() + d.getDeltaLine(), src.getColumn());
+			if (!alt1.getType().diagonalyPassable() ||
+				!alt2.getType().diagonalyPassable())
+				return false;
+		case NORTH:
+		case SOUTH:
+		case EAST:
+		case WEST:
 			return (s.getType() != SquareType.VERTICAL_WALL &&
 					s.getType() != SquareType.HORIZONTAL_WALL &&
 					dest.getType() != SquareType.VERTICAL_WALL &&

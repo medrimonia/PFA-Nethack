@@ -41,6 +41,13 @@ public enum SquareType {
 		return UNKNOWN;
 	}
 	
+	public boolean diagonalyPassable(){
+		return (this != VERTICAL_WALL &&
+				this != HORIZONTAL_WALL &&
+				this != CLOSED_DOOR &&
+				this != UNKNOWN);
+	}
+	
 	public boolean openable(){
 		return this == CLOSED_DOOR;
 	}
