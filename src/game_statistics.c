@@ -80,7 +80,7 @@ void update_reachable_squares(){
 	int r;
 	for (c = 0; c < COLNO ; c++){
 		for (r = 0; r < ROWNO ; r++){
-			if (levl[c][r].typ > 12) // see rm.h:33
+			if (IS_ACCESSIBLE(levl[c][r].typ)) // see rm.h:33
 				nb_squares_reachable++;
 		}
 	}
