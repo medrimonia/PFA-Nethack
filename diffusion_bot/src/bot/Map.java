@@ -145,6 +145,8 @@ public class Map {
 	}
 	
 	public void updateSquare(int line, int col, char newVal){
+		if (newVal == SquareType.UNKNOWN.getToken())
+			return;//Keeping memory of visited square in dark rooms
 		Position p = new Position(line, col);
 		SquareType newType;
 		if (newVal == Protocole.PLAYER_TOKEN){
