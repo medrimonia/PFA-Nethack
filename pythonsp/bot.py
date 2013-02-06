@@ -13,7 +13,7 @@ keys = [['y', 'k', 'u'],
 
 
 def build_cmd():
-	cmd = []
+	cmd = ' '
 	mmin = -1
 
 	for c in range(posc - 1, posc + 2):
@@ -55,6 +55,7 @@ while 1:
 			continue
 
 		elif (data[i] == 'E'):
+			dump_map(glyphs)
 			cmd = build_cmd()
 			print cmd
 			s.sendall(cmd)
@@ -88,7 +89,6 @@ while 1:
 	else:
 		data = []
 
-	dump_map(glyphs)
 
 s.close()
 
