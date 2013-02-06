@@ -1,7 +1,7 @@
-diff --git a/nethack-3.4.3/src/lock.c b/nethack-3.4.3/src/lock.c
+diff --git nethack-3.4.3/src/lock.c nethack-3.4.3/src/lock.c
 index 4d5d333..00184c7 100644
---- a/nethack-3.4.3/src/lock.c
-+++ b/nethack-3.4.3/src/lock.c
+--- nethack-3.4.3/src/lock.c
++++ nethack-3.4.3/src/lock.c
 @@ -566,7 +566,7 @@ doopen()		/* try to open a door */
  		door->doormask = D_NODOOR;
  		if (*in_rooms(cc.x, cc.y, SHOPBASE)) add_damage(cc.x, cc.y, 0L);
