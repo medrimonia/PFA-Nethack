@@ -12,17 +12,21 @@ keys = [['y', 'k', 'u'],
         ['b', 'j', 'n']]
 
 
-def build_cmd_list():
-	cmds = []
+def build_cmd():
+	cmd = []
+	mmin = -1
 
 	for c in range(posc - 1, posc + 2):
 		for r in range(posr - 1, posr + 2):
 			if (c == posc and r == posr):
 				continue
 			if (is_valid_pos(glyphs, c, r)):
-				cmds.append(keys[r-(posr-1)][c-(posc-1)])
+				cnt = been_there_count(glyphs, c, r)
+				if (cnt < mmin or mmin == -1):
+					mmin = cnt
+					cmd = keys[r-(posr-1)][c-(posc-1)]
 	
-	return cmds
+	return cmd
 
 
 
@@ -51,11 +55,9 @@ while 1:
 			continue
 
 		elif (data[i] == 'E'):
-			cmds = build_cmd_list()
-			if (len(cmds) == 0):
-				cmds = ['\n']
-			print cmds
-			s.sendall(random.choice(cmds))
+			cmd = build_cmd()
+			print cmd
+			s.sendall(cmd)
 
 		elif (data[i] == 'm'):
 			if (dlen - i > 2):
