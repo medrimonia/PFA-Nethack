@@ -46,6 +46,9 @@ void update_reachable_squares();
  */
 void update_reached_squares();
 
+/* Shall be called when a seed is used to set game random */
+void gs_set_seed(int);
+
 /* Return the number of secret doors reachable in all the level reached. */
 int get_nb_sdoors();
 
@@ -64,6 +67,9 @@ int get_nb_squares_reachable();
 
 /* Return the number of square reached during the game. */
 int get_nb_squares_reached();
+
+/* Return the game seed. */
+int get_seed();
 
 /* Add result of current game to database */
 void gs_submit_game();

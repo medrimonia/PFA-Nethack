@@ -8,7 +8,7 @@
 #define DATABASE_NAME "pfa.db"
 
 #define REQUEST_SIZE 400
-#define NB_COLUMNS 7
+#define NB_COLUMNS 8
 
 // SPECIFIC STRUCTURES
 
@@ -96,6 +96,8 @@ void initialize_table_descriptor(){
 	table_descriptor->columns[5]->type = "int";
 	table_descriptor->columns[6]->name = "nb_scorrs_reachable";
 	table_descriptor->columns[6]->type = "int";
+	table_descriptor->columns[7]->name = "seed";
+	table_descriptor->columns[7]->type = "int";
 }
 
 int init_db_manager(){

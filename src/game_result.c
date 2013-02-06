@@ -32,7 +32,7 @@ game_result_p new_game_result(const char * mode){
 	game_result_p new = malloc(sizeof(struct game_result));
 	new->mode = mode;
 	if (strcmp(mode, "seek_secret") == 0){
-		new->nb_properties = 6;
+		new->nb_properties = 7;
 	}
 	new->properties = malloc(new->nb_properties * sizeof(property_p));
 	int i;
@@ -68,6 +68,8 @@ game_result_p create_actual_game_result(const char * mode){
 	gr_set_property_int_value(gr, 4, get_nb_scorrs_found());
 	gr_set_property_name(gr, 5, "nb_scorrs_reachable");
 	gr_set_property_int_value(gr, 5, get_nb_scorrs());
+	gr_set_property_name(gr, 6, "seed");
+	gr_set_property_int_value(gr, 6, get_seed());
 	return gr;
 }
 

@@ -17,6 +17,8 @@ int nb_scorrs_found = 0;
 int nb_squares_reached = 0;
 int nb_squares_reachable = 0;
 
+int seed = 0;
+
 #ifndef NETHACK_ACCESS
 void make_random_stats(){
 	nb_sdoors = rand() % 20;
@@ -25,6 +27,7 @@ void make_random_stats(){
   nb_scorrs_found = rand() % 20;
   nb_squares_reached = rand() % 20;
   nb_squares_reachable = rand() % 20;
+  seed = rand() % 20;
 }
 #endif
 
@@ -96,6 +99,10 @@ void update_reached_squares(){
 #endif
 }
 
+void gs_set_seed(int s){
+	seed = s;
+}
+
 int get_nb_sdoors() {
 	return nb_sdoors;
 }
@@ -118,6 +125,10 @@ int get_nb_squares_reachable(){
 
 int get_nb_squares_reached(){
 	return nb_squares_reached;
+}
+
+int get_seed(){
+	return seed;
 }
 
 void gs_submit_game(){
