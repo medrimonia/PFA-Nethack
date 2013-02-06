@@ -92,49 +92,12 @@ public class Map {
 		switch (d){
 		case NORTH:
 		case SOUTH:
-			if (s.getType() == SquareType.VERTICAL_WALL){
-				Square left = getDest(s.getPosition(), Direction.WEST);
-				Square right = getDest(s.getPosition(), Direction.EAST);
-				if (left == null || right == null)
-					return false;
-				if (left.getType() != SquareType.HORIZONTAL_WALL ||
-					right.getType() != SquareType.HORIZONTAL_WALL)
-					return false;
-			}//TODO
-			if (dest.getType() == SquareType.VERTICAL_WALL){
-				Square left = getDest(dest.getPosition(), Direction.WEST);
-				Square right = getDest(dest.getPosition(), Direction.EAST);
-				if (left == null || right == null)
-					return false;
-				if (left.getType() != SquareType.HORIZONTAL_WALL ||
-					right.getType() != SquareType.HORIZONTAL_WALL)
-					return false;
-			}
 			return (s.getType() != SquareType.HORIZONTAL_WALL &&
 					dest.getType() != SquareType.HORIZONTAL_WALL);
 		case EAST:
 		case WEST:
-			if (s.getType() == SquareType.HORIZONTAL_WALL){
-				Square top = getDest(s.getPosition(), Direction.NORTH);
-				Square bot = getDest(s.getPosition(), Direction.SOUTH);
-				if (top == null || bot == null)
-					return false;
-				if (top.getType() != SquareType.VERTICAL_WALL ||
-					bot.getType() != SquareType.VERTICAL_WALL)
-					return false;
-			}
-			if (dest.getType() == SquareType.HORIZONTAL_WALL){
-				Square top = getDest(dest.getPosition(), Direction.NORTH);
-				Square bot = getDest(dest.getPosition(), Direction.SOUTH);
-				if (top == null || bot == null)
-					return false;
-				if (top.getType() != SquareType.VERTICAL_WALL ||
-					bot.getType() != SquareType.VERTICAL_WALL)
-					return false;
-			}
 			return (s.getType() != SquareType.VERTICAL_WALL &&
 					dest.getType() != SquareType.VERTICAL_WALL);
-			//TODO double horizontal!
 		case NORTH_EAST:
 		case NORTH_WEST:
 		case SOUTH_WEST:
@@ -225,9 +188,7 @@ public class Map {
 				}
 			}
 			// updating neighbors
-			double newScore = bestScore - Scoring.MOVE_COST;
-			if (newScore < Scoring.MINIMAL_CONSERVATION)
-				newScore = bestScore * 0.999;//Avoiding that all squares get the same score
+			double newScore = Scoring.afterMoveScore(bestScore);
 			for (Direction d : Direction.values()){
 				Square neighbor = getDest(bestSquare.getPosition(), d);
 				if (isAllowedMove(bestSquare.getPosition(), d) &&

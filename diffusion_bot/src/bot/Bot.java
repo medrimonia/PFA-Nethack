@@ -83,7 +83,7 @@ public class Bot {
 			if (map.isAllowedMove(dir))
 				toAdd = new Action(ActionType.MOVE,
 							       dir,
-							       dest.getScore() - Scoring.MOVE_COST);
+							       Scoring.afterMoveScore(dest.getScore()));
 			if (map.isAllowedOpen(dir)){
 				toAdd = new Action(ActionType.OPEN,
 							       dir,

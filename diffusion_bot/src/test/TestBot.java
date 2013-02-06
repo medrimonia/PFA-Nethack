@@ -29,6 +29,7 @@ public class TestBot {
 		b.map.updateSquare(3, 2, '<');
 		b.map.updateSquare(4, 2, '@');
 		System.out.println(b.map);
+		b.map.getSquare(4, 1).addSearch(b.map);
 		b.doTurn();
 		System.out.println(b.map);
 		

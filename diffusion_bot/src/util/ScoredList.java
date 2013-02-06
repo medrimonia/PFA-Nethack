@@ -19,7 +19,7 @@ public class ScoredList<A extends Scoreable> {
 	}
 	
 	public A getBestItem(){
-		double bestScore = Double.MIN_VALUE;
+		double bestScore = Double.NEGATIVE_INFINITY;
 		A bestItem = null;
 		for (A item : l){
 			if (item.getScore() > bestScore){

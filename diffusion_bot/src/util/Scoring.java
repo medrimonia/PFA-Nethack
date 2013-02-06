@@ -8,8 +8,8 @@ import bot.SquareType;
 
 public class Scoring {
 	
-	public final static double MOVE_COST = 1;
-	public final static double MINIMAL_CONSERVATION = 1;
+	private final static double MOVE_COST = 1;
+	private final static double MINIMAL_CONSERVATION = 1;
 	
 	public final static double VISIT_SCORE = 1;
 	public final static double UNKNOWN_SCORE = 2;
@@ -102,13 +102,20 @@ public class Scoring {
 			if (n.getType() == SquareType.UNKNOWN)
 				score += UNKNOWN_SCORE;
 		if (s.getType() == SquareType.PASSAGE)
-			return PASSAGE_SCORE;
-		return 1;
+			return PASSAGE_SCORE + score;
+		return 1 + score;
 	}
 	
 	public static double openScore(Square s){
 		if (s.getType() != SquareType.CLOSED_DOOR) return 0;
 		return Math.pow(OPEN_FADING, s.getNbOpenTries());
 		//return smoothedProbability(0, s.getNbOpenTries(), OPEN_K);
+	}
+	
+	public static double afterMoveScore(double initialScore){
+		double newScore = initialScore - Scoring.MOVE_COST;
+		if (newScore < Scoring.MINIMAL_CONSERVATION)
+			newScore = initialScore * 0.999;//Avoiding that all squares get the same score
+		return newScore;
 	}
 }

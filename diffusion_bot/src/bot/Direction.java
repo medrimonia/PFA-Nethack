@@ -20,6 +20,15 @@ public enum Direction {
 		this.deltaColumn = deltaColumn;
 	}
 	
+	public Direction opposite(){
+		for (Direction d : Direction.values()){
+			if (d.deltaColumn == - deltaColumn &&
+			    d.deltaLine == -deltaLine)
+				return d;
+		}
+		return null;
+	}
+	
 	public char getValue(){
 		return value;
 	}
