@@ -1,40 +1,12 @@
-import sys
 import struct
 import random
 from socket import *
 
+from nhmap import *
+
 posc = 0
 posr = 0
 glyphs = []
-
-# nethack sends coordinates formated as (col,row)
-
-def reset_map(colno, rowno):
-	for i in range(0, rowno):
-		glyphs.append([[' ', 0] for j in range(0, colno)])
-
-
-def dump_map():
-	for line in glyphs:
-		for glyph in line:
-			sys.stdout.write('%c' % glyph[0])
-		sys.stdout.write("\n")
-
-
-def is_valid_pos(c, r):
-	if (c >= map_width or c < 0):
-		return False;
-
-	if (r >= map_height or r < 0):
-		return False;
-
-	g = glyphs[r][c][0]
-	for i in ['.', '#', '<', '>', '$']:
-		if (g == i):
-			return True
-
-	return False
-
 
 keys = [['y', 'k', 'u'],
         ['h', ' ', 'l'],
@@ -48,7 +20,7 @@ def build_cmd_list():
 		for r in range(posr - 1, posr + 2):
 			if (c == posc and r == posr):
 				continue
-			if (is_valid_pos(c, r)):
+			if (is_valid_pos(glyphs, c, r)):
 				cmds.append(keys[r-(posr-1)][c-(posc-1)])
 	
 	return cmds
@@ -68,7 +40,7 @@ random.seed()
 
 map_width = 80; # default
 map_height = 21; # default
-reset_map(map_width, map_height)
+reset_map(glyphs, map_width, map_height)
 
 while 1:
 	
@@ -90,7 +62,7 @@ while 1:
 			if (dlen - i > 2):
 				map_width = ord(data[i+1])
 				map_height = ord(data[i+2])
-				reset_map(map_width, map_height)
+				reset_map(glyphs, map_width, map_height)
 				i += 2
 			else:
 				break
@@ -117,6 +89,6 @@ while 1:
 
 
 	print "--------------------------------------------------------------"
-	dump_map()
+	dump_map(glyphs)
 	print "--------------------------------------------------------------"
 
