@@ -13,7 +13,10 @@ public class Bot {
 	private InputOutputUnit myParser;
 	private int dungeonLevel;
 	public Map map;
-	int turn;
+	private int turn;
+	private int nbMoves;
+	private int nbSearches;
+	private int nbOpen;
 	
 	public Bot(){
 		dungeonLevel = 0;
@@ -63,6 +66,9 @@ public class Bot {
 	
 	public void doTurn(){
 		Logger.println("Starting Turn : " + turn);
+		Logger.println(nbMoves + " moves until now");
+		Logger.println(nbSearches + " search until now");
+		Logger.println(nbOpen + " open until now");		
 		map.actualSquare().addVisit(map);
 		map.updateScores();
 		Logger.println(map.toString());
@@ -116,13 +122,16 @@ public class Bot {
 			for (Square neighbor : map.actualSquare().getNeighbors())
 				neighbor.addSearch(map);
 			myParser.broadcastSearch();
+			nbSearches++;
 			return;
 		case OPEN:
 			map.getDest(a.getDirection()).addOpenTry();
 			myParser.broadcastOpeningDoor(a.getDirection());
+			nbOpen++;
 			return;
 		case MOVE:
 			myParser.broadcastMove(a.getDirection());
+			nbMoves++;
 			return;
 		}
 	}
