@@ -80,7 +80,7 @@ void update_reachable_squares(){
 	int r;
 	for (c = 0; c < COLNO ; c++){
 		for (r = 0; r < ROWNO ; r++){
-			if (IS_ACCESSIBLE(levl[c][r].typ)) // see rm.h:33
+			if (ACCESSIBLE(levl[c][r].typ)) // see rm.h:33
 				nb_squares_reachable++;
 		}
 	}
@@ -128,7 +128,7 @@ void gs_submit_game(){
 	close_db_manager();
 }
 
-#define MAX_MOVES 20000
+#define MAX_MOVES 2000
 void gs_end_game_if_needed(){
 	if (moves >= MAX_MOVES){
 		terminate(EXIT_SUCCESS);
