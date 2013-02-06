@@ -6,7 +6,6 @@ from nhmap import *
 
 posc = 0
 posr = 0
-glyphs = []
 
 keys = [['y', 'k', 'u'],
         ['h', ' ', 'l'],
@@ -40,7 +39,7 @@ random.seed()
 
 map_width = 80; # default
 map_height = 21; # default
-reset_map(glyphs, map_width, map_height)
+glyphs = new_map(map_width, map_height)
 
 while 1:
 	
@@ -62,7 +61,7 @@ while 1:
 			if (dlen - i > 2):
 				map_width = ord(data[i+1])
 				map_height = ord(data[i+2])
-				reset_map(glyphs, map_width, map_height)
+				glyphs = new_map(map_width, map_height)
 				i += 2
 			else:
 				break
@@ -72,12 +71,12 @@ while 1:
 				c = ord(data[i+1])
 				r = ord(data[i+2])
 				g = data[i+3]
-				glyphs[r][c][0] = g
+				set_glyph(glyphs, c, r, g)
 				i += 3
 				if (g == '@'):
 					posc = c
 					posr = r
-					glyphs[r][c][1] += 1  # 'been there' count
+					been_there_inc(glyphs, c, r)  # 'been there' count
 			else:
 				break
 
@@ -87,8 +86,7 @@ while 1:
 	else:
 		data = []
 
-
-	print "--------------------------------------------------------------"
 	dump_map(glyphs)
-	print "--------------------------------------------------------------"
+
+s.close()
 

@@ -2,9 +2,12 @@ import sys
 
 # nethack sends coordinates formated as (col,row)
 
-def reset_map(glyphs, colno, rowno):
+def new_map(colno, rowno):
+	glyphs = []
 	for i in range(0, rowno):
 		glyphs.append([[' ', 0] for j in range(0, colno)])
+
+	return glyphs
 
 
 def is_valid_pos(glyphs, c, r):
@@ -24,6 +27,17 @@ def is_valid_pos(glyphs, c, r):
 
 	return False
 
+def get_glyph(glyphs, c, r):
+	return glyphs[r][c][0]
+
+def set_glyph(glyphs, c, r, g):
+	glyphs[r][c][0] = g
+
+def been_there_count(glyphs, c, r):
+	return glyphs[r][c][1]
+
+def been_there_inc(glyphs, c, r):
+	glyphs[r][c][1] += 1
 
 def dump_map(glyphs):
 	for line in glyphs:
