@@ -111,10 +111,6 @@ class InputOutputUnit{
 		int height = buffer[1];
 		Logger.println("Reading map Size : [" + height + "," + width +"]");
 		b.map.updateSize(height, width);
-		
-		Logger.println("Sending message to pass the class choice");
-		output.write("\n");
-		output.flush();
 	}
 	
 	public void parseSeed(Bot b){
