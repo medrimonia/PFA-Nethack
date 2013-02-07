@@ -49,13 +49,15 @@ random.seed()
 map_width = 80; # default
 map_height = 21; # default
 glyphs = new_map(map_width, map_height)
-n = 200000
-while n > 0:
-	n -= 1
+
+while 1:
 	
 	received = s.recv(128)
 	data.extend(received)
 	dlen = len(data)
+
+	if (dlen == 0):
+		break
 
 	i = 0
 	while (i < dlen):
