@@ -68,6 +68,11 @@ int get_nb_squares_reachable();
 /* Return the number of square explored during the game. */
 int get_nb_squares_explored();
 
+/* Return the maximal number of moves allowed in this game. */
+int get_max_moves();
+
+char * get_bot_name();
+
 /* Add result of current game to database */
 void gs_submit_game();
 

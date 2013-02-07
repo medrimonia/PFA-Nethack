@@ -8,7 +8,7 @@
 #define DATABASE_NAME "pfa.db"
 
 #define REQUEST_SIZE 400
-#define NB_COLUMNS 7
+#define NB_COLUMNS 8 // 1(gameID) + nbFields of the mode 
 
 // SPECIFIC STRUCTURES
 

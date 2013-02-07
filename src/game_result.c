@@ -32,7 +32,7 @@ game_result_p new_game_result(const char * mode){
 	game_result_p new = malloc(sizeof(struct game_result));
 	new->mode = mode;
 	if (strcmp(mode, "seek_secret") == 0){
-		new->nb_properties = 6;
+		new->nb_properties = 7;
 	}
 	new->properties = malloc(new->nb_properties * sizeof(property_p));
 	int i;

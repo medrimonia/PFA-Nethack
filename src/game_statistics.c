@@ -44,12 +44,14 @@ void gs_init(){
 
 #ifndef NETHACK_ACCESS
 void make_random_stats(){
-	nb_sdoors = rand() % 20;
-  nb_sdoors_found = rand() % 20;
-  nb_scorrs = rand() % 20;
-  nb_scorrs_found = rand() % 20;
-  nb_squares_explored = rand() % 20;
-  nb_squares_reachable = rand() % 20;
+	nb_sdoors = rand() % 10;
+  nb_sdoors_found = rand() % 10;
+  nb_scorrs = rand() % 5;
+  nb_scorrs_found = rand() % 5;
+  nb_squares_explored = rand() % 400;
+  nb_squares_reachable = rand() % 400;
+	max_moves = (rand() % 20) * 1000;
+	bot_name = "random_stats";
 }
 #endif
 
@@ -143,6 +145,14 @@ int get_nb_squares_reachable(){
 
 int get_nb_squares_explored(){
 	return nb_squares_explored;
+}
+
+int get_max_moves(){
+	return max_moves;
+}
+
+char * get_bot_name(){
+	return bot_name;
 }
 
 void gs_submit_game(){
