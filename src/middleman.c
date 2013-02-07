@@ -428,7 +428,7 @@ mm_print_glyph(window, x, y, glyph)
 
 	if (client != -1) {
 		size = sprintf(buf, "g%c%c%c", x, y, ochar);
-		mm_log("send()", buf);
+		mm_vlog("send(): g %#x %#x %c", x, y, ochar);
 		send(client, buf, size, 0);
 	}
 
@@ -536,6 +536,7 @@ mm_nh_poskey(x, y, mod)
 		}
 
 		nb_received = recv(client, buf, BUFSIZE, 0);
+		buf[nb_received] = '\0';
 		if (nb_received < 1) {
 			mm_log("recv()", "Client disconnected.");
 			terminate(EXIT_FAILURE);
