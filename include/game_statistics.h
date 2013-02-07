@@ -3,7 +3,7 @@
 
 // Comment if there's no access to nethack files
 // This is used typically for test outside of nethack kernel
-#define NETHACK_ACCESS
+//#define NETHACK_ACCESS
 
 /* Initialize the number of moves allowed for a game */
 void gs_init();
@@ -62,11 +62,11 @@ int get_nb_scorrs();
 /* Return the number of secret corridors found during the game. */
 int get_nb_scorrs_found();
 
-/* Return the number of squares reachable in all the level reached. */
+/* Return the number of squares reachable in all the level discovered. */
 int get_nb_squares_reachable();
 
-/* Return the number of square reached during the game. */
-int get_nb_squares_reached();
+/* Return the number of square explored during the game. */
+int get_nb_squares_explored();
 
 /* Add result of current game to database */
 void gs_submit_game();

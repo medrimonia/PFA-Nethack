@@ -17,13 +17,14 @@ int nb_sdoors_found = 0;
 int nb_scorrs = 0;
 int nb_scorrs_found = 0;
 
-int nb_squares_reached = 0;
+int nb_squares_explored = 0;
 int nb_squares_reachable = 0;
 
 int max_moves = -1;
 
 char * bot_name = NULL;
 
+#ifdef NETHACK_ACCESS
 void gs_init(){
 	char * str;
 
@@ -39,6 +40,7 @@ void gs_init(){
 	else
 		bot_name = strdup(str);
 }
+#endif
 
 #ifndef NETHACK_ACCESS
 void make_random_stats(){
@@ -46,7 +48,7 @@ void make_random_stats(){
   nb_sdoors_found = rand() % 20;
   nb_scorrs = rand() % 20;
   nb_scorrs_found = rand() % 20;
-  nb_squares_reached = rand() % 20;
+  nb_squares_explored = rand() % 20;
   nb_squares_reachable = rand() % 20;
 }
 #endif
@@ -139,8 +141,8 @@ int get_nb_squares_reachable(){
 	return nb_squares_reachable;
 }
 
-int get_nb_squares_reached(){
-	return nb_squares_reached;
+int get_nb_squares_explored(){
+	return nb_squares_explored;
 }
 
 void gs_submit_game(){
@@ -151,8 +153,10 @@ void gs_submit_game(){
 	close_db_manager();
 }
 
+#ifdef NETHACK_ACCESS
 void gs_end_game_if_needed(){
 	if (moves >= max_moves){
 		terminate(EXIT_SUCCESS);
 	}
 }
+#endif

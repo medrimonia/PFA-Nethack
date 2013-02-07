@@ -84,18 +84,10 @@ void initialize_table_descriptor(){
 	}
 	table_descriptor->columns[0]->name = "id";
 	table_descriptor->columns[0]->type = "int";
-	table_descriptor->columns[1]->name = "nb_squares_explored";
-	table_descriptor->columns[1]->type = "int";
-	table_descriptor->columns[2]->name = "nb_squares_reachable";
-	table_descriptor->columns[2]->type = "int";
-	table_descriptor->columns[3]->name = "nb_sdoors_found";
-	table_descriptor->columns[3]->type = "int";
-	table_descriptor->columns[4]->name = "nb_sdoors_reachable";
-	table_descriptor->columns[4]->type = "int";
-	table_descriptor->columns[5]->name = "nb_scorrs_found";
-	table_descriptor->columns[5]->type = "int";
-	table_descriptor->columns[6]->name = "nb_scorrs_reachable";
-	table_descriptor->columns[6]->type = "int";
+#define DATABASE_FIELD(num, fName, fType) \
+  table_descriptor->columns[1 + num]->name = #fName; \
+  table_descriptor->columns[1 + num]->type = #fType;
+#include "seek_secret.def"
 }
 
 int init_db_manager(){
