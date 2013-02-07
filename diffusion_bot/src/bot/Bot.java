@@ -17,11 +17,13 @@ public class Bot {
 	private int nbMoves;
 	private int nbSearches;
 	private int nbOpen;
+	private Square expectedLocation;
 	
 	public Bot(){
 		dungeonLevel = 0;
 		map = new Map();
 		myParser = new InputOutputUnit();
+		expectedLocation = null;
 	}
 	
 	public Bot(String unixSocketName)
@@ -65,6 +67,9 @@ public class Bot {
 	}
 	
 	public void doTurn(){
+		if (expectedLocation != null &&
+		    map.actualSquare() != expectedLocation)
+			expectedLocation.setType(SquareType.HORIZONTAL_WALL, map);
 		Logger.println("Starting Turn : " + turn);
 		Logger.println(nbMoves + " moves until now");
 		Logger.println(nbSearches + " search until now");
@@ -131,6 +136,7 @@ public class Bot {
 			return;
 		case MOVE:
 			myParser.broadcastMove(a.getDirection());
+			expectedLocation = map.getDest(a.getDirection());
 			nbMoves++;
 			return;
 		}

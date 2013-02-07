@@ -128,7 +128,7 @@ void gs_submit_game(){
 	close_db_manager();
 }
 
-#define MAX_MOVES 2000
+#define MAX_MOVES 5000
 void gs_end_game_if_needed(){
 	if (moves >= MAX_MOVES){
 		terminate(EXIT_SUCCESS);
