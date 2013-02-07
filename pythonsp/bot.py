@@ -13,9 +13,9 @@ keys = [['y', 'k', 'u'],
         ['b', 'j', 'n']]
 
 
-def build_cmd():
-	cmd = ' '
+def build_cmd_list():
 	mmin = -1
+	cmds = ["s"]
 
 	for c in range(posc - 1, posc + 2):
 		for r in range(posr - 1, posr + 2):
@@ -23,17 +23,20 @@ def build_cmd():
 				continue
 			if (is_valid_pos(glyphs, c, r)):
 				cnt = been_there_count(glyphs, c, r)
-				if (cnt < mmin or mmin == -1):
+				if (cnt <= mmin or mmin == -1):
 					mmin = cnt
+					if (cnt < mmin):
+						cmds = ["s"]
 					g = get_glyph(glyphs, c, r)
 					if (g == '+'):
-						cmd = 'o' + keys[r-(posr-1)][c-(posc-1)]
+						cmds.append("o" + keys[r-(posr-1)][c-(posc-1)])
 					else:
-						cmd = keys[r-(posr-1)][c-(posc-1)]
+						cmds.append(keys[r-(posr-1)][c-(posc-1)])
 	
-	return cmd
+	return cmds
 
 
+print "new game..."
 
 
 s = socket(AF_UNIX, SOCK_STREAM)
@@ -53,6 +56,9 @@ while 1:
 	data.extend(received)
 	dlen = len(data)
 
+	if (dlen == 0):
+		break
+
 	i = 0
 	while (i < dlen):
 		if (data[i] == 'S'):
@@ -61,12 +67,9 @@ while 1:
 
 		elif (data[i] == 'E'):
 			i += 1
-			cmd = build_cmd()
-			print cmd
-			s.send(cmd)
-			dump_map(glyphs)
-			#dump_been_there(glyphs)
-			#time.sleep(1)
+			cmds = build_cmd_list()
+			cmd = random.choice(cmds)
+			s.sendall(cmd)
 
 		elif (data[i] == 'm'):
 			if (dlen - i > 2):
