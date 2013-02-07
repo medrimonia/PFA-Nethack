@@ -55,6 +55,7 @@ if [ $reuse = 0 ]; then
 	patch -p0 < install/pfamain.patch
 	patch -p0 < install/middleman.patch
 	patch -p0 < install/game_statistics.patch
+	patch -p0 < install/game_seed.patch
 	echo "Replacing $nhdir/src/Makefile..."
 	cp -r install/nh/* $nhdir
 fi

@@ -32,7 +32,7 @@ game_result_p new_game_result(const char * mode){
 	game_result_p new = malloc(sizeof(struct game_result));
 	new->mode = mode;
 	if (strcmp(mode, "seek_secret") == 0){
-		new->nb_properties = 7;
+		new->nb_properties = 8;
 	}
 	new->properties = malloc(new->nb_properties * sizeof(property_p));
 	int i;
@@ -61,6 +61,7 @@ game_result_p create_actual_game_result(const char * mode){
   gr_set_property_name(gr, num, #name); \
 	gr_set_property_##type##_value(gr, num, get_##name () );
 #include "seek_secret.def"
+
 	return gr;
 }
 

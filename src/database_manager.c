@@ -8,7 +8,7 @@
 #define DATABASE_NAME "pfa.db"
 
 #define REQUEST_SIZE 400
-#define NB_COLUMNS 8 // 1(gameID) + nbFields of the mode 
+#define NB_COLUMNS 9 // 1(gameID) + nbFields of the mod
 
 // SPECIFIC STRUCTURES
 
@@ -84,6 +84,7 @@ void initialize_table_descriptor(){
 	}
 	table_descriptor->columns[0]->name = "id";
 	table_descriptor->columns[0]->type = "int";
+
 #define DATABASE_FIELD(num, fName, fType) \
   table_descriptor->columns[1 + num]->name = #fName; \
   table_descriptor->columns[1 + num]->type = #fType;

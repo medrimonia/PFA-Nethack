@@ -21,6 +21,7 @@ int nb_squares_explored = 0;
 int nb_squares_reachable = 0;
 
 int max_moves = -1;
+int seed;
 
 char * bot_name = NULL;
 
@@ -50,6 +51,7 @@ void make_random_stats(){
   nb_scorrs_found = rand() % 5;
   nb_squares_explored = rand() % 400;
   nb_squares_reachable = rand() % 400;
+  seed = rand();
 	max_moves = (rand() % 20) * 1000;
 	bot_name = "random_stats";
 }
@@ -123,6 +125,10 @@ void update_reached_squares(){
 #endif
 }
 
+void gs_set_seed(int s){
+	seed = s;
+}
+
 int get_nb_sdoors() {
 	return nb_sdoors;
 }
@@ -153,6 +159,10 @@ int get_max_moves(){
 
 char * get_bot_name(){
 	return bot_name;
+}
+
+int get_seed(){
+	return seed;
 }
 
 void gs_submit_game(){

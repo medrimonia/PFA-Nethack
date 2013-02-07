@@ -3,7 +3,7 @@
 
 // Comment if there's no access to nethack files
 // This is used typically for test outside of nethack kernel
-#define NETHACK_ACCESS
+//#define NETHACK_ACCESS
 
 /* Initialize the number of moves allowed for a game */
 void gs_init();
@@ -49,6 +49,9 @@ void update_reachable_squares();
  */
 void update_reached_squares();
 
+/* Shall be called when a seed is used to set game random */
+void gs_set_seed(int);
+
 /* Return the number of secret doors reachable in all the level reached. */
 int get_nb_sdoors();
 
@@ -72,6 +75,9 @@ int get_nb_squares_explored();
 int get_max_moves();
 
 char * get_bot_name();
+
+/* Return the game seed. */
+int get_seed();
 
 /* Add result of current game to database */
 void gs_submit_game();
