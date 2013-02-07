@@ -9,6 +9,7 @@
 #endif
 
 #define DEFAULT_MAX_MOVES 20000
+#define DEFAULT_BOT_NAME "unknown"
 
 int nb_sdoors = 0;
 int nb_sdoors_found = 0;
@@ -21,6 +22,8 @@ int nb_squares_reachable = 0;
 
 int max_moves = -1;
 
+char * bot_name = NULL;
+
 void gs_init(){
 	char * str;
 
@@ -29,6 +32,12 @@ void gs_init(){
 		max_moves = DEFAULT_MAX_MOVES;
 	else
 		max_moves = atoi(str);
+
+	str = nh_getenv("NH_BOT_NAME");
+	if (str == NULL)
+		bot_name = DEFAULT_BOT_NAME;
+	else
+		bot_name = strdup(str);
 }
 
 #ifndef NETHACK_ACCESS
