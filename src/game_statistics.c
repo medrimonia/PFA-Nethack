@@ -118,7 +118,7 @@ void update_reached_squares(){
 #ifdef NETHACK_ACCESS
 	if (!visited_square[u.uz.dnum][u.uz.dlevel][u.ux][u.uy]){
 		visited_square[u.uz.dnum][u.uz.dlevel][u.ux][u.uy] = 1;
-		nb_squares_reached++;
+		nb_squares_explored++;
 	}
 #endif
 }
