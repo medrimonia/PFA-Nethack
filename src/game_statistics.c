@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #endif
 
+#define DEFAULT_MAX_MOVES 20000
+
 int nb_sdoors = 0;
 int nb_sdoors_found = 0;
 
@@ -16,6 +18,18 @@ int nb_scorrs_found = 0;
 
 int nb_squares_reached = 0;
 int nb_squares_reachable = 0;
+
+int max_moves = -1;
+
+void gs_init(){
+	char * str;
+
+	str = nh_getenv("NH_MAX_MOVES");
+	if (str == NULL)
+		max_moves = DEFAULT_MAX_MOVES;
+	else
+		max_moves = atoi(str);
+}
 
 #ifndef NETHACK_ACCESS
 void make_random_stats(){
@@ -128,9 +142,8 @@ void gs_submit_game(){
 	close_db_manager();
 }
 
-#define MAX_MOVES 5000
 void gs_end_game_if_needed(){
-	if (moves >= MAX_MOVES){
+	if (moves >= max_moves){
 		terminate(EXIT_SUCCESS);
 	}
 }

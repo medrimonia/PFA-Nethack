@@ -10,6 +10,7 @@ void pfa_init()
 	// middleman stuff
 
 	// game statistics stuff
+	gs_init();
 	update_nb_sdoors();
 	update_nb_scorrs();
 	update_reachable_squares();

@@ -5,6 +5,9 @@
 // This is used typically for test outside of nethack kernel
 #define NETHACK_ACCESS
 
+/* Initialize the number of moves allowed for a game */
+void gs_init();
+
 #ifndef NETHACK_ACCESS
 /* srand initialization is not provided by game_statistics, it should be done
  * by the caller.
