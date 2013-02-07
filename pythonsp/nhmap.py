@@ -21,7 +21,7 @@ def is_valid_pos(glyphs, c, r):
 		return False;
 
 	g = glyphs[r][c][0]
-	for i in ['.', '#', '<', '>', '$']:
+	for i in ['.', '#', '<', '>', '$', '+']:
 		if (g == i):
 			return True
 
@@ -45,3 +45,8 @@ def dump_map(glyphs):
 			sys.stdout.write('%c' % glyph[0])
 		sys.stdout.write("\n")
 
+def dump_been_there(glyphs):
+	for line in glyphs:
+		for glyph in line:
+			sys.stdout.write('%i' % glyph[1])
+		sys.stdout.write("\n")

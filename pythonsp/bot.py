@@ -1,3 +1,4 @@
+import time
 import struct
 import random
 from socket import *
@@ -13,7 +14,7 @@ keys = [['y', 'k', 'u'],
 
 
 def build_cmd():
-	cmd = []
+	cmd = ' '
 	mmin = -1
 
 	for c in range(posc - 1, posc + 2):
@@ -24,7 +25,11 @@ def build_cmd():
 				cnt = been_there_count(glyphs, c, r)
 				if (cnt < mmin or mmin == -1):
 					mmin = cnt
-					cmd = keys[r-(posr-1)][c-(posc-1)]
+					g = get_glyph(glyphs, c, r)
+					if (g == '+'):
+						cmd = 'o' + keys[r-(posr-1)][c-(posc-1)]
+					else:
+						cmd = keys[r-(posr-1)][c-(posc-1)]
 	
 	return cmd
 
@@ -33,9 +38,6 @@ def build_cmd():
 
 s = socket(AF_UNIX, SOCK_STREAM)
 s.connect("/tmp/mmsock")
-
-s.sendall("\n")
-
 
 data = []
 random.seed()
@@ -47,24 +49,31 @@ glyphs = new_map(map_width, map_height)
 
 while 1:
 	
-	data.extend(s.recv(128))
+	received = s.recv(128)
+	data.extend(received)
 	dlen = len(data)
 
-	for i in range(0, dlen):
+	i = 0
+	while (i < dlen):
 		if (data[i] == 'S'):
+			i += 1
 			continue
 
 		elif (data[i] == 'E'):
+			i += 1
 			cmd = build_cmd()
 			print cmd
-			s.sendall(cmd)
+			s.send(cmd)
+			dump_map(glyphs)
+			#dump_been_there(glyphs)
+			#time.sleep(1)
 
 		elif (data[i] == 'm'):
 			if (dlen - i > 2):
 				map_width = ord(data[i+1])
 				map_height = ord(data[i+2])
 				glyphs = new_map(map_width, map_height)
-				i += 2
+				i += 3
 			else:
 				break
 
@@ -74,7 +83,7 @@ while 1:
 				r = ord(data[i+2])
 				g = data[i+3]
 				set_glyph(glyphs, c, r, g)
-				i += 3
+				i += 4
 				if (g == '@'):
 					posc = c
 					posr = r
@@ -82,13 +91,14 @@ while 1:
 			else:
 				break
 
+		else: # unknown char
+			i += 1
+
 	# leftover
 	if (i != dlen - 1):
 		data = data[i:]
 	else:
 		data = []
-
-	dump_map(glyphs)
 
 s.close()
 
