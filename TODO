@@ -17,6 +17,7 @@
    * Add elapsed time tracking
 * Update doc
    * Everywhere
+* Add pfa_setrandom declaration in pfamain.h
 
 
 ### LATER
