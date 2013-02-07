@@ -2,9 +2,8 @@
 *.swp
 ~*
 *~
-!nethack-3.4.3
+nethack-3.4.3/*
 nethack-343-src.tgz
-!nethack-3.4.3/game_simulator_src/
 java_starter_package/.classpath
 java_starter_package/.project
 java_starter_package/Bot.jar
