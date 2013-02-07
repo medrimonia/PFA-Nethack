@@ -1,85 +1,21 @@
-diff --git nethack-3.4.3.b/include/extern.h nethack-3.4.3/include/extern.h
-index 4e2314d..68b8d64 100644
---- nethack-3.4.3.b/include/extern.h
-+++ nethack-3.4.3/include/extern.h
-@@ -739,6 +739,7 @@ E int FDECL(strncmpi, (const char *,const char *,int));
- E char *FDECL(strstri, (const char *,const char *));
- #endif
- E boolean FDECL(fuzzymatch, (const char *,const char *,const char *,BOOLEAN_P));
-+E void FDECL(setseed, (const char *));
- E void NDECL(setrandom);
- E int NDECL(getyear);
- #if 0
-diff --git nethack-3.4.3.b/src/hacklib.c nethack-3.4.3/src/hacklib.c
-index 0d08270..ea96d6b 100644
---- nethack-3.4.3.b/src/hacklib.c
-+++ nethack-3.4.3/src/hacklib.c
-@@ -458,6 +458,54 @@ extern struct tm *FDECL(localtime,(time_t *));
- static struct tm *NDECL(getlt);
- 
- void
-+setseed(const char * seed_s)
-+{
-+	int seed;
-+	if (seed_s == NULL) {
-+#ifdef RANDOM	/* srandom() from sys/share/random.c */
-+		seed = time((time_t *)0);
-+	}
-+	else {
-+		seed = atoi(seed_s);
-+	}
-+	srandom((unsigned int) seed);
-+#else
-+# if defined(__APPLE__) || defined(BSD) || defined(LINUX) || defined(ULTRIX) || defined(CYGWIN32) /* system srandom() */
-+#  if defined(BSD) && !defined(POSIX_TYPES)
-+#   if defined(SUNOS4)
-+		(void)
-+#   endif
-+			seed = time((long *)0);
-+#  else
-+			seed = time((time_t *)0);
-+#  endif
-+		}
-+		else {
-+			seed = atoi(seed_s);
-+		}
-+		srandom(seed);
-+# else
-+#  ifdef UNIX	/* system srand48() */
-+		seed = time((time_t *)0);
-+	}
-+	else {
-+		seed = atoi(seed_s);
-+	}
-+	srand48((long) seed);
-+#  else		/* poor quality system routine */
-+		seed = time((time_t *)0);
-+	}
-+	else {
-+		seed = atoi(seed_s);
-+	}
-+	srand(seed);
-+#  endif
-+# endif
-+#endif
-+	gs_set_seed(seed);
-+}
-+
-+void
- setrandom()
- {
- 	/* the types are different enough here that sweeping the different
 diff --git nethack-3.4.3.b/src/options.c nethack-3.4.3/src/options.c
-index dfb8006..a8ee51f 100644
+index dfb8006..a2b97f1 100644
 --- nethack-3.4.3.b/src/options.c
 +++ nethack-3.4.3/src/options.c
-@@ -494,7 +494,8 @@ initoptions()
+@@ -14,6 +14,7 @@ NEARDATA struct instance_flags iflags;	/* provide linkage */
+ #include "tcap.h"
+ #include <ctype.h>
+ #endif
++#include "pfamain.h"
+ 
+ #define WINTYPELEN 16
+ 
+@@ -494,7 +495,7 @@ initoptions()
  	int i;
  
  	/* initialize the random number generator */
 -	setrandom();
-+	/* using determined seed, if given */
-+	setseed(nh_getenv("SEED"));
++	pfa_setrandom();
  
  	/* for detection of configfile options specified multiple times */
  	iflags.opt_booldup = iflags.opt_compdup = (int *)0;

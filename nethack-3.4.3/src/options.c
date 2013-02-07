@@ -14,6 +14,7 @@ NEARDATA struct instance_flags iflags;	/* provide linkage */
 #include "tcap.h"
 #include <ctype.h>
 #endif
+#include "pfamain.h"
 
 #define WINTYPELEN 16
 
@@ -494,8 +495,7 @@ initoptions()
 	int i;
 
 	/* initialize the random number generator */
-	/* using determined seed, if given */
-	setseed(nh_getenv("SEED"));
+	pfa_setrandom();
 
 	/* for detection of configfile options specified multiple times */
 	iflags.opt_booldup = iflags.opt_compdup = (int *)0;
