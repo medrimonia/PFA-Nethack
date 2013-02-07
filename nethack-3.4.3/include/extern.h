@@ -739,7 +739,6 @@ E int FDECL(strncmpi, (const char *,const char *,int));
 E char *FDECL(strstri, (const char *,const char *));
 #endif
 E boolean FDECL(fuzzymatch, (const char *,const char *,const char *,BOOLEAN_P));
-E void FDECL(setseed, (const char *));
 E void NDECL(setrandom);
 E int NDECL(getyear);
 #if 0
