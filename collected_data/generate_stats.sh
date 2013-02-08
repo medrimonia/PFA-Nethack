@@ -46,11 +46,13 @@ set ylabel "Number of games with this result"
 
 set datafile separator "|"
 
+set tics out
+
 #In case for building an eps-file ...
 set terminal postscript enhanced color solid eps 15
 set output "${FOLDER}/${FIELDS[i]}.eps"
 
-plot '${FOLDER}/${FIELDS[i]}_result.txt' with impulses title "games results", '${FOLDER}/average.txt' with impulses title "average"
+plot '${FOLDER}/${FIELDS[i]}_result.txt' with impulses title "games results", '${FOLDER}/average.txt' with impulses lc rgb "blue" lw 3 title "average"
 
 #replot
 
