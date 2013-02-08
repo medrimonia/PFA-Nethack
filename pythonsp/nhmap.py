@@ -48,5 +48,5 @@ def dump_map(glyphs):
 def dump_been_there(glyphs):
 	for line in glyphs:
 		for glyph in line:
-			sys.stdout.write('%i' % glyph[1])
+			sys.stdout.write('%2i' % glyph[1])
 		sys.stdout.write("\n")

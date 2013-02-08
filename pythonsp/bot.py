@@ -24,8 +24,8 @@ def build_cmd_list():
 			if (is_valid_pos(glyphs, c, r)):
 				cnt = been_there_count(glyphs, c, r)
 				if (cnt <= mmin or mmin == -1):
-					mmin = cnt
-					if (cnt < mmin):
+					if (cnt < mmin or mmin == -1):
+						mmin = cnt
 						cmds = ["s"]
 					g = get_glyph(glyphs, c, r)
 					if (g == '+'):
@@ -71,6 +71,7 @@ while 1:
 			cmds = build_cmd_list()
 			cmd = random.choice(cmds)
 			s.sendall(cmd)
+			#print cmds
 			#print cmd
 			#dump_map(glyphs)
 			#dump_been_there(glyphs)
