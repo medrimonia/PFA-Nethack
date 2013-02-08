@@ -1,0 +1,24 @@
+diff -Nur nethack-3.4.3.b/src/lock.c nethack-3.4.3/src/lock.c
+--- nethack-3.4.3.b/src/lock.c	2013-02-08 09:24:35.688929997 +0100
++++ nethack-3.4.3/src/lock.c	2013-02-07 20:04:09.512455125 +0100
+@@ -566,7 +566,7 @@
+ 		door->doormask = D_NODOOR;
+ 		if (*in_rooms(cc.x, cc.y, SHOPBASE)) add_damage(cc.x, cc.y, 0L);
+ 	    } else
+-		door->doormask = D_ISOPEN;
++		door->doormask = D_NODOOR;
+ 	    if (Blind)
+ 		feel_location(cc.x,cc.y);	/* the hero knows she opened it  */
+ 	    else
+diff -Nur nethack-3.4.3.b/src/mklev.c nethack-3.4.3/src/mklev.c
+--- nethack-3.4.3.b/src/mklev.c	2013-02-08 09:20:37.393554287 +0100
++++ nethack-3.4.3/src/mklev.c	2013-02-08 09:20:46.936835920 +0100
+@@ -382,7 +382,7 @@
+ 	if(type == DOOR) {
+ 	    if(!rn2(3)) {      /* is it a locked door, closed, or a doorway? */
+ 		if(!rn2(5))
+-		    levl[x][y].doormask = D_ISOPEN;
++		    levl[x][y].doormask = D_NODOOR;
+ 		else if(!rn2(6))
+ 		    levl[x][y].doormask = D_LOCKED;
+ 		else
