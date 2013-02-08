@@ -29,7 +29,8 @@ def build_cmd_list():
 						cmds = ["s"]
 					g = get_glyph(glyphs, c, r)
 					if (g == '+'):
-						cmds.append("o" + keys[r-(posr-1)][c-(posc-1)])
+						# kick door instead of opening : more effective :D
+						cmds.append("\4" + keys[r-(posr-1)][c-(posc-1)])
 					else:
 						cmds.append(keys[r-(posr-1)][c-(posc-1)])
 	
@@ -70,6 +71,10 @@ while 1:
 			cmds = build_cmd_list()
 			cmd = random.choice(cmds)
 			s.sendall(cmd)
+			#print cmd
+			#dump_map(glyphs)
+			#dump_been_there(glyphs)
+			#time.sleep(0.4)
 
 		elif (data[i] == 'm'):
 			if (dlen - i > 2):
