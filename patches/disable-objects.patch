@@ -1,0 +1,42 @@
+diff --git nethack-3.4.3.b/src/mkobj.c nethack-3.4.3/src/mkobj.c
+index 3db4c0b..d7ca093 100644
+--- nethack-3.4.3.b/src/mkobj.c
++++ nethack-3.4.3/src/mkobj.c
+@@ -1102,6 +1102,9 @@ place_object(otmp, x, y)
+ register struct obj *otmp;
+ int x, y;
+ {
++	/* Disable objects by not placing them */
++	return;
++
+     register struct obj *otmp2 = level.objects[x][y];
+ 
+     if (otmp->where != OBJ_FREE)
+diff --git nethack-3.4.3.b/src/timeout.c nethack-3.4.3/src/timeout.c
+index 6a336d6..c04d545 100644
+--- nethack-3.4.3.b/src/timeout.c
++++ nethack-3.4.3/src/timeout.c
+@@ -1661,6 +1661,9 @@ boolean
+ obj_is_local(obj)
+     struct obj *obj;
+ {
++	/* Avoid some errors after having disabled objects */
++	return FALSE;
++
+     switch (obj->where) {
+ 	case OBJ_INVENT:
+ 	case OBJ_MIGRATING:	return FALSE;
+diff --git nethack-3.4.3.b/src/u_init.c nethack-3.4.3/src/u_init.c
+index 77c92b0..ff7f49e 100644
+--- nethack-3.4.3.b/src/u_init.c
++++ nethack-3.4.3/src/u_init.c
+@@ -883,6 +883,9 @@ STATIC_OVL void
+ ini_inv(trop)
+ register struct trobj *trop;
+ {
++	/* Disable objects in the inventory */
++	return;
++
+ 	struct obj *obj;
+ 	int otyp, i;
+ 
