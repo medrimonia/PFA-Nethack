@@ -10,12 +10,14 @@ public class Map {
 	private int height;
 	private int width;
 	private Square[][] content;
+	public boolean needUpdate;
 
 	public Map(){
 		this.height = 0;
 		this.width = 0;
 		myPosition = null;
 		content = null;
+		needUpdate = false;
 	}
 	
 	public Map(char[][] map) throws UnknownPositionException{
@@ -38,6 +40,7 @@ public class Map {
 		this.height = height;
 		this.width = width;
 		myPosition = null;
+		needUpdate = false;
 		initMap();
 	}
 	
@@ -148,6 +151,8 @@ public class Map {
 		if (newVal == SquareType.UNKNOWN.getToken())
 			return;//Keeping memory of visited square in dark rooms
 		Position p = new Position(line, col);
+		Square s = getSquare(p);
+		SquareType oldType = s.getType();
 		SquareType newType;
 		if (newVal == Protocole.PLAYER_TOKEN){
 			myPosition = p;
@@ -159,7 +164,9 @@ public class Map {
 		else{
 			newType = SquareType.tokenToVariables(newVal);
 		}
-		getSquare(p).setType(newType, this);
+		s.setType(newType, this);
+		if (oldType != newType)
+			needUpdate = true;
 	}
 	
 	public void updateSize(int height, int width){
@@ -200,7 +207,7 @@ public class Map {
 			}
 			toTreat.remove(bestSquare);
 		}
-		
+		needUpdate = false;
 	}
 	
 	public boolean isKnownPosition(){

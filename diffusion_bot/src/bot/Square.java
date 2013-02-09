@@ -170,13 +170,13 @@ public class Square{
 			n.updateReachable(m);
 		}
 		//Update scores for square and neighbors
-		updateOpenScore();
-		updateForceScore();
+		updateOpenScore(m);
+		updateForceScore(m);
 		updateVisitScore(m);
 		updateLocalSearchScore(m);
 		for (Square n : neighbors){
-			n.updateOpenScore();
-			n.updateForceScore();
+			n.updateOpenScore(m);
+			n.updateForceScore(m);
 			n.updateVisitScore(m);
 			n.updateLocalSearchScore(m);
 		}
@@ -185,7 +185,6 @@ public class Square{
 	public void addVisit(Map m){
 		nbVisits++;
 		updateVisitScore(m);
-		updateInternScore();
 	}
 	
 	public void addSearch(Map m){
@@ -193,14 +192,14 @@ public class Square{
 		updateLocalSearchScore(m);
 	}
 	
-	public void addOpenTry(){
+	public void addOpenTry(Map m){
 		nbOpenTries++;
-		updateOpenScore();
+		updateOpenScore(m);
 	}
 	
-	public void addForceTry(){
+	public void addForceTry(Map m){
 		nbForceTries++;
-		updateForceScore();
+		updateForceScore(m);
 	}
 	
 	public void setScore(double newScore){
@@ -229,30 +228,34 @@ public class Square{
 	/**
 	 * Assume that all the score functions return the appropriated values
 	 */
-	private void updateInternScore(){
+	private void updateInternScore(Map m){
+		double oldScore = internScore;
 		internScore = 0;
 		internScore += getVisitScore();
 		internScore += getSearchScore();
 		internScore += getOpenScore();
 		internScore += getForceScore();
+		// if score has changed, map needs update
+		if (oldScore != internScore)
+			m.needUpdate = true;
 	}
 	
 	/**
 	 * Assume neighborhood types are up to date
 	 */
-	private void updateOpenScore() {
+	private void updateOpenScore(Map m) {
 		//TODO openScore should be lower if both sides are opened
 		double oldScore = openScore;
 		openScore = Scoring.openScore(this);
 		if (oldScore != openScore)
-			updateInternScore();
+			updateInternScore(m);
 	}
 	
-	private void updateForceScore(){
+	private void updateForceScore(Map m){
 		double oldScore = forceScore;
 		forceScore = Scoring.forceScore(this);
 		if (oldScore != forceScore)
-			updateInternScore();		
+			updateInternScore(m);		
 	}
 
 	/**
@@ -264,7 +267,7 @@ public class Square{
 		if (isReachable())
 			visitScore = Scoring.visitScore(m, p);
 		if (oldValue != visitScore)
-			updateInternScore();
+			updateInternScore(m);
 	}
 	
 	/**
@@ -328,7 +331,7 @@ public class Square{
 		double oldScore = searchScore;
 		searchScore = Scoring.environmentalSearchScore(m, p);
 		if (oldScore != searchScore)
-			updateInternScore();
+			updateInternScore(m);
 	}
 	
 	public String toString(){

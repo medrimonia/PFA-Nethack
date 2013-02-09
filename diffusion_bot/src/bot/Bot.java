@@ -80,7 +80,8 @@ public class Bot {
 		Logger.println(nbSearches + " search until now");
 		Logger.println(nbOpen + " open until now");		
 		map.actualSquare().addVisit(map);
-		map.updateScores();
+		if (map.needUpdate)
+			map.updateScores();
 		Logger.println(map.toString());
 		Logger.println(map.searchMapAsString());
 		/*try {
@@ -141,12 +142,12 @@ public class Bot {
 			nbSearches++;
 			return;
 		case OPEN:
-			map.getDest(a.getDirection()).addOpenTry();
+			map.getDest(a.getDirection()).addOpenTry(map);
 			myParser.broadcastOpeningDoor(a.getDirection());
 			nbOpen++;
 			return;
 		case FORCE:
-			map.getDest(a.getDirection()).addForceTry();
+			map.getDest(a.getDirection()).addForceTry(map);
 			myParser.broadcastForcingDoor(a.getDirection());
 			nbForce++;
 			return;
