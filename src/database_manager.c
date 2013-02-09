@@ -5,7 +5,7 @@
 
 #include "database_manager.h"
 
-#define DATABASE_NAME "pfa.db"
+#define DEFAULT_DATABASE_PATH "pfa.db"
 
 #define REQUEST_SIZE 400
 #define NB_COLUMNS 9 // 1(gameID) + nbFields of the mod
@@ -92,12 +92,15 @@ void initialize_table_descriptor(){
 }
 
 int init_db_manager(){
+	
+	char * str = nh_getenv("NH_DATABASE_PATH");
+	if (str == NULL) str = DEFAULT_DATABASE_PATH;
 
 	initialize_table_descriptor();
 
 	int result;
 
-	result = sqlite3_open_v2(DATABASE_NAME,
+	result = sqlite3_open_v2(str,
 													 &db,
 													 SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
 													 NULL);
