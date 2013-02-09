@@ -148,7 +148,7 @@ void create_table(const char * table_name){
 
 	int index = 0;
 	index += sprintf(request,
-									 "create table %s (id int primary key, ",
+									 "create table %s (id int primary key autoincrement, ",
 									 table_name);
 	
 	int i = 1;
