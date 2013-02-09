@@ -92,8 +92,10 @@ void initialize_table_descriptor(){
 }
 
 int init_db_manager(){
-	
-	char * str = nh_getenv("NH_DATABASE_PATH");
+	char * str = NULL;
+#ifdef NETHACK_ACCESS
+	str = nh_getenv("NH_DATABASE_PATH");
+#endif
 	if (str == NULL) str = DEFAULT_DATABASE_PATH;
 
 	initialize_table_descriptor();
@@ -151,7 +153,7 @@ void create_table(const char * table_name){
 
 	int index = 0;
 	index += sprintf(request,
-									 "create table %s (id int primary key autoincrement, ",
+									 "create table %s (id integer primary key autoincrement, ",
 									 table_name);
 	
 	int i = 1;
