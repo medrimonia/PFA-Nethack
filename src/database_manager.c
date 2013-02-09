@@ -4,6 +4,10 @@
 #include <sqlite3.h>
 
 #include "database_manager.h"
+// for ifdef
+#include "game_statistics.h"
+// for nh_getenv
+#include "hack.h"
 
 #define DEFAULT_DATABASE_PATH "pfa.db"
 
