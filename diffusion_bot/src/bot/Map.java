@@ -222,6 +222,21 @@ public class Map {
 		return sb.toString();
 	}
 	
+	public String searchMapAsString(){
+		StringBuffer sb = new StringBuffer();
+		sb.append("myPosition : " + myPosition + '\n');
+		for (int line = 0; line < content.length ; line++){
+			for (int column = 0; column < content[line].length; column++)
+				if (myPosition.getLine() == line &&
+					myPosition.getColumn() == column)
+					sb.append("@");
+				else
+					sb.append(content[line][column].getNbSearch());
+			sb.append('\n');
+		}
+		return sb.toString();
+	}
+	
 	public Square actualSquare(){
 		return getSquare(myPosition);
 	}

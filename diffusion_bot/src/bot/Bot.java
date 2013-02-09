@@ -77,6 +77,12 @@ public class Bot {
 		map.actualSquare().addVisit(map);
 		map.updateScores();
 		Logger.println(map.toString());
+		Logger.println(map.searchMapAsString());
+		/*try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}*/
 		bestAction();
 		turn++;
 	}

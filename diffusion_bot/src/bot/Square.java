@@ -242,9 +242,51 @@ public class Square{
 	 */
 	public void updateLocalSearchScore(Map m){
 		double oldScore = localSearchScore;
-		localSearchScore = Scoring.localSearchScore(this);
+		localSearchScore = Scoring.localSearchScore(m, this);
 		if (localSearchScore != oldScore)
 			m.updateNeighborsSearchScore(p);
+	}
+	
+	public boolean isRoomUnknownExit(Map m){
+
+		/* ROOMS EXIT
+		 * .|
+		 * ..
+		 * .|
+		 */
+		Position p = getPosition();
+		Square no = m.getDest(p, Direction.NORTH);
+		Square so = m.getDest(p, Direction.SOUTH);
+		Square we = m.getDest(p, Direction.WEST);
+		Square ea = m.getDest(p, Direction.EAST);
+		Square ne = m.getDest(p, Direction.NORTH_EAST);
+		Square nw = m.getDest(p, Direction.NORTH_WEST);
+		Square se = m.getDest(p, Direction.SOUTH_EAST);
+		Square sw = m.getDest(p, Direction.SOUTH_WEST);
+		if (no != null && so != null && we != null && ea != null &&
+			ne != null && nw != null && se != null && sw != null){
+			// Vertical exit of a place
+			if (no.getType() == SquareType.VERTICAL_WALL &&
+				so.getType() == SquareType.VERTICAL_WALL &&
+				((se.getType() == SquareType.UNKNOWN &&
+				  ea.getType() == SquareType.UNKNOWN &&
+				  ne.getType() == SquareType.UNKNOWN) ||
+				 (sw.getType() == SquareType.UNKNOWN &&
+				  we.getType() == SquareType.UNKNOWN &&
+				  nw.getType() == SquareType.UNKNOWN)))
+				return true;
+			// Horizontal exit of a place
+			if (we.getType() == SquareType.HORIZONTAL_WALL &&
+				ea.getType() == SquareType.HORIZONTAL_WALL &&
+				((se.getType() == SquareType.UNKNOWN &&
+				  so.getType() == SquareType.UNKNOWN &&
+				  sw.getType() == SquareType.UNKNOWN) ||
+				 (ne.getType() == SquareType.UNKNOWN &&
+				  no.getType() == SquareType.UNKNOWN &&
+				  nw.getType() == SquareType.UNKNOWN)))
+				return true;
+		}
+		return false;
 	}
 	
 	/**
