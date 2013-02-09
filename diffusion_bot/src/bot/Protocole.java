@@ -27,6 +27,8 @@ public final class Protocole {
 	public static final char SEARCH_TOKEN = 's';
 	
 	public static final char OPEN_TOKEN = 'o';
+	
+	public static final char FORCE_TOKEN = '\4';
 
 	public static final int DEFAULT_PORT = 4242;
 }

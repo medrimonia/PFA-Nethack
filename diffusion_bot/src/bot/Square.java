@@ -38,6 +38,10 @@ public class Square{
 	 */
 	private double openScore;
 	/**
+	 * score in [0,1] representing the importance of trying to force the square
+	 */
+	private double forceScore;
+	/**
 	 * score in [0,1] representing the probability
 	 * that something is hidden in this square (SCORR, SDOOR) 
 	 */
@@ -60,6 +64,10 @@ public class Square{
 	 * Number of time the player tried to open the door
 	 */
 	private int nbOpenTries;
+	/**
+	 * Number of time the player tried to open the door
+	 */
+	private int nbForceTries;
 	/**
 	 * Keep track of if the Square might be reached.
 	 */
@@ -103,6 +111,10 @@ public class Square{
 		return nbOpenTries;
 	}
 	
+	public int getNbForceTries(){
+		return nbForceTries;
+	}
+	
 	public int getNbSearch(){
 		return nbSearch;
 	}
@@ -121,6 +133,10 @@ public class Square{
 	
 	public double getOpenScore(){
 		return openScore * Scoring.OPEN_SCORE;
+	}
+	
+	public double getForceScore(){
+		return forceScore * Scoring.FORCE_SCORE;
 	}
 	
 	public double getLocalSearchScore(){
@@ -155,10 +171,12 @@ public class Square{
 		}
 		//Update scores for square and neighbors
 		updateOpenScore();
+		updateForceScore();
 		updateVisitScore(m);
 		updateLocalSearchScore(m);
 		for (Square n : neighbors){
 			n.updateOpenScore();
+			n.updateForceScore();
 			n.updateVisitScore(m);
 			n.updateLocalSearchScore(m);
 		}
@@ -178,6 +196,11 @@ public class Square{
 	public void addOpenTry(){
 		nbOpenTries++;
 		updateOpenScore();
+	}
+	
+	public void addForceTry(){
+		nbForceTries++;
+		updateForceScore();
 	}
 	
 	public void setScore(double newScore){
@@ -211,6 +234,7 @@ public class Square{
 		internScore += getVisitScore();
 		internScore += getSearchScore();
 		internScore += getOpenScore();
+		internScore += getForceScore();
 	}
 	
 	/**
@@ -222,6 +246,13 @@ public class Square{
 		openScore = Scoring.openScore(this);
 		if (oldScore != openScore)
 			updateInternScore();
+	}
+	
+	private void updateForceScore(){
+		double oldScore = forceScore;
+		forceScore = Scoring.forceScore(this);
+		if (oldScore != forceScore)
+			updateInternScore();		
 	}
 
 	/**

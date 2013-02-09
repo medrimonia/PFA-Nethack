@@ -17,6 +17,7 @@ public class Bot {
 	private int nbMoves;
 	private int nbSearches;
 	private int nbOpen;
+	private int nbForce;
 	private Square expectedLocation;
 	
 	public Bot(){
@@ -24,6 +25,10 @@ public class Bot {
 		map = new Map();
 		myParser = new InputOutputUnit();
 		expectedLocation = null;
+		nbMoves = 0;
+		nbSearches = 0;
+		nbOpen = 0;
+		nbForce = 0;
 	}
 	
 	public Bot(String unixSocketName)
@@ -93,21 +98,21 @@ public class Bot {
 		double searchScore = map.actualSquare().getSearchScore();
 		l.add(new Action(ActionType.SEARCH, null, searchScore));
 		for (Direction dir : Direction.values()){
-			Action toAdd = null;
 			Square dest = map.getDest(dir);
 			if (dest == null)
 				continue;
 			if (map.isAllowedMove(dir))
-				toAdd = new Action(ActionType.MOVE,
-							       dir,
-							       Scoring.afterMoveScore(dest.getScore()));
+				l.add(new Action(ActionType.MOVE,
+							     dir,
+							     Scoring.afterMoveScore(dest.getScore())));
 			if (map.isAllowedOpen(dir)){
-				toAdd = new Action(ActionType.OPEN,
-							       dir,
-							       dest.getScore());
+				l.add(new Action(ActionType.OPEN,
+							     dir,
+							     dest.getOpenScore()));
+				l.add(new Action(ActionType.FORCE,
+					     		 dir,
+					     		 dest.getForceScore()));				
 			}
-			if (toAdd != null)
-				l.add(toAdd);
 		}
 		Logger.println("Nb valid choices : " + l.nbElements());
 		return l;
@@ -139,6 +144,11 @@ public class Bot {
 			map.getDest(a.getDirection()).addOpenTry();
 			myParser.broadcastOpeningDoor(a.getDirection());
 			nbOpen++;
+			return;
+		case FORCE:
+			map.getDest(a.getDirection()).addForceTry();
+			myParser.broadcastForcingDoor(a.getDirection());
+			nbForce++;
 			return;
 		case MOVE:
 			myParser.broadcastMove(a.getDirection());

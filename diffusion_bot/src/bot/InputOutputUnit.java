@@ -142,6 +142,13 @@ class InputOutputUnit{
 		output.flush();
 	}
 	
+	public void broadcastForcingDoor(Direction d){
+		Logger.println("ACTION : " + Protocole.FORCE_TOKEN + d.getValue());
+		output.print(Protocole.FORCE_TOKEN);
+		output.print(d.getValue());
+		output.flush();
+	}
+	
 	public void close(){
 		try{
 			output.close();
