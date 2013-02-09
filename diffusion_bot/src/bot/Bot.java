@@ -14,6 +14,7 @@ public class Bot {
 	private int dungeonLevel;
 	public Map map;
 	private int turn;
+	private int nbUpdatesSaved;
 	private int nbMoves;
 	private int nbSearches;
 	private int nbOpen;
@@ -29,6 +30,8 @@ public class Bot {
 		nbSearches = 0;
 		nbOpen = 0;
 		nbForce = 0;
+		turn = 0;
+		nbUpdatesSaved = 0;
 	}
 	
 	public Bot(String unixSocketName)
@@ -80,8 +83,11 @@ public class Bot {
 		Logger.println(nbSearches + " search until now");
 		Logger.println(nbOpen + " open until now");		
 		map.actualSquare().addVisit(map);
-		if (map.needUpdate)
+		if (map.needUpdate){
+			nbUpdatesSaved++;
 			map.updateScores();
+		}
+		Logger.println(nbUpdatesSaved + " turns without updates");
 		Logger.println(map.toString());
 		Logger.println(map.searchMapAsString());
 		/*try {
