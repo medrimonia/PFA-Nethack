@@ -1,3 +1,6 @@
+#include <string.h>
+#include <sys/time.h>
+
 #include "game_statistics.h"
 
 #include "database_manager.h"
@@ -10,6 +13,7 @@
 
 #define DEFAULT_MAX_MOVES 20000
 #define DEFAULT_BOT_NAME "unknown"
+#define DEFAULT_MODE_NAME "seek_secret"
 
 int nb_sdoors = 0;
 int nb_sdoors_found = 0;
@@ -23,25 +27,40 @@ int nb_squares_reachable = 0;
 int max_moves = -1;
 int seed;
 
+struct timeval start;
+
 char * bot_name = NULL;
+char * mode_name = NULL;
+
+void gs_init(){
+	gettimeofday(&start, NULL);
+
+	char * str = NULL;
 
 #ifdef NETHACK_ACCESS
-void gs_init(){
-	char * str;
-
 	str = nh_getenv("NH_MAX_MOVES");
+#endif
 	if (str == NULL)
 		max_moves = DEFAULT_MAX_MOVES;
 	else
 		max_moves = atoi(str);
 
+#ifdef NETHACK_ACCESS
 	str = nh_getenv("NH_BOT_NAME");
+#endif
 	if (str == NULL)
-		bot_name = DEFAULT_BOT_NAME;
+		bot_name = strdup(DEFAULT_BOT_NAME);
 	else
 		bot_name = strdup(str);
-}
+
+#ifdef NETHACK_ACCESS
+	str = nh_getenv("NH_MODE_NAME");
 #endif
+	if (str == NULL)
+		mode_name = strdup(DEFAULT_MODE_NAME);
+	else
+		mode_name = strdup(str);
+}
 
 #ifndef NETHACK_ACCESS
 void make_random_stats(){
@@ -53,7 +72,6 @@ void make_random_stats(){
   nb_squares_reachable = rand() % 400;
   seed = rand();
 	max_moves = (rand() % 20) * 1000;
-	bot_name = "random_stats";
 }
 #endif
 
@@ -157,12 +175,24 @@ int get_max_moves(){
 	return max_moves;
 }
 
-char * get_bot_name(){
+const char * get_bot_name(){
 	return bot_name;
+}
+
+const char * get_mode_name(){
+	return mode_name;
 }
 
 int get_seed(){
 	return seed;
+}
+
+int get_processing_time(){
+	struct timeval actual;
+	gettimeofday(&actual, NULL);
+	struct timeval result;
+	timersub(&actual, &start, &result);
+	return result.tv_sec * 1000 + result.tv_usec / 1000;
 }
 
 void gs_submit_game(){
@@ -171,6 +201,8 @@ void gs_submit_game(){
 	add_game_result(gr);
 	destroy_game_result(gr);
 	close_db_manager();
+	free(bot_name);
+	free(mode_name);
 }
 
 #ifdef NETHACK_ACCESS

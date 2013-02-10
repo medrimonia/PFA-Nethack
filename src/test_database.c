@@ -5,12 +5,14 @@
 #include <sqlite3.h>
 
 #include "database_manager.h"
+#include "game_statistics.h"
 
 int main(int argc, char ** argv){
 	// Initializing random generator
 	srand(time(NULL));
 	//
 	init_db_manager();
+	gs_init();
 
 	// check if a table named seek_secret exists
 	if (exist_table("seek_secret")){

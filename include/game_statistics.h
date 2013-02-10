@@ -74,7 +74,14 @@ int get_nb_squares_explored();
 /* Return the maximal number of moves allowed in this game. */
 int get_max_moves();
 
-char * get_bot_name();
+/* Return the name of the bot playing this game */
+const char * get_bot_name();
+
+/* Return the name of the mode used in this game */
+const char * get_mode_name();
+
+/* Return time (in ms) since beginning of the game */
+int get_processing_time();
 
 /* Return the game seed. */
 int get_seed();

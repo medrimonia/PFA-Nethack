@@ -7,12 +7,14 @@
 // for ifdef
 #include "game_statistics.h"
 // for nh_getenv
+#ifdef NETHACK_ACCESS
 #include "hack.h"
+#endif
 
 #define DEFAULT_DATABASE_PATH "pfa.db"
 
 #define REQUEST_SIZE 400
-#define NB_COLUMNS 9 // 1(gameID) + nbFields of the mod
+#define NB_COLUMNS 12 // 1(gameID) + nbFields of the mod
 
 // SPECIFIC STRUCTURES
 
@@ -89,9 +91,9 @@ void initialize_table_descriptor(){
 	table_descriptor->columns[0]->name = "id";
 	table_descriptor->columns[0]->type = "int";
 
-#define DATABASE_FIELD(num, fName, fType) \
+#define DATABASE_FIELD(num, fName, cType, sqlType)					 \
   table_descriptor->columns[1 + num]->name = #fName; \
-  table_descriptor->columns[1 + num]->type = #fType;
+  table_descriptor->columns[1 + num]->type = #sqlType;
 #include "seek_secret.def"
 }
 
@@ -221,7 +223,10 @@ int add_game_result(game_result_p gr){
 
 	// printing columns values
 	while(true){
-		index += sprintf(request + index, "%s", gr_get_property_value(gr, i));
+		if (gr_is_property_text(gr,i))
+			index += sprintf(request + index, "'%s'", gr_get_property_value(gr, i));
+		else
+			index += sprintf(request + index, "%s", gr_get_property_value(gr, i));
 		i++;
 		if (i >= gr_get_nb_properties(gr))
 			break;
@@ -230,7 +235,7 @@ int add_game_result(game_result_p gr){
 	
 	index += sprintf(request + index, ")");
 	
-	//printf("REQUEST: %s\n", request);
+	printf("REQUEST: %s\n", request);
 
 	char * err_msg;
 

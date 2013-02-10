@@ -1,6 +1,8 @@
 #ifndef GAME_RESULT_H
 #define GAME_RESULT_H
 
+#include <stdbool.h>
+
 typedef struct game_result * game_result_p;
 
 /* The number and the names of properties will be set according to the mode
@@ -25,12 +27,18 @@ void gr_set_property_name(game_result_p gr,
 // if an old value is found, it's free
 void gr_set_property_value(game_result_p gr,
 													 int index,
-													 char * value);
+													 const char * value,
+													 bool is_text);
 
 // if an old value is found, it's free
-void gr_set_property_int_value(game_result_p gr,
-															 int index,
-															 int value);
+void gr_set_property_integer_value(game_result_p gr,
+																	 int index,
+																	 int value);
+
+// if an old value is found, it's free
+void gr_set_property_text_value(game_result_p gr,
+																int index,
+																const char * value);
 
 
 const char * gr_get_property_name(game_result_p gr,
@@ -38,6 +46,9 @@ const char * gr_get_property_name(game_result_p gr,
 
 const char * gr_get_property_value(game_result_p gr,
 																	 int index);
+
+bool gr_is_property_text(game_result_p gr,
+												 int index);
 
 const char * gr_get_mode(game_result_p gr);
 
