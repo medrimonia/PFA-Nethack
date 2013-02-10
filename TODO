@@ -13,6 +13,11 @@
 * Update doc
    * Everywhere
 * Add pfa_setrandom declaration in pfamain.h
+* Test bot_name, mode_name and time
+* Test rebuilding with game_runner launched
+* Test multiple game_runner with the same launcher
+* Document game_runner script (usage etc)
+* Verify indentation (particularly for ludovic)
 
 
 ### LATER
