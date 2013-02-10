@@ -55,6 +55,7 @@ export NH_DATABASE_PATH
 
 #Some tests should be runned first
 
+echo "Database_path : $NH_DATABASE_PATH"
 
 TEST_FOLDER="test"$$	
 BOT_FILE=$(basename $BOT_PATH)
@@ -69,9 +70,9 @@ do
 		#Avoiding mm.log to grow too much in size
 		rm -f $TEST_FOLDER/nethack-3.4.3/nethackdir/mm.log
 		#Running nethack
-		$TEST_FOLDER/nethack-3.4.3/nethack & #>$TEST_FOLDER/nh_log &
+		$TEST_FOLDER/nethack-3.4.3/nethack >$TEST_FOLDER/nh_log &
 		#Running bot
-		$BOT_CMD $TEST_FOLDER/$BOT_FILE $NH_MM_SOCKPATH #>$TEST_FOLDER/bot_log
+		$BOT_CMD $TEST_FOLDER/$BOT_FILE $NH_MM_SOCKPATH >$TEST_FOLDER/bot_log
 		printf "\033[80DRunning tests : %d/%d" $i $NB_GAMES
 done
 echo
