@@ -39,9 +39,11 @@ def build_cmd_list():
 
 print "new game..."
 
-
 s = socket(AF_UNIX, SOCK_STREAM)
-s.connect("/tmp/mmsock")
+if (len(sys.argv) < 2):
+	s.connect("/tmp/mmsock")
+else:
+	s.connect(sys.argv[1])
 
 data = []
 random.seed()
