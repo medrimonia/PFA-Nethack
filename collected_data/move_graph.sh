@@ -6,6 +6,7 @@ DATABASE="different_moves.db"
 
 BOTS[0]="diffusion"
 BOTS[1]="java_sp"
+BOTS[2]="pythonSP"
 
 MOVE_COLUMN=2
 
