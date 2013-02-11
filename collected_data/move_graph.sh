@@ -2,9 +2,10 @@
 
 #Variables
 
-DATABASE="diffusion.db"
+DATABASE="different_moves.db"
 
 BOTS[0]="diffusion"
+BOTS[1]="java_sp"
 
 MOVE_COLUMN=2
 
@@ -21,8 +22,10 @@ FIELD_NAME[2]="secret corridors found"
 #Generating data files
 for ((i = 0; i < ${#BOTS[@]}; i++))
 do
-		FILES[i]="data_${BOTS[i]}.csv"
-		sqlite3 -header -csv $DATABASE 'select count(*) as nb_games,max_moves,100 * sum(nb_squares_explored) / sum(nb_squares_reachable) as percent_explored, sum(100 * nb_sdoors_found)/sum(nb_sdoors) as percent_sdoors_found, 100 * sum(nb_scorrs_found) /sum (nb_scorrs) as percent_scorrs_found from seek_secret group by max_moves' >${FILES[i]}
+		FILES[i]="${BOTS[i]}.csv"
+		REQUEST="'select count(*) as nb_games, max_moves,100*sum(nb_squares_explored) / sum(nb_squares_reachable) as percent_explored, sum(100*nb_sdoors_found)/sum(nb_sdoors) as percent_sdoors_found, 100*sum(nb_scorrs_found) /sum (nb_scorrs) as percent_scorrs_found from seek_secret where bot_name == \"${BOTS[i]}\" group by max_moves'"
+		# This particular syntax is due to a problem when processing argument with '...'
+		echo $REQUEST | xargs sqlite3 -header -csv $DATABASE >${FILES[i]}
 done
 
 for ((i = 0; i < ${#FIELDS[@]};i++))
@@ -43,8 +46,8 @@ set tics out
 set terminal postscript enhanced color solid eps 15
 set output "graph_${FIELDS[i]}.eps"
 
-
-plot for [k=0:${#BOTS[@]}-1] '${FILES[k]}' using ${MOVE_COLUMN}:${DATA_COLUMN[i]} with linespoints lw 3 title '${BOTS[k]}'
+#for should be used here but it stills seems difficult
+plot for [bot in "${BOTS[@]}"] bot.".csv" using ${MOVE_COLUMN}:${DATA_COLUMN[i]} with linespoints lw 3 title bot
 quit
 PLOT
 done
