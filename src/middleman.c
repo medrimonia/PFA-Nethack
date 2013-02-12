@@ -9,6 +9,9 @@
 #include <sys/un.h>
 #include <sys/socket.h>
 
+#include <fcntl.h>
+#include <sys/stat.h>
+
 #define BUFSIZE         64
 #define DEFAULTSOCKPATH "/tmp/mmsock"
 
@@ -84,7 +87,7 @@ static winid winmapid;
 static FILE *log = NULL;
 static char use_logging = 0;
 
-static FILE *replay = NULL;
+static int replay = -1;
 static char record_replay = 0;
 
 static char *sockpath;
@@ -127,10 +130,9 @@ void mm_cleanup()
 		log = NULL;
 	}
 
-	if (replay != NULL) {
-		fflush(replay);
-		fclose(replay);
-		replay = NULL;
+	if (replay > 0) {
+		close(replay);
+		replay = -1;
 	}
 
 	if (mmsock != -1) {
@@ -195,10 +197,10 @@ void mm_init()
 
 	/* open replay file if enabled */
 	if (record_replay) {
-		replay = fopen("replay", "w");
+		replay = open("replay", O_CREAT | O_WRONLY | O_TRUNC, 0644);
 
-		if (replay == NULL) {
-			perror("fopen");
+		if (replay == -1) {
+			perror("open");
 		}
 	}
 
@@ -457,8 +459,8 @@ mm_print_glyph(window, x, y, glyph)
 		size = sprintf(buf, "g%c%c%c", x, y, ochar);
 		send(client, buf, size, 0);
 
-		if (replay != NULL) {
-			fputs(buf, replay);
+		if (replay > 0) {
+			write(replay, buf, size);
 		}
 	}
 
@@ -553,10 +555,6 @@ mm_nh_poskey(x, y, mod)
 
 	mm_log("mm_nh_poskey", "");
 
-	if (replay != NULL) {
-		fputc('\n', replay);
-	}
-
 	if (first == last) { // buffer empty
 		
 		first = 0;
@@ -568,6 +566,11 @@ mm_nh_poskey(x, y, mod)
 			mm_log("send()", "Client disconnected.");
 			terminate(EXIT_FAILURE);
 		}
+
+		if (replay > 0) {
+			write(replay, "E", 1);
+		}
+
 
 		nb_received = recv(client, buf, BUFSIZE, 0);
 		buf[nb_received] = '\0';
@@ -590,6 +593,10 @@ mm_nh_poskey(x, y, mod)
 			}
 
 			cmd = buf[0];
+		}
+
+		if (replay > 0) {
+			write(replay, "S", 1);
 		}
 	}
 	
