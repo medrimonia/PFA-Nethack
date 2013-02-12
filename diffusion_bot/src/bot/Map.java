@@ -74,6 +74,24 @@ public class Map {
 		}		
 	}
 	
+	public boolean fullySearched(){
+		for (int line = 0; line < height; line++){
+			for (int column = 0; column < width; column++){
+				if (content[line][column].getSearchScore() != 0)
+					return false;
+			}
+		}
+		return true;
+	}
+	
+	public void updateAllSearch(){
+		for (int line = 0; line < height; line++){
+			for (int column = 0; column < width; column++){
+				content[line][column].updateLocalSearchScore(this);
+			}
+		}
+	}
+	
 	public Square getDest(Direction d){
 		return getDest(myPosition, d);
 	}
@@ -197,6 +215,9 @@ public class Map {
 					bestScore = s.getScore();
 				}
 			}
+			// if bestScore is 0, no update will be needed on all future squares
+			if (bestScore == 0)
+				break;
 			// updating neighbors
 			double newScore = Scoring.afterMoveScore(bestScore);
 			for (Direction d : Direction.values()){
@@ -236,9 +257,13 @@ public class Map {
 			for (int column = 0; column < content[line].length; column++)
 				if (myPosition.getLine() == line &&
 					myPosition.getColumn() == column)
-					sb.append("@");
-				else
+					sb.append(" @|");
+				else{
+					if (content[line][column].getNbSearch() < 10)
+						sb.append(" ");
 					sb.append(content[line][column].getNbSearch());
+					sb.append('|');
+				}
 			sb.append('\n');
 		}
 		return sb.toString();

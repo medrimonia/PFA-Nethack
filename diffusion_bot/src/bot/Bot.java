@@ -75,6 +75,10 @@ public class Bot {
 	}
 	
 	public void doTurn(){
+		if (map.fullySearched()){
+			Scoring.nbCompleteSearch++;
+			map.updateAllSearch();
+		}
 		if (expectedLocation != null &&
 		    map.actualSquare() != expectedLocation)
 			expectedLocation.setType(SquareType.HORIZONTAL_WALL, map);
@@ -83,10 +87,11 @@ public class Bot {
 		Logger.println(nbSearches + " search until now");
 		Logger.println(nbOpen + " open until now");		
 		map.actualSquare().addVisit(map);
-		if (map.needUpdate){
-			nbUpdatesSaved++;
+		//if (map.needUpdate){
 			map.updateScores();
-		}
+		//}
+		//else
+			//nbUpdatesSaved++;			
 		Logger.println(nbUpdatesSaved + " turns without updates");
 		Logger.println(map.toString());
 		Logger.println(map.searchMapAsString());
