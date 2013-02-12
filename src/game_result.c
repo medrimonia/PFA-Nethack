@@ -16,7 +16,7 @@ struct property{
 typedef struct property * property_p;
 
 struct game_result{
-	const char * mode;
+	const char * table;
 	property_p * properties;
 	int nb_properties;
 };
@@ -31,11 +31,14 @@ property_p new_property(){
 	return new;
 }
 
-game_result_p new_game_result(const char * mode){
+game_result_p new_game_result(const char * table){
 	game_result_p new = malloc(sizeof(struct game_result));
-	new->mode = mode;
-	if (strcmp(mode, "seek_secret") == 0){
-		new->nb_properties = 11;
+	new->table = table;
+	if (strcmp(table, "seek_secret") == 0){
+		new->nb_properties = 12;
+	}
+	if (strcmp(table, "door_discovery") == 0){
+		new->nb_properties = 5;
 	}
 	new->properties = malloc(new->nb_properties * sizeof(property_p));
 	int i;
@@ -45,27 +48,37 @@ game_result_p new_game_result(const char * mode){
 	return new;
 }
 
-/* Including game_statistics imply to include all the nethack kernel,
- * That doesn't seems to be a good idea, maybe there's something to do
- * with '#if'?
- * A solution might be to move the code of new_game_result in game_statistics,
- * but then game_statistics dependance to database_manager should be
- * facultative.
- * Best solution might be to get the initialisation code inside of the
- * middle_man
- */
-game_result_p create_actual_game_result(const char * mode){
+game_result_p create_actual_game_result(const char * table){
 	#ifndef NETHACK_ACCESS
 	make_random_stats();
 	#endif
-	game_result_p gr = new_game_result(mode);
-
-#define DATABASE_FIELD(num, name, cType, sqlType)				\
-  gr_set_property_name(gr, num, #name);                 \
-	gr_set_property_##sqlType##_value(gr, num, get_##name () );
+	game_result_p gr = new_game_result(table);
+	
+	int index = 1;// id field is not set by this type of method
+#define DATABASE_FIELD(name, cType, sqlType)						  			 \
+  gr_set_property_name(gr, index, #name);                        \
+	gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
+	index++;
 #include "seek_secret.def"
 
 	return gr;
+}
+
+game_result_p create_door_discovery_result(){
+	#ifndef NETHACK_ACCESS
+	make_random_door_discovery();
+	#endif
+	game_result_p gr = new_game_result("door_discovery");
+	
+	int index = 1;// id field is not set by this type of method
+#define DATABASE_FIELD(name, cType, sqlType)						  			 \
+  gr_set_property_name(gr, index, #name);                        \
+	gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
+	index++;
+#include "door_discovery.def"
+
+	return gr;
+	
 }
 
 void destroy_game_result(game_result_p gr){
@@ -108,10 +121,10 @@ void gr_set_property_integer_value(game_result_p gr,
 																	 int value){
 	int size = 0;
 	int tmp = value;
-	while (tmp > 0){
+	do{
 		tmp = tmp / 10;
 		size++;
-	}
+	}while(tmp > 0);
 	if (value < 0)
 		size++;
 	char * new_value = malloc(size * sizeof(char *));
@@ -135,8 +148,8 @@ bool gr_is_property_text(game_result_p gr,
 }
 
 
-const char * gr_get_mode(game_result_p gr){
-	return gr->mode;
+const char * gr_get_table(game_result_p gr){
+	return gr->table;
 }
 
 int gr_get_nb_properties(game_result_p gr){

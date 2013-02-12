@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <sqlite3.h>
 
@@ -14,7 +15,6 @@
 #define DEFAULT_DATABASE_PATH "pfa.db"
 
 #define REQUEST_SIZE 400
-#define NB_COLUMNS 12 // 1(gameID) + nbFields of the mod
 
 // SPECIFIC STRUCTURES
 
@@ -46,7 +46,8 @@ typedef struct get_result * get_result_p;
 
 sqlite3 * db = NULL;
 
-table_descriptor_p table_descriptor = NULL;
+table_descriptor_p mode_table = NULL;
+table_descriptor_p door_discovery_table = NULL;
 
 get_result_p new_get_result(){
 	get_result_p new = malloc(sizeof(struct get_result));
@@ -77,24 +78,44 @@ get_result_p get_request(const char * request){
 	return r;
 }
 
-void initialize_table_descriptor(){
+void initialize_table_descriptor(const char * table_name,
+																 table_descriptor_p * td_p){
+	(*td_p) = malloc(sizeof(struct column_descriptor));
+	table_descriptor_p td = *td_p;
+
+	if (strcmp(table_name,"seek_secret") == 0){
+		td->nb_columns = 12;
+	}else if (strcmp(table_name,"door_discovery") == 0){
+		td->nb_columns = 5;
+	}
 	
-	table_descriptor = malloc(sizeof(struct column_descriptor));
-	table_descriptor->nb_columns = NB_COLUMNS;
-	
-	table_descriptor->columns = malloc(table_descriptor->nb_columns *
+	td->columns = malloc(td->nb_columns *
 																		 sizeof(column_descriptor_p));
 	int i;
-	for (i = 0; i < table_descriptor->nb_columns; i++){
-		table_descriptor->columns[i] = malloc(sizeof(struct column_descriptor));
+	for (i = 0; i < td->nb_columns; i++){
+		td->columns[i] = malloc(sizeof(struct column_descriptor));
 	}
-	table_descriptor->columns[0]->name = "id";
-	table_descriptor->columns[0]->type = "int";
+	
+	int col_no = 0;
+	td->columns[col_no]->name = "id";
+	td->columns[col_no]->type = "int";
+	col_no++;
 
-#define DATABASE_FIELD(num, fName, cType, sqlType)					 \
-  table_descriptor->columns[1 + num]->name = #fName; \
-  table_descriptor->columns[1 + num]->type = #sqlType;
+	if (strcmp(table_name,"seek_secret") == 0){
+#define DATABASE_FIELD(fName, cType, sqlType)		     \
+  td->columns[col_no]->name = #fName;   \
+  td->columns[col_no]->type = #sqlType; \
+	col_no++;
 #include "seek_secret.def"
+	}else if (strcmp(table_name,"door_discovery") == 0){
+#define DATABASE_FIELD(fName, cType, sqlType)	 \
+  td->columns[col_no]->name = #fName;   \
+  td->columns[col_no]->type = #sqlType; \
+	col_no++;
+#include "door_discovery.def"
+		
+	}
+  
 }
 
 int init_db_manager(){
@@ -104,7 +125,10 @@ int init_db_manager(){
 #endif
 	if (str == NULL) str = DEFAULT_DATABASE_PATH;
 
-	initialize_table_descriptor();
+	// initialize table descriptor according to the mode
+	initialize_table_descriptor(get_mode_name(), &mode_table);
+	// initialize table descriptor for door discovery
+	initialize_table_descriptor("door_discovery", &door_discovery_table);
 
 	int result;
 
@@ -121,12 +145,12 @@ int init_db_manager(){
 	return 0;
 }
 
-void free_table_descriptor(){
+void free_table_descriptor(table_descriptor_p td){
 	int i;
-	for (i = 0; i < table_descriptor->nb_columns; i++)
-		free(table_descriptor->columns[i]);
-	free(table_descriptor->columns);
-	free(table_descriptor);
+	for (i = 0; i < td->nb_columns; i++)
+		free(td->columns[i]);
+	free(td->columns);
+	free(td);
 }
 
 bool exist_table(const char * table_name){
@@ -154,7 +178,8 @@ bool exist_table(const char * table_name){
 	return exists;
 }
 
-void create_table(const char * table_name){
+// TODO include table_name in table_descriptor
+void create_table(table_descriptor_p td, const char * table_name){
 	char request[REQUEST_SIZE];
 
 	int index = 0;
@@ -166,10 +191,10 @@ void create_table(const char * table_name){
 	while(true){
 		index += sprintf(request + index,
 										 "%s %s",
-										 table_descriptor->columns[i]->name,
-										 table_descriptor->columns[i]->type);
+										 td->columns[i]->name,
+										 td->columns[i]->type);
 		i++;
-		if ( i >= table_descriptor->nb_columns)
+		if ( i >= td->nb_columns)
 			break;
 		index += sprintf(request + index, ", ");
 	}
@@ -198,15 +223,22 @@ int add_game_result(game_result_p gr){
 	//TODO just test inside, must be cleared
 	char request[REQUEST_SIZE];
 
-	if (!exist_table(gr_get_mode(gr)))
-		create_table(gr_get_mode(gr));
+	table_descriptor_p td;
+	if (strcmp(gr_get_table(gr),"door_discovery") == 0)
+		td = door_discovery_table;
+	else
+		td = mode_table;
+
+	if (!exist_table(gr_get_table(gr)))
+		create_table(td, gr_get_table(gr));
 			
 	
 	int index = 0;
 	
-	index += sprintf(request, "insert into %s ( ", gr_get_mode(gr));
+	index += sprintf(request, "insert into %s ( ", gr_get_table(gr));
 
-	int i = 0;
+	//ID is automatically choosen from
+	int i = 1;
 
 	// printing columns name
 	while(true){
@@ -219,7 +251,8 @@ int add_game_result(game_result_p gr){
 	
 	index += sprintf(request + index, ") values ( ");
 
-	i=0;
+	// not using id value
+	i=1;
 
 	// printing columns values
 	while(true){
@@ -265,7 +298,8 @@ int close_db_manager(){
 						sqlite3_errmsg(db));
 		return 1;
 	}
-	free_table_descriptor(table_descriptor);
+	free_table_descriptor(mode_table);
+	free_table_descriptor(door_discovery_table);
 	//printf("Database closed\n");
 	return 0;
 }

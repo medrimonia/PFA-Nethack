@@ -13,8 +13,6 @@ int init_db_manager();
 
 bool exist_table(const char * table_name);
 
-void create_table(const char * table_name);
-
 /* Add the specified game result to the current database
  */
 int add_game_result(game_result_p e);

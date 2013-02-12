@@ -45,11 +45,12 @@ test_db: test_database.o database_manager.o game_result.o game_statistics.o
 	${CC} -o $@ $^ ${LFLAGS}
 
 database_manager.o: ${HEADER_DIR}/database_manager.h \
-										${HEADER_DIR}/game_result.h \
-                    seek_secret.def
+										${HEADER_DIR}/game_result.h      \
+                    seek_secret.def	                 \
+                    door_discovery.def
 
-game_result.o: ${HEADER_DIR}/game_result.h \
-							 ${HEADER_DIR}/game_statistics.h \
+game_result.o: ${HEADER_DIR}/game_result.h           \
+							 ${HEADER_DIR}/game_statistics.h       \
                seek_secret.def
 
 clean:

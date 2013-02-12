@@ -10,8 +10,7 @@
 int main(int argc, char ** argv){
 	// Initializing random generator
 	srand(time(NULL));
-	//
-	init_db_manager();
+	//gs_init call init_db_manager
 	gs_init();
 
 	// check if a table named seek_secret exists
@@ -35,6 +34,11 @@ int main(int argc, char ** argv){
 	game_result_p gr = create_actual_game_result("seek_secret");
 	add_game_result(gr);
 
+	//Try to insert a door discovery
+	game_result_p dd = create_door_discovery_result();
+	add_game_result(dd);
+
+	destroy_game_result(dd);
 	destroy_game_result(gr);
 	close_db_manager();
 	return 0;
