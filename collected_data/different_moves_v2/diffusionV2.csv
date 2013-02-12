@@ -1,0 +1,7 @@
+nb_games,max_moves,percent_explored,percent_sdoors_found,percent_scorrs_found
+100,100,12,7,1
+100,200,22,13,10
+100,500,42,27,20
+100,1000,65,52,36
+100,2000,92,80,70
+100,5000,100,98,95
