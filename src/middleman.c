@@ -2,6 +2,7 @@
 
 #include "global.h" // nethack's globals (map size etc)
 
+#include <time.h>
 #include <stdio.h>
 #include <errno.h>
 #include <stdarg.h>
@@ -83,6 +84,9 @@ static winid winmapid;
 static FILE *log = NULL;
 static char use_logging = 0;
 
+static FILE *replay = NULL;
+static char record_replay = 0;
+
 static char *sockpath;
 static int mmsock = -1;
 static int client = -1;
@@ -123,6 +127,12 @@ void mm_cleanup()
 		log = NULL;
 	}
 
+	if (replay != NULL) {
+		fflush(replay);
+		fclose(replay);
+		replay = NULL;
+	}
+
 	if (mmsock != -1) {
 		close(mmsock);
 		mmsock = -1;
@@ -157,6 +167,13 @@ void mm_init()
 		use_logging = atoi(str);
 	}
 
+	str = getenv("NH_MM_REPLAY");
+	if (str == NULL) {
+		record_replay = 0;
+	} else {
+		record_replay = atoi(str);
+	}
+
 	/* unlink sockpath in case the came wasn't terminated cleanly */
 	if (EBUSY == unlink(sockpath)) {
 		fprintf(
@@ -167,12 +184,20 @@ void mm_init()
 		terminate(EXIT_FAILURE);
 	}
 
-
 	/* open log file if logging enabled */
 	if (use_logging) {
 		log = fopen("mm.log", "a");
 
 		if (log == NULL) {
+			perror("fopen");
+		}
+	}
+
+	/* open replay file if enabled */
+	if (record_replay) {
+		replay = fopen("replay", "w");
+
+		if (replay == NULL) {
 			perror("fopen");
 		}
 	}
@@ -427,9 +452,14 @@ mm_print_glyph(window, x, y, glyph)
 	mm_vlog("mm_print_glyph: window %d - %d:%d:%c", window, x, y, ochar);
 
 	if (client != -1) {
-		size = sprintf(buf, "g%c%c%c", x, y, ochar);
 		mm_vlog("send(): g %#x %#x %c", x, y, ochar);
+
+		size = sprintf(buf, "g%c%c%c", x, y, ochar);
 		send(client, buf, size, 0);
+
+		if (replay != NULL) {
+			fputs(buf, replay);
+		}
 	}
 
 }
@@ -522,6 +552,10 @@ mm_nh_poskey(x, y, mod)
 	char buf[BUFSIZE];
 
 	mm_log("mm_nh_poskey", "");
+
+	if (replay != NULL) {
+		fputc('\n', replay);
+	}
 
 	if (first == last) { // buffer empty
 		
