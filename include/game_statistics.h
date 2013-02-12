@@ -3,7 +3,7 @@
 
 // Comment if there's no access to nethack files
 // This is used typically for test outside of nethack kernel
-//#define NETHACK_ACCESS
+#define NETHACK_ACCESS
 
 /* Initialize the number of moves allowed for a game */
 void gs_init();
