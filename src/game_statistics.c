@@ -108,6 +108,8 @@ void statistic_add_sdoor_discovery(int line, int column){
 	last_door_discovery_turn = moves;
 	nb_sdoors_found++;
 #endif
+	game_result_p dd = create_door_discovery_result();
+	add_game_result(dd);
 }
 
 void statistic_add_scorr_discovery(){
