@@ -11,6 +11,9 @@
 
 #include "hack.h"
 #include "dlb.h"
+
+#include "pfamain.h"
+
 /* #define DEBUG */	/* uncomment to enable code debugging */
 
 #ifdef DEBUG
@@ -656,6 +659,7 @@ struct mkroom *broom;
 	}
 	add_door(x,y,broom);
 	levl[x][y].typ = (dd->secret ? SDOOR : DOOR);
+	if (dd->secret)pfa_add_sdoor(x, y);
 	levl[x][y].doormask = dd->mask;
 }
 
@@ -693,6 +697,7 @@ create_secret_door(croom, walls)
 	    levl[sx][sy].typ = SDOOR;
 	    levl[sx][sy].doormask = D_CLOSED;
 	    add_door(sx,sy,croom);
+	    pfa_add_sdoor(sx, sy);
 	    return;
 	}
     }

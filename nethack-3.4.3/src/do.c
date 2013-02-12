@@ -7,6 +7,8 @@
 #include "hack.h"
 #include "lev.h"
 
+#include "pfamain.h"
+
 #ifdef SINKS
 # ifdef OVLB
 STATIC_DCL void FDECL(trycall, (struct obj *));
@@ -1097,6 +1099,7 @@ boolean at_stairs, falling, portal;
 		}
 		mklev();
 		new = TRUE;	/* made the level */
+		pfa_new_level_reached();
 	} else {
 		/* returning to previously visited level; reload it */
 		fd = open_levelfile(new_ledger, whynot);

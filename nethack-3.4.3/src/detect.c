@@ -921,6 +921,7 @@ register int x, y;
     /* Secret corridors are found, but not secret doors. */
     if (lev->typ == SCORR) {
 	lev->typ = CORR;
+	pfa_scorr_discovery(x, y);
 	unblock_point(x,y);
     }
 
@@ -1008,11 +1009,13 @@ genericptr_t num;
 
 	if(levl[zx][zy].typ == SDOOR) {
 		cvt_sdoor_to_door(&levl[zx][zy]);	/* .typ = DOOR */
+		pfa_add_scorr_discovery(zx, zy);
 		magic_map_background(zx, zy, 0);
 		newsym(zx, zy);
 		(*(int*)num)++;
 	} else if(levl[zx][zy].typ == SCORR) {
 		levl[zx][zy].typ = CORR;
+		pfa_add_scorr_discovery(zx, zy);
 		unblock_point(zx,zy);
 		magic_map_background(zx, zy, 0);
 		newsym(zx, zy);
@@ -1080,6 +1083,7 @@ genericptr_t num;
 		newsym(zx, zy);
 		(*(int*)num)++;
 	} else if(levl[zx][zy].typ == SCORR) {
+		pfa_add_scorr_discovery(zx, zy);
 		levl[zx][zy].typ = CORR;
 		unblock_point(zx, zy);
 		newsym(zx, zy);
@@ -1199,6 +1203,7 @@ register int aflag;
 		    } else if(levl[x][y].typ == SCORR) {
 			if(rnl(7-fund)) continue;
 			levl[x][y].typ = CORR;
+			pfa_add_scorr_discovery(x,y);
 			unblock_point(x,y);	/* vision */
 			exercise(A_WIS, TRUE);
 			nomul(0);
