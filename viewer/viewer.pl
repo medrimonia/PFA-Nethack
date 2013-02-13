@@ -1,7 +1,8 @@
 use strict;
 use warnings;
 
-use Time::HiRes qw/sleep/;
+use Term::ReadKey;
+use Time::HiRes qw/usleep/;
 use Term::ANSIScreen qw/:cursor :screen/;
 
 
@@ -18,6 +19,7 @@ $| = 1;
 $/ = "\n";
 
 my $i = 1;
+my $slideshow = 0;
 my @coms = split("ES", $replay);
 
 my @glyphs = split('g', $coms[0]);
@@ -25,37 +27,58 @@ print_glyphs(@glyphs);
 
 while (1) {
 	# Prompt
-	locate 1,1;
-	clline();
-	print "> ";
-	my $nbr = <STDIN>;
+	locate 1,1; clline(); print "> ";
 
-	# goto turn number $nbr
-	if ($nbr =~ /^\d+$/ && $nbr <= $#coms) {
-		my $start;
+	if ($slideshow) {
+		ReadMode('cbreak');
 
-		if ($i < $nbr) {
-			$start = $i + 1;
-		} else {
-			cls();
-			$start = 0;
+		for (my $t = $i; $t <= $#coms; $i++, $t++) {
+			my $key = ReadKey(-1); # non-blocking read
+
+			last if (defined $key);
+
+			@glyphs = split('g', $coms[$t]);
+			print_glyphs(@glyphs);
+
+			usleep($slideshow);
 		}
 
-		for ($start .. $nbr) {
-			@glyphs = split('g', $coms[$_]);
+		$slideshow = 0;
+	}
+
+	else {
+		ReadMode('normal');
+		my $cmd = <STDIN>;
+
+		if ($cmd =~ /^\d+$/ && $cmd <= $#coms) {
+			# goto turn number in $cmd
+			my $start;
+
+			if ($i < $cmd) {
+				$start = $i + 1;
+			} else {
+				cls();
+				$start = 0;
+			}
+
+			for ($start .. $cmd) {
+				@glyphs = split('g', $coms[$_]);
+				print_glyphs(@glyphs);
+			}
+
+			$i = $cmd;
+		}
+
+		elsif ($cmd =~ /^s\s+(\d+)$/) {
+			$slideshow = $1;
+		}
+	
+		elsif ($i < $#coms) {
+			$i++;
+			@glyphs = split('g', $coms[$i]);
 			print_glyphs(@glyphs);
 		}
-
-		$i = $nbr;
 	}
-	
-	else {
-		$i++;
-		@glyphs = split('g', $coms[$i]);
-		print_glyphs(@glyphs);
-	}
-
-	#sleep(0.01);
 }
 
 
@@ -66,7 +89,7 @@ sub print_glyphs {
 		my ($y, $x, $g) = unpack("WWa");
 
 		if (defined $g) {
-			locate $x+1, $y+1;
+			locate $x+2, $y+1;
 			print $g;
 		}
 	}
