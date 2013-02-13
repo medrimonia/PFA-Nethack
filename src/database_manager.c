@@ -48,6 +48,7 @@ sqlite3 * db = NULL;
 
 table_descriptor_p mode_table = NULL;
 table_descriptor_p door_discovery_table = NULL;
+table_descriptor_p doors_table = NULL;
 
 get_result_p new_get_result(){
 	get_result_p new = malloc(sizeof(struct get_result));
@@ -85,8 +86,12 @@ void initialize_table_descriptor(const char * table_name,
 
 	if (strcmp(table_name,"seek_secret") == 0){
 		td->nb_columns = 12;
-	}else if (strcmp(table_name,"door_discovery") == 0){
+	}
+	else if (strcmp(table_name,"door_discovery") == 0){
 		td->nb_columns = 5;
+	}
+	else if (strcmp(table_name,"doors") == 0){
+		td->nb_columns = 4;
 	}
 	
 	td->columns = malloc(td->nb_columns *
@@ -107,13 +112,20 @@ void initialize_table_descriptor(const char * table_name,
   td->columns[col_no]->type = #sqlType; \
 	col_no++;
 #include "seek_secret.def"
-	}else if (strcmp(table_name,"door_discovery") == 0){
+	}
+	else if (strcmp(table_name,"door_discovery") == 0){
 #define DATABASE_FIELD(fName, cType, sqlType)	 \
   td->columns[col_no]->name = #fName;   \
   td->columns[col_no]->type = #sqlType; \
 	col_no++;
-#include "door_discovery.def"
-		
+#include "door_discovery.def"	
+	}
+	else if (strcmp(table_name,"doors") == 0){
+#define DATABASE_FIELD(fName, cType, sqlType)	 \
+  td->columns[col_no]->name = #fName;   \
+  td->columns[col_no]->type = #sqlType; \
+	col_no++;
+#include "doors.def"	
 	}
   
 }
@@ -129,6 +141,8 @@ int init_db_manager(){
 	initialize_table_descriptor(get_mode_name(), &mode_table);
 	// initialize table descriptor for door discovery
 	initialize_table_descriptor("door_discovery", &door_discovery_table);
+	// initialize table descriptor for doors
+	initialize_table_descriptor("doors", &doors_table);
 
 	int result;
 
@@ -226,6 +240,8 @@ int add_game_result(game_result_p gr){
 	table_descriptor_p td;
 	if (strcmp(gr_get_table(gr),"door_discovery") == 0)
 		td = door_discovery_table;
+	else if (strcmp(gr_get_table(gr),"doors") == 0)
+		td = doors_table;
 	else
 		td = mode_table;
 
@@ -298,6 +314,7 @@ int close_db_manager(){
 						sqlite3_errmsg(db));
 		return 1;
 	}
+	free_table_descriptor(doors_table);
 	free_table_descriptor(mode_table);
 	free_table_descriptor(door_discovery_table);
 	//printf("Database closed\n");

@@ -3,7 +3,7 @@
 
 // Comment if there's no access to nethack files
 // This is used typically for test outside of nethack kernel
-#define NETHACK_ACCESS
+//#define NETHACK_ACCESS
 
 /* Initialize the number of moves allowed for a game */
 void gs_init();
@@ -13,6 +13,8 @@ void gs_init();
  * by the caller.
  */
 void make_random_stats();
+void make_random_door_discovery();
+void make_random_door();
 #endif
 
 /* Add a door to the number of secret doors that can be found. This function
@@ -73,6 +75,24 @@ int get_nb_squares_explored();
 
 /* Return the maximal number of moves allowed in this game. */
 int get_max_moves();
+
+/* Return the turn where the last discovery was done */
+int get_discovery_turn();
+
+/* Return the line where the last door was found (in a door discovery or
+ * in an add_door or even in an update_sdoors)
+ */
+int get_door_line();
+
+/* Return the column where the last door was found (in a door discovery or
+ * in an add_door or even in an update_sdoors)
+ */
+int get_door_column();
+
+/* Return the level where the last door was found (in a door discovery or
+ * in an add_door or even in an update_sdoors)
+ */
+int get_door_level();
 
 /* Return the name of the bot playing this game */
 const char * get_bot_name();

@@ -38,6 +38,12 @@ int main(int argc, char ** argv){
 	game_result_p dd = create_door_discovery_result();
 	add_game_result(dd);
 
+	make_random_door();
+	//Try to insert a door discovery
+	game_result_p d = create_door_result();
+	add_game_result(d);
+
+	destroy_game_result(d);
 	destroy_game_result(dd);
 	destroy_game_result(gr);
 	close_db_manager();

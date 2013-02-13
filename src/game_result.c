@@ -40,6 +40,9 @@ game_result_p new_game_result(const char * table){
 	if (strcmp(table, "door_discovery") == 0){
 		new->nb_properties = 5;
 	}
+	if (strcmp(table, "doors") == 0){
+		new->nb_properties = 4;
+	}
 	new->properties = malloc(new->nb_properties * sizeof(property_p));
 	int i;
 	for (i = 0; i < new->nb_properties; i++){
@@ -76,6 +79,23 @@ game_result_p create_door_discovery_result(){
 	gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
 #include "door_discovery.def"
+
+	return gr;
+	
+}
+
+game_result_p create_door_result(){
+	#ifndef NETHACK_ACCESS
+	make_random_door();
+	#endif
+	game_result_p gr = new_game_result("doors");
+	
+	int index = 1;// id field is not set by this type of method
+#define DATABASE_FIELD(name, cType, sqlType)						  			 \
+  gr_set_property_name(gr, index, #name);                        \
+	gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
+	index++;
+#include "doors.def"
 
 	return gr;
 	

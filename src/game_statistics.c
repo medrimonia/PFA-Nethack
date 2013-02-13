@@ -87,6 +87,11 @@ void make_random_door_discovery(){
 	last_door_line = rand() % 21;
 	last_door_column = rand() % 80;
 }
+
+void make_random_door(){
+	last_door_line = rand() % 21;
+	last_door_column = rand() % 80;
+}
 #endif
 
 #ifdef NETHACK_ACCESS
@@ -122,8 +127,13 @@ void update_nb_sdoors() {
 	int row;
 	for (col = 0; col < COLNO; col++){
 	  for (row = 0; row < ROWNO; row++){
-	  if (levl[col][row].typ == SDOOR)
-	    nb_sdoors++;
+			if (levl[col][row].typ == SDOOR){
+				last_door_line = row;
+				last_door_column = col;
+				nb_sdoors++;
+				game_result_p d = create_door_result();
+				add_game_result(d);
+			}
 	  }
 	}
 #endif
