@@ -17,6 +17,7 @@ echo $COLUMN_REQUEST | xargs sqlite3 -header -csv $DATABASE > $COLUMN_DATA
 #Line graph
 gnuplot -persist <<PLOT
 set xrange [0:21]
+set yrange [0:*]
 
 set xlabel "Line"
 set ylabel "NbDoors"
@@ -25,19 +26,21 @@ set datafile separator ","
 set key autotitle columnhead
 
 set tics out
+set style fill solid
 
 #In case for building an eps-file ...
 set terminal postscript enhanced color solid eps 15
 set output "line_graph.eps"
 
 #for should be used here but it stills seems difficult
-plot '${LINE_DATA}' with linespoints
+plot '${LINE_DATA}' with boxes
 quit
 PLOT
 
 #Column graph
 gnuplot -persist <<PLOT
 set xrange [0:80]
+set yrange [0:*]
 
 set xlabel "Column"
 set ylabel "NbDoors"
@@ -46,12 +49,13 @@ set datafile separator ","
 set key autotitle columnhead
 
 set tics out
+set style fill solid
 
 #In case for building an eps-file ...
 set terminal postscript enhanced color solid eps 15
 set output "column_graph.eps"
 
 #for should be used here but it stills seems difficult
-plot '${COLUMN_DATA}' with linespoints
+plot '${COLUMN_DATA}' with boxes
 quit
 PLOT
