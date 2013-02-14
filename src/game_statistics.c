@@ -24,6 +24,11 @@ int nb_scorrs_found = 0;
 int nb_squares_explored = 0;
 int nb_squares_reachable = 0;
 
+int last_door_discovery_turn = -1;
+int last_door_line = -1;
+int last_door_column = -1;
+int last_door_level = -1;
+
 int max_moves = -1;
 int seed;
 
@@ -60,6 +65,9 @@ void gs_init(){
 		mode_name = strdup(DEFAULT_MODE_NAME);
 	else
 		mode_name = strdup(str);
+
+	// Must be done only once all game statistics has been properly initialized
+	init_db_manager();
 }
 
 #ifndef NETHACK_ACCESS
@@ -72,6 +80,17 @@ void make_random_stats(){
   nb_squares_reachable = rand() % 400;
   seed = rand();
 	max_moves = (rand() % 20) * 1000;
+}
+
+void make_random_door_discovery(){
+	last_door_discovery_turn = rand() % 1000;
+	last_door_line = rand() % 21;
+	last_door_column = rand() % 80;
+}
+
+void make_random_door(){
+	last_door_line = rand() % 21;
+	last_door_column = rand() % 80;
 }
 #endif
 
@@ -87,8 +106,15 @@ void statistic_add_scorr(){
 	nb_scorrs++;
 }
 
-void statistic_add_sdoor_discovery(){
+void statistic_add_sdoor_discovery(int line, int column){
+#ifdef NETHACK_ACCESS
+	last_door_line = line;
+	last_door_column = column;
+	last_door_discovery_turn = moves;
 	nb_sdoors_found++;
+#endif
+	game_result_p dd = create_door_discovery_result();
+	add_game_result(dd);
 }
 
 void statistic_add_scorr_discovery(){
@@ -101,8 +127,13 @@ void update_nb_sdoors() {
 	int row;
 	for (col = 0; col < COLNO; col++){
 	  for (row = 0; row < ROWNO; row++){
-	  if (levl[col][row].typ == SDOOR)
-	    nb_sdoors++;
+			if (levl[col][row].typ == SDOOR){
+				last_door_line = row;
+				last_door_column = col;
+				nb_sdoors++;
+				game_result_p d = create_door_result();
+				add_game_result(d);
+			}
 	  }
 	}
 #endif
@@ -187,6 +218,22 @@ int get_seed(){
 	return seed;
 }
 
+int get_discovery_turn(){
+	return last_door_discovery_turn;
+}
+
+int get_door_line(){
+	return last_door_line;
+}
+
+int get_door_column(){
+	return last_door_column;
+}
+
+int get_door_level(){
+	return last_door_level;
+}
+
 int get_processing_time(){
 	struct timeval actual;
 	gettimeofday(&actual, NULL);
@@ -196,7 +243,6 @@ int get_processing_time(){
 }
 
 void gs_submit_game(){
-	init_db_manager();
 	game_result_p gr = create_actual_game_result("seek_secret");
 	add_game_result(gr);
 	destroy_game_result(gr);

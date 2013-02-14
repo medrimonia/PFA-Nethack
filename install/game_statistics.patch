@@ -1,83 +1,64 @@
-diff --git nethack-3.4.3.b/src/detect.c nethack-3.4.3/src/detect.c
-index 5da025f..0cae139 100644
 --- nethack-3.4.3.b/src/detect.c
 +++ nethack-3.4.3/src/detect.c
-@@ -921,6 +921,9 @@ register int x, y;
+@@ -921,6 +921,7 @@ register int x, y;
      /* Secret corridors are found, but not secret doors. */
      if (lev->typ == SCORR) {
  	lev->typ = CORR;
-+
-+	statistic_add_scorr_discovery();
-+
++	pfa_scorr_discovery(x, y);
  	unblock_point(x,y);
      }
  
-@@ -993,6 +996,8 @@ struct rm *lev;
- 	    /* newly exposed door is closed */
- 	    if (!(newmask & D_LOCKED)) newmask |= D_CLOSED;
+@@ -995,6 +996,7 @@ struct rm *lev;
  
-+	statistic_add_sdoor_discovery();
-+
  	lev->typ = DOOR;
  	lev->doormask = newmask;
++	pfa_sdoor_discovery(-1, -1);//location unknown
  }
-@@ -1012,6 +1017,9 @@ genericptr_t num;
- 		newsym(zx, zy);
+ 
+ 
+@@ -1013,6 +1015,7 @@ genericptr_t num;
  		(*(int*)num)++;
  	} else if(levl[zx][zy].typ == SCORR) {
-+		
-+		statistic_add_scorr_discovery();
-+		
  		levl[zx][zy].typ = CORR;
++		pfa_scorr_discovery(zx, zy);
  		unblock_point(zx,zy);
  		magic_map_background(zx, zy, 0);
-@@ -1080,6 +1088,9 @@ genericptr_t num;
+ 		newsym(zx, zy);
+@@ -1080,6 +1083,7 @@ genericptr_t num;
  		newsym(zx, zy);
  		(*(int*)num)++;
  	} else if(levl[zx][zy].typ == SCORR) {
-+
-+		statistic_add_scorr_discovery();
-+
++		pfa_scorr_discovery(zx, zy);
  		levl[zx][zy].typ = CORR;
  		unblock_point(zx, zy);
  		newsym(zx, zy);
-@@ -1198,6 +1209,9 @@ register int aflag;
- 			    newsym(x,y);
+@@ -1199,6 +1203,7 @@ register int aflag;
  		    } else if(levl[x][y].typ == SCORR) {
  			if(rnl(7-fund)) continue;
-+
-+			statistic_add_scorr_discovery();
-+
  			levl[x][y].typ = CORR;
++			pfa_scorr_discovery(x,y);
  			unblock_point(x,y);	/* vision */
  			exercise(A_WIS, TRUE);
-diff --git nethack-3.4.3.b/src/do.c nethack-3.4.3/src/do.c
-index 858777f..67a9ea4 100644
+ 			nomul(0);
 --- nethack-3.4.3.b/src/do.c
 +++ nethack-3.4.3/src/do.c
 @@ -7,6 +7,8 @@
  #include "hack.h"
  #include "lev.h"
  
-+#include "game_statistics.h"
++#include "pfamain.h"
 +
  #ifdef SINKS
  # ifdef OVLB
  STATIC_DCL void FDECL(trycall, (struct obj *));
-@@ -1097,6 +1099,11 @@ boolean at_stairs, falling, portal;
+@@ -1097,6 +1099,7 @@ boolean at_stairs, falling, portal;
  		}
  		mklev();
  		new = TRUE;	/* made the level */
-+
-+		update_nb_sdoors();
-+		update_nb_scorrs();
-+		update_reachable_squares();
-+
++		pfa_new_level_reached();
  	} else {
  		/* returning to previously visited level; reload it */
  		fd = open_levelfile(new_ledger, whynot);
-diff --git nethack-3.4.3.b/src/sp_lev.c nethack-3.4.3/src/sp_lev.c
-index 435609f..78d6e97 100644
 --- nethack-3.4.3.b/src/sp_lev.c
 +++ nethack-3.4.3/src/sp_lev.c
 @@ -11,6 +11,9 @@
@@ -85,28 +66,24 @@ index 435609f..78d6e97 100644
  #include "hack.h"
  #include "dlb.h"
 +
-+#include "game_statistics.h"
++#include "pfamain.h"
 +
  /* #define DEBUG */	/* uncomment to enable code debugging */
  
  #ifdef DEBUG
-@@ -656,6 +659,9 @@ struct mkroom *broom;
+@@ -656,6 +659,7 @@ struct mkroom *broom;
  	}
  	add_door(x,y,broom);
  	levl[x][y].typ = (dd->secret ? SDOOR : DOOR);
-+	
-+	if (dd->secret)statistic_add_sdoor();
-+	
++	if (dd->secret)pfa_add_sdoor(x, y);
  	levl[x][y].doormask = dd->mask;
  }
  
-@@ -693,6 +699,9 @@ create_secret_door(croom, walls)
+@@ -693,6 +697,7 @@ create_secret_door(croom, walls)
  	    levl[sx][sy].typ = SDOOR;
  	    levl[sx][sy].doormask = D_CLOSED;
  	    add_door(sx,sy,croom);
-+
-+	    statistic_add_sdoor();
-+
++	    pfa_add_sdoor(sx, sy);
  	    return;
  	}
      }

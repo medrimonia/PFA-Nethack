@@ -89,3 +89,21 @@ void pfa_end()
 	// nethack stuff
 	clearlocks();
 }
+
+void pfa_new_level_reached(){
+	update_reachable_squares();
+	update_nb_sdoors();
+	update_nb_scorrs();
+}
+
+void pfa_add_sdoor(int line, int column){
+	statistic_add_sdoor(line, column);
+}
+
+void pfa_scorr_discovery(int line, int column){
+	statistic_add_scorr_discovery(line, column);
+}
+
+void pfa_sdoor_discovery(int line, int column){
+	statistic_add_sdoor_discovery(line, column);
+}
