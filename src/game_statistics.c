@@ -182,8 +182,8 @@ void update_nb_scorrs() {
 	for (col = 0; col < COLNO; col++){
 	  for (row = 0; row < ROWNO; row++){
 			if (levl[col][row].typ == SCORR){
-				last_door_line = row;
-				last_door_column = col;
+				last_scorr_line = row;
+				last_scorr_column = col;
 				nb_scorrs++;
 				game_result_p r = create_scorr_result();
 				add_game_result(r);
