@@ -5,8 +5,8 @@
 
 # Usage
 
-	perl viewer.pl /path/to/replay/file
+	perl viewer.pl /path/to/replay
 
 The prompt accepts these commands:
-* `N` : goto turn #N
-* `s N` : slideshow with N microseconds between each turn
+* `N` : goto turn number N.
+* `s N` : slideshow with N microseconds between each turn any key stops the slideshow.
