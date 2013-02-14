@@ -3,10 +3,13 @@
 
 // Comment if there's no access to nethack files
 // This is used typically for test outside of nethack kernel
-#define NETHACK_ACCESS
+//#define NETHACK_ACCESS
 
-/* Initialize the number of moves allowed for a game */
+/* Initialize the game statistic module */
 void gs_init();
+
+/* Free all the ressources dedicated to the game statistic module */
+void gs_terminate();
 
 #ifndef NETHACK_ACCESS
 /* srand initialization is not provided by game_statistics, it should be done
@@ -15,6 +18,9 @@ void gs_init();
 void make_random_stats();
 void make_random_door_discovery();
 void make_random_door();
+void make_random_scorr_discovery();
+void make_random_scorr();
+
 #endif
 
 /* Add a door to the number of secret doors that can be found. This function
@@ -93,6 +99,21 @@ int get_door_column();
  * in an add_door or even in an update_sdoors)
  */
 int get_door_level();
+
+/* Return the line where the last scorr was found (in a scorr discovery or
+ * in an add_scorr or even in an update_scorrs)
+ */
+int get_scorr_line();
+
+/* Return the column where the last scorr was found (in a scorr discovery or
+ * in an add_scorr or even in an update_scorrs)
+ */
+int get_scorr_column();
+
+/* Return the level where the last scorr was found (in a scorr discovery or
+ * in an add_scorr or even in an update_scorrs)
+ */
+int get_scorr_level();
 
 /* Return the name of the bot playing this game */
 const char * get_bot_name();

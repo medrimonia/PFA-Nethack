@@ -49,6 +49,8 @@ sqlite3 * db = NULL;
 table_descriptor_p mode_table = NULL;
 table_descriptor_p door_discovery_table = NULL;
 table_descriptor_p doors_table = NULL;
+table_descriptor_p scorr_discovery_table = NULL;
+table_descriptor_p scorrs_table = NULL;
 
 get_result_p new_get_result(){
 	get_result_p new = malloc(sizeof(struct get_result));
@@ -93,6 +95,12 @@ void initialize_table_descriptor(const char * table_name,
 	else if (strcmp(table_name,"doors") == 0){
 		td->nb_columns = 4;
 	}
+	else if (strcmp(table_name,"scorr_discovery") == 0){
+		td->nb_columns = 5;
+	}
+	else if (strcmp(table_name,"scorrs") == 0){
+		td->nb_columns = 4;
+	}
 	
 	td->columns = malloc(td->nb_columns *
 																		 sizeof(column_descriptor_p));
@@ -125,7 +133,21 @@ void initialize_table_descriptor(const char * table_name,
   td->columns[col_no]->name = #fName;   \
   td->columns[col_no]->type = #sqlType; \
 	col_no++;
-#include "doors.def"	
+#include "doors.def"
+	}
+	else if (strcmp(table_name,"scorr_discovery") == 0){
+#define DATABASE_FIELD(fName, cType, sqlType)	 \
+  td->columns[col_no]->name = #fName;   \
+  td->columns[col_no]->type = #sqlType; \
+	col_no++;
+#include "scorr_discovery.def"	
+	}
+	else if (strcmp(table_name,"scorrs") == 0){
+#define DATABASE_FIELD(fName, cType, sqlType)	 \
+  td->columns[col_no]->name = #fName;   \
+  td->columns[col_no]->type = #sqlType; \
+	col_no++;
+#include "scorrs.def"	
 	}
   
 }
@@ -143,6 +165,10 @@ int init_db_manager(){
 	initialize_table_descriptor("door_discovery", &door_discovery_table);
 	// initialize table descriptor for doors
 	initialize_table_descriptor("doors", &doors_table);
+	// initialize table descriptor for scorr discovery
+	initialize_table_descriptor("scorr_discovery", &scorr_discovery_table);
+	// initialize table descriptor for scorrs
+	initialize_table_descriptor("scorrs", &scorrs_table);
 
 	int result;
 
@@ -242,6 +268,10 @@ int add_game_result(game_result_p gr){
 		td = door_discovery_table;
 	else if (strcmp(gr_get_table(gr),"doors") == 0)
 		td = doors_table;
+	else if (strcmp(gr_get_table(gr),"scorrs") == 0)
+		td = scorrs_table;
+	else if (strcmp(gr_get_table(gr),"scorr_discovery") == 0)
+		td = scorr_discovery_table;
 	else
 		td = mode_table;
 
@@ -314,9 +344,11 @@ int close_db_manager(){
 						sqlite3_errmsg(db));
 		return 1;
 	}
-	free_table_descriptor(doors_table);
-	free_table_descriptor(mode_table);
 	free_table_descriptor(door_discovery_table);
+	free_table_descriptor(doors_table);
+	free_table_descriptor(scorr_discovery_table);
+	free_table_descriptor(scorrs_table);
+	free_table_descriptor(mode_table);
 	//printf("Database closed\n");
 	return 0;
 }

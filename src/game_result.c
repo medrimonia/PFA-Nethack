@@ -43,6 +43,13 @@ game_result_p new_game_result(const char * table){
 	if (strcmp(table, "doors") == 0){
 		new->nb_properties = 4;
 	}
+	if (strcmp(table, "scorr_discovery") == 0){
+		new->nb_properties = 5;
+	}
+	if (strcmp(table, "scorrs") == 0){
+		new->nb_properties = 4;
+	}
+
 	new->properties = malloc(new->nb_properties * sizeof(property_p));
 	int i;
 	for (i = 0; i < new->nb_properties; i++){
@@ -98,8 +105,41 @@ game_result_p create_door_result(){
 #include "doors.def"
 
 	return gr;
+}
+
+game_result_p create_scorr_discovery_result(){
+	#ifndef NETHACK_ACCESS
+	make_random_scorr_discovery();
+	#endif
+	game_result_p gr = new_game_result("scorr_discovery");
+	
+	int index = 1;// id field is not set by this type of method
+#define DATABASE_FIELD(name, cType, sqlType)						  			 \
+  gr_set_property_name(gr, index, #name);                        \
+	gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
+	index++;
+#include "scorr_discovery.def"
+
+	return gr;
 	
 }
+
+game_result_p create_scorr_result(){
+	#ifndef NETHACK_ACCESS
+	make_random_scorr();
+	#endif
+	game_result_p gr = new_game_result("scorrs");
+	
+	int index = 1;// id field is not set by this type of method
+#define DATABASE_FIELD(name, cType, sqlType)						  			 \
+  gr_set_property_name(gr, index, #name);                        \
+	gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
+	index++;
+#include "scorrs.def"
+
+	return gr;
+}
+
 
 void destroy_game_result(game_result_p gr){
 	int i;

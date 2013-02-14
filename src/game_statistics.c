@@ -24,10 +24,15 @@ int nb_scorrs_found = 0;
 int nb_squares_explored = 0;
 int nb_squares_reachable = 0;
 
-int last_door_discovery_turn = -1;
+int last_discovery_turn = -1;
+
 int last_door_line = -1;
 int last_door_column = -1;
 int last_door_level = -1;
+
+int last_scorr_line = -1;
+int last_scorr_column = -1;
+int last_scorr_level = -1;
 
 int max_moves = -1;
 int seed;
@@ -70,6 +75,11 @@ void gs_init(){
 	init_db_manager();
 }
 
+void gs_terminate(){
+	free(bot_name);
+	free(mode_name);
+}
+
 #ifndef NETHACK_ACCESS
 void make_random_stats(){
 	nb_sdoors = rand() % 10;
@@ -83,7 +93,7 @@ void make_random_stats(){
 }
 
 void make_random_door_discovery(){
-	last_door_discovery_turn = rand() % 1000;
+	last_discovery_turn = rand() % 1000;
 	last_door_line = rand() % 21;
 	last_door_column = rand() % 80;
 }
@@ -92,33 +102,59 @@ void make_random_door(){
 	last_door_line = rand() % 21;
 	last_door_column = rand() % 80;
 }
+
+void make_random_scorr_discovery(){
+	last_discovery_turn = rand() % 1000;
+	last_scorr_line = rand() % 21;
+	last_scorr_column = rand() % 80;
+}
+
+void make_random_scorr(){
+	last_scorr_line = rand() % 21;
+	last_scorr_column = rand() % 80;
+}
 #endif
 
 #ifdef NETHACK_ACCESS
 static char visited_square [MAXDUNGEON][MAXLEVEL][COLNO][ROWNO];
 #endif
 
-void statistic_add_sdoor(){
+void statistic_add_sdoor(int line, int column){
+	last_door_line = line;
+	last_door_column = column;
 	nb_sdoors++;
+	game_result_p d = create_door_result();
+	add_game_result(d);
 }
 
-void statistic_add_scorr(){
+void statistic_add_scorr(int line, int column){
+	last_scorr_line = line;
+	last_scorr_column = column;
 	nb_scorrs++;
+	game_result_p r = create_scorr_result();
+	add_game_result(r);
 }
 
 void statistic_add_sdoor_discovery(int line, int column){
-#ifdef NETHACK_ACCESS
 	last_door_line = line;
 	last_door_column = column;
-	last_door_discovery_turn = moves;
-	nb_sdoors_found++;
+#ifdef NETHACK_ACCESS
+	last_discovery_turn = moves;
 #endif
+	nb_sdoors_found++;
 	game_result_p dd = create_door_discovery_result();
 	add_game_result(dd);
 }
 
-void statistic_add_scorr_discovery(){
+void statistic_add_scorr_discovery(int line, int column){
+	last_scorr_line = line;
+	last_scorr_column = column;
+#ifdef NETHACK_ACCESS
+	last_discovery_turn = moves;
+#endif
 	nb_scorrs_found++;
+	game_result_p sd = create_scorr_discovery_result();
+	add_game_result(sd);
 }
 
 void update_nb_sdoors() {
@@ -145,8 +181,13 @@ void update_nb_scorrs() {
 	int row;
 	for (col = 0; col < COLNO; col++){
 	  for (row = 0; row < ROWNO; row++){
-	  if (levl[col][row].typ == SCORR)
-	    nb_scorrs++;
+			if (levl[col][row].typ == SCORR){
+				last_door_line = row;
+				last_door_column = col;
+				nb_scorrs++;
+				game_result_p r = create_scorr_result();
+				add_game_result(r);
+			}
 	  }
 	}
 #endif
@@ -219,7 +260,7 @@ int get_seed(){
 }
 
 int get_discovery_turn(){
-	return last_door_discovery_turn;
+	return last_discovery_turn;
 }
 
 int get_door_line(){
@@ -232,6 +273,18 @@ int get_door_column(){
 
 int get_door_level(){
 	return last_door_level;
+}
+
+int get_scorr_line(){
+	return last_scorr_line;
+}
+
+int get_scorr_column(){
+	return last_scorr_column;
+}
+
+int get_scorr_level(){
+	return last_scorr_level;
 }
 
 int get_processing_time(){

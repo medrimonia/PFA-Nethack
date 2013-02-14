@@ -26,6 +26,16 @@ game_result_p create_door_discovery_result();
  */
 game_result_p create_door_result();
 
+/* Create a new game_result struct, fill it with the data about last scorr
+ * discovery, provided by game_statistics, and then return a pointer on it
+ */
+game_result_p create_scorr_discovery_result();
+
+/* Create a new game_result struct, fill it with the data about last scorr,
+ * provided by game_statistics, and then return a pointer on it
+ */
+game_result_p create_scorr_result();
+
 /* Free all the property values, but not property names neither table */
 void destroy_game_result(game_result_p gr);
 
