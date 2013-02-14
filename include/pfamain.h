@@ -5,6 +5,12 @@ void pfa_init();
 void pfa_newloop();
 void pfa_end();
 
+/* This function initialize random from the environment variable or
+ * if the variable is not specified, initialize it with the result of 
+ * time(NULL)
+ */
+void pfa_setrandom();
+
 /* This function is called each time the player enters on a new nethack
  * level (it is not called when the player return on a previously reached
  * level)

@@ -1,27 +1,20 @@
 ### NOW
-* Handle bot name
-   * Two Possibilities :
-       * Bot name given as a parameter
-       * Bot name given by the bot.
-   * Ensure a table bot is created
-   * If bot is not in the database : add it
-   * Get bot id
-   * Add bot id to game result
 * Verify Makefile dependency
    * If we modify a pfa src file, nethack should be rebuilt partially
    * If we modify a pfa header file, some nethack files should rebuilt too.
+   * If we modify one of the .def file, according pfa files should be rebuilt
 * Update doc
    * Everywhere
-* Add pfa_setrandom declaration in pfamain.h
-* Test bot_name, mode_name and time
-* Test rebuilding with game_runner launched
-* Test multiple game_runner with the same launcher
 * Document game_runner script (usage etc)
 * Verify indentation (particularly for ludovic)
+   * only spaces ?
 
-
-### LATER
-* Choose what kind of analysis we want to do
-* Start producing statistics
-   * Disabling all outputs
-   * How to plot graphs needed
+### OPTIONAL
+* Solve an issue with game_runner
+   * nethack-3.4.3/nethack script has a hard reference to the nethack program
+* Reduce the time during which the database is used
+   * Store all datas in the process and push them to the database at end
+* Use a better database
+   * Avoid multiple existence of field
+   * Make reference to game id in doors discovery etc
+   * Use a table for bots (name, id and eventually version)
