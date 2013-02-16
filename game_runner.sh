@@ -60,7 +60,7 @@ echo "Database_path : $NH_DATABASE_PATH"
 TEST_FOLDER="test"$$	
 BOT_FILE=$(basename $BOT_PATH)
 
-mkdir $TEST_FOLDER
+mkdir $TEST_FOLDER || exit
 #content to move should be improved
 cp -r nethack-3.4.3 $TEST_FOLDER
 cp $BOT_PATH $TEST_FOLDER
@@ -75,6 +75,6 @@ do
 		$TEST_FOLDER/nethack-3.4.3/nethack >$TEST_FOLDER/nh_log &
 		#Running bot
 		$BOT_CMD $TEST_FOLDER/$BOT_FILE $NH_MM_SOCKPATH >$TEST_FOLDER/bot_log
-		printf "\033[80DRunning tests : %d/%d" $i $NB_GAMES
+		printf "\033[80DDone : %d of %d" $i $NB_GAMES
 done
 echo
