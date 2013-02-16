@@ -18,19 +18,19 @@ cls();
 $| = 1;
 $/ = "\n";
 
-my $i = 1;
 my $slideshow = 0;
 my @coms = split("ES", $replay);
 
 my @glyphs = split('g', $coms[0]);
 print_glyphs(@glyphs);
+my $turn = 0;
 
 while (1) {
 
 	if ($slideshow) {
 		ReadMode('cbreak');
 
-		for (my $t = $i; $t <= $#coms; $i++, $t++) {
+		for (my $t = $turn; $t <= $#coms; $turn++, $t++) {
 			@glyphs = split('g', $coms[$t]);
 			print_glyphs(@glyphs);
 
@@ -63,9 +63,9 @@ while (1) {
 			# goto turn number in $cmd
 			my $start;
 
-			if ($i < $cmd) {
+			if ($turn < $cmd) {
 				# drawn only what's necessary
-				$start = $i;
+				$start = $turn;
 			} else {
 				# redraw everything since turn 0
 				cls();
@@ -77,17 +77,17 @@ while (1) {
 				print_glyphs(@glyphs);
 			}
 
-			$i = $cmd;
+			$turn = $cmd;
 		}
 
 		elsif ($cmd =~ /^s\s*(\d+)$/) {
 			$slideshow = $1;
 		}
 	
-		elsif ($i < $#coms) {
-			@glyphs = split('g', $coms[$i]);
+		elsif ($turn < $#coms) {
+			@glyphs = split('g', $coms[$turn]);
 			print_glyphs(@glyphs);
-			$i++;
+			$turn++;
 		}
 	}
 }
