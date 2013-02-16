@@ -52,7 +52,7 @@ while (1) {
 
 		# Prompt
 		locate 1,1; clline(); print "turn $i > ";
-		my $cmd = <STDIN>;
+		defined (my $cmd = <STDIN>) or exit;
 		chomp $cmd;
 
 		if ($cmd =~ /^\d+$/ && $cmd <= $#coms) {
@@ -77,14 +77,13 @@ while (1) {
 		}
 
 		elsif ($cmd =~ /^s\s+(\d+)$/) {
-			$i++;
 			$slideshow = $1;
 		}
 	
 		elsif ($i < $#coms) {
-			$i++;
 			@glyphs = split('g', $coms[$i]);
 			print_glyphs(@glyphs);
+			$i++;
 		}
 	}
 }
