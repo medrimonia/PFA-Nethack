@@ -26,33 +26,31 @@ print_glyphs(@glyphs);
 my $turn = 0;
 
 while (1) {
+	# Prompt
+	locate 1,1; clline(); print "turn $turn > ";
 
 	if ($slideshow) {
 		ReadMode('cbreak');
 
-		for (my $t = $turn; $t <= $#coms; $turn++, $t++) {
-			@glyphs = split('g', $coms[$t]);
+		if ($turn <= $#coms) {
+			@glyphs = split('g', $coms[$turn]);
 			print_glyphs(@glyphs);
 
-			# Prompt
-			locate 1,1; clline(); print "turn $t > ";
-
+			$turn++;
 			usleep($slideshow);
 
-			my $key = ReadKey(-1); # non-blocking read
-			last if (defined $key);
-
+			$slideshow = 0 if (defined ReadKey(-1)); # non-blocking read
 		}
-
-		$slideshow = 0;
+		
+		else {
+			$slideshow = 0;
+		}
 	}
 
 	else {
 		my $cmd;
 		ReadMode('normal');
 
-		# Prompt
-		locate 1,1; clline(); print "turn $turn > ";
 		unless (defined ($cmd = <STDIN>)) {
 			cls();
 			exit;
@@ -63,7 +61,7 @@ while (1) {
 			# goto turn number in $cmd
 			my $start;
 
-			if ($turn < $cmd) {
+			if ($turn <= $cmd) {
 				# drawn only what's necessary
 				$start = $turn;
 			} else {
