@@ -48,11 +48,15 @@ while (1) {
 	}
 
 	else {
+		my $cmd;
 		ReadMode('normal');
 
 		# Prompt
-		locate 1,1; clline(); print "turn $i > ";
-		defined (my $cmd = <STDIN>) or exit;
+		locate 1,1; clline(); print "turn $turn > ";
+		unless (defined ($cmd = <STDIN>)) {
+			cls();
+			exit;
+		}
 		chomp $cmd;
 
 		if ($cmd =~ /^\d+$/ && $cmd <= $#coms) {
