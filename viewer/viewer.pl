@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 use Term::ReadKey;
-use Time::HiRes qw/usleep/;
+use Time::HiRes qw/sleep/;
 use Term::ANSIScreen qw/:cursor :screen/;
 
 
@@ -18,12 +18,12 @@ cls();
 $| = 1;
 $/ = "\n";
 
+my $turn = 0;
 my $slideshow = 0;
 my @coms = split("ES", $replay);
 
 my @glyphs = split('g', $coms[0]);
 print_glyphs(@glyphs);
-my $turn = 0;
 
 while (1) {
 	# Prompt
@@ -37,7 +37,7 @@ while (1) {
 			print_glyphs(@glyphs);
 
 			$turn++;
-			usleep($slideshow);
+			sleep(1./$slideshow);
 
 			$slideshow = 0 if (defined ReadKey(-1)); # non-blocking read
 		}
