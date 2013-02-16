@@ -76,7 +76,7 @@ while (1) {
 			$i = $cmd;
 		}
 
-		elsif ($cmd =~ /^s\s+(\d+)$/) {
+		elsif ($cmd =~ /^s\s*(\d+)$/) {
 			$slideshow = $1;
 		}
 	
