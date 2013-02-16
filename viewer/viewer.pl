@@ -61,7 +61,7 @@ while (1) {
 
 			if ($i < $cmd) {
 				# drawn only what's necessary
-				$start = $i + 1;
+				$start = $i;
 			} else {
 				# redraw everything since turn 0
 				cls();
