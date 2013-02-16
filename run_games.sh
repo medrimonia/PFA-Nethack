@@ -1,7 +1,5 @@
 #!/bin/bash
 
-STARTM=$(date -u "+%s")
-
 # Options for env. variables
 NH_MM_REPLAY=0
 NH_MM_LOGGING=0
@@ -28,8 +26,7 @@ export NH_MM_SOCKPATH
 
 if [ $# -lt 3 ]
 then
-		echo "Usage : $0 <nb_games> <launching_bot_cmd> <bot_name> <details_script (optional)>"
-		echo "Usage: $0 [options] <nb_games> <launching_bot_cmd> <bot_name>"
+		echo "Usage : $0 [options] <nb_games> <launching_bot_cmd> <bot_name> <details_script (optional)>"
 		echo "Options:"
 		echo -e "\t-r        enable replay recording"
 		echo -e "\t-l        enable middleman logging"
@@ -44,33 +41,33 @@ MAX_MOVES=$(grep "#define MAX_MOVES" src/game_statistics.c | grep -o [0-9]*)
 DATA_FOLDER="collected_data"
 DEST_FOLDER=$DATA_FOLDER/$(date +%y-%m-%d-%Hh%M)-$3-$1
 
+mkdir $DEST_FOLDER || exit;
 echo "Output will be send to $DEST_FOLDER"
 
 # Cleanup
 rm -f nethack-3.4.3/nethackdir/pfa.db
 rm -f nethack-3.4.3/nethackdir/replay
 
-
-mkdir $DEST_FOLDER
-
+STARTM=$(date -u "+%s")
 
 for ((i = 1; i <= $1; i++))
 do
 		rm -f nethack-3.4.3/nethackdir/mm.log
 		nethack-3.4.3/nethack >nh_log &
 		$2 >bot_log
-		printf "\033[80DRunning tests : %d/%d" $i $1
 
 		if [ $NH_MM_REPLAY -gt 0 ]; then
 			mv nethack-3.4.3/nethackdir/replay "$DEST_FOLDER/replay.$i"
 		fi
+
+		printf "\033[80DDone : %d of %d" $i $1
 done
-echo
+
+STOPM=$(date -u "+%s")
 
 mv nethack-3.4.3/nethackdir/pfa.db $DEST_FOLDER/games_result.db
 
 README=$DEST_FOLDER/README.md
-
 echo "## Source Data" >$README
 echo "* Number of games : $1" >>$README
 echo "* Bot : $3" >>$README
@@ -81,15 +78,19 @@ SCRIPT=$DATA_FOLDER/generate_stats.sh
 
 $SCRIPT $DEST_FOLDER
 
-STOPM=$(date -u "+%s")
 
 RUNTIMEM=$(expr $STOPM - $STARTM)
-if (($RUNTIMEM>3559)); then
-TTIMEM=$(printf "%dhours%dm%ds\n" $((RUNTIMEM/3600)) $((RUNTIMEM/60%60)) $((RUNTIMEM%60)))
-elif (($RUNTIMEM>59)); then
-TTIMEM=$(printf "%dm%ds\n" $((RUNTIMEM/60%60)) $((RUNTIMEM%60)))
+if (($RUNTIMEM>3559))
+then
+	TTIMEM=$(printf "%dhours%dm%ds\n" \
+		$((RUNTIMEM/3600)) \
+		$((RUNTIMEM/60%60)) \
+		$((RUNTIMEM%60)))
+elif (($RUNTIMEM>59))
+then
+	TTIMEM=$(printf "%dm%ds\n" $((RUNTIMEM/60%60)) $((RUNTIMEM%60)))
 else
-TTIMEM=$(printf "%ds\n" $((RUNTIMEM)))
+	TTIMEM=$(printf "%ds\n" $((RUNTIMEM)))
 fi
 
 echo "* Processing time: $TTIMEM" >>$README
