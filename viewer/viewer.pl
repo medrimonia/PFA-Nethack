@@ -1,3 +1,4 @@
+use v5.10;
 use strict;
 use warnings;
 
@@ -6,8 +7,15 @@ use Time::HiRes qw/sleep/;
 use Term::ANSIScreen qw/:cursor :screen/;
 
 
+if ($#ARGV < 0) {
+	print "Usage: perl $0 <replay file>\n";
+	print "Commands :\n";
+	print "\tN   : go to turn number N.\n";
+	print "\ts N : slideshow with N turns per second. Any key to stop.\n";
+	exit;
+}
 
-my $filename = $ARGV[0] // "replay";
+my $filename = $ARGV[0];
 open(my $fh, '<', $filename) or die "Can't open file $filename: $!";
 $/ = undef; #slurp!
 my $replay = <$fh>;
