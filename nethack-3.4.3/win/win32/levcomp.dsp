@@ -71,6 +71,7 @@ echo monk.des	..\util\levcomp.exe monk.des	 \
 echo oracle.des	..\util\levcomp.exe oracle.des	 \
 echo priest.des	..\util\levcomp.exe priest.des	 \
 echo ranger.des	..\util\levcomp.exe ranger.des	 \
+echo ring.des	..\util\levcomp.exe ring.des	 \
 echo rogue.des	..\util\levcomp.exe rogue.des	 \
 echo samurai.des	..\util\levcomp.exe samurai.des	 \
 echo sokoban.des	..\util\levcomp.exe sokoban.des	 \
@@ -125,6 +126,7 @@ echo monk.des	..\util\levcomp.exe monk.des	 \
 echo oracle.des	..\util\levcomp.exe oracle.des	 \
 echo priest.des	..\util\levcomp.exe priest.des	 \
 echo ranger.des	..\util\levcomp.exe ranger.des	 \
+echo ring.des	..\util\levcomp.exe ring.des	 \
 echo rogue.des	..\util\levcomp.exe rogue.des	 \
 echo samurai.des	..\util\levcomp.exe samurai.des	 \
 echo sokoban.des	..\util\levcomp.exe sokoban.des	 \
