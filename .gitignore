@@ -3,6 +3,13 @@
 ~*
 *~
 nethack-3.4.3/*
+!nethack-3.4.3/Files
+!nethack-3.4.3/util
+nethack-3.4.3/util/*
+!nethack-3.4.3/util/lev_main.c
+!nethack-3.4.3/dat
+nethack-3.4.3/dat/*
+!nethack-3.4.3/dat/Makefile
 nethack-343-src.tgz
 java_starter_package/.classpath
 java_starter_package/.project
