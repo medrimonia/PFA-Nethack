@@ -63,3 +63,16 @@ index 7c1486e..e1a4de3 100644
  echo rogue.des	..\util\levcomp.exe rogue.des	 \
  echo samurai.des	..\util\levcomp.exe samurai.des	 \
  echo sokoban.des	..\util\levcomp.exe sokoban.des	 \
+diff --git nethack-3.4.3.b/Makefile nethack-3.4.3/Makefile
+index 5c55f59..94d9778 100644
+--- nethack-3.4.3.b/Makefile
++++ nethack-3.4.3/Makefile
+@@ -75,7 +75,7 @@ DATHELP = help hh cmdhelp history opthelp wizhelp
+ 
+ SPEC_LEVS = asmodeus.lev baalz.lev bigrm-?.lev castle.lev fakewiz?.lev \
+ 	juiblex.lev knox.lev medusa-?.lev minend-?.lev minefill.lev \
+-	minetn-?.lev oracle.lev orcus.lev sanctum.lev soko?-?.lev \
++	minetn-?.lev oracle.lev orcus.lev ring.lev sanctum.lev soko?-?.lev \
+ 	tower?.lev valley.lev wizard?.lev \
+ 	astral.lev air.lev earth.lev fire.lev water.lev
+ QUEST_LEVS = ???-goal.lev ???-fil?.lev ???-loca.lev ???-strt.lev
