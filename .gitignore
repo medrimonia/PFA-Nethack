@@ -3,6 +3,7 @@
 ~*
 *~
 nethack-3.4.3/*
+!nethack-3.4.3/Makefile
 !nethack-3.4.3/Files
 !nethack-3.4.3/util
 nethack-3.4.3/util/*
