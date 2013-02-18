@@ -3,7 +3,7 @@
 
 // Comment if there's no access to nethack files
 // This is used typically for test outside of nethack kernel
-#define NETHACK_ACCESS
+//#define NETHACK_ACCESS
 
 /* Initialize the game statistic module */
 void gs_init();
@@ -82,38 +82,21 @@ int get_nb_squares_explored();
 /* Return the maximal number of moves allowed in this game. */
 int get_max_moves();
 
-/* Return the turn where the last discovery was done */
-int get_discovery_turn();
-
-/* Return the line where the last door was found (in a door discovery or
- * in an add_door or even in an update_sdoors)
- */
+int get_door_discovery_turn();
 int get_door_line();
-
-/* Return the column where the last door was found (in a door discovery or
- * in an add_door or even in an update_sdoors)
- */
 int get_door_column();
-
-/* Return the level where the last door was found (in a door discovery or
- * in an add_door or even in an update_sdoors)
- */
 int get_door_level();
+int get_door_discovery_line();
+int get_door_discovery_column();
+int get_door_discovery_level();
 
-/* Return the line where the last scorr was found (in a scorr discovery or
- * in an add_scorr or even in an update_scorrs)
- */
+int get_scorr_discovery_turn();
 int get_scorr_line();
-
-/* Return the column where the last scorr was found (in a scorr discovery or
- * in an add_scorr or even in an update_scorrs)
- */
 int get_scorr_column();
-
-/* Return the level where the last scorr was found (in a scorr discovery or
- * in an add_scorr or even in an update_scorrs)
- */
 int get_scorr_level();
+int get_scorr_discovery_line();
+int get_scorr_discovery_column();
+int get_scorr_discovery_level();
 
 /* Return the name of the bot playing this game */
 const char * get_bot_name();
