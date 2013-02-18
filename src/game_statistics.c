@@ -317,7 +317,7 @@ int get_scorr_discovery_turn(){
 }
 
 int get_scorr_discovery_level(){
-	return scorrs_discovery[actual_scorr_discovery].discovery_turn;
+	return scorrs_discovery[actual_scorr_discovery].level;
 }
 
 int get_scorr_level(){
@@ -345,7 +345,7 @@ int get_door_discovery_turn(){
 }
 
 int get_door_discovery_level(){
-	return sdoors_discovery[actual_sdoor_discovery].discovery_turn;
+	return sdoors_discovery[actual_sdoor_discovery].level;
 }
 
 int get_door_level(){
