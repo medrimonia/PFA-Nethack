@@ -20,6 +20,11 @@
 #define MAX_SCORRS 200
 #define MAX_SCORRS_DISCOVERY 200
 
+// Level is not taken into account for now
+int get_current_level(){
+	return -1;
+}
+
 // The variable moves is used sometimes in the game
 #ifndef NETHACK_ACCESS
 int moves = 0;
@@ -175,6 +180,7 @@ void statistic_add_sdoor(int line, int column){
 	if (!gs_initialized) gs_init();
 	sdoors[nb_sdoors].line = line;
 	sdoors[nb_sdoors].column = column;
+	sdoors[nb_sdoors].level = get_current_level();
 	nb_sdoors++;
 }
 
@@ -182,6 +188,7 @@ void statistic_add_scorr(int line, int column){
 	if (!gs_initialized) gs_init();
 	scorrs[nb_scorrs].line = line;
 	scorrs[nb_scorrs].column = column;
+	scorrs[nb_scorrs].level = get_current_level();
 	nb_scorrs++;
 }
 
@@ -190,6 +197,7 @@ void statistic_add_sdoor_discovery(int line, int column){
 	sdoors_discovery[nb_sdoors_found].line = line;
 	sdoors_discovery[nb_sdoors_found].column = column;
 	sdoors_discovery[nb_sdoors_found].discovery_turn = moves;
+	sdoors_discovery[nb_sdoors_found].level = get_current_level();
 	nb_sdoors_found++;
 }
 
@@ -198,6 +206,7 @@ void statistic_add_scorr_discovery(int line, int column){
 	scorrs_discovery[nb_scorrs_found].line = line;
 	scorrs_discovery[nb_scorrs_found].column = column;
 	scorrs_discovery[nb_scorrs_found].discovery_turn = moves;
+	scorrs_discovery[nb_scorrs_found].level = get_current_level();
 	nb_scorrs_found++;
 }
 
