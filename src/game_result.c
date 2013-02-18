@@ -62,9 +62,9 @@ game_result_p create_actual_game_result(const char * table){
 	game_result_p gr = new_game_result(table);
 	
 	int index = 1;// id field is not set by this type of method
-#define DATABASE_FIELD(name, cType, sqlType)						  			 \
+#define DATABASE_FIELD(name, cType, sqlType)                     \
   gr_set_property_name(gr, index, #name);                        \
-	gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
+  gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
 #include "seek_secret.def"
 
@@ -75,9 +75,9 @@ game_result_p create_door_discovery_result(){
 	game_result_p gr = new_game_result("door_discovery");
 	
 	int index = 1;// id field is not set by this type of method
-#define DATABASE_FIELD(name, cType, sqlType)						  			 \
+#define DATABASE_FIELD(name, cType, sqlType)                     \
   gr_set_property_name(gr, index, #name);                        \
-	gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
+  gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
 #include "door_discovery.def"
 
@@ -89,9 +89,9 @@ game_result_p create_door_result(){
 	game_result_p gr = new_game_result("doors");
 	
 	int index = 1;// id field is not set by this type of method
-#define DATABASE_FIELD(name, cType, sqlType)						  			 \
+#define DATABASE_FIELD(name, cType, sqlType)                     \
   gr_set_property_name(gr, index, #name);                        \
-	gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
+  gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
 #include "doors.def"
 
@@ -102,9 +102,9 @@ game_result_p create_scorr_discovery_result(){
 	game_result_p gr = new_game_result("scorr_discovery");
 	
 	int index = 1;// id field is not set by this type of method
-#define DATABASE_FIELD(name, cType, sqlType)						  			 \
+#define DATABASE_FIELD(name, cType, sqlType)                     \
   gr_set_property_name(gr, index, #name);                        \
-	gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
+  gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
 #include "scorr_discovery.def"
 
@@ -116,9 +116,9 @@ game_result_p create_scorr_result(){
 	game_result_p gr = new_game_result("scorrs");
 	
 	int index = 1;// id field is not set by this type of method
-#define DATABASE_FIELD(name, cType, sqlType)						  			 \
+#define DATABASE_FIELD(name, cType, sqlType)                     \
   gr_set_property_name(gr, index, #name);                        \
-	gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
+  gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
 #include "scorrs.def"
 
@@ -139,15 +139,15 @@ void destroy_game_result(game_result_p gr){
 
 
 void gr_set_property_name(game_result_p gr,
-													int index,
-													char * name){
+	                        int index,
+	                        char * name){
 	gr->properties[index]->name = name;	
 }
 
 void gr_set_property_value(game_result_p gr,
-													 int index,
-													 const char * value,
-													 bool is_text){
+	                         int index,
+	                         const char * value,
+	                         bool is_text){
 	if (gr->properties[index]->value != NULL)
 		free((char *)gr->properties[index]->value);
 	gr->properties[index]->value = value;
@@ -155,15 +155,15 @@ void gr_set_property_value(game_result_p gr,
 }
 
 void gr_set_property_text_value(game_result_p gr,
-																int index,
-																const char * value){
+	                              int index,
+	                              const char * value){
 	gr_set_property_value(gr, index, strdup(value), true);
 }
 
 
 void gr_set_property_integer_value(game_result_p gr,
-																	 int index,
-																	 int value){
+	                                 int index,
+	                                 int value){
 	int size = 0;
 	int tmp = value;
 	do{
@@ -178,17 +178,17 @@ void gr_set_property_integer_value(game_result_p gr,
 }
 
 const char * gr_get_property_name(game_result_p gr,
-																	int index){
+	                                int index){
 	return gr->properties[index]->name;
 }
 
 const char * gr_get_property_value(game_result_p gr,
-																	 int index){
+	                                 int index){
 	return gr->properties[index]->value;
 }
 
 bool gr_is_property_text(game_result_p gr,
-																 int index){
+	                       int index){
 	return gr->properties[index]->is_text;
 }
 

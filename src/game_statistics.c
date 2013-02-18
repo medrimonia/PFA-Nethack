@@ -235,11 +235,11 @@ void update_nb_scorrs() {
 	int col;
 	int row;
 	for (col = 0; col < COLNO; col++){
-	  for (row = 0; row < ROWNO; row++){
+		for (row = 0; row < ROWNO; row++){
 			if (levl[col][row].typ == SCORR){
 				statistic_add_scorr(row, col);
 			}
-	  }
+		}
 	}
 #endif
 }
@@ -397,16 +397,16 @@ void gs_submit_game(){
 	}
 	// Publishing door_discovery result
 	for (actual_sdoor_discovery = 0;
-			 actual_sdoor_discovery < nb_sdoors_found;
-			 actual_sdoor_discovery++){
+	     actual_sdoor_discovery < nb_sdoors_found;
+	     actual_sdoor_discovery++){
 		game_result_p dd = create_door_discovery_result();
 		add_game_result(dd);
 		destroy_game_result(dd);
 	}
 	// Publishing corr_discovery result
 	for (actual_scorr_discovery = 0;
-			 actual_scorr_discovery < nb_scorrs_found;
-			 actual_scorr_discovery++){
+	     actual_scorr_discovery < nb_scorrs_found;
+	     actual_scorr_discovery++){
 		game_result_p cd = create_scorr_discovery_result();
 		add_game_result(cd);
 		destroy_game_result(cd);

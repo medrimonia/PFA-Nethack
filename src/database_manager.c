@@ -135,7 +135,7 @@ void initialize_table_descriptor(const char * table_name,
 #include "doors.def"
 	}
 	else if (strcmp(table_name,"scorr_discovery") == 0){
-#define DATABASE_FIELD(fName, cType, sqlType)	 \
+#define DATABASE_FIELD(fName, cType, sqlType)  \
   td->columns[col_no]->name = #fName;          \
   td->columns[col_no]->type = #sqlType;        \
 	col_no++;
@@ -239,7 +239,7 @@ void create_table(table_descriptor_p td, const char * table_name){
 	}
 	
 	index += sprintf(request + index,
-									 ")");
+	                 ")");
 
 	//printf("Request : %s\n", request);
 	

@@ -9,7 +9,7 @@
 
 int main(int argc, char ** argv){
 	// Initializing random generator
-	srand(time(NULL));
+  srand(time(NULL));
 
 	//gs_init should be called implicitly
 
