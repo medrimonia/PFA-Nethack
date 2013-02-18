@@ -73,16 +73,16 @@ get_result_p get_request(const char * request){
 	get_result_p r = new_get_result();
 	
 	sqlite3_get_table(db,
-										request,
-										&r->result,
-										&r->num_rows,
-										&r->num_cols,
-										&r->err_msg);
+	                  request,
+	                  &r->result,
+	                  &r->num_rows,
+	                  &r->num_cols,
+	                  &r->err_msg);
 	return r;
 }
 
 void initialize_table_descriptor(const char * table_name,
-																 table_descriptor_p * td_p){
+                                 table_descriptor_p * td_p){
 	(*td_p) = malloc(sizeof(struct column_descriptor));
 	table_descriptor_p td = *td_p;
 
@@ -102,8 +102,7 @@ void initialize_table_descriptor(const char * table_name,
 		td->nb_columns = 4;
 	}
 	
-	td->columns = malloc(td->nb_columns *
-																		 sizeof(column_descriptor_p));
+	td->columns = malloc(td->nb_columns * sizeof(column_descriptor_p));
 	int i;
 	for (i = 0; i < td->nb_columns; i++){
 		td->columns[i] = malloc(sizeof(struct column_descriptor));
@@ -115,37 +114,37 @@ void initialize_table_descriptor(const char * table_name,
 	col_no++;
 
 	if (strcmp(table_name,"seek_secret") == 0){
-#define DATABASE_FIELD(fName, cType, sqlType)		     \
-  td->columns[col_no]->name = #fName;   \
-  td->columns[col_no]->type = #sqlType; \
+#define DATABASE_FIELD(fName, cType, sqlType) \
+  td->columns[col_no]->name = #fName;         \
+  td->columns[col_no]->type = #sqlType;       \
 	col_no++;
 #include "seek_secret.def"
 	}
 	else if (strcmp(table_name,"door_discovery") == 0){
-#define DATABASE_FIELD(fName, cType, sqlType)	 \
-  td->columns[col_no]->name = #fName;   \
-  td->columns[col_no]->type = #sqlType; \
+#define DATABASE_FIELD(fName, cType, sqlType) \
+  td->columns[col_no]->name = #fName;         \
+  td->columns[col_no]->type = #sqlType;       \
 	col_no++;
 #include "door_discovery.def"	
 	}
 	else if (strcmp(table_name,"doors") == 0){
-#define DATABASE_FIELD(fName, cType, sqlType)	 \
-  td->columns[col_no]->name = #fName;   \
-  td->columns[col_no]->type = #sqlType; \
+#define DATABASE_FIELD(fName, cType, sqlType)  \
+  td->columns[col_no]->name = #fName;          \
+  td->columns[col_no]->type = #sqlType;        \
 	col_no++;
 #include "doors.def"
 	}
 	else if (strcmp(table_name,"scorr_discovery") == 0){
 #define DATABASE_FIELD(fName, cType, sqlType)	 \
-  td->columns[col_no]->name = #fName;   \
-  td->columns[col_no]->type = #sqlType; \
+  td->columns[col_no]->name = #fName;          \
+  td->columns[col_no]->type = #sqlType;        \
 	col_no++;
 #include "scorr_discovery.def"	
 	}
 	else if (strcmp(table_name,"scorrs") == 0){
-#define DATABASE_FIELD(fName, cType, sqlType)	 \
-  td->columns[col_no]->name = #fName;   \
-  td->columns[col_no]->type = #sqlType; \
+#define DATABASE_FIELD(fName, cType, sqlType)  \
+  td->columns[col_no]->name = #fName;          \
+  td->columns[col_no]->type = #sqlType;        \
 	col_no++;
 #include "scorrs.def"	
 	}
@@ -173,13 +172,13 @@ int init_db_manager(){
 	int result;
 
 	result = sqlite3_open_v2(str,
-													 &db,
-													 SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
-													 NULL);
+	                         &db,
+	                         SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+	                         NULL);
 	if(result){// Database opening has failed
 		fprintf(stderr,
-						"CRITICAL_ERROR: Failed to open the database : %s\n",
-						sqlite3_errmsg(db));
+		        "CRITICAL_ERROR: Failed to open the database : %s\n",
+		        sqlite3_errmsg(db));
 		exit(EXIT_FAILURE);
 	}
 	return 0;
@@ -197,8 +196,8 @@ bool exist_table(const char * table_name){
 	char request[REQUEST_SIZE];
 
 	sprintf(request,
-					"SELECT name FROM sqlite_master WHERE type='table' AND name='%s';",
-					table_name);
+	        "SELECT name FROM sqlite_master WHERE type='table' AND name='%s';",
+	        table_name);
 
 	get_result_p r = get_request(request);
 	
@@ -224,15 +223,15 @@ void create_table(table_descriptor_p td, const char * table_name){
 
 	int index = 0;
 	index += sprintf(request,
-									 "create table %s (id integer primary key autoincrement, ",
-									 table_name);
+	                 "create table %s (id integer primary key autoincrement, ",
+	                 table_name);
 	
 	int i = 1;
 	while(true){
 		index += sprintf(request + index,
-										 "%s %s",
-										 td->columns[i]->name,
-										 td->columns[i]->type);
+		                 "%s %s",
+		                 td->columns[i]->name,
+		                 td->columns[i]->type);
 		i++;
 		if ( i >= td->nb_columns)
 			break;
@@ -247,10 +246,10 @@ void create_table(table_descriptor_p td, const char * table_name){
 	char * err_msg;
 
 	sqlite3_exec(db,
-							 request,
-							 NULL,
-							 NULL,
-							 &err_msg);
+	             request,
+	             NULL,
+	             NULL,
+	             &err_msg);
 	
 	if (err_msg != NULL){//error treatment
 		fprintf(stderr, "Failed to create the specified table\n");
@@ -319,10 +318,10 @@ int add_game_result(game_result_p gr){
 	char * err_msg;
 
 	sqlite3_exec(db,
-							 request,
-							 NULL,
-							 NULL,
-							 &err_msg);
+	             request,
+	             NULL,
+	             NULL,
+	             &err_msg);
 	
 	if (err_msg != NULL){//error treatment
 		fprintf(stderr, "Failed to insert the game\n");
@@ -340,8 +339,8 @@ int close_db_manager(){
 		// Database closing has failed
 		// According to the sqlite3 doc, close should be tried again later
 		fprintf(stderr,
-						"Failed to close the database : %s\n",
-						sqlite3_errmsg(db));
+		        "Failed to close the database : %s\n",
+		        sqlite3_errmsg(db));
 		return 1;
 	}
 	free_table_descriptor(door_discovery_table);
