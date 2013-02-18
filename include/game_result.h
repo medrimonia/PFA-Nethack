@@ -41,34 +41,34 @@ void destroy_game_result(game_result_p gr);
 
 // If an old value is found, it's overwritten
 void gr_set_property_name(game_result_p gr,
-													int index,
-													char * name);
+                          int index,
+                          char * name);
 
 // if an old value is found, it's free
 void gr_set_property_value(game_result_p gr,
-													 int index,
-													 const char * value,
-													 bool is_text);
+                           int index,
+                           const char * value,
+                           bool is_text);
 
 // if an old value is found, it's free
 void gr_set_property_integer_value(game_result_p gr,
-																	 int index,
-																	 int value);
+                                   int index,
+                                   int value);
 
 // if an old value is found, it's free
 void gr_set_property_text_value(game_result_p gr,
-																int index,
-																const char * value);
+                                int index,
+                                const char * value);
 
 
 const char * gr_get_property_name(game_result_p gr,
-																	int index);
+                                  int index);
 
 const char * gr_get_property_value(game_result_p gr,
-																	 int index);
+                                   int index);
 
 bool gr_is_property_text(game_result_p gr,
-												 int index);
+                         int index);
 
 const char * gr_get_table(game_result_p gr);
 
