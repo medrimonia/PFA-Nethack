@@ -12,8 +12,6 @@
 ### OPTIONAL
 * Solve an issue with game_runner
    * nethack-3.4.3/nethack script has a hard reference to the nethack program
-* Reduce the time during which the database is used
-   * Store all datas in the process and push them to the database at end
 * Use a better database
    * Avoid multiple existence of field
    * Make reference to game id in doors discovery etc

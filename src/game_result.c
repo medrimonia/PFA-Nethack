@@ -59,9 +59,6 @@ game_result_p new_game_result(const char * table){
 }
 
 game_result_p create_actual_game_result(const char * table){
-	#ifndef NETHACK_ACCESS
-	make_random_stats();
-	#endif
 	game_result_p gr = new_game_result(table);
 	
 	int index = 1;// id field is not set by this type of method
@@ -75,9 +72,6 @@ game_result_p create_actual_game_result(const char * table){
 }
 
 game_result_p create_door_discovery_result(){
-	#ifndef NETHACK_ACCESS
-	make_random_door_discovery();
-	#endif
 	game_result_p gr = new_game_result("door_discovery");
 	
 	int index = 1;// id field is not set by this type of method
@@ -92,9 +86,6 @@ game_result_p create_door_discovery_result(){
 }
 
 game_result_p create_door_result(){
-	#ifndef NETHACK_ACCESS
-	make_random_door();
-	#endif
 	game_result_p gr = new_game_result("doors");
 	
 	int index = 1;// id field is not set by this type of method
@@ -108,9 +99,6 @@ game_result_p create_door_result(){
 }
 
 game_result_p create_scorr_discovery_result(){
-	#ifndef NETHACK_ACCESS
-	make_random_scorr_discovery();
-	#endif
 	game_result_p gr = new_game_result("scorr_discovery");
 	
 	int index = 1;// id field is not set by this type of method
@@ -125,9 +113,6 @@ game_result_p create_scorr_discovery_result(){
 }
 
 game_result_p create_scorr_result(){
-	#ifndef NETHACK_ACCESS
-	make_random_scorr();
-	#endif
 	game_result_p gr = new_game_result("scorrs");
 	
 	int index = 1;// id field is not set by this type of method
