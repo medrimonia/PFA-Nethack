@@ -30,35 +30,8 @@ int main(int argc, char ** argv){
 	}
 	add_game_result(gr);*/
 
-	//Try to insert a random game
-	game_result_p gr = create_actual_game_result("seek_secret");
-	add_game_result(gr);
+	gs_submit_game();
 
-	//Try to insert a door discovery
-	game_result_p dd = create_door_discovery_result();
-	add_game_result(dd);
-
-	make_random_door();
-	//Try to insert a door
-	game_result_p d = create_door_result();
-	add_game_result(d);
-
-	make_random_scorr_discovery();
-	//Try to insert a scorr discovery
-	game_result_p sd = create_scorr_discovery_result();
-	add_game_result(sd);
-
-	make_random_scorr();
-	//Try to insert a scorr
-	game_result_p r = create_scorr_result();
-	add_game_result(r);
-
-	destroy_game_result(sd);
-	destroy_game_result(r);
-	destroy_game_result(d);
-	destroy_game_result(dd);
-	destroy_game_result(gr);
-	close_db_manager();
 	gs_terminate();
 	return 0;
 }

@@ -101,8 +101,9 @@ void gs_init(){
 	sdoors_discovery = malloc(MAX_SDOORS_DISCOVERY * sizeof(struct discovery));
 	scorrs_discovery = malloc(MAX_SCORRS_DISCOVERY * sizeof(struct discovery));
 
-	// Must be done only once all game statistics has been properly initialized
-	init_db_manager();
+#ifndef NETHACK_ACCESS
+	make_random_stats();
+#endif
 }
 
 void gs_terminate(){
@@ -116,10 +117,19 @@ void gs_terminate(){
 
 #ifndef NETHACK_ACCESS
 void make_random_stats(){
-	nb_sdoors = rand() % 10;
-  nb_sdoors_found = rand() % 10;
-  nb_scorrs = rand() % 5;
-  nb_scorrs_found = rand() % 5;
+	int i;
+	int nb_sdoors = rand() % 10;
+	for (i = 0; i < nb_sdoors; i++)
+		make_random_door();
+  int nb_sdoors_found = rand() % 10;
+	for (i = 0; i < nb_sdoors_found; i++)
+		make_random_door_discovery();
+  int nb_scorrs = rand() % 5;
+	for (i = 0; i < nb_scorrs; i++)
+		make_random_scorr();
+  int nb_scorrs_found = rand() % 5;
+	for (i = 0; i < nb_scorrs_found; i++)
+		make_random_scorr_discovery();
   nb_squares_explored = rand() % 400;
   nb_squares_reachable = rand() % 400;
   seed = rand();
@@ -342,12 +352,41 @@ int get_processing_time(){
 }
 
 void gs_submit_game(){
+	init_db_manager();
+	// Publishing global game result
 	game_result_p gr = create_actual_game_result("seek_secret");
 	add_game_result(gr);
 	destroy_game_result(gr);
+	// Publishing door result
+	for (actual_sdoor = 0; actual_sdoor < nb_sdoors; actual_sdoor++){
+		game_result_p d = create_door_result();
+		add_game_result(d);
+		destroy_game_result(d);
+	}
+	// Publishing scorr result
+	for (actual_scorr = 0; actual_scorr < nb_scorrs; actual_scorr++){
+		game_result_p c = create_scorr_result();
+		add_game_result(c);
+		destroy_game_result(c);
+	}
+	// Publishing door_discovery result
+	for (actual_sdoor_discovery = 0;
+			 actual_sdoor_discovery < nb_sdoors_found;
+			 actual_sdoor_discovery++){
+		game_result_p dd = create_door_discovery_result();
+		add_game_result(dd);
+		destroy_game_result(dd);
+	}
+	// Publishing corr_discovery result
+	for (actual_scorr_discovery = 0;
+			 actual_scorr_discovery < nb_scorrs_found;
+			 actual_scorr_discovery++){
+		game_result_p cd = create_scorr_discovery_result();
+		add_game_result(cd);
+		destroy_game_result(cd);
+	}
+
 	close_db_manager();
-	free(bot_name);
-	free(mode_name);
 }
 
 #ifdef NETHACK_ACCESS
