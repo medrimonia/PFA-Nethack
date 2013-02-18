@@ -22,7 +22,11 @@
 
 // Level is not taken into account for now
 int get_current_level(){
+#ifdef NETHACK_ACCESS
+	return u.uz.dlevel;
+#else
 	return -1;
+#endif
 }
 
 // The variable moves is used sometimes in the game
@@ -218,7 +222,7 @@ void update_nb_sdoors() {
 	for (col = 0; col < COLNO; col++){
 	  for (row = 0; row < ROWNO; row++){
 			if (levl[col][row].typ == SDOOR){
-				statistic.add_sdoor(row, col);
+				statistic_add_sdoor(row, col);
 			}
 	  }
 	}
@@ -233,7 +237,7 @@ void update_nb_scorrs() {
 	for (col = 0; col < COLNO; col++){
 	  for (row = 0; row < ROWNO; row++){
 			if (levl[col][row].typ == SCORR){
-				statistic.add_scorr(row, col);
+				statistic_add_scorr(row, col);
 			}
 	  }
 	}
