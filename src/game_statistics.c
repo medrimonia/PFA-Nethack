@@ -68,6 +68,9 @@ char * mode_name = NULL;
 bool gs_initialized = false;
 
 void gs_init(){
+	if (gs_initialized)
+		return;
+	gs_initialized = true;
 	gettimeofday(&start, NULL);
 
 	char * str = NULL;
@@ -113,6 +116,7 @@ void gs_terminate(){
 	free(scorrs_discovery);
 	free(bot_name);
 	free(mode_name);
+	gs_initialized = false;
 }
 
 #ifndef NETHACK_ACCESS
@@ -168,18 +172,21 @@ static char visited_square [MAXDUNGEON][MAXLEVEL][COLNO][ROWNO];
 #endif
 
 void statistic_add_sdoor(int line, int column){
+	if (!gs_initialized) gs_init();
 	sdoors[nb_sdoors].line = line;
 	sdoors[nb_sdoors].column = column;
 	nb_sdoors++;
 }
 
 void statistic_add_scorr(int line, int column){
+	if (!gs_initialized) gs_init();
 	scorrs[nb_scorrs].line = line;
 	scorrs[nb_scorrs].column = column;
 	nb_scorrs++;
 }
 
 void statistic_add_sdoor_discovery(int line, int column){
+	if (!gs_initialized) gs_init();
 	sdoors_discovery[nb_sdoors_found].line = line;
 	sdoors_discovery[nb_sdoors_found].column = column;
 	sdoors_discovery[nb_sdoors_found].discovery_turn = moves;
@@ -187,6 +194,7 @@ void statistic_add_sdoor_discovery(int line, int column){
 }
 
 void statistic_add_scorr_discovery(int line, int column){
+	if (!gs_initialized) gs_init();
 	scorrs_discovery[nb_scorrs_found].line = line;
 	scorrs_discovery[nb_scorrs_found].column = column;
 	scorrs_discovery[nb_scorrs_found].discovery_turn = moves;
@@ -194,6 +202,7 @@ void statistic_add_scorr_discovery(int line, int column){
 }
 
 void update_nb_sdoors() {
+	if (!gs_initialized) gs_init();
 #ifdef NETHACK_ACCESS
 	int col;
 	int row;
@@ -208,6 +217,7 @@ void update_nb_sdoors() {
 }
 
 void update_nb_scorrs() {
+	if (!gs_initialized) gs_init();
 #ifdef NETHACK_ACCESS
 	int col;
 	int row;
@@ -222,6 +232,7 @@ void update_nb_scorrs() {
 }
 
 void update_reachable_squares(){
+	if (!gs_initialized) gs_init();
 #ifdef NETHACK_ACCESS
 	int c;
 	int r;
@@ -235,6 +246,7 @@ void update_reachable_squares(){
 }
 
 void update_reached_squares(){
+	if (!gs_initialized) gs_init();
 #ifdef NETHACK_ACCESS
 	if (!visited_square[u.uz.dnum][u.uz.dlevel][u.ux][u.uy]){
 		visited_square[u.uz.dnum][u.uz.dlevel][u.ux][u.uy] = 1;
@@ -352,6 +364,7 @@ int get_processing_time(){
 }
 
 void gs_submit_game(){
+	if (!gs_initialized) gs_init();
 	init_db_manager();
 	// Publishing global game result
 	game_result_p gr = create_actual_game_result("seek_secret");
