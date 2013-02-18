@@ -336,16 +336,12 @@ HACKCSRC = allmain.c alloc.c apply.c artifact.c attrib.c ball.c bones.c \
 	   spell.c steal.c steed.c teleport.c timeout.c topten.c track.c trap.c \
 	   u_init.c uhitm.c vault.c version.c vision.c weapon.c were.c wield.c \
 	   windows.c wizard.c worm.c worn.c write.c zap.c
-# PFA additions
-HACKCSRC += $(PFASRC)/game_statistics.c
 
 # all operating-system-dependent .c (for dependencies and such)
 SYSCSRC = ../sys/atari/tos.c ../sys/share/pcmain.c ../sys/share/pcsys.c \
 	../sys/share/pctty.c ../sys/share/pcunix.c ../sys/share/random.c \
 	../sys/share/ioctl.c ../sys/share/unixtty.c ../sys/unix/unixmain.c \
 	../sys/unix/unixunix.c ../sys/unix/unixres.c ../sys/be/bemain.c
-# PFA additions
-SYSCSRC += $(PFASRC)/pfamain.c
 
 # generated source files (tile.c is handled separately via WINxxxSRC)
 GENCSRC = monstr.c vis_tab.c	#tile.c
@@ -586,18 +582,47 @@ $(HACK_H): ../include/hack.h $(CONFIG_H) ../include/align.h \
 		../include/wintty.h ../include/trampoli.h
 	touch $(HACK_H)
 #
+
 $(PFAINC)/database_manager.h: $(PFAINC)/game_result.h
 
-pfamain.o: $(PFASRC)/pfamain.c $(PFAINC)/pfamain.h
+$(PFAINC)/middleman.h: $(HACK_H)
+
+#Macro file defining tables
+table_defs: $(PFASRC)/door_discovery.def  \
+            $(PFASRC)/doors.def           \
+            $(PFASRC)/scorr_discovery.def \
+            $(PFASRC)/scorrs.def          \
+            $(PFASRC)/seek_secret.def
+
+database_manager.o: $(PFASRC)/database_manager.c \
+                    $(PFAINC)/database_manager.h \
+                    $(PFAINC)/game_statistics.h  \
+                    table_defs                   \
+                    $(HACK_H)
 	$(CC) -o $@ $(CFLAGS) -c $<
-middleman.o: $(PFASRC)/middleman.c $(PFAINC)/middleman.h
+
+game_result.o: $(PFASRC)/game_result.c     \
+               $(PFAINC)/game_result.h     \
+               $(PFAINC)/game_statistics.h \
+               table_defs 
 	$(CC) -o $@ $(CFLAGS) -c $<
-game_statistics.o: $(PFASRC)/game_statistics.c $(PFAINC)/game_statistics.h
+
+game_statistics.o: $(PFASRC)/game_statistics.c  \
+                   $(PFAINC)/game_statistics.h  \
+                   $(PFAINC)/database_manager.h \
+                   $(HACK_H)
 	$(CC) -o $@ $(CFLAGS) -c $<
-game_result.o: $(PFASRC)/game_result.c $(PFAINC)/game_result.h \
-               $(PFAINC)/database_manager.h $(PFAINC)/game_statistics.h
+
+middleman.o: $(PFASRC)/middleman.c \
+             $(PFAINC)/middleman.h \
+             ../include/global.h
 	$(CC) -o $@ $(CFLAGS) -c $<
-database_manager.o: $(PFASRC)/database_manager.c $(PFAINC)/database_manager.h
+
+pfamain.o: $(PFASRC)/pfamain.c         \
+           $(PFAINC)/pfamain.h         \
+           $(PFAINC)/middleman.h       \
+           $(PFAINC)/game_statistics.h \
+           ../include/extern.h
 	$(CC) -o $@ $(CFLAGS) -c $<
 #
 tos.o: ../sys/atari/tos.c $(HACK_H) ../include/tcap.h
