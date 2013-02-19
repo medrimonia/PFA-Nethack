@@ -34,6 +34,7 @@ int get_current_level(){
 int moves = 0;
 #endif
 
+int level_reached = 0;
 int actual_sdoor = 0;
 int nb_sdoors = 0;
 int actual_sdoor_discovery = 0;
@@ -126,6 +127,13 @@ void gs_terminate(){
 	free(bot_name);
 	free(mode_name);
 	gs_initialized = false;
+}
+
+void gs_new_level(){
+	level_reached++;
+	update_reachable_squares();
+	update_nb_sdoors();
+	update_nb_scorrs();
 }
 
 #ifndef NETHACK_ACCESS
@@ -374,6 +382,10 @@ int get_processing_time(){
 	struct timeval result;
 	timersub(&actual, &start, &result);
 	return result.tv_sec * 1000 + result.tv_usec / 1000;
+}
+
+int get_level_reached(){
+	return level_reached;
 }
 
 void gs_submit_game(){
