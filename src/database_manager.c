@@ -313,7 +313,7 @@ int add_game_result(game_result_p gr){
 	
 	index += sprintf(request + index, ")");
 	
-	printf("REQUEST: %s\n", request);
+	//printf("REQUEST: %s\n", request);
 
 	char * err_msg;
 
