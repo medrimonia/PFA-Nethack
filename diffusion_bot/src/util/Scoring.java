@@ -12,6 +12,8 @@ public class Scoring {
 	private final static double MINIMAL_CONSERVATION = 1;
 	private final static double PERCENT_CONSERVATION = 0.45;
 	
+	public final static double LEVEL_SCORE = 2000;
+	
 	public final static double VISIT_SCORE = 1;
 	public final static double UNKNOWN_SCORE = 2;
 	public final static double PASSAGE_SCORE = 20;
@@ -136,5 +138,12 @@ public class Scoring {
 		if (newScore < Scoring.MINIMAL_CONSERVATION)
 			newScore = initialScore * Scoring.PERCENT_CONSERVATION;//Avoiding that all squares get the same score
 		return newScore;
+	}
+
+	public static double levelChangeScore(Map m, Square s) {
+		if (s.getType() == SquareType.WAY_DOWN &&
+		    s.getStairsDest() == null)
+			return 1;
+		return 0;
 	}
 }

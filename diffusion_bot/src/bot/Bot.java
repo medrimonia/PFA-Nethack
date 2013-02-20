@@ -2,6 +2,7 @@ package bot;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
 
 import util.InvalidMessageException;
 import util.Logger;
@@ -12,6 +13,8 @@ public class Bot {
 	
 	private InputOutputUnit myParser;
 	private int dungeonLevel;
+	private LinkedList<Map> higherLevels;
+	private LinkedList<Map> deeperLevels;
 	public Map map;
 	private int turn;
 	private int nbUpdatesSaved;
@@ -32,6 +35,8 @@ public class Bot {
 		nbForce = 0;
 		turn = 0;
 		nbUpdatesSaved = 0;
+		higherLevels = new LinkedList<Map>();
+		deeperLevels = new LinkedList<Map>();
 	}
 	
 	public Bot(String unixSocketName)
@@ -76,8 +81,7 @@ public class Bot {
 	
 	public void doTurn(){
 		if (map.fullySearched()){
-			Scoring.nbCompleteSearch++;
-			map.updateAllSearch();
+			map.increaseNbCompleteSearches();
 		}
 		if (expectedLocation != null &&
 		    map.actualSquare() != expectedLocation)
@@ -109,6 +113,10 @@ public class Bot {
 		// Search is always available
 		double searchScore = map.actualSquare().getSearchScore();
 		l.add(new Action(ActionType.SEARCH, null, searchScore));
+		// Going down is available if squareType is WAY_DOWN
+		if (map.actualSquare().getLevelChangeScore() > 0)
+			l.add(new Action(ActionType.DOWNSTAIR, null, map.actualSquare().getScore()));
+		// Some moves might be available
 		for (Direction dir : Direction.values()){
 			Square dest = map.getDest(dir);
 			if (dest == null)
@@ -167,6 +175,17 @@ public class Bot {
 			expectedLocation = map.getDest(a.getDirection());
 			nbMoves++;
 			return;
+		case DOWNSTAIR:
+			myParser.broadcastDownstair();
+			Map newLevel;
+			if (deeperLevels.isEmpty())
+				newLevel = new Map(map.getHeight(), map.getWidth());
+			else{
+				newLevel = deeperLevels.pollFirst();
+			}
+			map.actualSquare().setDest(newLevel, map);
+			higherLevels.addFirst(map);
+			map = newLevel;
 		}
 	}
 	

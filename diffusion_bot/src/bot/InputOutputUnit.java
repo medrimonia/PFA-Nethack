@@ -148,6 +148,13 @@ class InputOutputUnit{
 		output.print(d.getValue());
 		output.flush();
 	}
+
+	public void broadcastDownstair() {
+		Logger.println("Action : " + Protocole.DOWN_TOKEN);
+		output.print(Protocole.DOWN_TOKEN);
+		output.flush();
+		
+	}
 	
 	public void close(){
 		try{
