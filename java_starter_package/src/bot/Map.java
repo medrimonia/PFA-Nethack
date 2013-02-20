@@ -98,9 +98,23 @@ public class Map {
 	}
 	
 	public void updateSquare(int line, int col, char newVal){
-		if (newVal == Protocole.PLAYER_TOKEN)
-			myPosition = new Position(line, col);
-		content[line][col] = new Square(newVal);
+		if (newVal == SquareType.UNKNOWN.getToken())
+			return;//Keeping memory of visited square in dark rooms
+		Position p = new Position(line, col);
+		Square s = getSquare(p);
+		SquareType oldType = s.getType();
+		SquareType newType;
+		if (newVal == Protocole.PLAYER_TOKEN){
+			myPosition = p;
+			if (oldType == SquareType.UNKNOWN)
+				newType = SquareType.EMPTY;
+			else
+				newType = oldType;
+		}
+		else{
+			newType = SquareType.tokenToVariables(newVal);
+		}
+		content[line][col] = new Square (newType);
 	}
 	
 	public void updateSize(int height, int width){

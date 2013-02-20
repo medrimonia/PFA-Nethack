@@ -10,6 +10,8 @@ import util.Logger;
 
 public class Bot {
 	
+	private static final boolean ONE_LEVEL = false;
+	
 	InputOutputUnit myParser;
 	int dungeonLevel;
 	Map map;
@@ -65,6 +67,11 @@ public class Bot {
 	}
 	
 	public void randomAction(){
+		Square s = map.getSquare(map.getPlayerPosition());
+		if (!ONE_LEVEL && s.getType() == SquareType.WAY_DOWN){
+			myParser.broadcastDownOrder();
+			return;
+		}
 		double dice = Math.random();
 		if (dice > 0.7)
 			myParser.broadcastSearch();

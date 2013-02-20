@@ -116,6 +116,12 @@ class InputOutputUnit{
 	public void parseSeed(Bot b){
 		throw new RuntimeException("Unhandled function, parse Seed is not implemented yet");
 	}
+
+	public void broadcastDownOrder() {
+		output.print(Protocole.DOWN_TOKEN);
+		Logger.println("ACTION : " + Protocole.DOWN_TOKEN);
+		output.flush();		
+	}
 	
 	
 	public void broadcastMove(Direction d){

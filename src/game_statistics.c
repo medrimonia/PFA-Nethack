@@ -34,7 +34,7 @@ int get_current_level(){
 int moves = 0;
 #endif
 
-int level_reached = 0;
+int level_reached = 1;
 int actual_sdoor = 0;
 int nb_sdoors = 0;
 int actual_sdoor_discovery = 0;
