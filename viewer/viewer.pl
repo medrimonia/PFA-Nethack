@@ -108,7 +108,6 @@ while (1) {
 
 	else {
 		my $key = ReadKey(0);
-		$slideshow = 0;
 
 		if ($key eq 'j' && $turn < $#coms) {
 			$turn++;
