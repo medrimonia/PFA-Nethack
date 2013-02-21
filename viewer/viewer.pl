@@ -9,9 +9,6 @@ use Term::ANSIScreen qw/:cursor :screen/;
 
 if ($#ARGV < 0) {
 	print "Usage: perl $0 <replay file>\n";
-	print "Commands :\n";
-	print "\tN   : go to turn number N.\n";
-	print "\ts N : slideshow with N turns per second. Any key to stop.\n";
 	exit;
 }
 
