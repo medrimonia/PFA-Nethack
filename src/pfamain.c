@@ -93,9 +93,7 @@ void pfa_end()
 }
 
 void pfa_new_level_reached(){
-	update_reachable_squares();
-	update_nb_sdoors();
-	update_nb_scorrs();
+	gs_new_level();
 }
 
 void pfa_add_sdoor(int line, int column){

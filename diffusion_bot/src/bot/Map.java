@@ -10,6 +10,7 @@ public class Map {
 	private int height;
 	private int width;
 	private Square[][] content;
+	private int nbCompleteSearches;
 	public boolean needUpdate;
 
 	public Map(){
@@ -72,6 +73,14 @@ public class Map {
 				}
 			}
 		}		
+	}
+	
+	public int getHeight(){
+		return height;
+	}
+	
+	public int getWidth(){
+		return width;
 	}
 	
 	public boolean fullySearched(){
@@ -280,5 +289,14 @@ public class Map {
 			if (neighbor != null)
 				neighbor.updateSearchScore(this);
 		}
+	}
+	
+	public int getNbCompleteSearches(){
+		return nbCompleteSearches;
+	}
+	
+	public void increaseNbCompleteSearches(){
+		nbCompleteSearches++;
+		updateAllSearch();
 	}
 }

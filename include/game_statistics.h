@@ -11,6 +11,10 @@ void gs_init();
 /* Free all the ressources dedicated to the game statistic module */
 void gs_terminate();
 
+/* Must be called each time a new level is reached in order to update stats
+ */
+void gs_new_level();
+
 #ifndef NETHACK_ACCESS
 /* srand initialization is not provided by game_statistics, it should be done
  * by the caller.
@@ -97,6 +101,9 @@ int get_scorr_level();
 int get_scorr_discovery_line();
 int get_scorr_discovery_column();
 int get_scorr_discovery_level();
+
+/* return the number of levels visited */
+int get_level_reached();
 
 /* Return the name of the bot playing this game */
 const char * get_bot_name();

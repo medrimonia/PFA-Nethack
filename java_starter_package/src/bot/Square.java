@@ -8,6 +8,10 @@ public class Square {
 		type = SquareType.tokenToVariables(c);
 	}
 
+	public Square(SquareType newType) {
+		type = newType;
+	}
+
 	public SquareType getType(){
 		return type;
 	}

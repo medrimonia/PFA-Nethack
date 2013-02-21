@@ -87,7 +87,7 @@ void initialize_table_descriptor(const char * table_name,
 	table_descriptor_p td = *td_p;
 
 	if (strcmp(table_name,"seek_secret") == 0){
-		td->nb_columns = 12;
+		td->nb_columns = 13;
 	}
 	else if (strcmp(table_name,"door_discovery") == 0){
 		td->nb_columns = 5;
@@ -313,7 +313,7 @@ int add_game_result(game_result_p gr){
 	
 	index += sprintf(request + index, ")");
 	
-	printf("REQUEST: %s\n", request);
+	//printf("REQUEST: %s\n", request);
 
 	char * err_msg;
 

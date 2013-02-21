@@ -13,6 +13,11 @@ public class Square{
 	private Position p;
 	
 	/**
+	 * null for every square except stairs.
+	 */
+	private Map stairsDest;
+	
+	/**
 	 * Neighbors are used so frequently that it's better to use a list like that
 	 */
 	private Collection<Square> neighbors;
@@ -46,6 +51,8 @@ public class Square{
 	 * that something is hidden in this square (SCORR, SDOOR) 
 	 */
 	private double localSearchScore;
+	
+	private double levelChangeScore;
 	/**
 	 * A score in [0,1] specifying the probability of finding something
 	 * hidden in the neighborhood when performing a search on this square
@@ -87,6 +94,7 @@ public class Square{
 		nbVisits = 0;
 		nbOpenTries = 0;
 		reachable = false;
+		stairsDest = null;
 	}
 	
 	// GETTERS
@@ -105,6 +113,10 @@ public class Square{
 	
 	public boolean isReachable(){
 		return reachable;
+	}
+
+	public Map getStairsDest() {
+		return stairsDest;
 	}
 	
 	public int getNbOpenTries(){
@@ -143,6 +155,10 @@ public class Square{
 		return localSearchScore; 
 	}
 	
+	public double getLevelChangeScore(){
+		return levelChangeScore * Scoring.LEVEL_SCORE;
+	}
+	
 	public double getInternScore(){
 		return internScore;
 	}
@@ -174,6 +190,7 @@ public class Square{
 		updateForceScore(m);
 		updateVisitScore(m);
 		updateLocalSearchScore(m);
+		updateLevelChangeScore(m);
 		for (Square n : neighbors){
 			n.updateOpenScore(m);
 			n.updateForceScore(m);
@@ -235,6 +252,7 @@ public class Square{
 		internScore += getSearchScore();
 		internScore += getOpenScore();
 		internScore += getForceScore();
+		internScore += getLevelChangeScore();
 		// if score has changed, map needs update
 		if (oldScore != internScore)
 			m.needUpdate = true;
@@ -279,6 +297,18 @@ public class Square{
 		localSearchScore = Scoring.localSearchScore(m, this);
 		if (localSearchScore != oldScore)
 			m.updateNeighborsSearchScore(p);
+	}
+	
+	public void updateLevelChangeScore(Map m){
+		double oldScore = levelChangeScore;
+		levelChangeScore = Scoring.levelChangeScore(m, this);
+		if (oldScore != levelChangeScore)
+			updateInternScore(m);
+	}
+
+	public void setDest(Map newDest, Map currentMap) {
+		stairsDest = newDest;
+		updateLevelChangeScore(currentMap);
 	}
 	
 	public boolean isRoomUnknownExit(Map m){
