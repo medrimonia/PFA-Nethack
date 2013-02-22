@@ -57,6 +57,14 @@ public class Bot {
 		case MAP: map = (Map)i.getValue(); break;
 		}
 	}
+	
+	public int getActualLevel(){
+		return higherLevels.size() + 1;
+	}
+	
+	public int getDeepestLevel(){
+		return higherLevels.size() + deeperLevels.size() + 1;
+	}
 
 	public void start(){
 		try{
@@ -79,26 +87,33 @@ public class Bot {
 		}
 	}
 	
+	public void printTurnHeader(){
+		Logger.println("Starting Turn : " + turn);
+		Logger.println("Actual Level : " + getActualLevel());
+		Logger.println("Deepest Level Reached : " + getDeepestLevel());
+		Logger.println(nbMoves + " moves until now");
+		Logger.println(nbSearches + " search until now");
+		Logger.println(nbOpen + " open until now");
+		Logger.println(nbForce + " force until now");
+		Logger.println(nbUpdatesSaved + " turns without updates");
+		Logger.println(map.toString());
+		//Logger.println(map.searchMapAsString());	
+	}
+	
 	public void doTurn(){
 		if (map.fullySearched()){
 			map.increaseNbCompleteSearches();
 		}
 		if (expectedLocation != null &&
 		    map.actualSquare() != expectedLocation)
-			expectedLocation.setType(SquareType.HORIZONTAL_WALL, map);
-		Logger.println("Starting Turn : " + turn);
-		Logger.println(nbMoves + " moves until now");
-		Logger.println(nbSearches + " search until now");
-		Logger.println(nbOpen + " open until now");		
+			expectedLocation.setType(SquareType.HORIZONTAL_WALL, map);		
 		map.actualSquare().addVisit(map);
 		//if (map.needUpdate){
 			map.updateScores();
 		//}
 		//else
-			//nbUpdatesSaved++;			
-		Logger.println(nbUpdatesSaved + " turns without updates");
-		Logger.println(map.toString());
-		Logger.println(map.searchMapAsString());
+			//nbUpdatesSaved++;
+		printTurnHeader();
 		/*try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
