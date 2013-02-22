@@ -119,11 +119,11 @@ public class Bot {
 		if (map.fullySearched()){
 			map.increaseNbCompleteSearches();
 		}
-		if (expectedLocation != null &&
+		/*if (expectedLocation != null &&
 		    map.actualSquare() != expectedLocation){
 			expectedLocation.setType(SquareType.HORIZONTAL_WALL, map);		
 			expectedLocation = map.actualSquare();
-		}
+		}*/
 		map.actualSquare().addVisit(map);
 		//if (map.needUpdate){
 			map.updateScores();
