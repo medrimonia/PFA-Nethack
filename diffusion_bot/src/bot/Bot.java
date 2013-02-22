@@ -41,8 +41,23 @@ public class Bot {
 	
 	public Bot(String unixSocketName)
 			throws UnknownHostException, IOException{
-		this();		
-		myParser = new InputOutputUnit(unixSocketName);
+		this();
+		int nb_try = 0;
+		while (nb_try < 5){
+			try{
+				myParser = new InputOutputUnit(unixSocketName);
+				break;
+			}catch(IOException e){
+				long timeToWait = (long) (100 * Math.pow(2, nb_try));
+				System.out.println("Connection to the socket failed : trying again in " + timeToWait + "ms.");
+				try {
+					Thread.sleep(timeToWait);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+			nb_try++;
+		}
 	}
 
 	public Bot(String hostname, int port)
