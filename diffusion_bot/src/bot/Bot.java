@@ -120,8 +120,10 @@ public class Bot {
 			map.increaseNbCompleteSearches();
 		}
 		if (expectedLocation != null &&
-		    map.actualSquare() != expectedLocation)
+		    map.actualSquare() != expectedLocation){
 			expectedLocation.setType(SquareType.HORIZONTAL_WALL, map);		
+			expectedLocation = map.actualSquare();
+		}
 		map.actualSquare().addVisit(map);
 		//if (map.needUpdate){
 			map.updateScores();
@@ -216,6 +218,7 @@ public class Bot {
 			map.actualSquare().setDest(newLevel, map);
 			higherLevels.addFirst(map);
 			map = newLevel;
+			expectedLocation = null;
 		}
 	}
 	
