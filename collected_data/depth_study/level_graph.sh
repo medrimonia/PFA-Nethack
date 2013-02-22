@@ -39,7 +39,7 @@ for ((i = 0; i < ${#FIELDS[@]};i++))
 do
 		gnuplot -persist <<PLOT
 set yrange [0:${YRANGE[i]}]
-set xrange [0:20100]
+set xrange [0:200100]
 
 set xlabel "Number of moves per game"
 set ylabel "Percentage of ${FIELD_NAME[i]}"
