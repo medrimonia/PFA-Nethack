@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
 
 #include <sqlite3.h>
 
@@ -8,6 +9,8 @@
 #include "game_statistics.h"
 
 int main(int argc, char ** argv){
+
+	fork();
 	// Initializing random generator
   srand(time(NULL));
 
