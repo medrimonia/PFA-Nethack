@@ -15,6 +15,12 @@ int init_db_manager();
  */
 int add_game_result(game_result_p e);
 
+/* Start a transaction with the database */
+void start_transaction();
+
+/* Validate the transaction started before */
+void commit_transaction();
+
 /* Free all ressources associated to the database manager
  * return 0 on success
  * print an error message and return 1 on error

@@ -202,8 +202,8 @@ int init_db_manager(){
 	}while (next != NULL);
 	// Initializing database semaphore
 	char sem_name[SEM_NAME_SIZE];
-	sprintf(sem_name, "%s", basename);
-	printf("semaphore name : %s\n", sem_name);
+	sprintf(sem_name, "/%s.lock", basename);
+	printf("semaphore name : '%s'\n", sem_name);
 	sem = sem_open(sem_name , O_CREAT, 0666, 1);
 	if (sem == SEM_FAILED){
 		perror("Error : Can't open nor create the database semaphore");
@@ -304,11 +304,8 @@ int add_game_result(game_result_p gr){
 	else
 		td = mode_table;
 
-	sem_wait(sem);
 	if (!exist_table(gr_get_table(gr)))
 		create_table(td, gr_get_table(gr));
-	sem_post(sem);
-			
 	
 	int index = 0;
 	
@@ -349,13 +346,11 @@ int add_game_result(game_result_p gr){
 
 	char * err_msg;
 
-	sem_wait(sem);
 	sqlite3_exec(db,
 	             request,
 	             NULL,
 	             NULL,
 	             &err_msg);
-	sem_post(sem);
 
 	if (err_msg != NULL){//error treatment
 		fprintf(stderr, "Failed to insert the game\n");
@@ -364,6 +359,16 @@ int add_game_result(game_result_p gr){
 	}
 
 	return 0;
+}
+
+void start_transaction(){
+	sem_wait(sem);
+	sqlite3_exec(db, "BEGIN", 0, 0, 0);
+}
+
+void commit_transaction(){
+	sqlite3_exec(db, "COMMIT", 0, 0, 0);
+	sem_post(sem);
 }
 
 
