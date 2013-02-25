@@ -10,7 +10,8 @@ posr = 0
 
 keys = [['k', 0, -1], ['l', 1, 0], ['j', 0, 1], ['h', -1, 0]]
 pos = 0
-search_nb = 1          #number of searches on each case
+search_nb = 3          #number of searches on each tile
+search_step = 2        #lunch searches every 2 tiles
 
 print "new game..."
 
@@ -23,6 +24,7 @@ else:
 data = []
 random.seed()
 cmds = []
+tile_index = 0
 
 map_width = 80; # default
 map_height = 21; # default
@@ -46,7 +48,9 @@ while 1:
 		elif (data[i] == 'E'):
 			i += 1
 			if len(cmds) == 0:
-				cmds = ["s" for j in range(0, search_nb)]
+				if tile_index == 0:
+					cmds = ["s" for j in range(0, search_nb)]
+				tile_index = (tile_index + 1) % search_step
 
 				if (is_valid_pos(glyphs, posc+keys[pos][1], posr+keys[pos][2]) == 0):
 					pos = (pos + 1) % 4
