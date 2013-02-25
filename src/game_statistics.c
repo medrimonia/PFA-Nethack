@@ -391,6 +391,9 @@ int get_level_reached(){
 void gs_submit_game(){
 	if (!gs_initialized) gs_init();
 	init_db_manager();
+
+	start_transaction();
+
 	// Publishing global game result
 	game_result_p gr = create_actual_game_result("seek_secret");
 	add_game_result(gr);
@@ -423,6 +426,8 @@ void gs_submit_game(){
 		add_game_result(cd);
 		destroy_game_result(cd);
 	}
+
+	commit_transaction();
 
 	close_db_manager();
 }

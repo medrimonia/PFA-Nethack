@@ -1,7 +1,7 @@
 CC=gcc
 
 CFLAGS= -g -Wall -Wextra #std=c99 is forbidden because nethack doesn't use it
-LFLAGS= -lsqlite3
+LFLAGS= -lsqlite3 -pthread
 
 HEADER_DIR= ../include
 

@@ -1,6 +1,9 @@
+#include <fcntl.h>
+#include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #include <sqlite3.h>
 
@@ -15,6 +18,7 @@
 #define DEFAULT_DATABASE_PATH "pfa.db"
 
 #define REQUEST_SIZE 400
+#define SEM_NAME_SIZE 200
 
 // SPECIFIC STRUCTURES
 
@@ -45,6 +49,7 @@ typedef struct get_result * get_result_p;
 // GLOBAL VARIABLES
 
 sqlite3 * db = NULL;
+sem_t * sem = NULL;
 
 table_descriptor_p mode_table = NULL;
 table_descriptor_p door_discovery_table = NULL;
@@ -152,11 +157,11 @@ void initialize_table_descriptor(const char * table_name,
 }
 
 int init_db_manager(){
-	char * str = NULL;
+	char * db_name = NULL;
 #ifdef NETHACK_ACCESS
-	str = nh_getenv("NH_DATABASE_PATH");
+	db_name = nh_getenv("NH_DATABASE_PATH");
 #endif
-	if (str == NULL) str = DEFAULT_DATABASE_PATH;
+	if (db_name == NULL) db_name = DEFAULT_DATABASE_PATH;
 
 	// initialize table descriptor according to the mode
 	initialize_table_descriptor(get_mode_name(), &mode_table);
@@ -171,7 +176,8 @@ int init_db_manager(){
 
 	int result;
 
-	result = sqlite3_open_v2(str,
+	// Opening database
+	result = sqlite3_open_v2(db_name,
 	                         &db,
 	                         SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
 	                         NULL);
@@ -181,6 +187,29 @@ int init_db_manager(){
 		        sqlite3_errmsg(db));
 		exit(EXIT_FAILURE);
 	}
+	// Getting the semaphore name
+  // found on http://stupefydeveloper.blogspot.ch/2009/02/linux-key-for-semopenshmopen.html
+	// semaphore name can't contain / anywhere, basically, here we get basename
+	char * basename;
+	char * next = db_name;
+	do{
+		basename = next;
+		printf("basename : %s\n", basename);
+		if (next[0] == '/')
+			next = strstr(next + 1,"/");
+		else
+			next = strstr(next,"/");
+	}while (next != NULL);
+	// Initializing database semaphore
+	char sem_name[SEM_NAME_SIZE];
+	sprintf(sem_name, "/%s.lock", basename);
+	printf("semaphore name : '%s'\n", sem_name);
+	sem = sem_open(sem_name , O_CREAT, 0666, 1);
+	if (sem == SEM_FAILED){
+		perror("Error : Can't open nor create the database semaphore");
+		exit(EXIT_FAILURE);
+	}
+
 	return 0;
 }
 
@@ -198,8 +227,9 @@ bool exist_table(const char * table_name){
 	sprintf(request,
 	        "SELECT name FROM sqlite_master WHERE type='table' AND name='%s';",
 	        table_name);
+	get_result_p r;
 
-	get_result_p r = get_request(request);
+	r = get_request(request);
 	
 	if (r->err_msg != NULL){//error treatment
 		fprintf(stderr, "Failed to get the specified table\n");
@@ -276,7 +306,6 @@ int add_game_result(game_result_p gr){
 
 	if (!exist_table(gr_get_table(gr)))
 		create_table(td, gr_get_table(gr));
-			
 	
 	int index = 0;
 	
@@ -322,7 +351,7 @@ int add_game_result(game_result_p gr){
 	             NULL,
 	             NULL,
 	             &err_msg);
-	
+
 	if (err_msg != NULL){//error treatment
 		fprintf(stderr, "Failed to insert the game\n");
 		fprintf(stderr, "Error : %s\n", err_msg);
@@ -330,6 +359,16 @@ int add_game_result(game_result_p gr){
 	}
 
 	return 0;
+}
+
+void start_transaction(){
+	sem_wait(sem);
+	sqlite3_exec(db, "BEGIN", 0, 0, 0);
+}
+
+void commit_transaction(){
+	sqlite3_exec(db, "COMMIT", 0, 0, 0);
+	sem_post(sem);
 }
 
 

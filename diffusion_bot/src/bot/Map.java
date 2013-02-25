@@ -126,8 +126,10 @@ public class Map {
 		case SOUTH_EAST:
 			Square alt1 = getSquare(src.getLine(), src.getColumn() + d.getDeltaColumn());
 			Square alt2 = getSquare(src.getLine() + d.getDeltaLine(), src.getColumn());
-			if (!alt1.getType().diagonalyPassable() ||
-				!alt2.getType().diagonalyPassable())
+			if ((!alt1.getType().diagonalyPassable() &&
+				 alt2.getType().diagonalyPassable()) ||
+				(alt1.getType().diagonalyPassable() &&
+				 !alt2.getType().diagonalyPassable()))
 				return false;
 		case NORTH:
 		case SOUTH:

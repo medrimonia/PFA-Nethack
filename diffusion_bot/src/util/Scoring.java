@@ -28,8 +28,6 @@ public class Scoring {
 	public final static double DEAD_END_SEARCH_RATIO = 2;
 	
 	
-	public static int nbCompleteSearch = 0;
-	
 	/**
 	 * SEARCH_K is used to smooth the probability of founding something
 	 */
@@ -54,7 +52,7 @@ public class Scoring {
 		if (!s.getType().searchable())
 			return 0;
 		double searchedValue = s.getNbSearch() /
-				(hiddenProbability(m,s) * TRIES_PER_SEARCH * (nbCompleteSearch + 1));
+				(hiddenProbability(m,s) * TRIES_PER_SEARCH * (m.getNbCompleteSearches() + 1));
 		if (searchedValue > 1)
 			return 0;
 		return (1 - searchedValue);

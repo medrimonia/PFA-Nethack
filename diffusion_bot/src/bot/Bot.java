@@ -41,8 +41,23 @@ public class Bot {
 	
 	public Bot(String unixSocketName)
 			throws UnknownHostException, IOException{
-		this();		
-		myParser = new InputOutputUnit(unixSocketName);
+		this();
+		int nb_try = 0;
+		while (nb_try < 5){
+			try{
+				myParser = new InputOutputUnit(unixSocketName);
+				break;
+			}catch(IOException e){
+				long timeToWait = (long) (100 * Math.pow(2, nb_try));
+				System.out.println("Connection to the socket failed : trying again in " + timeToWait + "ms.");
+				try {
+					Thread.sleep(timeToWait);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+			nb_try++;
+		}
 	}
 
 	public Bot(String hostname, int port)
@@ -56,6 +71,14 @@ public class Bot {
 		case DUNGEON_LEVEL: dungeonLevel = (Integer)i.getValue(); break;
 		case MAP: map = (Map)i.getValue(); break;
 		}
+	}
+	
+	public int getActualLevel(){
+		return higherLevels.size() + 1;
+	}
+	
+	public int getDeepestLevel(){
+		return higherLevels.size() + deeperLevels.size() + 1;
 	}
 
 	public void start(){
@@ -79,26 +102,35 @@ public class Bot {
 		}
 	}
 	
+	public void printTurnHeader(){
+		Logger.println("Starting Turn : " + turn);
+		Logger.println("Actual Level : " + getActualLevel());
+		Logger.println("Deepest Level Reached : " + getDeepestLevel());
+		Logger.println(nbMoves + " moves until now");
+		Logger.println(nbSearches + " search until now");
+		Logger.println(nbOpen + " open until now");
+		Logger.println(nbForce + " force until now");
+		Logger.println(nbUpdatesSaved + " turns without updates");
+		Logger.println(map.toString());
+		//Logger.println(map.searchMapAsString());	
+	}
+	
 	public void doTurn(){
 		if (map.fullySearched()){
 			map.increaseNbCompleteSearches();
 		}
-		if (expectedLocation != null &&
-		    map.actualSquare() != expectedLocation)
-			expectedLocation.setType(SquareType.HORIZONTAL_WALL, map);
-		Logger.println("Starting Turn : " + turn);
-		Logger.println(nbMoves + " moves until now");
-		Logger.println(nbSearches + " search until now");
-		Logger.println(nbOpen + " open until now");		
+		/*if (expectedLocation != null &&
+		    map.actualSquare() != expectedLocation){
+			expectedLocation.setType(SquareType.HORIZONTAL_WALL, map);		
+			expectedLocation = map.actualSquare();
+		}*/
 		map.actualSquare().addVisit(map);
 		//if (map.needUpdate){
 			map.updateScores();
 		//}
 		//else
-			//nbUpdatesSaved++;			
-		Logger.println(nbUpdatesSaved + " turns without updates");
-		Logger.println(map.toString());
-		Logger.println(map.searchMapAsString());
+			//nbUpdatesSaved++;
+		printTurnHeader();
 		/*try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
@@ -186,6 +218,7 @@ public class Bot {
 			map.actualSquare().setDest(newLevel, map);
 			higherLevels.addFirst(map);
 			map = newLevel;
+			expectedLocation = null;
 		}
 	}
 	
