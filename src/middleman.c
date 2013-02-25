@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <sys/un.h>
+#include <sys/time.h>
 #include <sys/socket.h>
 
 #include <fcntl.h>
@@ -99,6 +100,22 @@ static int cmdbuf[BUFSIZE];
 static unsigned int first = 0;
 static unsigned int last = 0;
 
+struct timeval tvbot;
+struct timeval tvstart;
+
+void tvprint(const struct timeval *);
+
+void tvadd(
+	struct timeval *,
+	const struct timeval *,
+	const struct timeval *
+);
+
+void tvsub(
+	struct timeval *,
+	const struct timeval *,
+	const struct timeval *
+);
 
 void mm_vlog(const char *format, ...)
 {
@@ -146,6 +163,13 @@ void mm_cleanup()
 	}
 
 	unlink(sockpath);
+
+	struct timeval tvend, tvdiff;
+	gettimeofday(&tvend, NULL);
+	tvsub(&tvdiff, &tvend, &tvstart);
+	printf("Middleman execution time : ");
+	tvprint(&tvdiff);
+	puts("");
 }
 
 
@@ -154,6 +178,12 @@ void mm_init()
 	int rv;
 	char *str;
 	socklen_t len;
+
+	/* These are used to compute the ratio between nethack's execution time
+	 * and the bot's execution time */
+	tvbot.tv_sec  = 0;
+	tvbot.tv_usec = 0;
+	gettimeofday(&tvstart, NULL);
 
 	str = getenv("NH_MM_SOCKPATH");
 	if (str == NULL) {
@@ -627,4 +657,40 @@ void
 mm_end_screen()
 {
 	mm_log("mm_end_screen", "");
+}
+
+
+/* Utility functions */
+
+void tvadd(
+	struct timeval * tv,
+	const struct timeval * tv1,
+	const struct timeval * tv2
+) {
+	unsigned int usec;
+
+	usec = tv1->tv_usec + tv2->tv_usec;
+
+	tv->tv_sec  = tv1->tv_sec + tv2->tv_sec + (usec / 1000000);
+	tv->tv_usec = usec % 1000000;
+}
+
+
+void tvsub(
+	struct timeval * tv,
+	const struct timeval * tv1,
+	const struct timeval * tv2
+) {
+	unsigned long usec;
+
+	usec = tv1->tv_usec - tv2->tv_usec
+	     + (tv1->tv_sec - tv2->tv_sec) * 1000000;
+
+	tv->tv_sec  = usec / 1000000;
+	tv->tv_usec = usec % 1000000;
+}
+
+void tvprint(const struct timeval *tv)
+{
+	printf("%g seconds", tv->tv_sec + tv->tv_usec/1000000);
 }
