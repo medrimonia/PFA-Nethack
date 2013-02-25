@@ -206,7 +206,7 @@ void mm_init()
 
 	/* open unix socket */
 	local.sun_family = AF_UNIX;
-	strcpy(local.sun_path, sockpath);
+	strncpy(local.sun_path, sockpath, sizeof local.sun_path - 1);
 	len = strlen(sockpath) + sizeof local.sun_family;
 
 	mmsock = socket(AF_UNIX, SOCK_STREAM, 0);
