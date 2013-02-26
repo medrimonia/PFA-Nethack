@@ -588,11 +588,11 @@ $(PFAINC)/database_manager.h: $(PFAINC)/game_result.h
 $(PFAINC)/middleman.h: $(HACK_H)
 
 #Macro file defining tables
-table_defs: $(PFASRC)/door_discovery.def  \
-            $(PFASRC)/doors.def           \
-            $(PFASRC)/scorr_discovery.def \
-            $(PFASRC)/scorrs.def          \
-            $(PFASRC)/seek_secret.def
+table_defs: $(PFASRC)/sdoor_discovery.def  \
+            $(PFASRC)/sdoors.def           \
+            $(PFASRC)/scorr_discovery.def  \
+            $(PFASRC)/scorrs.def           \
+            $(PFASRC)/games.def
 
 database_manager.o: $(PFASRC)/database_manager.c \
                     $(PFAINC)/database_manager.h \
