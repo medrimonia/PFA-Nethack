@@ -91,7 +91,7 @@ void initialize_table_descriptor(const char * table_name,
 	(*td_p) = malloc(sizeof(struct column_descriptor));
 	table_descriptor_p td = *td_p;
 
-	if (strcmp(table_name,"seek_secret") == 0){
+	if (strcmp(table_name,"games") == 0){
 		td->nb_columns = 13;
 	}
 	else if (strcmp(table_name,"door_discovery") == 0){
@@ -118,12 +118,12 @@ void initialize_table_descriptor(const char * table_name,
 	td->columns[col_no]->type = "int";
 	col_no++;
 
-	if (strcmp(table_name,"seek_secret") == 0){
+	if (strcmp(table_name,"games") == 0){
 #define DATABASE_FIELD(fName, cType, sqlType) \
   td->columns[col_no]->name = #fName;         \
   td->columns[col_no]->type = #sqlType;       \
 	col_no++;
-#include "seek_secret.def"
+#include "games.def"
 	}
 	else if (strcmp(table_name,"door_discovery") == 0){
 #define DATABASE_FIELD(fName, cType, sqlType) \
@@ -163,8 +163,8 @@ int init_db_manager(){
 #endif
 	if (db_name == NULL) db_name = DEFAULT_DATABASE_PATH;
 
-	// initialize table descriptor according to the mode
-	initialize_table_descriptor(get_mode_name(), &mode_table);
+	// initialize table descriptor for games
+	initialize_table_descriptor("games", &mode_table);
 	// initialize table descriptor for door discovery
 	initialize_table_descriptor("door_discovery", &door_discovery_table);
 	// initialize table descriptor for doors
@@ -288,7 +288,12 @@ void create_table(table_descriptor_p td, const char * table_name){
 	}
 }
 
-int add_game_result(game_result_p gr){
+int add_game(game_result_p gr){
+	add_game_details(gr);
+	return sqlite3_last_insert_rowid(db);
+}
+
+int add_game_details(game_result_p gr){
 	//TODO just test inside, must be cleared
 	char request[REQUEST_SIZE];
 

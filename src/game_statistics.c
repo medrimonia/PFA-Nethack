@@ -48,6 +48,7 @@ int nb_scorrs_found = 0;
 int nb_squares_explored = 0;
 int nb_squares_reachable = 0;
 
+int game_id = -1;
 int last_discovery_turn = -1;
 
 struct location{
@@ -395,19 +396,19 @@ void gs_submit_game(){
 	start_transaction();
 
 	// Publishing global game result
-	game_result_p gr = create_actual_game_result("seek_secret");
-	add_game_result(gr);
+	game_result_p gr = create_actual_game_result("games");
+	add_game(gr);
 	destroy_game_result(gr);
 	// Publishing door result
 	for (actual_sdoor = 0; actual_sdoor < nb_sdoors; actual_sdoor++){
 		game_result_p d = create_door_result();
-		add_game_result(d);
+		add_game_details(d);
 		destroy_game_result(d);
 	}
 	// Publishing scorr result
 	for (actual_scorr = 0; actual_scorr < nb_scorrs; actual_scorr++){
 		game_result_p c = create_scorr_result();
-		add_game_result(c);
+		add_game_details(c);
 		destroy_game_result(c);
 	}
 	// Publishing door_discovery result
@@ -415,7 +416,7 @@ void gs_submit_game(){
 	     actual_sdoor_discovery < nb_sdoors_found;
 	     actual_sdoor_discovery++){
 		game_result_p dd = create_door_discovery_result();
-		add_game_result(dd);
+		add_game_details(dd);
 		destroy_game_result(dd);
 	}
 	// Publishing corr_discovery result
@@ -423,7 +424,7 @@ void gs_submit_game(){
 	     actual_scorr_discovery < nb_scorrs_found;
 	     actual_scorr_discovery++){
 		game_result_p cd = create_scorr_discovery_result();
-		add_game_result(cd);
+		add_game_details(cd);
 		destroy_game_result(cd);
 	}
 

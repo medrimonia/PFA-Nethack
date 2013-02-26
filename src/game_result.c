@@ -34,7 +34,7 @@ property_p new_property(){
 game_result_p new_game_result(const char * table){
 	game_result_p new = malloc(sizeof(struct game_result));
 	new->table = table;
-	if (strcmp(table, "seek_secret") == 0){
+	if (strcmp(table, "games") == 0){
 		new->nb_properties = 13;
 	}
 	if (strcmp(table, "door_discovery") == 0){
@@ -66,7 +66,7 @@ game_result_p create_actual_game_result(const char * table){
   gr_set_property_name(gr, index, #name);                        \
   gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
-#include "seek_secret.def"
+#include "games.def"
 
 	return gr;
 }
