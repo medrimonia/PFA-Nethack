@@ -291,7 +291,7 @@ WINLIB = $(WINTTYLIB)
 #
 LIBS =
 
-LIBS += -lsqlite3
+LIBS += -lsqlite3 -lpthread
 
 # make NetHack
 GAME     = nethack
