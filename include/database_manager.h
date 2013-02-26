@@ -11,9 +11,13 @@
  */
 int init_db_manager();
 
+/* Return the id of the game inserted
+ */
+int add_game(game_result_p e);
+
 /* Add the specified game result to the current database
  */
-int add_game_result(game_result_p e);
+int add_game_details(game_result_p e);
 
 /* Start a transaction with the database.
  * It should always be called before calling an add_game_result when multiple
