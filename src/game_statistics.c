@@ -305,6 +305,10 @@ int get_nb_squares_explored(){
 	return nb_squares_explored;
 }
 
+int get_used_moves(){
+	return moves;
+}
+
 int get_max_moves(){
 	return max_moves;
 }
@@ -375,6 +379,18 @@ int get_sdd_column(){
 
 int get_sd_column(){
 	return sdoors[actual_sdoor].column;
+}
+
+int get_nethack_time(){
+	return -1;
+}
+
+int get_bot_time(){
+	return -1;
+}
+
+int get_db_time(){
+	return -1;
 }
 
 int get_processing_time(){

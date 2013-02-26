@@ -91,8 +91,9 @@ void initialize_table_descriptor(const char * table_name,
 	(*td_p) = malloc(sizeof(struct column_descriptor));
 	table_descriptor_p td = *td_p;
 
+	//TODO trick with modes.def should be done here
 	if (strcmp(table_name,"games") == 0){
-		td->nb_columns = 13;
+		td->nb_columns = 12;
 	}
 	else if (strcmp(table_name,"sdoor_discovery") == 0){
 		td->nb_columns = 6;

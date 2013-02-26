@@ -35,7 +35,7 @@ game_result_p new_game_result(const char * table){
 	game_result_p new = malloc(sizeof(struct game_result));
 	new->table = table;
 	if (strcmp(table, "games") == 0){
-		new->nb_properties = 13;
+		new->nb_properties = 12;
 	}
 	if (strcmp(table, "sdoor_discovery") == 0){
 		new->nb_properties = 6;

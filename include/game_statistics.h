@@ -83,10 +83,16 @@ int get_nb_squares_reachable();
 /* Return the number of square explored during the game. */
 int get_nb_squares_explored();
 
+int get_used_moves();
+
 /* Return the maximal number of moves allowed in this game. */
 int get_max_moves();
 
 int get_game_id();
+
+int get_nethack_time();
+int get_bot_time();
+int get_db_time();
 
 int get_sdd_turn();
 int get_sd_line();
