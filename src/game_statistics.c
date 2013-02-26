@@ -389,6 +389,10 @@ int get_level_reached(){
 	return level_reached;
 }
 
+int get_game_id(){
+	return game_id;
+}
+
 void gs_submit_game(){
 	if (!gs_initialized) gs_init();
 	init_db_manager();
@@ -397,7 +401,7 @@ void gs_submit_game(){
 
 	// Publishing global game result
 	game_result_p gr = create_actual_game_result("games");
-	add_game(gr);
+	game_id = add_game(gr);
 	destroy_game_result(gr);
 	// Publishing door result
 	for (actual_sdoor = 0; actual_sdoor < nb_sdoors; actual_sdoor++){

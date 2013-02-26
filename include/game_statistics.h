@@ -86,6 +86,8 @@ int get_nb_squares_explored();
 /* Return the maximal number of moves allowed in this game. */
 int get_max_moves();
 
+int get_game_id();
+
 int get_door_discovery_turn();
 int get_door_line();
 int get_door_column();

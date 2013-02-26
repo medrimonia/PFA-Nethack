@@ -95,16 +95,16 @@ void initialize_table_descriptor(const char * table_name,
 		td->nb_columns = 13;
 	}
 	else if (strcmp(table_name,"door_discovery") == 0){
-		td->nb_columns = 5;
+		td->nb_columns = 6;
 	}
 	else if (strcmp(table_name,"doors") == 0){
-		td->nb_columns = 4;
-	}
-	else if (strcmp(table_name,"scorr_discovery") == 0){
 		td->nb_columns = 5;
 	}
+	else if (strcmp(table_name,"scorr_discovery") == 0){
+		td->nb_columns = 6;
+	}
 	else if (strcmp(table_name,"scorrs") == 0){
-		td->nb_columns = 4;
+		td->nb_columns = 5;
 	}
 	
 	td->columns = malloc(td->nb_columns * sizeof(column_descriptor_p));

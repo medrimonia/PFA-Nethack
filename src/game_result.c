@@ -38,16 +38,16 @@ game_result_p new_game_result(const char * table){
 		new->nb_properties = 13;
 	}
 	if (strcmp(table, "door_discovery") == 0){
-		new->nb_properties = 5;
+		new->nb_properties = 6;
 	}
 	if (strcmp(table, "doors") == 0){
-		new->nb_properties = 4;
-	}
-	if (strcmp(table, "scorr_discovery") == 0){
 		new->nb_properties = 5;
 	}
+	if (strcmp(table, "scorr_discovery") == 0){
+		new->nb_properties = 6;
+	}
 	if (strcmp(table, "scorrs") == 0){
-		new->nb_properties = 4;
+		new->nb_properties = 5;
 	}
 
 	new->properties = malloc(new->nb_properties * sizeof(property_p));
