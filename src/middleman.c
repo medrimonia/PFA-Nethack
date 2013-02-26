@@ -167,9 +167,10 @@ void mm_cleanup()
 	struct timeval tvend, tvdiff;
 	gettimeofday(&tvend, NULL);
 	tvsub(&tvdiff, &tvend, &tvstart);
-	printf("Middleman execution time : ");
-	tvprint(&tvdiff);
-	puts("");
+	printf("Total execution time : ");
+	tvprint(&tvdiff); puts("");
+	printf("Bot execution time : ");
+	tvprint(&tvbot); puts("");
 }
 
 
@@ -485,9 +486,11 @@ mm_print_glyph(window, x, y, glyph)
 	mm_vlog("mm_print_glyph: window %d - %d:%d:%c", window, x, y, ochar);
 
 	if (client != -1) {
+
 		mm_vlog("send(): g %#x %#x %c", x, y, ochar);
 
 		size = sprintf(buf, "g%c%c%c", x, y, ochar);
+
 		send(client, buf, size, 0);
 
 		if (replay > 0) {
@@ -584,6 +587,8 @@ mm_nh_poskey(x, y, mod)
 	ssize_t size;
 	char buf[BUFSIZE];
 
+	struct timeval tmp1, tmp2;
+
 	mm_log("mm_nh_poskey", "");
 
 	if (first == last) { // buffer empty
@@ -592,18 +597,24 @@ mm_nh_poskey(x, y, mod)
 		last = 0;
 
 		mm_log("send()", "E");
-		size = send(client, "E", 1, 0);
-		if (size < 1) {
-			mm_log("send()", "Client disconnected.");
-			terminate(EXIT_FAILURE);
-		}
 
 		if (replay > 0) {
 			write(replay, "E", 1);
 		}
 
-
+		// start timer
+		gettimeofday(&tmp1, NULL);
+		size = send(client, "E", 1, 0);
+		if (size < 1) {
+			mm_log("send()", "Client disconnected.");
+			terminate(EXIT_FAILURE);
+		}
 		nb_received = recv(client, buf, BUFSIZE, 0);
+		// stop timer
+		gettimeofday(&tmp2, NULL);
+		tvsub(&tmp2, &tmp2, &tmp1);
+		tvadd(&tvbot, &tvbot, &tmp2);
+
 		buf[nb_received] = '\0';
 		if (nb_received < 1) {
 			mm_log("recv()", "Client disconnected.");
@@ -693,5 +704,5 @@ void tvsub(
 
 void tvprint(const struct timeval *tv)
 {
-	printf("%g seconds", tv->tv_sec + tv->tv_usec/1000000);
+	printf("%d.%d seconds", tv->tv_sec, tv->tv_usec * 1000);
 }
