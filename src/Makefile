@@ -44,14 +44,15 @@ TESTS+= test_db
 test_db: test_database.o database_manager.o game_result.o game_statistics.o
 	${CC} -o $@ $^ ${LFLAGS}
 
+TABLE_FILES=$(wildcard *.c)
+
 database_manager.o: ${HEADER_DIR}/database_manager.h \
-										${HEADER_DIR}/game_result.h      \
-                    games.def	                       \
-                    door_discovery.def
+                    ${HEADER_DIR}/game_result.h      \
+                    ${TABLE_FILES}
 
 game_result.o: ${HEADER_DIR}/game_result.h           \
-							 ${HEADER_DIR}/game_statistics.h       \
-               games.def
+               ${HEADER_DIR}/game_statistics.h       \
+               ${TABLE_FILES}
 
 clean:
 	@rm -f *~ *.o test
