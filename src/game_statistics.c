@@ -140,21 +140,21 @@ void gs_new_level(){
 #ifndef NETHACK_ACCESS
 void make_random_stats(){
 	int i;
-	int nb_sdoors = rand() % 10;
+	int nb_sdoors = rand() % 10 + 1;
 	for (i = 0; i < nb_sdoors; i++)
 		make_random_door();
-  int nb_sdoors_found = rand() % 10;
+	int nb_sdoors_found = rand() % 10 + 1;
 	for (i = 0; i < nb_sdoors_found; i++)
 		make_random_door_discovery();
-  int nb_scorrs = rand() % 5;
+	int nb_scorrs = rand() % 5 + 1;
 	for (i = 0; i < nb_scorrs; i++)
 		make_random_scorr();
-  int nb_scorrs_found = rand() % 5;
+	int nb_scorrs_found = rand() % 5 + 1;
 	for (i = 0; i < nb_scorrs_found; i++)
 		make_random_scorr_discovery();
-  nb_squares_explored = rand() % 400;
-  nb_squares_reachable = rand() % 400;
-  seed = rand();
+	nb_squares_explored = rand() % 400 + 1;
+	nb_squares_reachable = rand() % 400 + 1;
+	seed = rand();
 	max_moves = (rand() % 20) * 1000;
 }
 

@@ -126,16 +126,16 @@ void initialize_table_descriptor(const char * table_name,
 #include "games.def"
 	}
 	else if (strcmp(table_name,"door_discovery") == 0){
-#define DATABASE_FIELD(fName, cType, sqlType) \
-  td->columns[col_no]->name = #fName;         \
-  td->columns[col_no]->type = #sqlType;       \
+#define DATABASE_FIELD(fName, cType, sqlType, sqlParam) \
+  td->columns[col_no]->name = #fName;                   \
+  td->columns[col_no]->type = #sqlType " " sqlParam;    \
 	col_no++;
 #include "door_discovery.def"	
 	}
 	else if (strcmp(table_name,"doors") == 0){
-#define DATABASE_FIELD(fName, cType, sqlType)  \
-  td->columns[col_no]->name = #fName;          \
-  td->columns[col_no]->type = #sqlType;        \
+#define DATABASE_FIELD(fName, cType, sqlType, sqlParam) \
+  td->columns[col_no]->name = #fName;                   \
+  td->columns[col_no]->type = #sqlType " " sqlParam;    \
 	col_no++;
 #include "doors.def"
 	}
@@ -186,6 +186,18 @@ int init_db_manager(){
 		        "CRITICAL_ERROR: Failed to open the database : %s\n",
 		        sqlite3_errmsg(db));
 		exit(EXIT_FAILURE);
+	}
+
+	/* Foreign key constraints must be activated after each connection
+	 * according to : http://www.sqlite.org/foreignkeys.html#fk_enable
+	 * This allow us to be sure that an insert with an invalid game won't happen
+	 */
+	char * err_msg;
+	sqlite3_exec(db, "PRAGMA foreign_keys = ON;", NULL, NULL, &err_msg);
+	if (err_msg != NULL){//error treatment
+		fprintf(stderr, "Failed to create the specified table\n");
+		fprintf(stderr, "Error : %s\n", err_msg);
+		sqlite3_free(err_msg);
 	}
 	// Getting the semaphore name
   // found on http://stupefydeveloper.blogspot.ch/2009/02/linux-key-for-semopenshmopen.html

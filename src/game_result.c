@@ -75,7 +75,7 @@ game_result_p create_door_discovery_result(){
 	game_result_p gr = new_game_result("door_discovery");
 	
 	int index = 1;// id field is not set by this type of method
-#define DATABASE_FIELD(name, cType, sqlType)                     \
+#define DATABASE_FIELD(name, cType, sqlType, sqlParam)           \
   gr_set_property_name(gr, index, #name);                        \
   gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
@@ -89,7 +89,7 @@ game_result_p create_door_result(){
 	game_result_p gr = new_game_result("doors");
 	
 	int index = 1;// id field is not set by this type of method
-#define DATABASE_FIELD(name, cType, sqlType)                     \
+#define DATABASE_FIELD(name, cType, sqlType, sqlParam)           \
   gr_set_property_name(gr, index, #name);                        \
   gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
