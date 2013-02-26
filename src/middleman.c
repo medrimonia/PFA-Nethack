@@ -179,12 +179,6 @@ void mm_init()
 	char *str;
 	socklen_t len;
 
-	/* These are used to compute the ratio between nethack's execution time
-	 * and the bot's execution time */
-	tvbot.tv_sec  = 0;
-	tvbot.tv_usec = 0;
-	gettimeofday(&tvstart, NULL);
-
 	str = getenv("NH_MM_SOCKPATH");
 	if (str == NULL) {
 		sockpath = DEFAULTSOCKPATH;
@@ -283,6 +277,13 @@ void mm_init()
 			}
 		}
 	}
+
+	/* These are used to compute the ratio between nethack's execution time
+	 * and the bot's execution time */
+	tvbot.tv_sec  = 0;
+	tvbot.tv_usec = 0;
+	gettimeofday(&tvstart, NULL);
+
 }
 
 void
