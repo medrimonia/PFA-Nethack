@@ -1,0 +1,9 @@
+#if defined(DATABASE_FIELD)
+/* DATABASE_FIELD(name, cType, sqlType) */
+DATABASE_FIELD(game_id    , int , integer, "not null references games(id)")
+DATABASE_FIELD(sdd_turn   , int , integer, "")
+DATABASE_FIELD(sdd_line   , int , integer, "")
+DATABASE_FIELD(sdd_column , int , integer, "")
+DATABASE_FIELD(sdd_level  , int , integer, "")
+#undef DATABASE_FIELD
+#endif /* define(DATABASE_FIELD) */

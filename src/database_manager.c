@@ -52,8 +52,8 @@ sqlite3 * db = NULL;
 sem_t * sem = NULL;
 
 table_descriptor_p mode_table = NULL;
-table_descriptor_p door_discovery_table = NULL;
-table_descriptor_p doors_table = NULL;
+table_descriptor_p sdoor_discovery_table = NULL;
+table_descriptor_p sdoors_table = NULL;
 table_descriptor_p scorr_discovery_table = NULL;
 table_descriptor_p scorrs_table = NULL;
 
@@ -94,10 +94,10 @@ void initialize_table_descriptor(const char * table_name,
 	if (strcmp(table_name,"games") == 0){
 		td->nb_columns = 13;
 	}
-	else if (strcmp(table_name,"door_discovery") == 0){
+	else if (strcmp(table_name,"sdoor_discovery") == 0){
 		td->nb_columns = 6;
 	}
-	else if (strcmp(table_name,"doors") == 0){
+	else if (strcmp(table_name,"sdoors") == 0){
 		td->nb_columns = 5;
 	}
 	else if (strcmp(table_name,"scorr_discovery") == 0){
@@ -122,36 +122,36 @@ void initialize_table_descriptor(const char * table_name,
 #define DATABASE_FIELD(fName, cType, sqlType) \
   td->columns[col_no]->name = #fName;         \
   td->columns[col_no]->type = #sqlType;       \
-	col_no++;
+  col_no++;
 #include "games.def"
 	}
-	else if (strcmp(table_name,"door_discovery") == 0){
+	else if (strcmp(table_name,"sdoor_discovery") == 0){
 #define DATABASE_FIELD(fName, cType, sqlType, sqlParam) \
   td->columns[col_no]->name = #fName;                   \
   td->columns[col_no]->type = #sqlType " " sqlParam;    \
-	col_no++;
-#include "door_discovery.def"	
+  col_no++;
+  #include "sdoor_discovery.def"
 	}
-	else if (strcmp(table_name,"doors") == 0){
+	else if (strcmp(table_name,"sdoors") == 0){
 #define DATABASE_FIELD(fName, cType, sqlType, sqlParam) \
   td->columns[col_no]->name = #fName;                   \
   td->columns[col_no]->type = #sqlType " " sqlParam;    \
-	col_no++;
-#include "doors.def"
+  col_no++;
+#include "sdoors.def"
 	}
 	else if (strcmp(table_name,"scorr_discovery") == 0){
-#define DATABASE_FIELD(fName, cType, sqlType)  \
-  td->columns[col_no]->name = #fName;          \
-  td->columns[col_no]->type = #sqlType;        \
-	col_no++;
-#include "scorr_discovery.def"	
+#define DATABASE_FIELD(fName, cType, sqlType, sqlParams) \
+  td->columns[col_no]->name = #fName;                    \
+  td->columns[col_no]->type = #sqlType " " sqlParams;    \
+  col_no++;
+#include "scorr_discovery.def"
 	}
 	else if (strcmp(table_name,"scorrs") == 0){
-#define DATABASE_FIELD(fName, cType, sqlType)  \
-  td->columns[col_no]->name = #fName;          \
-  td->columns[col_no]->type = #sqlType;        \
-	col_no++;
-#include "scorrs.def"	
+#define DATABASE_FIELD(fName, cType, sqlType, sqlParams) \
+  td->columns[col_no]->name = #fName;                    \
+  td->columns[col_no]->type = #sqlType " " sqlParams;    \
+  col_no++;
+#include "scorrs.def"
 	}
   
 }
@@ -165,10 +165,10 @@ int init_db_manager(){
 
 	// initialize table descriptor for games
 	initialize_table_descriptor("games", &mode_table);
-	// initialize table descriptor for door discovery
-	initialize_table_descriptor("door_discovery", &door_discovery_table);
-	// initialize table descriptor for doors
-	initialize_table_descriptor("doors", &doors_table);
+	// initialize table descriptor for sdoor discovery
+	initialize_table_descriptor("sdoor_discovery", &sdoor_discovery_table);
+	// initialize table descriptor for sdoors
+	initialize_table_descriptor("sdoors", &sdoors_table);
 	// initialize table descriptor for scorr discovery
 	initialize_table_descriptor("scorr_discovery", &scorr_discovery_table);
 	// initialize table descriptor for scorrs
@@ -310,10 +310,10 @@ int add_game_details(game_result_p gr){
 	char request[REQUEST_SIZE];
 
 	table_descriptor_p td;
-	if (strcmp(gr_get_table(gr),"door_discovery") == 0)
-		td = door_discovery_table;
-	else if (strcmp(gr_get_table(gr),"doors") == 0)
-		td = doors_table;
+	if (strcmp(gr_get_table(gr),"sdoor_discovery") == 0)
+		td = sdoor_discovery_table;
+	else if (strcmp(gr_get_table(gr),"sdoors") == 0)
+		td = sdoors_table;
 	else if (strcmp(gr_get_table(gr),"scorrs") == 0)
 		td = scorrs_table;
 	else if (strcmp(gr_get_table(gr),"scorr_discovery") == 0)
@@ -399,8 +399,8 @@ int close_db_manager(){
 		        sqlite3_errmsg(db));
 		return 1;
 	}
-	free_table_descriptor(door_discovery_table);
-	free_table_descriptor(doors_table);
+	free_table_descriptor(sdoor_discovery_table);
+	free_table_descriptor(sdoors_table);
 	free_table_descriptor(scorr_discovery_table);
 	free_table_descriptor(scorrs_table);
 	free_table_descriptor(mode_table);

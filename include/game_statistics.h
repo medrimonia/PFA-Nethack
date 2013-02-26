@@ -88,21 +88,21 @@ int get_max_moves();
 
 int get_game_id();
 
-int get_door_discovery_turn();
-int get_door_line();
-int get_door_column();
-int get_door_level();
-int get_door_discovery_line();
-int get_door_discovery_column();
-int get_door_discovery_level();
+int get_sdd_turn();
+int get_sd_line();
+int get_sd_column();
+int get_sd_level();
+int get_sdd_line();
+int get_sdd_column();
+int get_sdd_level();
 
-int get_scorr_discovery_turn();
-int get_scorr_line();
-int get_scorr_column();
-int get_scorr_level();
-int get_scorr_discovery_line();
-int get_scorr_discovery_column();
-int get_scorr_discovery_level();
+int get_scd_turn();
+int get_sc_line();
+int get_sc_column();
+int get_sc_level();
+int get_scd_line();
+int get_scd_column();
+int get_scd_level();
 
 /* return the number of levels visited */
 int get_level_reached();

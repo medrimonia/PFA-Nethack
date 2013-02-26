@@ -1,8 +1,8 @@
 #if defined(DATABASE_FIELD)
-/* DATABASE_FIELD(name, cType, sqlType) */
-DATABASE_FIELD(game_id            , int   , integer)
-DATABASE_FIELD(scorr_line         , int   , integer)
-DATABASE_FIELD(scorr_column       , int   , integer)
-DATABASE_FIELD(scorr_level        , int   , integer)
+/* DATABASE_FIELD(name, cType, sqlType, sqlParams) */
+DATABASE_FIELD(game_id    , int   , integer, "not null references games(id)")
+DATABASE_FIELD(sc_line    , int   , integer, "")
+DATABASE_FIELD(sc_column  , int   , integer, "")
+DATABASE_FIELD(sc_level   , int   , integer, "")
 #undef DATABASE_FIELD
 #endif /* define(DATABASE_FIELD) */

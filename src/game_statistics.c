@@ -321,59 +321,59 @@ int get_seed(){
 	return seed;
 }
 
-int get_scorr_discovery_turn(){
+int get_scd_turn(){
 	return scorrs_discovery[actual_scorr_discovery].discovery_turn;
 }
 
-int get_scorr_discovery_level(){
+int get_scd_level(){
 	return scorrs_discovery[actual_scorr_discovery].level;
 }
 
-int get_scorr_level(){
+int get_sc_level(){
 	return scorrs[actual_scorr].level;
 }
 
-int get_scorr_discovery_line(){
+int get_scd_line(){
 	return scorrs_discovery[actual_scorr_discovery].line;
 }
 
-int get_scorr_line(){
+int get_sc_line(){
 	return scorrs[actual_scorr].line;
 }
 
-int get_scorr_discovery_column(){
+int get_scd_column(){
 	return scorrs_discovery[actual_scorr_discovery].column;
 }
 
-int get_scorr_column(){
+int get_sc_column(){
 	return scorrs[actual_scorr].column;
 }
 
-int get_door_discovery_turn(){
+int get_sdd_turn(){
 	return sdoors_discovery[actual_sdoor_discovery].discovery_turn;
 }
 
-int get_door_discovery_level(){
+int get_sdd_level(){
 	return sdoors_discovery[actual_sdoor_discovery].level;
 }
 
-int get_door_level(){
+int get_sd_level(){
 	return sdoors[actual_sdoor].level;
 }
 
-int get_door_discovery_line(){
+int get_sdd_line(){
 	return sdoors_discovery[actual_sdoor_discovery].line;
 }
 
-int get_door_line(){
+int get_sd_line(){
 	return sdoors[actual_sdoor].line;
 }
 
-int get_door_discovery_column(){
+int get_sdd_column(){
 	return sdoors_discovery[actual_sdoor_discovery].column;
 }
 
-int get_door_column(){
+int get_sd_column(){
 	return sdoors[actual_sdoor].column;
 }
 
@@ -403,9 +403,9 @@ void gs_submit_game(){
 	game_result_p gr = create_actual_game_result("games");
 	game_id = add_game(gr);
 	destroy_game_result(gr);
-	// Publishing door result
+	// Publishing sdoor result
 	for (actual_sdoor = 0; actual_sdoor < nb_sdoors; actual_sdoor++){
-		game_result_p d = create_door_result();
+		game_result_p d = create_sdoor_result();
 		add_game_details(d);
 		destroy_game_result(d);
 	}
@@ -415,11 +415,11 @@ void gs_submit_game(){
 		add_game_details(c);
 		destroy_game_result(c);
 	}
-	// Publishing door_discovery result
+	// Publishing sdoor_discovery result
 	for (actual_sdoor_discovery = 0;
 	     actual_sdoor_discovery < nb_sdoors_found;
 	     actual_sdoor_discovery++){
-		game_result_p dd = create_door_discovery_result();
+		game_result_p dd = create_sdoor_discovery_result();
 		add_game_details(dd);
 		destroy_game_result(dd);
 	}

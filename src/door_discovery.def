@@ -1,9 +1,0 @@
-#if defined(DATABASE_FIELD)
-/* DATABASE_FIELD(name, cType, sqlType) */
-DATABASE_FIELD(game_id               , int , integer, "not null references games(id)")
-DATABASE_FIELD(door_discovery_turn   , int , integer, "")
-DATABASE_FIELD(door_discovery_line   , int , integer, "")
-DATABASE_FIELD(door_discovery_column , int , integer, "")
-DATABASE_FIELD(door_discovery_level  , int , integer, "")
-#undef DATABASE_FIELD
-#endif /* define(DATABASE_FIELD) */

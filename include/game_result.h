@@ -16,15 +16,15 @@ game_result_p new_game_result(const char * table);
  */
 game_result_p create_actual_game_result(const char * table);
 
-/* Create a new game_result struct, fill it with the data about last door
+/* Create a new game_result struct, fill it with the data about last sdoor
  * discovery, provided by game_statistics, and then return a pointer on it
  */
-game_result_p create_door_discovery_result();
+game_result_p create_sdoor_discovery_result();
 
-/* Create a new game_result struct, fill it with the data about last door,
+/* Create a new game_result struct, fill it with the data about last sdoor,
  * provided by game_statistics, and then return a pointer on it
  */
-game_result_p create_door_result();
+game_result_p create_sdoor_result();
 
 /* Create a new game_result struct, fill it with the data about last scorr
  * discovery, provided by game_statistics, and then return a pointer on it

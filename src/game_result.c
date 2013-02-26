@@ -37,10 +37,10 @@ game_result_p new_game_result(const char * table){
 	if (strcmp(table, "games") == 0){
 		new->nb_properties = 13;
 	}
-	if (strcmp(table, "door_discovery") == 0){
+	if (strcmp(table, "sdoor_discovery") == 0){
 		new->nb_properties = 6;
 	}
-	if (strcmp(table, "doors") == 0){
+	if (strcmp(table, "sdoors") == 0){
 		new->nb_properties = 5;
 	}
 	if (strcmp(table, "scorr_discovery") == 0){
@@ -71,29 +71,29 @@ game_result_p create_actual_game_result(const char * table){
 	return gr;
 }
 
-game_result_p create_door_discovery_result(){
-	game_result_p gr = new_game_result("door_discovery");
+game_result_p create_sdoor_discovery_result(){
+	game_result_p gr = new_game_result("sdoor_discovery");
 	
 	int index = 1;// id field is not set by this type of method
 #define DATABASE_FIELD(name, cType, sqlType, sqlParam)           \
   gr_set_property_name(gr, index, #name);                        \
   gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
-#include "door_discovery.def"
+#include "sdoor_discovery.def"
 
 	return gr;
 	
 }
 
-game_result_p create_door_result(){
-	game_result_p gr = new_game_result("doors");
+game_result_p create_sdoor_result(){
+	game_result_p gr = new_game_result("sdoors");
 	
 	int index = 1;// id field is not set by this type of method
 #define DATABASE_FIELD(name, cType, sqlType, sqlParam)           \
   gr_set_property_name(gr, index, #name);                        \
   gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
-#include "doors.def"
+#include "sdoors.def"
 
 	return gr;
 }
@@ -102,7 +102,7 @@ game_result_p create_scorr_discovery_result(){
 	game_result_p gr = new_game_result("scorr_discovery");
 	
 	int index = 1;// id field is not set by this type of method
-#define DATABASE_FIELD(name, cType, sqlType)                     \
+#define DATABASE_FIELD(name, cType, sqlType, sqlParam)           \
   gr_set_property_name(gr, index, #name);                        \
   gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
@@ -116,7 +116,7 @@ game_result_p create_scorr_result(){
 	game_result_p gr = new_game_result("scorrs");
 	
 	int index = 1;// id field is not set by this type of method
-#define DATABASE_FIELD(name, cType, sqlType)                     \
+#define DATABASE_FIELD(name, cType, sqlType, sqlParam)           \
   gr_set_property_name(gr, index, #name);                        \
   gr_set_property_##sqlType##_value(gr, index, get_##name () );  \
 	index++;
