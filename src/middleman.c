@@ -704,5 +704,5 @@ void tvsub(
 
 void tvprint(const struct timeval *tv)
 {
-	printf("%d.%d seconds", tv->tv_sec, tv->tv_usec * 1000);
+	printf("%d.%d seconds", tv->tv_sec, tv->tv_usec / 1000);
 }
