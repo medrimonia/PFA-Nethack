@@ -10,6 +10,11 @@
 extern struct window_procs middleman;
 extern struct window_procs real_winprocs;
 
+/* Return the time elapsed since beginning of the game (in ms)*/
+int mm_total_time();
+/* Return the time spent waiting the bot's answer */
+int mm_bot_time();
+
 
 void FDECL(mm_init_nhwindows, (int *, char **));
 void NDECL(mm_player_selection);

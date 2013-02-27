@@ -671,6 +671,17 @@ mm_end_screen()
 	mm_log("mm_end_screen", "");
 }
 
+int mm_total_time(){
+	struct timeval elapsed;
+	struct timeval now;
+	gettimeofday(&now, NULL);
+	tvsub(&elapsed, &now, &tvstart);
+	return elapsed.tv_sec * 1000 + elapsed.tv_usec / 1000;
+}
+
+int mm_bot_time(){
+	return  tvbot.tv_sec * 1000 + tvbot.tv_usec / 1000;
+}
 
 /* Utility functions */
 

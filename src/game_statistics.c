@@ -382,11 +382,11 @@ int get_sd_column(){
 }
 
 int get_nethack_time(){
-	return -1;
+	return mm_total_time() - mm_bot_time();
 }
 
 int get_bot_time(){
-	return -1;
+	return mm_bot_time();
 }
 
 int get_db_time(){
