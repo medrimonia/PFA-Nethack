@@ -91,10 +91,10 @@ static char use_logging = 0;
 static int replay = -1;
 static char record_replay = 0;
 
+static int timeout;
 static char *sockpath;
 static int mmsock = -1;
 static int client = -1;
-static int timeout = 2;
 static struct sockaddr_un local;
 
 static int cmdbuf[BUFSIZE];
@@ -181,6 +181,7 @@ void mm_init()
 	char *str;
 	socklen_t len;
 
+	// Options
 	str = getenv("NH_MM_SOCKPATH");
 	if (str == NULL) {
 		sockpath = DEFAULTSOCKPATH;
@@ -200,6 +201,16 @@ void mm_init()
 		record_replay = 0;
 	} else {
 		record_replay = atoi(str);
+	}
+
+	str = getenv("NH_MM_TIMEOUT");
+	if (str == NULL) {
+		timeout = 2;
+	} else {
+		rv = atoi(str);
+		if (rv > 0) {
+			timeout = rv;
+		}
 	}
 
 	/* unlink sockpath in case the came wasn't terminated cleanly */
