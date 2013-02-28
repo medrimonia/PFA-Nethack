@@ -19,6 +19,11 @@ int add_game(game_result_p e);
  */
 int add_game_details(game_result_p e);
 
+/* In current game entry, update the db_time field with the value received by
+ * get_db_time in game_statistics.
+ */
+void update_db_time();
+
 /* Start a transaction with the database.
  * It should always be called before calling an add_game_result when multiple
  * processes might access to the same database, because it avoids to have

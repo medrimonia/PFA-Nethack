@@ -379,6 +379,30 @@ int add_game_details(game_result_p gr){
 	return 0;
 }
 
+void update_db_time(){
+	char request[REQUEST_SIZE];
+
+	int index = 0;
+	index += sprintf(request,
+	                 "update %s set db_time = %d where id = %d",
+	                 "games",
+	                 get_db_time(),
+	                 get_game_id());
+	char * err_msg;
+
+	sqlite3_exec(db,
+	             request,
+	             NULL,
+	             NULL,
+	             &err_msg);
+
+	if (err_msg != NULL){//error treatment
+		fprintf(stderr, "Failed to insert the game\n");
+		fprintf(stderr, "Error : %s\n", err_msg);
+		sqlite3_free(err_msg);
+	}
+}
+
 void start_transaction(){
 	sem_wait(sem);
 	sqlite3_exec(db, "BEGIN", 0, 0, 0);

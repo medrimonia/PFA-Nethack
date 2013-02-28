@@ -51,6 +51,8 @@ int nb_squares_reachable = 0;
 int game_id = -1;
 int last_discovery_turn = -1;
 
+int db_time = -1;// in ms
+
 struct location{
 	int line;
 	int column;
@@ -390,7 +392,7 @@ int get_bot_time(){
 }
 
 int get_db_time(){
-	return -1;
+	return db_time;
 }
 
 int get_processing_time(){
@@ -410,6 +412,11 @@ int get_game_id(){
 }
 
 void gs_submit_game(){
+	struct timeval start;
+	struct timeval end;
+	struct timeval result;
+	gettimeofday(&start, NULL);
+
 	if (!gs_initialized) gs_init();
 	init_db_manager();
 
@@ -447,6 +454,14 @@ void gs_submit_game(){
 		add_game_details(cd);
 		destroy_game_result(cd);
 	}
+
+	gettimeofday(&end, NULL);
+	timersub(&end, &start, &result);
+	db_time = result.tv_sec * 1000 + result.tv_usec / 1000;
+
+	// Time do not take into account transaction time, but it would imply to do
+	// another transaction, that's why it's not so accurate
+	update_db_time();
 
 	commit_transaction();
 
