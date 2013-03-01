@@ -587,8 +587,23 @@ mm_nh_poskey(x, y, mod)
 	ssize_t size;
 	char buf[BUFSIZE];
 
+	static int deadlock_detector = 0;
+	static int old_moves = 0;
+
 	struct timeval tmp1, tmp2;
 
+	// If N moves does not update the number of moves done in a raw, stop the
+	// game.
+	if (old_moves == moves){
+		deadlock_detector++;
+		if (deadlock_detector >= 20)
+			terminate(EXIT_SUCCESS);
+	}
+	else
+		deadlock_detector = 0;
+	old_moves = moves;
+
+	//TODO check moves evolution in order to check if there's deadlock
 	mm_log("mm_nh_poskey", "");
 
 	if (first == last) { // buffer empty
