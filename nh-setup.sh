@@ -10,7 +10,7 @@ apply_patch () {
         read -p "Apply $i? [Y/n]" yn
 
         case $yn in
-            Y|y|"" ) patch -p0 < $i;;
+            Y|y|"" ) patch -Nu -r - -p0 < $i > /dev/null;;
             * ) ;;
         esac
     done
