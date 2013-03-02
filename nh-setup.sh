@@ -5,7 +5,14 @@ nharchive="nethack-343-src.tgz"
 dlurl="http://downloads.sourceforge.net/project/nethack/nethack/3.4.3/nethack-343-src.tgz"
 patchdir="patches"
 
-apply_patch () {
+apply_default_patch () {
+    for i in `grep "^[^#]" $patchdir/patch.conf`; do
+        echo "Applying $i..."
+		patch -Nu -r - -p0 < $i > /dev/null
+    done
+}
+
+apply_patch_i () {
     for i in `ls $patchdir/*.patch`; do
         read -p "Apply $i? [Y/n]" yn
 
@@ -61,8 +68,12 @@ if [ $reuse = 0 ]; then
 fi
 
 if [ -d $patchdir ]; then
-    echo "Applying patches..."
-    apply_patch
+	read -p "Apply default patches? [Y/n]" yn
+
+	case $yn in
+		Y|y|"" ) apply_default_patch;;
+        * ) apply_patch_i ;;
+	esac
 fi
 
 cd $nhdir && make && make install
