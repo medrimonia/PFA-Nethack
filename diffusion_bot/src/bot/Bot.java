@@ -22,6 +22,7 @@ public class Bot {
 	private int nbSearches;
 	private int nbOpen;
 	private int nbForce;
+	private int nbWalkThrough;
 	private Square expectedLocation;
 	
 	public Bot(){
@@ -33,6 +34,7 @@ public class Bot {
 		nbSearches = 0;
 		nbOpen = 0;
 		nbForce = 0;
+		nbWalkThrough = 0;
 		turn = 0;
 		nbUpdatesSaved = 0;
 		higherLevels = new LinkedList<Map>();
@@ -110,6 +112,7 @@ public class Bot {
 		Logger.println(nbSearches + " search until now");
 		Logger.println(nbOpen + " open until now");
 		Logger.println(nbForce + " force until now");
+		Logger.println(nbWalkThrough + " walkthrough until now");
 		Logger.println(nbUpdatesSaved + " turns without updates");
 		Logger.println(map.toString());
 		//Logger.println(map.searchMapAsString());	
@@ -163,7 +166,10 @@ public class Bot {
 							     dest.getOpenScore()));
 				l.add(new Action(ActionType.FORCE,
 					     		 dir,
-					     		 dest.getForceScore()));				
+					     		 dest.getForceScore()));
+				l.add(new Action(ActionType.WALKTHROUGH,
+							     dir,
+							     dest.getWalkThroughScore()));
 			}
 		}
 		Logger.println("Nb valid choices : " + l.nbElements());
@@ -201,6 +207,11 @@ public class Bot {
 			map.getDest(a.getDirection()).addForceTry(map);
 			myParser.broadcastForcingDoor(a.getDirection());
 			nbForce++;
+			return;
+		case WALKTHROUGH:
+			map.getDest(a.getDirection()).addWalkThroughTry(map);
+			myParser.broadcastMove(a.getDirection());
+			nbWalkThrough++;
 			return;
 		case MOVE:
 			myParser.broadcastMove(a.getDirection());

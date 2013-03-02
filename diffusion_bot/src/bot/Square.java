@@ -47,6 +47,10 @@ public class Square{
 	 */
 	private double forceScore;
 	/**
+	 * score in [0,1] representing the importance of trying to force the square
+	 */
+	private double walkThroughScore;
+	/**
 	 * score in [0,1] representing the probability
 	 * that something is hidden in this square (SCORR, SDOOR) 
 	 */
@@ -76,6 +80,10 @@ public class Square{
 	 */
 	private int nbForceTries;
 	/**
+	 * Number of time the player tried to walk through the door
+	 */
+	private int nbWalkThroughTries;
+	/**
 	 * Keep track of if the Square might be reached.
 	 */
 	private boolean reachable;
@@ -93,6 +101,7 @@ public class Square{
 		nbSearch = 0;
 		nbVisits = 0;
 		nbOpenTries = 0;
+		nbWalkThroughTries = 0;
 		reachable = false;
 		stairsDest = null;
 	}
@@ -127,6 +136,10 @@ public class Square{
 		return nbForceTries;
 	}
 	
+	public int getNbWalkThroughTries(){
+		return nbWalkThroughTries;
+	}
+	
 	public int getNbSearch(){
 		return nbSearch;
 	}
@@ -149,6 +162,10 @@ public class Square{
 	
 	public double getForceScore(){
 		return forceScore * Scoring.FORCE_SCORE;
+	}
+	
+	public double getWalkThroughScore(){
+		return walkThroughScore * Scoring.WALKTHROUGH_SCORE;
 	}
 	
 	public double getLocalSearchScore(){
@@ -188,12 +205,14 @@ public class Square{
 		//Update scores for square and neighbors
 		updateOpenScore(m);
 		updateForceScore(m);
+		updateWalkThroughScore(m);
 		updateVisitScore(m);
 		updateLocalSearchScore(m);
 		updateLevelChangeScore(m);
 		for (Square n : neighbors){
 			n.updateOpenScore(m);
 			n.updateForceScore(m);
+			updateWalkThroughScore(m);
 			n.updateVisitScore(m);
 			n.updateLocalSearchScore(m);
 		}
@@ -217,6 +236,11 @@ public class Square{
 	public void addForceTry(Map m){
 		nbForceTries++;
 		updateForceScore(m);
+	}
+	
+	public void addWalkThroughTry(Map m){
+		nbWalkThroughTries++;
+		updateWalkThroughScore(m);
 	}
 	
 	public void setScore(double newScore){
@@ -273,6 +297,13 @@ public class Square{
 		double oldScore = forceScore;
 		forceScore = Scoring.forceScore(this);
 		if (oldScore != forceScore)
+			updateInternScore(m);		
+	}
+	
+	private void updateWalkThroughScore(Map m){
+		double oldScore = walkThroughScore;
+		walkThroughScore = Scoring.walkThroughScore(this);
+		if (oldScore != walkThroughScore)
 			updateInternScore(m);		
 	}
 

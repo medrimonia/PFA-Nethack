@@ -21,6 +21,7 @@ public class Scoring {
 	public final static double OPEN_FADING = 0.8;
 	public final static double FORCE_SCORE = 50;
 	public final static double FORCE_FADING = 0.8;
+	public final static double WALKTHROUGH_SCORE = 50;
 	public final static double FOUND_SCORE = 250;
 	
 	private final static int TRIES_PER_SEARCH = 5;
@@ -129,6 +130,13 @@ public class Scoring {
 		if (s.getType() != SquareType.CLOSED_DOOR) return 0;
 		return Math.pow(FORCE_FADING, s.getNbForceTries());
 		//return smoothedProbability(0, s.getNbOpenTries(), OPEN_K);
+	}
+	
+	public static double walkThroughScore(Square s){
+		if (s.getType() != SquareType.CLOSED_DOOR ||
+		    s.getNbWalkThroughTries() > 0)
+			return 0;
+		return 1;
 	}
 	
 	public static double afterMoveScore(double initialScore){

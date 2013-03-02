@@ -9,9 +9,9 @@
 #include <sys/un.h>
 #include <sys/time.h>
 #include <sys/socket.h>
-
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/select.h>
 
 #define BUFSIZE         64
 #define DEFAULTSOCKPATH "/tmp/mmsock"
@@ -91,6 +91,7 @@ static char use_logging = 0;
 static int replay = -1;
 static char record_replay = 0;
 
+static int timeout;
 static char *sockpath;
 static int mmsock = -1;
 static int client = -1;
@@ -180,6 +181,7 @@ void mm_init()
 	char *str;
 	socklen_t len;
 
+	// Options
 	str = getenv("NH_MM_SOCKPATH");
 	if (str == NULL) {
 		sockpath = DEFAULTSOCKPATH;
@@ -199,6 +201,16 @@ void mm_init()
 		record_replay = 0;
 	} else {
 		record_replay = atoi(str);
+	}
+
+	str = getenv("NH_MM_TIMEOUT");
+	if (str == NULL) {
+		timeout = 2;
+	} else {
+		rv = atoi(str);
+		if (rv > 0) {
+			timeout = rv;
+		}
 	}
 
 	/* unlink sockpath in case the came wasn't terminated cleanly */
@@ -617,16 +629,37 @@ mm_nh_poskey(x, y, mod)
 			write(replay, "E", 1);
 		}
 
+		// select stuff
+		fd_set sel;
+		struct timeval tvtimeout;
+
+		FD_ZERO(&sel);
+		FD_SET(client, &sel);
+		tvtimeout.tv_usec = 0;
+		tvtimeout.tv_sec  = timeout;
+
 		// start timer
+		struct timeval tmp1, tmp2;
 		gettimeofday(&tmp1, NULL);
+
+		select(client+1, &sel, NULL, NULL, &tvtimeout);
+
+		if (!FD_ISSET(client, &sel)) {
+			mm_log("select()", "Client timeout.");
+			terminate(EXIT_FAILURE);
+		}
+
 		size = send(client, "E", 1, 0);
 		if (size < 1) {
 			mm_log("send()", "Client disconnected.");
 			terminate(EXIT_FAILURE);
 		}
 		nb_received = recv(client, buf, BUFSIZE, 0);
+
 		// stop timer
 		gettimeofday(&tmp2, NULL);
+
+		// compute time
 		tvsub(&tmp2, &tmp2, &tmp1);
 		tvadd(&tvbot, &tvbot, &tmp2);
 
