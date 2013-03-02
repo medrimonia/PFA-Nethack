@@ -608,11 +608,13 @@ mm_nh_poskey(x, y, mod)
 	// game.
 	if (old_moves == moves){
 		deadlock_detector++;
+		printf("No move since last nh_get_pos, dd = %d\n", deadlock_detector);
 		if (deadlock_detector >= 20)
 			terminate(EXIT_SUCCESS);
 	}
-	else
+	else{
 		deadlock_detector = 0;
+	}
 	old_moves = moves;
 
 	//TODO check moves evolution in order to check if there's deadlock
@@ -642,6 +644,12 @@ mm_nh_poskey(x, y, mod)
 		struct timeval tmp1, tmp2;
 		gettimeofday(&tmp1, NULL);
 
+		size = send(client, "E", 1, 0);
+		if (size < 1) {
+			mm_log("send()", "Client disconnected.");
+			terminate(EXIT_FAILURE);
+		}
+
 		select(client+1, &sel, NULL, NULL, &tvtimeout);
 
 		if (!FD_ISSET(client, &sel)) {
@@ -649,11 +657,6 @@ mm_nh_poskey(x, y, mod)
 			terminate(EXIT_FAILURE);
 		}
 
-		size = send(client, "E", 1, 0);
-		if (size < 1) {
-			mm_log("send()", "Client disconnected.");
-			terminate(EXIT_FAILURE);
-		}
 		nb_received = recv(client, buf, BUFSIZE, 0);
 
 		// stop timer
