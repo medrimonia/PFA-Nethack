@@ -1,3 +1,11 @@
+/* This module allows the client to track easily a lot of statistics from
+ * nethack core.
+ * Some of the functions presented here must be called by nethack in order to
+ * ensure that statistics are up to date, this is done mainly by some hooks
+ * placed in nethack's core. An option is offered of removing nethack access in
+ * order to run unitary tests.
+ *
+ */
 #ifndef GAME_STATISTICS_H
 #define GAME_STATISTICS_H
 
@@ -15,6 +23,9 @@ void gs_terminate();
  */
 void gs_new_level();
 
+/* For unitary tests, access to nethack isn't required, but creating random
+ * datas allows to fill the database with some "realistic" input
+ */
 #ifndef NETHACK_ACCESS
 /* srand initialization is not provided by game_statistics, it should be done
  * by the caller.
@@ -88,24 +99,33 @@ int get_used_moves();
 /* Return the maximal number of moves allowed in this game. */
 int get_max_moves();
 
+/* The game id is set once the game has been added to the database */
 int get_game_id();
+
+// Getters about time spent in different modules
 
 int get_nethack_time();
 int get_bot_time();
 int get_db_time();
 
-int get_sdd_turn();
+// Secret Doors Getters
 int get_sd_line();
 int get_sd_column();
 int get_sd_level();
+
+// Secret Doors Discoveries Getters
+int get_sdd_turn();
 int get_sdd_line();
 int get_sdd_column();
 int get_sdd_level();
 
-int get_scd_turn();
+// Secret Corridors Getters
 int get_sc_line();
 int get_sc_column();
 int get_sc_level();
+
+// Secret Corridors Discoveries Getters
+int get_scd_turn();
 int get_scd_line();
 int get_scd_column();
 int get_scd_level();
