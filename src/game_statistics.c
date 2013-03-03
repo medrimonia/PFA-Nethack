@@ -77,10 +77,10 @@ int last_discovery_turn = -1;
 int db_time = -1;// in ms
 
 // Data Storing
-struct location * sdoors[MAX_SDOORS];
-struct location * scorrs[MAX_SCORRS];
-struct discovery * sdoors_discovery[MAX_SDOORS_DISCOVERY];
-struct discovery * scorrs_discovery[MAX_SCORRS_DISCOVERY];
+struct location sdoors[MAX_SDOORS];
+struct location scorrs[MAX_SCORRS];
+struct discovery sdoors_discovery[MAX_SDOORS_DISCOVERY];
+struct discovery scorrs_discovery[MAX_SCORRS_DISCOVERY];
 
 int max_moves = -1;
 int seed = -1;

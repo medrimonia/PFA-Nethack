@@ -390,7 +390,7 @@ int add_game_details(game_result_p gr){
 	return 0;
 }
 
-void update_db_time(){
+int update_db_time(){
 	char request[REQUEST_SIZE];
 
 	int index = 0;
