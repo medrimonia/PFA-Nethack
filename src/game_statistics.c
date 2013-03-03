@@ -262,7 +262,9 @@ void update_reachable_squares(){
 	int r;
 	for (c = 0; c < COLNO ; c++){
 		for (r = 0; r < ROWNO ; r++){
-			if (ACCESSIBLE(levl[c][r].typ)) // see rm.h:33
+			if (ACCESSIBLE(levl[c][r].typ) ||
+			    levl[c][r].typ == SDOOR    ||
+			    levl[c][r].typ == SCORR) // see rm.h:33
 				nb_squares_reachable++;
 		}
 	}
