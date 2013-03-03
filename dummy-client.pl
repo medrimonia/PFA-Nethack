@@ -3,7 +3,8 @@ use strict;
 use warnings;
 
 use Term::ReadKey;
-use IO::Socket::INET;
+use IO::Socket::UNIX;
+use Term::ANSIScreen qw/:cursor :screen/;
 
 
 my $sock = IO::Socket::UNIX->new(
@@ -14,10 +15,11 @@ my $sock = IO::Socket::UNIX->new(
 $sock->autoflush(1);
 
 
+
 defined (my $pid = fork()) or die "fork: $!";
 
 if ($pid) {
-	ReadMode('cbreak');
+	ReadMode('raw');
 
 	while (my $key = ReadKey(0)) {
 		print $sock $key;
@@ -28,7 +30,28 @@ if ($pid) {
 
 else {
 	$| = 1;
-	print while(<$sock>);
+	$/ = 'E';
+
+	cls();
+
+	while(my $msg = <$sock>) {
+		$msg = substr($msg, 1, -1);
+		print_glyphs(split('g', $msg));
+	}
 }
 
 close $sock;
+
+
+sub print_glyphs {
+	local $| = 0;
+
+	for (@_) {
+		my ($y, $x, $g) = unpack("WWa");
+
+		if (defined $g) {
+			locate $x, $y;
+			print $g;
+		}
+	}
+}
