@@ -1,3 +1,16 @@
+/* Implements the game result, using .def files and macro in order to make
+ * reading code easier.
+ *
+ * Getters according to field names are needed, most of them are accessible
+ * through the game_statistics module.
+ *
+ * All the database definitions are done through external files :
+ * - games.def
+ * - scorrs.def
+ * - scorr_discovery.def
+ * - sdoors.def
+ * - sdorr_discovery.def
+ */
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,6 +47,8 @@ property_p new_property(){
 game_result_p new_game_result(const char * table){
 	game_result_p new = malloc(sizeof(struct game_result));
 	new->table = table;
+	// TODO nb_properties initialization might be done through .def options,
+	// like for fields 
 	if (strcmp(table, "games") == 0){
 		new->nb_properties = 12;
 	}

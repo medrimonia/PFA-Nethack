@@ -302,8 +302,18 @@ void create_table(table_descriptor_p td, const char * table_name){
 }
 
 int add_game(game_result_p gr){
-	add_game_details(gr);
-	return sqlite3_last_insert_rowid(db);
+
+	int result = add_game_details(gr);
+	if (result == -1) return -1;
+
+	result = sqlite3_last_insert_rowid(db);
+	//sqlite3_last_insert_rowid returns 0 if no line had been inserted
+	if (result == 0){
+		fprintf(stderr,
+		        "Game was not properly added, failed retrieving last insert id\n");
+		return -1;
+	}
+	return result;
 }
 
 int add_game_details(game_result_p gr){
@@ -374,12 +384,13 @@ int add_game_details(game_result_p gr){
 		fprintf(stderr, "Failed to insert the game\n");
 		fprintf(stderr, "Error : %s\n", err_msg);
 		sqlite3_free(err_msg);
+		return 1;
 	}
 
 	return 0;
 }
 
-void update_db_time(){
+int update_db_time(){
 	char request[REQUEST_SIZE];
 
 	int index = 0;
@@ -400,7 +411,10 @@ void update_db_time(){
 		fprintf(stderr, "Failed to insert the game\n");
 		fprintf(stderr, "Error : %s\n", err_msg);
 		sqlite3_free(err_msg);
+		return -1;
 	}
+
+	return 0;
 }
 
 void start_transaction(){
