@@ -22,6 +22,7 @@ if ($pid) {
 	ReadMode('raw');
 
 	while (my $key = ReadKey(0)) {
+		print $key;
 		print $sock $key;
 	}
 

@@ -97,12 +97,12 @@ static int mmsock = -1;
 static int client = -1;
 static struct sockaddr_un local;
 
-static int cmdbuf[BUFSIZE];
-static unsigned int first = 0;
-static unsigned int last = 0;
-
 struct timeval tvbot;
 struct timeval tvstart;
+
+
+
+int mm_recv();
 
 void tvprint(const struct timeval *);
 
@@ -117,6 +117,8 @@ void tvsub(
 	const struct timeval *,
 	const struct timeval *
 );
+
+
 
 void mm_vlog(const char *format, ...)
 {
@@ -499,7 +501,7 @@ mm_print_glyph(window, x, y, glyph)
 
 	if (client != -1) {
 
-		mm_vlog("send(): g %#x %#x %c", x, y, ochar);
+		mm_vlog("send(): g %#x %#x %c %d", x, y, ochar, glyph);
 
 		size = sprintf(buf, "g%c%c%c", x, y, ochar);
 
@@ -553,13 +555,7 @@ mm_yn_function(query,resp, def)
 
 	mm_log("mm_yn_function", query);
 
-	if (first == last) { // buffer empty
-		cmd = def;
-	} else {
-		cmd = cmdbuf[++first % BUFSIZE];
-	}
-
-	return cmd;
+	return mm_recv();
 }
 
 void
@@ -595,10 +591,6 @@ int
 mm_nh_poskey(x, y, mod)
     int *x, *y, *mod;
 {
-	int i, cmd, nb_received;
-	ssize_t size;
-	char buf[BUFSIZE];
-
 	static int deadlock_detector = 0;
 	static int old_moves = 0;
 
@@ -619,9 +611,55 @@ mm_nh_poskey(x, y, mod)
 
 	//TODO check moves evolution in order to check if there's deadlock
 	mm_log("mm_nh_poskey", "");
+	
+	return mm_recv();
+
+}
+
+#ifdef POSITIONBAR
+void
+mm_update_positionbar(posbar)
+	char *posbar;
+{
+	mm_log("mm_update_positionbar", "");
+}
+#endif
+
+void
+mm_start_screen()
+{
+	mm_log("mm_start_screen", "");
+}
+
+void
+mm_end_screen()
+{
+	mm_log("mm_end_screen", "");
+}
+
+int mm_total_time(){
+	struct timeval elapsed;
+	struct timeval now;
+	gettimeofday(&now, NULL);
+	tvsub(&elapsed, &now, &tvstart);
+	return elapsed.tv_sec * 1000 + elapsed.tv_usec / 1000;
+}
+
+int mm_bot_time(){
+	return  tvbot.tv_sec * 1000 + tvbot.tv_usec / 1000;
+}
+
+int mm_recv()
+{
+	static int cmdbuf[BUFSIZE];
+	static unsigned int first = 0;
+	static unsigned int last = 0;
+
+	ssize_t size;
+	char buf[BUFSIZE];
+	int i, cmd, nb_received;
 
 	if (first == last) { // buffer empty
-		
 		first = 0;
 		last = 0;
 
@@ -691,47 +729,12 @@ mm_nh_poskey(x, y, mod)
 		if (replay > 0) {
 			write(replay, "S", 1);
 		}
-	}
-	
-	else {
+
+	} else {
 		cmd = cmdbuf[++first % BUFSIZE];
 	}
-	
+
 	return cmd;
-
-}
-
-#ifdef POSITIONBAR
-void
-mm_update_positionbar(posbar)
-	char *posbar;
-{
-	mm_log("mm_update_positionbar", "");
-}
-#endif
-
-void
-mm_start_screen()
-{
-	mm_log("mm_start_screen", "");
-}
-
-void
-mm_end_screen()
-{
-	mm_log("mm_end_screen", "");
-}
-
-int mm_total_time(){
-	struct timeval elapsed;
-	struct timeval now;
-	gettimeofday(&now, NULL);
-	tvsub(&elapsed, &now, &tvstart);
-	return elapsed.tv_sec * 1000 + elapsed.tv_usec / 1000;
-}
-
-int mm_bot_time(){
-	return  tvbot.tv_sec * 1000 + tvbot.tv_usec / 1000;
 }
 
 /* Utility functions */
