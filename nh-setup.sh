@@ -67,8 +67,8 @@ if [ $reuse = 0 ]; then
 	cp -r install/nh/* $nhdir
 fi
 
-if [ -d $patchdir ]; then
-	read -p "Apply default patches? [Y/n]" yn
+if [ -f "$patchdir/patch.conf" ]; then
+	read -p "Apply patches listed in $patchdir/patch.conf ? [Y/n]" yn
 
 	case $yn in
 		Y|y|"" ) apply_default_patch;;
