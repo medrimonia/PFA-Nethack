@@ -18,10 +18,7 @@ DB_PATH=$(dirname $DATABASE)
 
 #Variables
 
-BOTS[0]="diffusion"
-BOTS[1]="java sp"
-#BOTS[2]="python sp"
-
+BOT_FILE=( `sqlite3 /tmp/test.db 'select distinct bot_name from games' | sed 's/ /-/'` )
 MOVE_COLUMN=2
 
 FIELDS[0]="percent_explored"
@@ -37,7 +34,7 @@ FIELD_NAME[2]="secret corridors found"
 #Generating data files
 for ((i = 0; i < ${#BOTS[@]}; i++))
 do
-		BOT_FILE[i]=$(echo ${BOTS[i]} | sed 's/ /-/')
+		BOTS[i]=$(echo ${BOT_FILE[i]} | sed 's/-/ /')
 		echo "Bot file : ${BOT_FILE[i]}"
     FILES[i]="${DB_PATH}/${BOT_FILE[i]}.csv"
     REQUEST="'select count(*) as nb_games,
