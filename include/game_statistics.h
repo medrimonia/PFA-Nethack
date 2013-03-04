@@ -11,7 +11,7 @@
 
 // Comment if there's no access to nethack files
 // This is used typically for test outside of nethack kernel
-//#define NETHACK_ACCESS
+#define NETHACK_ACCESS
 
 /* Initialize the game statistic module */
 void gs_init();

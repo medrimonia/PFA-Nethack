@@ -507,7 +507,6 @@ int add_views(){
 	index += sprintf(request + index, "  AND sc.id == g.id ");
 	index += sprintf(request + index, "  AND scd.id == g.id;");
 
-	printf("request : %s\n", request);
 	char * err_msg;
 
 	sqlite3_exec(db,
