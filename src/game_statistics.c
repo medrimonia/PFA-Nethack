@@ -391,11 +391,19 @@ int get_sd_column(){
 }
 
 int get_nethack_time(){
+#ifdef NETHACK_ACCESS
 	return mm_total_time() - mm_bot_time();
+#else
+	return 0;
+#endif
 }
 
 int get_bot_time(){
+#ifdef NETHACK_ACCESS
 	return mm_bot_time();
+#else
+	return 0;
+#endif
 }
 
 int get_db_time(){

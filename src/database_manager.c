@@ -17,8 +17,10 @@
 
 #define DEFAULT_DATABASE_PATH "pfa.db"
 
-#define REQUEST_SIZE 400
+#define REQUEST_SIZE 1000
 #define SEM_NAME_SIZE 200
+
+int add_views();
 
 // SPECIFIC STRUCTURES
 
@@ -51,7 +53,7 @@ typedef struct get_result * get_result_p;
 sqlite3 * db = NULL;
 sem_t * sem = NULL;
 
-table_descriptor_p mode_table = NULL;
+table_descriptor_p games_table = NULL;
 table_descriptor_p sdoor_discovery_table = NULL;
 table_descriptor_p sdoors_table = NULL;
 table_descriptor_p scorr_discovery_table = NULL;
@@ -165,7 +167,7 @@ int init_db_manager(){
 	if (db_name == NULL) db_name = DEFAULT_DATABASE_PATH;
 
 	// initialize table descriptor for games
-	initialize_table_descriptor("games", &mode_table);
+	initialize_table_descriptor("games", &games_table);
 	// initialize table descriptor for sdoor discovery
 	initialize_table_descriptor("sdoor_discovery", &sdoor_discovery_table);
 	// initialize table descriptor for sdoors
@@ -175,31 +177,7 @@ int init_db_manager(){
 	// initialize table descriptor for scorrs
 	initialize_table_descriptor("scorrs", &scorrs_table);
 
-	int result;
 
-	// Opening database
-	result = sqlite3_open_v2(db_name,
-	                         &db,
-	                         SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
-	                         NULL);
-	if(result){// Database opening has failed
-		fprintf(stderr,
-		        "CRITICAL_ERROR: Failed to open the database : %s\n",
-		        sqlite3_errmsg(db));
-		exit(EXIT_FAILURE);
-	}
-
-	/* Foreign key constraints must be activated after each connection
-	 * according to : http://www.sqlite.org/foreignkeys.html#fk_enable
-	 * This allow us to be sure that an insert with an invalid game won't happen
-	 */
-	char * err_msg;
-	sqlite3_exec(db, "PRAGMA foreign_keys = ON;", NULL, NULL, &err_msg);
-	if (err_msg != NULL){//error treatment
-		fprintf(stderr, "Failed to create the specified table\n");
-		fprintf(stderr, "Error : %s\n", err_msg);
-		sqlite3_free(err_msg);
-	}
 	// Getting the semaphore name
   // found on http://stupefydeveloper.blogspot.ch/2009/02/linux-key-for-semopenshmopen.html
 	// semaphore name can't contain / anywhere, basically, here we get basename
@@ -223,6 +201,34 @@ int init_db_manager(){
 		exit(EXIT_FAILURE);
 	}
 
+	int result;
+
+	// Opening database
+	sem_wait(sem);
+	result = sqlite3_open_v2(db_name,
+	                         &db,
+	                         SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
+	                         NULL);
+	if(result){// Database opening has failed
+		fprintf(stderr,
+		        "CRITICAL_ERROR: Failed to open the database : %s\n",
+		        sqlite3_errmsg(db));
+		exit(EXIT_FAILURE);
+	}
+
+	/* Foreign key constraints must be activated after each connection
+	 * according to : http://www.sqlite.org/foreignkeys.html#fk_enable
+	 * This allow us to be sure that an insert with an invalid game won't happen
+	 */
+	char * err_msg;
+	sqlite3_exec(db, "PRAGMA foreign_keys = ON;", NULL, NULL, &err_msg);
+	if (err_msg != NULL){//error treatment
+		fprintf(stderr, "Failed to create the specified table\n");
+		fprintf(stderr, "Error : %s\n", err_msg);
+		sqlite3_free(err_msg);
+	}
+	add_views();
+
 	return 0;
 }
 
@@ -239,6 +245,32 @@ bool exist_table(const char * table_name){
 
 	sprintf(request,
 	        "SELECT name FROM sqlite_master WHERE type='table' AND name='%s';",
+	        table_name);
+	get_result_p r;
+
+	r = get_request(request);
+	
+	if (r->err_msg != NULL){//error treatment
+		fprintf(stderr, "Failed to get the specified table\n");
+		fprintf(stderr, "Error : %s\n", r->err_msg);
+		sqlite3_free(r->err_msg);
+		return false;
+	}
+
+	bool exists = false;
+	if (r->num_rows > 0)
+		exists = true;
+	
+	free_get_result(r);
+
+	return exists;
+}
+
+bool exist_view(const char * table_name){
+	char request[REQUEST_SIZE];
+
+	sprintf(request,
+	        "SELECT name FROM sqlite_master WHERE type='view' AND name='%s';",
 	        table_name);
 	get_result_p r;
 
@@ -330,7 +362,7 @@ int add_game_details(game_result_p gr){
 	else if (strcmp(gr_get_table(gr),"scorr_discovery") == 0)
 		td = scorr_discovery_table;
 	else
-		td = mode_table;
+		td = games_table;
 
 	if (!exist_table(gr_get_table(gr)))
 		create_table(td, gr_get_table(gr));
@@ -418,18 +450,85 @@ int update_db_time(){
 }
 
 void start_transaction(){
-	sem_wait(sem);
 	sqlite3_exec(db, "BEGIN", 0, 0, 0);
 }
 
 void commit_transaction(){
 	sqlite3_exec(db, "COMMIT", 0, 0, 0);
-	sem_post(sem);
+}
+
+int add_views(){
+	if (exist_view("game_results"))
+		return 0;// No need to create the view
+	
+	// TODO initialize elsewhere?
+	if (!exist_table("sdoors")){
+		create_table(sdoors_table, "sdoors");
+	}
+	if (!exist_table("sdoor_discovery")){
+		create_table(sdoor_discovery_table, "sdoor_discovery");
+	}
+	if (!exist_table("scorrs")){
+		create_table(scorrs_table, "scorrs");
+	}
+	if (!exist_table("scorr_discovery")){
+		create_table(scorr_discovery_table, "scorr_discovery");
+	}
+	if (!exist_table("games")){
+		create_table(games_table, "games");
+	}
+	int index = 0;
+	char request[REQUEST_SIZE];
+	index += sprintf(request + index, "CREATE VIEW game_results AS ");
+	index += sprintf(request + index, "SELECT g.id, nb_sdoors, nb_sdoor_discovery, nb_scorrs, nb_scorr_discovery, nb_squares_explored, nb_squares_reachable, used_moves, max_moves, bot_name, mode_name, level_reached ");
+	index += sprintf(request + index, "FROM games as g, ");
+	//sdoors
+	index += sprintf(request + index, "     (SELECT g.id, count(*) as nb_sdoors ");
+	index += sprintf(request + index, "      FROM games g, sdoors sd ");
+	index += sprintf(request + index, "      WHERE g.id == sd.game_id ");
+	index += sprintf(request + index, "      GROUP BY g.id) as sd, ");
+	//sdoor_discovery
+	index += sprintf(request + index, "     (SELECT g.id, count(*) as nb_sdoor_discovery ");
+	index += sprintf(request + index, "      FROM games g, sdoor_discovery sdd ");
+	index += sprintf(request + index, "      WHERE g.id == sdd.game_id ");
+	index += sprintf(request + index, "      GROUP BY g.id) as sdd, ");
+	//scorrs
+	index += sprintf(request + index, "     (SELECT g.id, count(*) as nb_scorrs ");
+	index += sprintf(request + index, "      FROM games g, scorrs sc ");
+	index += sprintf(request + index, "      WHERE g.id == sc.game_id ");
+	index += sprintf(request + index, "      GROUP BY g.id) as sc, ");
+	//scorr_discovery
+	index += sprintf(request + index, "     (SELECT g.id, count(*) as nb_scorr_discovery ");
+	index += sprintf(request + index, "      FROM games g, scorr_discovery scd ");
+	index += sprintf(request + index, "      WHERE g.id == scd.game_id ");
+	index += sprintf(request + index, "      GROUP BY g.id) as scd ");
+	index += sprintf(request + index, "WHERE sd.id  == g.id ");
+	index += sprintf(request + index, "  AND sdd.id == g.id ");
+	index += sprintf(request + index, "  AND sc.id == g.id ");
+	index += sprintf(request + index, "  AND scd.id == g.id;");
+
+	printf("request : %s\n", request);
+	char * err_msg;
+
+	sqlite3_exec(db,
+	             request,
+	             NULL,
+	             NULL,
+	             &err_msg);
+	
+	if (err_msg != NULL){//error treatment
+		fprintf(stderr, "Failed to create the specified table\n");
+		fprintf(stderr, "Error : %s\n", err_msg);
+		sqlite3_free(err_msg);
+		return -1;
+	}
+	return 0;
 }
 
 
 int close_db_manager(){
 	int result = sqlite3_close(db);
+	sem_post(sem);
 	if(result){
 		// Database closing has failed
 		// According to the sqlite3 doc, close should be tried again later
@@ -442,7 +541,7 @@ int close_db_manager(){
 	free_table_descriptor(sdoors_table);
 	free_table_descriptor(scorr_discovery_table);
 	free_table_descriptor(scorrs_table);
-	free_table_descriptor(mode_table);
+	free_table_descriptor(games_table);
 	//printf("Database closed\n");
 	return 0;
 }
