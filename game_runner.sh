@@ -4,7 +4,7 @@ STARTM=$(date -u "+%s")
 
 #default options
 NH_MAX_MOVES=200
-NH_BOT_NAME="java_sp"
+NH_BOT_NAME="java sp"
 NH_MM_LOGGING=0
 NH_DATABASE_PATH="/tmp/test.db"
 NB_GAMES=10
@@ -12,7 +12,7 @@ BOT_PATH="java_starter_package/Bot.jar"
 BOT_CMD="java -jar"
 
 
-#b specifies the bot
+#b specifies the bot name (Unusual chars should be avoided, spaces are accepted)
 #l enable middleman logging
 #m specifies the number of moves per game
 #g specifies the number of games
