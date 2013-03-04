@@ -87,8 +87,7 @@ class InputOutputUnit{
 		char buffer[] = new char[3];
 		int nb_read;
 		Logger.println("Reading Glyph");
-		// All glyph message are formatted with g<l><c><g>
-		// From David: it seems that it's g<c><l><g> actually, am I wrong?
+		// All glyph message are formatted with g<c><l><g>
 		nb_read = input.read(buffer, 0, 3);
 		if (nb_read < 0) throw new IOException("Connection closed by server");
 		if (nb_read != 3)
