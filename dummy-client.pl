@@ -53,7 +53,6 @@ else {
 				
 				# truncated glyph info goes in $leftover
 				else {
-					print STDERR "POUET : ";
 					$leftover = join('', @tmp[$i .. $#tmp]);
 					last;
 				}
