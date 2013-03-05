@@ -18,7 +18,7 @@ DB_PATH=$(dirname $DATABASE)
 
 #Variables
 
-BOT_FILE=( `sqlite3 /tmp/test.db 'select distinct bot_name from games' | sed 's/ /-/'` )
+BOT_FILE=( `sqlite3 $DATABASE 'select distinct bot_name from games' | sed 's/ /-/'` )
 MOVE_COLUMN=2
 
 FIELDS[0]="percent_explored"
@@ -39,7 +39,7 @@ FIELD_NAME[3]="average level reached"
 YRANGE[3]=$(sqlite3 $DATABASE 'select max(level_reached) from games')
 
 #Generating data files
-for ((i = 0; i < ${#BOTS[@]}; i++))
+for ((i = 0; i < ${#BOT_FILE[@]}; i++))
 do
     BOTS[i]=$(echo ${BOT_FILE[i]} | sed 's/-/ /')
     echo "Bot file : ${BOT_FILE[i]}"
@@ -61,14 +61,14 @@ do
     echo $REQUEST | xargs sqlite3 -header -csv $DATABASE >${FILES[i]}
 done
 
-pushd $DB_PATH >/dev/null
-
 MAX_X=$(sqlite3 $DATABASE 'select max(max_moves) from games')
+
+pushd $DB_PATH >/dev/null
 
 for ((i = 0; i < ${#FIELDS[@]};i++))
 do
 		gnuplot -persist <<PLOT
-set yrange [0:110]
+set yrange [0:${YRANGE[i]}]
 set xrange [0:${MAX_MOVES}]
 
 set xlabel "Number of moves"
