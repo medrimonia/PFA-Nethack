@@ -13,6 +13,9 @@
 #include <sys/stat.h>
 #include <sys/select.h>
 
+#include <stdint.h>
+#include <string.h>
+
 #define BUFSIZE         64
 #define DEFAULTSOCKPATH "/tmp/mmsock"
 
@@ -492,6 +495,7 @@ mm_print_glyph(window, x, y, glyph)
 {
 	int ochar, ocolor;
 	unsigned ospecial;
+	uint16_t glyphcode;
 
 	char buf[BUFSIZE];
 	ssize_t size;
@@ -504,16 +508,16 @@ mm_print_glyph(window, x, y, glyph)
 
 	if (client != -1) {
 
+		glyphcode = (uint16_t) glyph;
 		mm_vlog("send(): g %d %d %c %d", x, y, ochar, glyph);
 
 		size = sprintf(buf, "g%c%c%c", x, y, ochar);
+		memcpy(buf+size, &glyphcode, sizeof glyphcode);
 
-		send(client, buf, size, 0);
-		send(client, glyph, sizeof glyph, 0);
+		send(client, buf, size + sizeof glyphcode, 0);
 
 		if (replay > 0) {
-			write(replay, buf, size);
-			write(replay, glyph, sizeof glyph);
+			write(replay, buf, size + sizeof glyphcode);
 		}
 	}
 
