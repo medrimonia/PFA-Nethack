@@ -2,6 +2,7 @@ use v5.10;
 use strict;
 use warnings;
 
+use Data::Dumper;
 use Term::ReadKey;
 use Time::HiRes qw/sleep/;
 use Term::ANSIScreen qw/:cursor :screen/;
@@ -13,10 +14,11 @@ if ($#ARGV < 0) {
 }
 
 
+my @buf;
 my @coms;
 my @coms_reversed;
 
-{	# slurp @coms from $filename
+{	# slurp @buf from $filename
 
 	local $/ = undef;
 
@@ -26,33 +28,44 @@ my @coms_reversed;
 	my $replay = <$fh>;
 	close $fh;
 
-	@coms = split("ES", $replay);
+	@buf = split("ES", $replay);
 }
 
-{	# build @coms_reversed
+{	# build @coms and @coms_reversed
+
+	for my $i (0 .. $#buf) {
+		my @glyphs;
+		my @tmp = split('', $buf[$i]);
+
+		for (my $j = 0; $j <= $#tmp; $j++) {
+
+			if (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
+				push @glyphs, join('', @tmp[$j+1 .. $j+3]);
+				$j += 5;
+			}
+		}
+
+		$coms[$i] = \@glyphs;
+	}
 
 	my $tmpmap = [[]]; # remember what was where
 
-	for (@coms) {
-		my @glyphs_reversed;
-		my @glyphs = split 'g';
+	for my $i (0 .. $#coms) {
+		my @glyphs;
 
-		for (@glyphs) {
-			my ($y, $x, $g) = unpack("WWa");
+		for (@{$coms[$i]}) {
+			my ($y, $x, $g) = unpack("CCa");
 
 			if (defined $g) {
 				# use 'unshift' to reverse the order of appearance of glyphs
-				# and don't forget to pack the leading 'g' code
 				unshift
-					@glyphs_reversed,
-					pack("aWWa", 'g', $y, $x, $tmpmap->[$x]->[$y] // " ");
+					@glyphs,
+					pack("WWa", $y, $x, $tmpmap->[$x]->[$y] // " ");
 				$tmpmap->[$x]->[$y] = $g;
 			}
 		}
 
-		# make sure each element of @coms_reversed is a string (same as
-		# @coms)
-		push @coms_reversed, "@glyphs_reversed";
+		$coms_reversed[$i] = \@glyphs;
 	}
 }
 
@@ -65,8 +78,7 @@ my $slideshow = 0;
 my $slideshow_reversed = 0;
 
 # print first set of glyphs (initial map)
-my @glyphs = split('g', $coms[0]);
-print_glyphs(@glyphs);
+print_glyphs($coms[0]);
 
 ReadMode('cbreak');
 
@@ -79,8 +91,7 @@ while (1) {
 			sleep(1./$slideshow);
 
 			$turn++;
-			@glyphs = split('g', $coms[$turn]);
-			print_glyphs(@glyphs);
+			print_glyphs($coms[$turn]);
 
 			$slideshow = 0 if (defined ReadKey(-1));
 		}
@@ -95,8 +106,7 @@ while (1) {
 			sleep(1./$slideshow_reversed);
 
 			$turn--;
-			@glyphs = split('g', $coms_reversed[$turn+1]);
-			print_glyphs(@glyphs);
+			print_glyphs($coms_reversed[$turn+1]);
 
 			$slideshow_reversed = 0 if (defined ReadKey(-1));
 		}
@@ -111,14 +121,12 @@ while (1) {
 
 		if ($key eq 'j' && $turn < $#coms) {
 			$turn++;
-			@glyphs = split('g', $coms[$turn]);
-			print_glyphs(@glyphs);
+			print_glyphs($coms[$turn]);
 		}
 
 		elsif ($key eq 'k' && $turn > 0) {
 			$turn--;
-			@glyphs = split('g', $coms_reversed[$turn+1]);
-			print_glyphs(@glyphs);
+			print_glyphs($coms_reversed[$turn+1]);
 		}
 
 		elsif ($key eq ':') {
@@ -151,8 +159,7 @@ while (1) {
 
 				for (; $turn != $cmd; $turn += $step) {
 					# replay until $turn == $cmd
-					@glyphs = split('g', $coms_array->[$turn]);
-					print_glyphs(@glyphs);
+					print_glyphs($coms_array->[$turn]);
 				}
 			}
 
@@ -168,10 +175,12 @@ while (1) {
 }
 
 
+
 sub print_glyphs {
 	local $| = 0;
+	my ($ref) = @_;
 
-	for (@_) {
+	for (@{$ref}) {
 		my ($y, $x, $g) = unpack("WWa");
 
 		if (defined $g) {
