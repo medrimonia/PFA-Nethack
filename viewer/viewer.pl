@@ -75,7 +75,7 @@ while (1) {
 
 	if ($slideshow) {
 
-		if ($turn <= $#coms) {
+		if ($turn < $#coms) {
 			sleep(1./$slideshow);
 
 			$turn++;
