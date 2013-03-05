@@ -39,13 +39,16 @@ my $replay;
 	for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
 		if (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
+			my $glyph = join('', @tmp[$j+1 .. $j+5]);
+			my ($y, $x, $g, $code) = unpack("CCaS", $glyph);
+
 			push
 				@glyphs,
-				join('', @tmp[$j+1 .. $j+3]);
+				pack("CCa", $y, $x, $g);
 
 			unshift 
 				@glyphs_r,
-				join('', @tmp[$j+1 .. $j+2], $tmpmap->[$x]->[$y] // " ");
+				pack("CCa", $y, $x, $tmpmap->[$x]->[$y] // " ");
 
 			$j += 5;
 			$tmpmap->[$x]->[$y] = $g;
