@@ -35,8 +35,16 @@ else {
 	cls();
 
 	while(my $msg = <$sock>) {
-		$msg = substr($msg, 1, -1);
-		print_glyphs(split('g', $msg));
+		my @glyphs;
+		my @tmp = split('(g)', $msg);
+
+		for my $i (0 .. $#tmp - 1) {
+			if ($tmp[$i] eq 'g') {
+				push @glyphs, $tmp[$i+1];
+			}
+		}
+
+		print_glyphs(@glyphs);
 	}
 }
 
