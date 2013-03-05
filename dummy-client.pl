@@ -2,6 +2,7 @@ use 5.010;
 use strict;
 use warnings;
 
+use IO::Select;
 use Term::ReadKey;
 use IO::Socket::UNIX;
 use Term::ANSIScreen qw/:cursor :screen/;
@@ -32,9 +33,16 @@ else {
 	$| = 1;
 	$/ = 'E';
 
+	my $s = IO::Select->new($sock);
+
 	cls();
 
 	while(my $msg = <$sock>) {
+
+		while ($s->can_read(0.05)) {
+			$msg .= <$sock>;
+		}
+
 		my @glyphs;
 		my @tmp = split('(g)', $msg);
 
