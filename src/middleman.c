@@ -506,12 +506,14 @@ mm_print_glyph(window, x, y, glyph)
 
 		mm_vlog("send(): g %d %d %c %d", x, y, ochar, glyph);
 
-		size = sprintf(buf, "g%c%c%c%d", x, y, ochar, glyph);
+		size = sprintf(buf, "g%c%c%c", x, y, ochar);
 
 		send(client, buf, size, 0);
+		send(client, glyph, sizeof glyph, 0);
 
 		if (replay > 0) {
 			write(replay, buf, size);
+			write(replay, glyph, sizeof glyph);
 		}
 	}
 
