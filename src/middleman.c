@@ -497,13 +497,16 @@ mm_print_glyph(window, x, y, glyph)
 	ssize_t size;
 
 	mapglyph(glyph, &ochar, &ocolor, &ospecial, x, y);
-	mm_vlog("mm_print_glyph: window %d - %d:%d:%c", window, x, y, ochar);
+	mm_vlog(
+		"mm_print_glyph: window %d - %d:%d:%c:%d",
+		window, x, y, ochar, glyph
+	);
 
 	if (client != -1) {
 
-		mm_vlog("send(): g %#x %#x %c %d", x, y, ochar, glyph);
+		mm_vlog("send(): g %d %d %c %d", x, y, ochar, glyph);
 
-		size = sprintf(buf, "g%c%c%c", x, y, ochar);
+		size = sprintf(buf, "g%c%c%c%d", x, y, ochar, glyph);
 
 		send(client, buf, size, 0);
 
