@@ -14,11 +14,12 @@ if ($#ARGV < 0) {
 }
 
 
-my @buf;
 my @coms;
 my @coms_reversed;
 
-{	# slurp @buf from $filename
+my $replay;
+
+{	# slurp from $filename
 
 	local $/ = undef;
 
@@ -28,44 +29,44 @@ my @coms_reversed;
 	my $replay = <$fh>;
 	close $fh;
 
-	@buf = split("ES", $replay);
-}
+	# build @coms and @coms_reversed
 
-{	# build @coms and @coms_reversed
-
-	for my $i (0 .. $#buf) {
-		my @glyphs;
-		my @tmp = split('', $buf[$i]);
-
-		for (my $j = 0; $j <= $#tmp; $j++) {
-
-			if (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
-				push @glyphs, join('', @tmp[$j+1 .. $j+3]);
-				$j += 5;
-			}
-		}
-
-		$coms[$i] = \@glyphs;
-	}
+	my @glyphs;
+	my @glyphs_r;
+	my @tmp = split('', $replay);
 
 	my $tmpmap = [[]]; # remember what was where
 
-	for my $i (0 .. $#coms) {
-		my @glyphs;
+	for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
-		for (@{$coms[$i]}) {
-			my ($y, $x, $g) = unpack("CCa");
+		if (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
+			my $glyph = join('', @tmp[$j+1 .. $j+5]);
+			my ($y, $x, $g, $code) = unpack("CCaS", $glyph);
 
-			if (defined $g) {
-				# use 'unshift' to reverse the order of appearance of glyphs
-				unshift
-					@glyphs,
-					pack("WWa", $y, $x, $tmpmap->[$x]->[$y] // " ");
-				$tmpmap->[$x]->[$y] = $g;
-			}
+			push
+				@glyphs,
+				pack("CCa", $y, $x, $g);
+
+			unshift 
+				@glyphs_r,
+				pack("CCa", $y, $x, $tmpmap->[$x]->[$y] // " ");
+
+			$j += 5;
+			$tmpmap->[$x]->[$y] = $g;
 		}
 
-		$coms_reversed[$i] = \@glyphs;
+		elsif ($tmp[$j] eq 'E') {
+			my @glyphs_copy   = @glyphs;
+			my @glyphs_r_copy = @glyphs_r;
+
+			$coms[$i]          = \@glyphs_copy;
+			$coms_reversed[$i] = \@glyphs_r_copy;
+
+			@glyphs   = ();
+			@glyphs_r = ();
+
+			$i++;
+		}
 	}
 }
 
@@ -146,20 +147,16 @@ while (1) {
 
 			if ($cmd =~ /^\d+$/ && $cmd <= $#coms) {
 				# goto turn number in $cmd
-				my $step;
-				my $coms_array;
-
 				if ($turn <= $cmd) {
-					$step = 1;
-					$coms_array = \@coms;
+					while ($turn != $cmd) {
+						$turn++;
+						print_glyphs($coms[$turn]);
+					}
 				} else {
-					$step = -1;
-					$coms_array = \@coms_reversed;
-				}
-
-				for (; $turn != $cmd; $turn += $step) {
-					# replay until $turn == $cmd
-					print_glyphs($coms_array->[$turn]);
+					while ($turn != $cmd) {
+						$turn--;
+						print_glyphs($coms_reversed[$turn+1]);
+					}
 				}
 			}
 
