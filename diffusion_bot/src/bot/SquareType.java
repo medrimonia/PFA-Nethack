@@ -10,6 +10,7 @@ public enum SquareType {
 	VERTICAL_WALL('|'),
 	HORIZONTAL_WALL('-'),
 	WAY_UP('<'),
+	FORBIDDEN('X'),
 	WAY_DOWN('>');
 	
 	private char token;

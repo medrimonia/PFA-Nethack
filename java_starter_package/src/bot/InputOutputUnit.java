@@ -92,6 +92,7 @@ class InputOutputUnit{
 		if (nb_read < 0) throw new IOException("Connection closed by server");
 		if (nb_read != 3)
 			throw new InvalidMessageException("Expected 3 chars, received " + nb_read);
+		int unused = input.read() + input.read() * 256;
 		int line = (int)buffer[1];
 		int col = (int)buffer[0];
 		Logger.println("Update glyph " + buffer[2] + " in [" + line +','+col+"]");

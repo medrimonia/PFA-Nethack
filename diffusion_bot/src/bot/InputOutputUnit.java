@@ -94,8 +94,10 @@ class InputOutputUnit{
 			throw new InvalidMessageException("Expected 3 chars, received " + nb_read);
 		int line = (int)buffer[1];
 		int col = (int)buffer[0];
+		// Might cause some problems, should ideally be fixed by using DataInputStream
+		int trueGlyph = input.read() + input.read() * 256;
 		Logger.println("Update glyph " + buffer[2] + " in [" + line +','+col+"]");
-		b.map.updateSquare(line, col, buffer[2]);
+		b.map.updateSquare(line, col, buffer[2], trueGlyph);
 	}
 	
 	public void parseMapSize(Bot b) throws IOException, InvalidMessageException{
