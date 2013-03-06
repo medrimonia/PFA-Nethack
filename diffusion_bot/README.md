@@ -1,4 +1,4 @@
-DIFFUSION_BOT
+DIFFUSION BOT
 =============
 
 This folder contains everything needed to build the diffusion bot. The bot
@@ -71,12 +71,13 @@ when a square has a high score, it'll propagate this value to all it's
 neighboors, lowering it with a cost for each move.
 
 Example:
-
+```
 4|0|0|6        4|4|5|6
 -------        -------
 0|@|2|1  --->  3|@|5|5
 -------        -------
 3|0|1|2        3|4|4|4
+```
 
 The bot will then move east or north-east (Cost might be parametred)
 
