@@ -9,7 +9,7 @@ NH_MM_LOGGING=0
 NH_DATABASE_PATH="/tmp/test.db"
 NB_GAMES=10
 BOT_PATH="java_starter_package/Bot.jar"
-BOT_CMD="java -jar"
+BOT_CMD="java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"
 
 
 #b specifies the bot name (Unusual chars should be avoided, spaces are accepted)
@@ -57,15 +57,15 @@ export NH_DATABASE_PATH
 
 echo "Database_path : $NH_DATABASE_PATH"
 
-TEST_FOLDER="test"$$	
+TEST_FOLDER="/tmp/test"$$
 BOT_FILE=$(basename $BOT_PATH)
 
 mkdir $TEST_FOLDER || exit
 #content to move should be improved
 cp -r nethack-3.4.3 $TEST_FOLDER
-sed s:nethack-3.4.3:"$TEST_FOLDER"/nethack-3.4.3: \
-		<$TEST_FOLDER/nethack-3.4.3/nethack          \
-		>$TEST_FOLDER/nethack-3.4.3/nethack_2
+sed s:=.*nethack-3.4.3:"=$TEST_FOLDER"/nethack-3.4.3: \
+    <$TEST_FOLDER/nethack-3.4.3/nethack               \
+    >$TEST_FOLDER/nethack-3.4.3/nethack_2
 chmod +x $TEST_FOLDER/nethack-3.4.3/nethack_2
 cp $BOT_PATH $TEST_FOLDER
 #dirtyhack
