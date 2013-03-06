@@ -63,10 +63,8 @@ BOT_FILE=$(basename $BOT_PATH)
 mkdir $TEST_FOLDER || exit
 #content to move should be improved
 cp -r nethack-3.4.3 $TEST_FOLDER
-sed s:=.*nethack-3.4.3:"=$TEST_FOLDER"/nethack-3.4.3: \
-    <$TEST_FOLDER/nethack-3.4.3/nethack               \
-    >$TEST_FOLDER/nethack-3.4.3/nethack_2
-chmod +x $TEST_FOLDER/nethack-3.4.3/nethack_2
+sed -i s:=.*nethack-3.4.3:"=$TEST_FOLDER"/nethack-3.4.3: \
+    $TEST_FOLDER/nethack-3.4.3/nethack
 cp $BOT_PATH $TEST_FOLDER
 #dirtyhack
 cp pythonsp/nhmap.py $TEST_FOLDER
@@ -78,7 +76,7 @@ do
 		#Avoiding mm.log to grow too much in size
 		rm -f $TEST_FOLDER/nethack-3.4.3/nethackdir/mm.log
 		#Running nethack
-		$TEST_FOLDER/nethack-3.4.3/nethack_2 >$TEST_FOLDER/nh_log &
+		$TEST_FOLDER/nethack-3.4.3/nethack >$TEST_FOLDER/nh_log &
 		#Running bot
 		$BOT_CMD $TEST_FOLDER/$BOT_FILE $NH_MM_SOCKPATH >$TEST_FOLDER/bot_log
 		printf "\033[80DDone : %d of %d" $i $NB_GAMES
