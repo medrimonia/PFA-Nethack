@@ -186,10 +186,9 @@ int init_db_manager(){
 	do{
 		basename = next;
 		printf("basename : %s\n", basename);
-		if (next[0] == '/')
-			next = strstr(next + 1,"/");
-		else
-			next = strstr(next,"/");
+		next = strstr(next,"/");
+		if (next != NULL)
+			next++;
 	}while (next != NULL);
 	// Initializing database semaphore
 	char sem_name[SEM_NAME_SIZE];
