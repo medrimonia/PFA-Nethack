@@ -16,53 +16,46 @@ if ($#ARGV < 0) {
 my @coms;
 my @coms_reversed;
 
-my $replay;
+{
+	my @tmp;
 
-{	# slurp from $filename
+	{	# slurp from $filename
+		local $/ = undef;
 
-	local $/ = undef;
+		my $filename = $ARGV[0];
+		open(my $fh, '<', $filename)
+			or die "Can't open file $filename: $!";
+		my $replay = <$fh>;
+		close $fh;
 
-	my $filename = $ARGV[0];
-	open(my $fh, '<', $filename)
-		or die "Can't open file $filename: $!";
-	my $replay = <$fh>;
-	close $fh;
+		@tmp = split('', $replay);
+	}
 
 	# build @coms and @coms_reversed
+	my $glyphs = [];
+	my $glyphs_r = [];
 
-	my @glyphs;
-	my @glyphs_r;
-	my @tmp = split('', $replay);
-
-	my $tmpmap = [[]]; # remember what was where
+	my $tmpmap = []; # remember what was where
 
 	for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
 		if (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
 			my $glyph = join('', @tmp[$j+1 .. $j+5]);
-			my ($y, $x, $g, $code) = unpack("CCaS", $glyph);
+			my ($y, $x, $g, $c) = unpack("CCaS", $glyph);
 
-			push
-				@glyphs,
-				pack("CCa", $y, $x, $g);
-
-			unshift 
-				@glyphs_r,
-				pack("CCa", $y, $x, $tmpmap->[$x]->[$y] // " ");
+			push    @$glyphs,   [$y, $x, $g];
+			unshift @$glyphs_r, [$y, $x, $tmpmap->[$x]->[$y] // " "];
 
 			$j += 5;
 			$tmpmap->[$x]->[$y] = $g;
 		}
 
 		elsif ($tmp[$j] eq 'E') {
-			my @glyphs_copy   = @glyphs;
-			my @glyphs_r_copy = @glyphs_r;
+			$coms[$i]          = $glyphs;
+			$coms_reversed[$i] = $glyphs_r;
 
-			$coms[$i]          = \@glyphs_copy;
-			$coms_reversed[$i] = \@glyphs_r_copy;
-
-			@glyphs   = ();
-			@glyphs_r = ();
+			$glyphs   = [];
+			$glyphs_r = [];
 
 			$i++;
 		}
@@ -172,7 +165,7 @@ sub print_glyphs {
 	my ($ref) = @_;
 
 	for (@{$ref}) {
-		my ($y, $x, $g) = unpack("WWa");
+		my ($y, $x, $g) = @$_;
 
 		if (defined $g) {
 			locate $x+2, $y+1;
