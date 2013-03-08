@@ -1,20 +1,45 @@
 #!/bin/bash
 
-#Variables
 
-DATABASE="database.db"
+if [ $# -lt 1 ]
+then
+		echo "usage: `basename $0` <database_name>"
+		exit
+fi
 
-DATAFILE="data.csv"
-PLOTDATA="data_formated.csv"
+DATABASE=$1;
 
-REQUEST="'select door_line, door_column, count(*) as nb_doors from doors group by door_line, door_column'"
+if [ ! -f $DATABASE ]
+then
+		echo "'$DATABASE' doesn't exist, please provide a valid database"
+		exit
+fi
+
+DB_PATH=$(dirname $DATABASE)
+
+DATAFILE="${DB_PATH}/sd_3d_data.csv"
+PLOTDATA="${DB_PATH}/sd_3d_data_formated.csv"
+
+REQUEST="'select sd_line, sd_column, count(*) as nb_doors
+            from sdoors
+            group by sd_line, sd_column
+            order by sd_line, sd_column'"
 # This particular syntax is due to a problem when processing argument with
 # 'select ... '
 echo $REQUEST | xargs sqlite3 -header -csv $DATABASE > $DATAFILE
 rm -f $PLOTDATA
 for ((x = 0 ; x < 22 ; x++))
 do
-		grep "^$x" ${DATAFILE} >> $PLOTDATA
+		for ((y =0; y < 81; y++))
+		do
+				LINE=$(grep "^$x,$y," ${DATAFILE})
+				if [ ${#LINE} -lt 4 ]
+				then
+						echo "$x,$y,0" >> $PLOTDATA
+				else
+						echo "$LINE" >> $PLOTDATA
+				fi
+		done
 		echo "" >> $PLOTDATA
 done
 
