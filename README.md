@@ -10,13 +10,10 @@ illustrating their content.
 The folder 'database_details' contains more informations about the database used
 to store all the games details.
 
-The folder 'interface-perl' contains the perl interface. It has it's own README
-which explains how to use it.
-
-The folder 'install' contains some patches needed to work with our modified
+The folder 'install' contains some patches needed to work with this modified
 version of nethack, those patches are mainly adding hooks in the game. A
 modified version of nethack's Makefile is also contained in this folder,
-ensuring that the files from the pfa will be used.
+ensuring that the files from the PFA will be used.
 
 The folder 'patches' contains some patches that disable hunger, monsters or
 other features of nethack. Those patches are mainly modifying the game
@@ -45,14 +42,16 @@ The folder 'scripts' contains scripts allowing to run several games, to generate
 graphs or other utilities based on our programs. Every script is described in
 'scripts/README.md'
 
-The folder 'viewer' contains a perl implementation of a viewer allowing to see
+The folder 'viewer' contains a program called `viewer.pl` which can show
 replays of games played by bots.
+
 
 ## Used package
 
-Here's the list of the packages needed in order to compile properly :
+Here's the list of the packages required for the provided bots programmed in Java
 * libunixsocket-java _The package might also be named libmatthew-java_
-* libsqlite3-dev
+* libsqlite3
+
 
 ## Compiling
 
@@ -65,62 +64,6 @@ The perl modules viewer and dummy_client require some dependencies in order to
 run (refer to the appropriate README).
 
 
-## Running a game
-
-The interface needs to be started first, from the root directory :
-
-	perl interface-perl/interface.pl path/to/nethack
-
-Neither the bot nor the interface handle the game start automatically, you have
-to choose the character class and press enter once or twice in order to skip the
-initial message before starting the bot.
-
-Once the game is properly started and the map is shown, it's possible to launch 
-the bot.
-
-	java -jar java_starter_package/Bot.jar
-
-
-## Full example
-
-First, cd into the project's root directory and execute the nh-setup.sh script
-
-	$ ./nh-setup.sh
-	nethack-343-src.tgz not found, automatically download it now? [Y/n]y
-
-	-- download --
-	
-	Extracting... 
-	Running NetHack's setup script... 
-	Copying Makefiles.
-	patching file nethack-3.4.3/Makefile
-	patching file nethack-3.4.3/include/unixconf.h
-	patching file nethack-3.4.3/src/Makefile
-	Applying patches...
-	Apply disable-hunger.patch? [Y/n]y         <--- patches you want to apply
-	patching file nethack-3.4.3/src/eat.c
-	Apply disable-monsters.patch? [Y/n]n
-
-	-- compilation --
-
-	************************************************
-	Nethack run script installed in nethack-3.4.3/    <--- where to find the game
-
-
-NetHack is now compiled with the desired patches. Let us build the java starter package bot:
-
-	$ cd java_starter_package/
-	$ ./build_starter_package.sh
-
-This will create a Bot.jar file. The last step is to setup the interface (please read the README in the interface-perl directory) and run it with the patched NetHack. From the root directory:
-
-	$ perl interface-perl/interface.pl nethack-3.4.3/nethack
-
-You now have to choose the adventurer's characteristics and skip the intro by pressing return a few times. When the map is finaly shown, you may start the bot (or play the game from the keyboard: useful if the bot gets stuck or to enter the #quit command to end the game). To launch the bot, run in a new terminal window :
-
-	$ java -jar java_starter_package/Bot.jar
-
-	
 ## Further development
 
 If you wish to develop something for this project, please checkout the branch
