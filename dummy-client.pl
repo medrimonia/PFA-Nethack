@@ -16,22 +16,40 @@ my $sock = IO::Socket::UNIX->new(
 $sock->autoflush(1);
 
 
-
 defined (my $pid = fork()) or die "fork: $!";
 
 if ($pid) {
+	$SIG{CHLD} = sub {
+		# what to do when the reader is dead
+		ReadMode('normal'); # reset to default
+		close $sock;
+		exit;
+	};
+
 	ReadMode('raw');
 
 	while (my $key = ReadKey(0)) {
+		last if ($key eq "\3"); # Ctrl-C quits
 		print $sock $key;
 	}
 
 	ReadMode('normal'); # reset to default
+	close $sock;
+
+	# tell reader to quit
+	kill 15, $pid;
+	wait;
 }
 
 else {
 	$| = 1;
 	$/ = 'E';
+
+	$SIG{TERM} = sub {
+		# cleanup when told to quit
+		close $sock;
+		exit;
+	};
 
 	cls();
 	my @glyphs;
@@ -46,7 +64,7 @@ else {
 
 			if ($tmp[$i] eq 'g') {
 
-				# complete glyph info
+				# got a complete glyph info
 				if ($i + 5 <= $#tmp) {
 					push @glyphs, join('', @tmp[$i+1 .. $i+5]);
 				}
@@ -61,18 +79,19 @@ else {
 			}
 		}
 
-		print_glyphs(@glyphs);
+		print_glyphs(\@glyphs);
 	}
-}
 
-close $sock;
+	close $sock;
+}
 
 
 sub print_glyphs {
 	local $| = 0;
+	my ($ref) = @_;
 
-	for (@_) {
-		my ($y, $x, $g, $code) = unpack("WWaS");
+	for (@$ref) {
+		my ($y, $x, $g, $code) = unpack("CCaS");
 
 		if (defined $g) {
 			locate $x+2, $y;
