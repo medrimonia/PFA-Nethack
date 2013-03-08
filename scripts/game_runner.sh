@@ -62,9 +62,9 @@ export NH_MM_LOGGING
 export NH_BOT_NAME
 export NH_DATABASE_PATH
 
-#Some tests should be runned first
-
-echo "Database_path : $NH_DATABASE_PATH"
+BASEDIR=$(pwd)
+DIR="$( cd "$( dirname "$0" )" && pwd )/.."
+cd $DIR
 
 TEST_FOLDER="/tmp/test"$$
 BOT_FILE=$(basename $BOT_PATH)
@@ -74,10 +74,13 @@ mkdir $TEST_FOLDER || exit
 cp -r nethack-3.4.3 $TEST_FOLDER
 sed -i s:=.*nethack-3.4.3:"=$TEST_FOLDER"/nethack-3.4.3: \
     $TEST_FOLDER/nethack-3.4.3/nethack
+cd ..
+cd $BASEDIR
 cp $BOT_PATH $TEST_FOLDER
 #dirtyhack
 cp pythonsp/nhmap.py $TEST_FOLDER
 
+printf "Done : 0 of %d" $NB_GAMES
 for ((i = 1; i <= NB_GAMES; i++))
 do
 		#Avoiding mm.log to grow too much in size
