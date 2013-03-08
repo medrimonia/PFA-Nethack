@@ -19,6 +19,14 @@ $sock->autoflush(1);
 defined (my $pid = fork()) or die "fork: $!";
 
 if ($pid) {
+	$SIG{TERM} = sub {
+		# cleanup when told to quit
+		close $sock;
+		my $cnt = kill 15, $pid;
+		wait if ($cnt > 0);
+		exit;
+	};
+
 	$SIG{CHLD} = sub {
 		# what to do when the reader is dead
 		ReadMode('normal'); # reset to default
@@ -37,8 +45,8 @@ if ($pid) {
 	close $sock;
 
 	# tell reader to quit
-	kill 15, $pid;
-	wait;
+	my $cnt = kill 15, $pid;
+	wait if ($cnt > 0);
 }
 
 else {
