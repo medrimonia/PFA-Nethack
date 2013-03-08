@@ -26,7 +26,7 @@ This script takes the following parameters :
 * -g <nb>   : The number of games to play
 	* _Default : 10_
 * -m <nb>   : The maximum number of moves allowed for the bot
- 	* _Default : 20_
+ 	* _Default : 200_
 * -p <path> : The path to the Bot main file
 	* _Default : "java_starter_package/Bot.jar"_
 * -c <cmd>  : The command used to launch the Bot
