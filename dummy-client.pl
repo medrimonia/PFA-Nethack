@@ -33,22 +33,31 @@ else {
 	$| = 1;
 	$/ = 'E';
 
-	my $s = IO::Select->new($sock);
-
 	cls();
+	my @glyphs;
+	my $leftover;
 
-	while(my $msg = <$sock>) {
+	while (my $msg = <$sock>) {
 
-		while ($s->can_read(0.05)) {
-			$msg .= <$sock>;
-		}
+		my @tmp = split('', ($leftover // '') . $msg);
+		$leftover = undef;
 
-		my @glyphs;
-		my @tmp = split('(g)', $msg);
+		for (my $i = 0; $i <= $#tmp; $i++) {
 
-		for my $i (0 .. $#tmp - 1) {
 			if ($tmp[$i] eq 'g') {
-				push @glyphs, $tmp[$i+1];
+
+				# complete glyph info
+				if ($i + 5 <= $#tmp) {
+					push @glyphs, join('', @tmp[$i+1 .. $i+5]);
+				}
+				
+				# truncated glyph info goes in $leftover
+				else {
+					$leftover = join('', @tmp[$i .. $#tmp]);
+					last;
+				}
+
+				$i += 5;
 			}
 		}
 
@@ -63,10 +72,10 @@ sub print_glyphs {
 	local $| = 0;
 
 	for (@_) {
-		my ($y, $x, $g) = unpack("WWa");
+		my ($y, $x, $g, $code) = unpack("WWaS");
 
 		if (defined $g) {
-			locate $x, $y;
+			locate $x+2, $y;
 			print $g;
 		}
 	}

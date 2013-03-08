@@ -16,7 +16,9 @@ if ($#ARGV < 0) {
 my @coms;
 my @coms_reversed;
 
-{	# slurp @coms from $filename
+my $replay;
+
+{	# slurp from $filename
 
 	local $/ = undef;
 
@@ -26,33 +28,44 @@ my @coms_reversed;
 	my $replay = <$fh>;
 	close $fh;
 
-	@coms = split("ES", $replay);
-}
+	# build @coms and @coms_reversed
 
-{	# build @coms_reversed
+	my @glyphs;
+	my @glyphs_r;
+	my @tmp = split('', $replay);
 
 	my $tmpmap = [[]]; # remember what was where
 
-	for (@coms) {
-		my @glyphs_reversed;
-		my @glyphs = split 'g';
+	for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
-		for (@glyphs) {
-			my ($y, $x, $g) = unpack("WWa");
+		if (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
+			my $glyph = join('', @tmp[$j+1 .. $j+5]);
+			my ($y, $x, $g, $code) = unpack("CCaS", $glyph);
 
-			if (defined $g) {
-				# use 'unshift' to reverse the order of appearance of glyphs
-				# and don't forget to pack the leading 'g' code
-				unshift
-					@glyphs_reversed,
-					pack("aWWa", 'g', $y, $x, $tmpmap->[$x]->[$y] // " ");
-				$tmpmap->[$x]->[$y] = $g;
-			}
+			push
+				@glyphs,
+				pack("CCa", $y, $x, $g);
+
+			unshift 
+				@glyphs_r,
+				pack("CCa", $y, $x, $tmpmap->[$x]->[$y] // " ");
+
+			$j += 5;
+			$tmpmap->[$x]->[$y] = $g;
 		}
 
-		# make sure each element of @coms_reversed is a string (same as
-		# @coms)
-		push @coms_reversed, "@glyphs_reversed";
+		elsif ($tmp[$j] eq 'E') {
+			my @glyphs_copy   = @glyphs;
+			my @glyphs_r_copy = @glyphs_r;
+
+			$coms[$i]          = \@glyphs_copy;
+			$coms_reversed[$i] = \@glyphs_r_copy;
+
+			@glyphs   = ();
+			@glyphs_r = ();
+
+			$i++;
+		}
 	}
 }
 
@@ -65,8 +78,7 @@ my $slideshow = 0;
 my $slideshow_reversed = 0;
 
 # print first set of glyphs (initial map)
-my @glyphs = split('g', $coms[0]);
-print_glyphs(@glyphs);
+print_glyphs($coms[0]);
 
 ReadMode('cbreak');
 
@@ -79,8 +91,7 @@ while (1) {
 			sleep(1./$slideshow);
 
 			$turn++;
-			@glyphs = split('g', $coms[$turn]);
-			print_glyphs(@glyphs);
+			print_glyphs($coms[$turn]);
 
 			$slideshow = 0 if (defined ReadKey(-1));
 		}
@@ -95,8 +106,7 @@ while (1) {
 			sleep(1./$slideshow_reversed);
 
 			$turn--;
-			@glyphs = split('g', $coms_reversed[$turn+1]);
-			print_glyphs(@glyphs);
+			print_glyphs($coms_reversed[$turn+1]);
 
 			$slideshow_reversed = 0 if (defined ReadKey(-1));
 		}
@@ -111,14 +121,12 @@ while (1) {
 
 		if ($key eq 'j' && $turn < $#coms) {
 			$turn++;
-			@glyphs = split('g', $coms[$turn]);
-			print_glyphs(@glyphs);
+			print_glyphs($coms[$turn]);
 		}
 
 		elsif ($key eq 'k' && $turn > 0) {
 			$turn--;
-			@glyphs = split('g', $coms_reversed[$turn+1]);
-			print_glyphs(@glyphs);
+			print_glyphs($coms_reversed[$turn+1]);
 		}
 
 		elsif ($key eq ':') {
@@ -127,32 +135,22 @@ while (1) {
 			# prompt
 			locate 1,1; clline(); print "turn $turn : ";
 			ReadMode('normal');
-			
-			unless (defined ($cmd = <STDIN>)) {
-				cls();
-				exit;
-			}
-
-			ReadMode('cbreak');
+			$cmd = <STDIN>;
 			chomp $cmd;
+			ReadMode('cbreak');
 
 			if ($cmd =~ /^\d+$/ && $cmd <= $#coms) {
 				# goto turn number in $cmd
-				my $step;
-				my $coms_array;
-
 				if ($turn <= $cmd) {
-					$step = 1;
-					$coms_array = \@coms;
+					while ($turn != $cmd) {
+						$turn++;
+						print_glyphs($coms[$turn]);
+					}
 				} else {
-					$step = -1;
-					$coms_array = \@coms_reversed;
-				}
-
-				for (; $turn != $cmd; $turn += $step) {
-					# replay until $turn == $cmd
-					@glyphs = split('g', $coms_array->[$turn]);
-					print_glyphs(@glyphs);
+					while ($turn != $cmd) {
+						$turn--;
+						print_glyphs($coms_reversed[$turn+1]);
+					}
 				}
 			}
 
@@ -168,10 +166,12 @@ while (1) {
 }
 
 
+
 sub print_glyphs {
 	local $| = 0;
+	my ($ref) = @_;
 
-	for (@_) {
+	for (@{$ref}) {
 		my ($y, $x, $g) = unpack("WWa");
 
 		if (defined $g) {

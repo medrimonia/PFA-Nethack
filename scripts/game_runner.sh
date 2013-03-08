@@ -9,6 +9,13 @@ NB_GAMES=10
 BOT_PATH="java_starter_package/Bot.jar"
 BOT_CMD="java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"
 
+usage() {
+	echo "Usage: $0 [options]"
+	echo "Options:"
+	echo -e "\t-h        display this help"
+	echo "Exemple: $0 -b \"python sp\" -p \"pythonsp/bot.py\" -c \"python\""
+}
+
 
 #b specifies the bot name (Unusual chars should be avoided, spaces are accepted)
 #l enable middleman logging
@@ -17,8 +24,12 @@ BOT_CMD="java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"
 #p specifies the bot path
 #c specifies the bot launching cmd
 #d specifies the database path
-while getopts "g:m:b:p:c:d:l" opt; do
+while getopts "g:m:b:p:c:d:lh" opt; do
 		case $opt in
+				h)
+						usage;
+						exit;
+						;;
 				g)
 						NB_GAMES=$OPTARG;
 						;;
@@ -69,8 +80,6 @@ cp pythonsp/nhmap.py $TEST_FOLDER
 
 for ((i = 1; i <= NB_GAMES; i++))
 do
-		#dirtyhack
-		cp pythonsp/nhmap.py $TEST_FOLDER
 		#Avoiding mm.log to grow too much in size
 		rm -f $TEST_FOLDER/nethack-3.4.3/nethackdir/mm.log
 		#Running nethack

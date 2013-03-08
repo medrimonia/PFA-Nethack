@@ -1,5 +1,6 @@
 import time
 import struct
+import string
 import random
 from socket import *
 
@@ -27,8 +28,8 @@ def build_cmd_list():
 					if (cnt < mmin or mmin == -1):
 						mmin = cnt
 						cmds = ["s"]
-					g = get_glyph(glyphs, c, r)
-					if (g == '+'):
+					g, code = get_glyph(glyphs, c, r)
+					if (code == 2359 or code == 2360):
 						# kick door instead of opening : more effective :D
 						cmds.append("\4" + keys[r-(posr-1)][c-(posc-1)])
 					else:
@@ -77,7 +78,7 @@ while 1:
 			#print cmd
 			#dump_map(glyphs)
 			#dump_been_there(glyphs)
-			#time.sleep(0.4)
+			#time.sleep(0.05)
 
 		elif (data[i] == 'm'):
 			if (dlen - i > 2):
@@ -89,13 +90,14 @@ while 1:
 				break
 
 		elif (data[i] == 'g'):
-			if (dlen - i > 3):
+			if (dlen - i > 5):
 				c = ord(data[i+1])
 				r = ord(data[i+2])
 				g = data[i+3]
-				set_glyph(glyphs, c, r, g)
-				i += 4
-				if (g == '@'):
+				code = struct.unpack('H', ''.join(data[i+4:i+6]))[0]
+				set_glyph(glyphs, c, r, g, code)
+				i += 6
+				if (g == '@' and code < 400):
 					posc = c
 					posr = r
 					been_there_inc(glyphs, c, r)  # 'been there' count
