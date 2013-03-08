@@ -16,8 +16,8 @@ fi
 
 DB_PATH=$(dirname $DATABASE)
 
-LINE_DATA="${DB_PATH}/line_data.csv"
-COLUMN_DATA="${DB_PATH}/col_data.csv"
+LINE_DATA="${DB_PATH}/sd_line_data.csv"
+COLUMN_DATA="${DB_PATH}/sd_col_data.csv"
 
 LINE_REQUEST="'select sd_line, count(*) as nb_doors
                  from sdoors
