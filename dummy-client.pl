@@ -60,11 +60,11 @@ else {
 	};
 
 	cls();
-	my @glyphs;
 	my $leftover;
 
 	while (my $msg = <$sock>) {
 
+		my @glyphs;
 		my @tmp = split('', ($leftover // '') . $msg);
 		$leftover = undef;
 
