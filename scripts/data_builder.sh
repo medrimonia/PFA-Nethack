@@ -12,6 +12,8 @@ MAX_MOVES[4]=10000
 
 NB_GAMES=20
 
+DATABASE="/tmp/test.db"
+
 for ((i = 0; i < ${#BOT[@]}; i++))
 do
     for ((j = 0; j < ${#MAX_MOVES[@]}; j++))
@@ -20,6 +22,7 @@ do
         ./game_runner.sh -g $NB_GAMES        \
                          -m ${MAX_MOVES[$j]} \
                          -b ${BOT[$i]}       \
-                         -p ${BOT_PATH[$i]}
+                         -p ${BOT_PATH[$i]}  \
+                         -d ${DATABASE}
     done
 done

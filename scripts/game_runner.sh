@@ -69,8 +69,6 @@ cp pythonsp/nhmap.py $TEST_FOLDER
 
 for ((i = 1; i <= NB_GAMES; i++))
 do
-		#dirtyhack
-		cp pythonsp/nhmap.py $TEST_FOLDER
 		#Avoiding mm.log to grow too much in size
 		rm -f $TEST_FOLDER/nethack-3.4.3/nethackdir/mm.log
 		#Running nethack
