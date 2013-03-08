@@ -9,11 +9,11 @@
 #include "database_manager.h"
 #include "game_statistics.h"
 
-int main(int argc, char ** argv){
+int main(void){
 
 	fork();
 	// Initializing random generator
-  srand(time(NULL));
+	srand(time(NULL));
 
 	//gs_init should be called implicitly
 

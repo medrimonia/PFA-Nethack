@@ -11,7 +11,7 @@
 // for ifdef
 #include "game_statistics.h"
 // for nh_getenv
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 #include "hack.h"
 #endif
 
@@ -161,7 +161,7 @@ void initialize_table_descriptor(const char * table_name,
 
 int init_db_manager(){
 	char * db_name = NULL;
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 	db_name = nh_getenv("NH_DATABASE_PATH");
 #endif
 	if (db_name == NULL) db_name = DEFAULT_DATABASE_PATH;

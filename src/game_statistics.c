@@ -5,7 +5,7 @@
 
 #include "database_manager.h"
 
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 #include "hack.h"
 #else
 #include <stdlib.h>
@@ -25,7 +25,7 @@
 #define MAX_SCORRS_DISCOVERY 200
 
 int get_current_level(){
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 	return u.uz.dlevel;
 #else
 	return -1;
@@ -33,7 +33,7 @@ int get_current_level(){
 }
 
 // The variable moves is used sometimes in the game
-#ifndef NETHACK_ACCESS
+#ifdef NO_NETHACK_ACCESS
 /* moves variable is declared in hack.h, if this file is not used for
  * compilation, it is still needed in game_statistics.
  */
@@ -102,7 +102,7 @@ void gs_init(){
 
 	char * str = NULL;
 
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 	str = nh_getenv("NH_MAX_MOVES");
 #endif
 	if (str == NULL)
@@ -110,7 +110,7 @@ void gs_init(){
 	else
 		max_moves = atoi(str);
 
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 	str = nh_getenv("NH_BOT_NAME");
 #endif
 	if (str == NULL)
@@ -118,7 +118,7 @@ void gs_init(){
 	else
 		bot_name = strdup(str);
 
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 	str = nh_getenv("NH_MODE_NAME");
 #endif
 	if (str == NULL)
@@ -126,7 +126,7 @@ void gs_init(){
 	else
 		mode_name = strdup(str);
 
-#ifndef NETHACK_ACCESS
+#ifdef NO_NETHACK_ACCESS
 	make_random_stats();
 #endif
 }
@@ -144,7 +144,7 @@ void gs_new_level(){
 	update_nb_scorrs();
 }
 
-#ifndef NETHACK_ACCESS
+#ifdef NO_NETHACK_ACCESS
 void make_random_stats(){
 	int i;
 	int nb_sdoors = rand() % 10 + 1;
@@ -192,7 +192,7 @@ void make_random_scorr(){
 }
 #endif
 
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 static char visited_square [MAXDUNGEON][MAXLEVEL][COLNO][ROWNO];
 #endif
 
@@ -232,7 +232,7 @@ void statistic_add_scorr_discovery(int line, int column){
 
 void update_nb_sdoors() {
 	if (!gs_initialized) gs_init();
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 	int col;
 	int row;
 	for (col = 0; col < COLNO; col++){
@@ -247,7 +247,7 @@ void update_nb_sdoors() {
 
 void update_nb_scorrs() {
 	if (!gs_initialized) gs_init();
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 	int col;
 	int row;
 	for (col = 0; col < COLNO; col++){
@@ -262,7 +262,7 @@ void update_nb_scorrs() {
 
 void update_reachable_squares(){
 	if (!gs_initialized) gs_init();
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 	int c;
 	int r;
 	for (c = 0; c < COLNO ; c++){
@@ -278,7 +278,7 @@ void update_reachable_squares(){
 
 void update_reached_squares(){
 	if (!gs_initialized) gs_init();
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 	if (!visited_square[u.uz.dnum][u.uz.dlevel][u.ux][u.uy]){
 		visited_square[u.uz.dnum][u.uz.dlevel][u.ux][u.uy] = 1;
 		nb_squares_explored++;
@@ -391,7 +391,7 @@ int get_sd_column(){
 }
 
 int get_nethack_time(){
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 	return mm_total_time() - mm_bot_time();
 #else
 	return 0;
@@ -399,7 +399,7 @@ int get_nethack_time(){
 }
 
 int get_bot_time(){
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 	return mm_bot_time();
 #else
 	return 0;
@@ -483,7 +483,7 @@ void gs_submit_game(){
 	close_db_manager();
 }
 
-#ifdef NETHACK_ACCESS
+#ifndef NO_NETHACK_ACCESS
 void gs_end_game_if_needed(){
 	if (moves >= max_moves){
 		terminate(EXIT_SUCCESS);
