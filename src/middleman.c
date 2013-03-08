@@ -13,6 +13,9 @@
 #include <sys/stat.h>
 #include <sys/select.h>
 
+#include <stdint.h>
+#include <string.h>
+
 #define BUFSIZE         64
 #define DEFAULTSOCKPATH "/tmp/mmsock"
 
@@ -492,23 +495,29 @@ mm_print_glyph(window, x, y, glyph)
 {
 	int ochar, ocolor;
 	unsigned ospecial;
+	uint16_t glyphcode;
 
 	char buf[BUFSIZE];
 	ssize_t size;
 
 	mapglyph(glyph, &ochar, &ocolor, &ospecial, x, y);
-	mm_vlog("mm_print_glyph: window %d - %d:%d:%c", window, x, y, ochar);
+	mm_vlog(
+		"mm_print_glyph: window %d - %d:%d:%c:%d",
+		window, x, y, ochar, glyph
+	);
 
 	if (client != -1) {
 
-		mm_vlog("send(): g %#x %#x %c %d", x, y, ochar, glyph);
+		glyphcode = (uint16_t) glyph;
+		mm_vlog("send(): g %d %d %c %d", x, y, ochar, glyph);
 
 		size = sprintf(buf, "g%c%c%c", x, y, ochar);
+		memcpy(buf+size, &glyphcode, sizeof glyphcode);
 
-		send(client, buf, size, 0);
+		send(client, buf, size + sizeof glyphcode, 0);
 
 		if (replay > 0) {
-			write(replay, buf, size);
+			write(replay, buf, size + sizeof glyphcode);
 		}
 	}
 
@@ -555,7 +564,13 @@ mm_yn_function(query,resp, def)
 
 	mm_log("mm_yn_function", query);
 
-	return mm_recv();
+	cmd = (char)mm_recv();
+
+	if (cmd < 0) {
+		return def;
+	}
+
+	return cmd;
 }
 
 void
@@ -594,8 +609,6 @@ mm_nh_poskey(x, y, mod)
 	static int deadlock_detector = 0;
 	static int old_moves = 0;
 
-	struct timeval tmp1, tmp2;
-
 	// If N moves does not update the number of moves done in a raw, stop the
 	// game.
 	if (old_moves == moves){
@@ -612,8 +625,13 @@ mm_nh_poskey(x, y, mod)
 	//TODO check moves evolution in order to check if there's deadlock
 	mm_log("mm_nh_poskey", "");
 	
-	return mm_recv();
+	int cmd = mm_recv();
 
+	if (cmd < 0) {
+		terminate(EXIT_FAILURE);
+	}
+
+	return cmd;
 }
 
 #ifdef POSITIONBAR
@@ -685,14 +703,14 @@ int mm_recv()
 		size = send(client, "E", 1, 0);
 		if (size < 1) {
 			mm_log("send()", "Client disconnected.");
-			terminate(EXIT_FAILURE);
+			return -1;
 		}
 
 		select(client+1, &sel, NULL, NULL, &tvtimeout);
 
 		if (!FD_ISSET(client, &sel)) {
 			mm_log("select()", "Client timeout.");
-			terminate(EXIT_FAILURE);
+			return -1;
 		}
 
 		nb_received = recv(client, buf, BUFSIZE, 0);
@@ -707,7 +725,7 @@ int mm_recv()
 		buf[nb_received] = '\0';
 		if (nb_received < 1) {
 			mm_log("recv()", "Client disconnected.");
-			terminate(EXIT_FAILURE);
+			return -1;
 		} else {
 			mm_log("recv()", buf);
 		}
@@ -716,7 +734,7 @@ int mm_recv()
 		size = send(client, "S", 1, 0);
 		if (size < 1) {
 			mm_log("send()", "Client disconnected.");
-			terminate(EXIT_FAILURE);
+			return -1;
 		} else {
 			// put extra chars in a buffer
 			for (i = 1; i < nb_received; i++) {

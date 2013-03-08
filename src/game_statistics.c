@@ -15,12 +15,15 @@
 #define DEFAULT_BOT_NAME "unknown"
 #define DEFAULT_MODE_NAME "seek_secret"
 
+/* All game details are saved in arrays before game_end, this allows
+ * to add all details in a single transaction once the game is finished.
+ * The maximal capacity of this arrays is defined here.
+ */
 #define MAX_SDOORS 200
 #define MAX_SDOORS_DISCOVERY 200
 #define MAX_SCORRS 200
 #define MAX_SCORRS_DISCOVERY 200
 
-// Level is not taken into account for now
 int get_current_level(){
 #ifdef NETHACK_ACCESS
 	return u.uz.dlevel;
@@ -31,10 +34,30 @@ int get_current_level(){
 
 // The variable moves is used sometimes in the game
 #ifndef NETHACK_ACCESS
+/* moves variable is declared in hack.h, if this file is not used for
+ * compilation, it is still needed in game_statistics.
+ */
 int moves = 0;
 #endif
 
+// Struct used for saving informations about the games
+
+struct location{
+	int line;
+	int column;
+	int level;
+};
+struct discovery{
+	int discovery_turn;
+	int line;
+	int column;
+	int level;
+};
+// Global Variables initializations
+
+// Contains the deepest level reached
 int level_reached = 1;
+
 int actual_sdoor = 0;
 int nb_sdoors = 0;
 int actual_sdoor_discovery = 0;
@@ -53,31 +76,22 @@ int last_discovery_turn = -1;
 
 int db_time = -1;// in ms
 
-struct location{
-	int line;
-	int column;
-	int level;
-};
-struct discovery{
-	int discovery_turn;
-	int line;
-	int column;
-	int level;
-};
-
-struct location * sdoors;
-struct location * scorrs;
-struct discovery * sdoors_discovery;
-struct discovery * scorrs_discovery;
+// Data Storing
+struct location sdoors[MAX_SDOORS];
+struct location scorrs[MAX_SCORRS];
+struct discovery sdoors_discovery[MAX_SDOORS_DISCOVERY];
+struct discovery scorrs_discovery[MAX_SCORRS_DISCOVERY];
 
 int max_moves = -1;
-int seed;
+int seed = -1;
 
+// Used to calculate db_time 
 struct timeval start;
 
 char * bot_name = NULL;
 char * mode_name = NULL;
 
+// Using a lazy-mechanism
 bool gs_initialized = false;
 
 void gs_init(){
@@ -112,21 +126,12 @@ void gs_init(){
 	else
 		mode_name = strdup(str);
 
-	sdoors = malloc(MAX_SDOORS * sizeof(struct location));
-	scorrs = malloc(MAX_SCORRS * sizeof(struct location));
-	sdoors_discovery = malloc(MAX_SDOORS_DISCOVERY * sizeof(struct discovery));
-	scorrs_discovery = malloc(MAX_SCORRS_DISCOVERY * sizeof(struct discovery));
-
 #ifndef NETHACK_ACCESS
 	make_random_stats();
 #endif
 }
 
 void gs_terminate(){
-	free(sdoors);
-	free(scorrs);
-	free(sdoors_discovery);
-	free(scorrs_discovery);
 	free(bot_name);
 	free(mode_name);
 	gs_initialized = false;
@@ -386,11 +391,19 @@ int get_sd_column(){
 }
 
 int get_nethack_time(){
+#ifdef NETHACK_ACCESS
 	return mm_total_time() - mm_bot_time();
+#else
+	return 0;
+#endif
 }
 
 int get_bot_time(){
+#ifdef NETHACK_ACCESS
 	return mm_bot_time();
+#else
+	return 0;
+#endif
 }
 
 int get_db_time(){
@@ -448,7 +461,7 @@ void gs_submit_game(){
 		add_game_details(dd);
 		destroy_game_result(dd);
 	}
-	// Publishing corr_discovery result
+	// Publishing scorr_discovery result
 	for (actual_scorr_discovery = 0;
 	     actual_scorr_discovery < nb_scorrs_found;
 	     actual_scorr_discovery++){

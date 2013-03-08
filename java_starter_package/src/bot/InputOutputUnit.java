@@ -1,8 +1,7 @@
 package bot;
 
-import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -14,34 +13,34 @@ import util.Logger;
 
 class InputOutputUnit{
 	
-	private BufferedReader input;
+	private DataInputStream input;
 	private Socket mySocket;
 	private UnixSocket myUnixSocket;
 	private PrintWriter output;
 	
 	public InputOutputUnit(){
-		input = new BufferedReader(new InputStreamReader(System.in));
+		input = new DataInputStream(System.in);
 		output = new PrintWriter(System.out);
 	}
 	
 	public InputOutputUnit(String unixSocketAddress)
 			throws IOException{
 		myUnixSocket = new UnixSocket(unixSocketAddress);//Connection is done in the builder
-		input = new BufferedReader(new InputStreamReader(myUnixSocket.getInputStream()));
+		input = new DataInputStream(myUnixSocket.getInputStream());
 		output = new PrintWriter(myUnixSocket.getOutputStream());
 	}
 	
 	public InputOutputUnit(String hostname, int portNo)
 			throws UnknownHostException, IOException{
 		mySocket = new Socket(hostname, portNo);
-		input = new BufferedReader(new InputStreamReader(mySocket.getInputStream()));
+		input = new DataInputStream(mySocket.getInputStream());
 		output = new PrintWriter(mySocket.getOutputStream());
 	}
 	
 	public void parseNextTurn(Bot b) throws InvalidMessageException, IOException{
 		try{
 			Logger.println("Parsing Next Turn");
-			char buffer[] = new char[1];
+			byte buffer[] = new byte[1];
 			// Verify start of message :
 			// All middle_man communications must starts with a precise char
 			int nb_read;
@@ -84,7 +83,7 @@ class InputOutputUnit{
 	}
 	
 	public void parseGlyph(Bot b) throws InvalidMessageException, IOException{
-		char buffer[] = new char[3];
+		byte buffer[] = new byte[3];
 		int nb_read;
 		Logger.println("Reading Glyph");
 		// All glyph message are formatted with g<c><l><g>
@@ -92,14 +91,17 @@ class InputOutputUnit{
 		if (nb_read < 0) throw new IOException("Connection closed by server");
 		if (nb_read != 3)
 			throw new InvalidMessageException("Expected 3 chars, received " + nb_read);
+		// Endianness isn't handled since the result isn't used.
+		// To handle endianness, refer to the InputOutputUnit of diffusion bot
+		input.readUnsignedShort();
 		int line = (int)buffer[1];
 		int col = (int)buffer[0];
 		Logger.println("Update glyph " + buffer[2] + " in [" + line +','+col+"]");
-		b.map.updateSquare(line, col, buffer[2]);
+		b.map.updateSquare(line, col, (char)buffer[2]);
 	}
 	
 	public void parseMapSize(Bot b) throws IOException, InvalidMessageException{
-		char buffer[] = new char[2];
+		byte buffer[] = new byte[2];
 		int nb_read;
 		Logger.println("Reading Map Size");
 		// All mapSize message are formatted with <#c><#l>

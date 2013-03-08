@@ -113,11 +113,13 @@ public class Map {
 		Square s = getSquare(src);
 		Square dest = getDest(src, d);
 		// if dest is out of map, is a door or is out of sight, move is forbidden
-		if (dest == null ||
-		    s.getType() == SquareType.CLOSED_DOOR ||
-			s.getType() == SquareType.UNKNOWN ||
+		if (dest == null                             ||
+		    s.getType() == SquareType.CLOSED_DOOR    ||
+			s.getType() == SquareType.UNKNOWN        ||
+			s.getType() == SquareType.FORBIDDEN      ||
 			dest.getType() == SquareType.CLOSED_DOOR ||
-			dest.getType() == SquareType.UNKNOWN)
+			dest.getType() == SquareType.UNKNOWN     ||
+			dest.getType() == SquareType.FORBIDDEN)
 			return false;
 		switch (d){
 		case NORTH_EAST:
@@ -176,7 +178,22 @@ public class Map {
 		return myPosition;
 	}
 	
+	/**
+	 * Deprecated : Doesn't handle trueGlyph
+	 */
 	public void updateSquare(int line, int col, char newVal){
+		updateSquare(line, col, newVal, 2364);
+	}
+	
+	public void updateSquare(int line, int col, char newVal, int trueGlyph){
+		// Avoiding confusion with type having the same glyph
+		if (newVal == '#'){
+			switch(trueGlyph){
+			case 2364: break;
+			case 2365: break;
+			default: newVal = SquareType.FORBIDDEN.getToken();
+			}
+		}
 		if (newVal == SquareType.UNKNOWN.getToken())
 			return;//Keeping memory of visited square in dark rooms
 		Position p = new Position(line, col);
