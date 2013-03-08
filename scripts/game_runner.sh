@@ -1,7 +1,5 @@
 #!/bin/bash
 
-STARTM=$(date -u "+%s")
-
 #default options
 NH_MAX_MOVES=200
 NH_BOT_NAME="java sp"
