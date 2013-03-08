@@ -1,14 +1,31 @@
 #!/bin/bash
 
-#Variables
+if [ $# -lt 1 ]
+then
+		echo "usage: `basename $0` <database_name>"
+		exit
+fi
 
-DATABASE="database.db"
+DATABASE=$1;
 
-LINE_DATA="line_data.csv"
-COLUMN_DATA="col_data.csv"
+if [ ! -f $DATABASE ]
+then
+		echo "'$DATABASE' doesn't exist, please provide a valid database"
+		exit
+fi
 
-LINE_REQUEST="'select scorr_line, count(*) as nb_scorrs from scorrs group by scorr_line'"
-COLUMN_REQUEST="'select scorr_column, count(*) as nb_scorrs from scorrs group by scorr_column'"
+DB_PATH=$(dirname $DATABASE)
+
+LINE_DATA="${DB_PATH}/sc_line_data.csv"
+COLUMN_DATA="${DB_PATH}/sc_col_data.csv"
+
+LINE_REQUEST="'select sc_line, count(*) as nb_scorrs
+                 from scorrs
+                 group by sc_line'"
+COLUMN_REQUEST="'select sc_column, count(*) as nb_scorrs
+                   from scorrs
+                   group by sc_column'"
+
 # This particular syntax is due to a problem when processing argument with
 # 'select ... '
 echo $LINE_REQUEST | xargs sqlite3 -header -csv $DATABASE > $LINE_DATA
@@ -30,7 +47,7 @@ set style fill solid
 
 #In case for building an eps-file ...
 set terminal postscript enhanced color solid eps 15
-set output "line_graph.eps"
+set output "${DB_PATH}/sc_line_graph.eps"
 
 #for should be used here but it stills seems difficult
 plot '${LINE_DATA}' with boxes
@@ -53,7 +70,7 @@ set style fill solid
 
 #In case for building an eps-file ...
 set terminal postscript enhanced color solid eps 15
-set output "column_graph.eps"
+set output "${DB_PATH}/sc_column_graph.eps"
 
 #for should be used here but it stills seems difficult
 plot '${COLUMN_DATA}' with boxes

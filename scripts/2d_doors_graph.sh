@@ -47,7 +47,7 @@ set style fill solid
 
 #In case for building an eps-file ...
 set terminal postscript enhanced color solid eps 15
-set output "${DB_PATH}/line_graph.eps"
+set output "${DB_PATH}/sd_line_graph.eps"
 
 #for should be used here but it stills seems difficult
 plot '${LINE_DATA}' with boxes
@@ -70,7 +70,7 @@ set style fill solid
 
 #In case for building an eps-file ...
 set terminal postscript enhanced color solid eps 15
-set output "${DB_PATH}/column_graph.eps"
+set output "${DB_PATH}/sd_column_graph.eps"
 
 #for should be used here but it stills seems difficult
 plot '${COLUMN_DATA}' with boxes
