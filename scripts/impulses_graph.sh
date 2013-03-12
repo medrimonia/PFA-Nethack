@@ -32,13 +32,13 @@ XAXIS[4]="Number of secret corridors found"
 XAXIS[5]="Number of secret corridors in the game"
 XAXIS[6]="Deepest level reached"
 
-BOTS=( `sqlite3 ${DATABASE} 'select distinct bot_name from games'` )
+BOTS=( $(sqlite3 ${DATABASE} 'select distinct bot_name from games' | sed 's/ /-/') )
 
 #For each bot
 for ((b = 0; b < ${#BOTS[@]}; b++))
 do
-		BOT_FOLDER=$(echo ${BOTS[b]} | sed 's/ /-/')
-		BOT_FOLDER=${DB_PATH}/${BOT_FOLDER}
+		BOT_FOLDER=${DB_PATH}/${BOTS[b]}
+		BOT_NAME="$(echo ${BOTS[b]} | sed 's/-/ /')"
 		
 		# Creating the folder if it doesn't exist yet
 		if [ ! -d ${BOT_FOLDER} ]
@@ -48,7 +48,7 @@ do
 
 		REQUEST="'select distinct max_moves
                 from game_results
-                where bot_name == \"${BOTS[b]}\";'"
+                where bot_name == \"${BOT_NAME}\";'"
 		MAX_MOVES=( `echo $REQUEST | xargs sqlite3 ${DATABASE}`)
 		# For each max_moves
 		for (( m = 0; m < ${#MAX_MOVES[@]}; m++))
@@ -62,32 +62,32 @@ do
 						OUTPUT_FILE=${BOT_FOLDER}/m_${MAX_MOVES[m]}_${FIELDS[i]}.eps
 
 						# Getting results
-						REQUEST="'select ${FIELDS[i]}, count(*) as nb 
+						REQUEST="'select ${FIELDS[i]}, count(*) as nb
                         from game_results
                         where max_moves == ${MAX_MOVES[m]}
-                          and bot_name  == \"${BOTS[b]}\" 
+                          and bot_name  == \"${BOT_NAME}\"
                         group by ${FIELDS[$i]}'"
 						echo $REQUEST | xargs sqlite3 ${DATABASE} >${RESULT_FILE}
 		
 						# Getting average and max
 						REQUEST="'select AVG, MAX
                         from (select max(NB) as MAX
-                                from (select count(*) as NB 
+                                from (select count(*) as NB
                                         from game_results
                                         where max_moves == ${MAX_MOVES[m]}
-                                          and bot_name  == \"${BOTS[b]}\" 
+                                          and bot_name  == \"${BOT_NAME}\"
                                         group by ${FIELDS[i]}) A) A,
                              (select avg(${FIELDS[i]}) as AVG
                                 from game_results
                                 where max_moves == ${MAX_MOVES[m]}
-                                  and bot_name  == \"${BOTS[b]}\" ) B'"
+                                  and bot_name  == \"${BOT_NAME}\" ) B'"
 						echo $REQUEST | xargs sqlite3 ${DATABASE} >${AVERAGE_FILE}
 
 						# Getting game_count
 						REQUEST="'select count(*)
                         from game_results
                         where max_moves == ${MAX_MOVES[m]}
-                          and bot_name  == \"${BOTS[b]}\"'" 
+                          and bot_name  == \"${BOT_NAME}\"'"
 						NB_GAMES=$( echo $REQUEST | xargs sqlite3 $DATABASE)
 						
 						gnuplot -persist <<PLOT
