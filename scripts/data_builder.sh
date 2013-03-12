@@ -19,24 +19,24 @@ MAX_MOVES[4]=10000
 
 NB_GAMES=2
 
-DATABASE="/tmp/test.db"
+DATABASE="/tmp/complete_data.db"
 
 BASEDIR=$(pwd)
 
 DIR="$( cd "$( dirname "$0" )" && pwd )/.."
 cd $DIR
 
-for ((i = 0; i < ${#BOT[@]}; i++))
+for ((i = 1; i < ${#BOT[@]}; i++))
 do
     for ((j = 0; j < ${#MAX_MOVES[@]}; j++))
     do
         echo "Doing games for '${BOT[$i]}' with '${MAX_MOVES[$j]}' moves"
         scripts/game_runner.sh -g $NB_GAMES        \
                                -m ${MAX_MOVES[$j]} \
-                               -b ${BOT[$i]}       \
+                               -b "${BOT[$i]}"     \
                                -p ${BOT_PATH[$i]}  \
                                -c "${BOT_CMD[$i]}" \
-                               -d ${DATABASE}
+                               -d $DATABASE
     done
 done
 
