@@ -18,9 +18,6 @@ if ($#ARGV < 0) {
 }
 
 
-print $header;
-print '\begin{tikzpicture} [scale=0.4]', "\n";
-
 my @tmp;
 
 {	# slurp from $filename
@@ -35,13 +32,33 @@ my @tmp;
 	@tmp = split('', $replay);
 }
 
+my $map = [];
+my $btcnt = [];
+
 for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
 	if (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
 		my $glyph = join('', @tmp[$j+1 .. $j+5]);
 		my ($y, $x, $g, $c) = unpack("CCaS", $glyph);
-		node($x, $y, $g) if ($g ne '@');
+
+		if ($g ne '@') {
+			$map->[$x]->[$y] = $g;
+		} elsif ($c < 400) {
+			$btcnt->[$x]->[$y] += 1;
+		}
+
 		$j += 5;
+	}
+}
+
+print $header;
+print '\begin{tikzpicture} [scale=0.4]', "\n";
+
+for my $x (0 .. $#{$map}) {
+	my $line = $map->[$x];
+	for my $y (0 .. $#{$line}) {
+		my $glyph = $line->[$y];
+		node($x, $y, $glyph) if (defined $glyph);
 	}
 }
 
