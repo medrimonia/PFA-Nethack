@@ -2,6 +2,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
 \usepackage{graphicx}
+\usepackage{float}
 
 \begin{document}
 
@@ -44,42 +45,70 @@ l'évolution des exécutions, il est conseillé des les exécuter dans $N$
 terminaux différents.
 \section{Revoir une partie}
 TODO Benoit
-\section{Générer des graphes}
+\section{Générer des graphiques}
 Afin de jauger les performances des différents bots, mais aussi afin de
-déceler des bugs, il peut être pratique de générer des graphes illustrant les
-données qui ont été générées par les parties jouées. Ces graphes peuvent
+déceler des bugs, il peut être pratique de générer des graphiques illustrant les
+données qui ont été générées par les parties jouées. Ces graphiques peuvent
 non seulement permettre d'évaluer la répartition des résultats d'un bot,
 mais aussi de comparer les performances moyennes des bots entre eux. Il existe
 un dernier type de graphe qui permet de jauger la répartition des portes
 secrètes et des couloirs secrets en fonction de la position dans la carte.
 
-\subsection{Graphes analysant un bot}
-Le script \emph{impulse\_graph.sh} permet de créer un grand nombre de graphes
-indiquant la répartition des performances du bot, ces graphes sont générés à
-l'aide de gnuplot et se présentent sous cette forme.
+\subsection{Graphiques analysant un bot}
+Le script \emph{impulse\_graph.sh} permet de créer un grand nombre de
+graphiques indiquant la répartition des performances du bot, ces graphiques
+sont générés à l'aide de gnuplot et se présentent sous cette forme.
 
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=120mm]{impulse_graph.eps}
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{impulse_graph.eps}}
+	\caption{\label{fig:impulse_graph} Un exemple de fichier produit par impulse\_graph.sh}
 \end{figure}
 
 Lors de son exécution, ce script créé un dossier présent par bot trouvé dans
-la base de donnée passée en paramètre et y ajoute tous les graphes le
+la base de donnée passée en paramètre et y ajoute tous les graphiques le
 concernant. En conséquence, il est hautement recommandé que le dossier ne
 contienne que la base de donnée lorsque celui-ci est exécuté.
 
-\subsection{Graphes comparant des bots}
+\subsection{Graphiques comparant des bots}
 Afin de comparer les performances des bots dans différents domaines, il est
 possible d'utiliser le script \emph{move\_graph.sh}. Celui-ci génère des
-graphes pour les principales performances générées par les bots, les résultats
-se présentent sous cette forme.
+graphiques pour les principales performances générées par les bots, les
+résultats se présentent sous cette forme.
 
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=120mm]{move_graph.eps}
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{move_graph.eps}}
+	\caption{\label{fig:move_graph} Un exemple de fichier produit par move\_graph.sh}
 \end{figure}
 
-\subsection{Graphes indiquant la répartition de différents objets}
+\subsection{Graphiques indiquant la répartition de différents objets}
+Afin d'évaluer la répartition des portes secrètes ou des couloirs secrets,
+quatres scripts sont mis à dispositions :
+
+\begin{itemize}
+\item 2d\_doors\_graph.sh
+\item 3d\_doors\_graph.sh
+\item 2d\_scorrs\_graph.sh
+\item 3d\_scorrs\_graph.sh
+\end{itemize}
+
+Les scripts \emph{2d} produisent un graphique indiquant le nombre de cases
+correspondant à la catégorie demandée sur chaque ligne et un autre par rapport
+aux colonnes. 
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{2d_graph.eps}}
+	\caption{\label{fig:2d_graph} Un exemple de graphique 2d}
+\end{figure}
+
+
+Les scripts \emph{3d} ne produisent pas de fichiers, mais ils ouvrent une
+fenêtre gnuplot permettant de visualiser un graphe indiquant le nombre de cases
+de la catégorie demandée pour chaque position. 
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{3d_graph.eps}}
+	\caption{\label{fig:3d_graph} Un exemple de visualisation en 3d}
+\end{figure}
 
 \chapter{Les bots}
 \section{Le starter package java}
