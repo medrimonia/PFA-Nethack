@@ -480,31 +480,35 @@ int add_views(){
 	char request[REQUEST_SIZE];
 	index += sprintf(request + index, "CREATE VIEW game_results AS ");
 	index += sprintf(request + index, "SELECT g.id, nb_sdoors, nb_sdoor_discovery, nb_scorrs, nb_scorr_discovery, nb_squares_explored, nb_squares_reachable, used_moves, max_moves, bot_name, mode_name, level_reached ");
-	index += sprintf(request + index, "FROM games as g, ");
+	index += sprintf(request + index, "FROM games as g ");
 	//sdoors
-	index += sprintf(request + index, "     (SELECT g.id, count(*) as nb_sdoors ");
-	index += sprintf(request + index, "      FROM games g, sdoors sd ");
-	index += sprintf(request + index, "      WHERE g.id == sd.game_id ");
-	index += sprintf(request + index, "      GROUP BY g.id) as sd, ");
+	index += sprintf(request + index, " LEFT JOIN");
+	index += sprintf(request + index, "     (SELECT g.id, count(sd.id) as nb_sdoors ");
+	index += sprintf(request + index, "      FROM games as g LEFT JOIN sdoors as sd ");
+	index += sprintf(request + index, "      ON g.id == sd.game_id ");
+	index += sprintf(request + index, "      GROUP BY g.id) as sd");
+	index += sprintf(request + index, "  ON sd.id = g.id ");
 	//sdoor_discovery
-	index += sprintf(request + index, "     (SELECT g.id, count(*) as nb_sdoor_discovery ");
-	index += sprintf(request + index, "      FROM games g, sdoor_discovery sdd ");
-	index += sprintf(request + index, "      WHERE g.id == sdd.game_id ");
-	index += sprintf(request + index, "      GROUP BY g.id) as sdd, ");
+	index += sprintf(request + index, " LEFT JOIN");
+	index += sprintf(request + index, "     (SELECT g.id, count(sdd.id) as nb_sdoor_discovery ");
+	index += sprintf(request + index, "      FROM games as g LEFT JOIN sdoor_discovery as sdd ");
+	index += sprintf(request + index, "      ON g.id == sdd.game_id ");
+	index += sprintf(request + index, "      GROUP BY g.id) as sdd");
+	index += sprintf(request + index, "  ON sdd.id = g.id ");
 	//scorrs
-	index += sprintf(request + index, "     (SELECT g.id, count(*) as nb_scorrs ");
-	index += sprintf(request + index, "      FROM games g, scorrs sc ");
-	index += sprintf(request + index, "      WHERE g.id == sc.game_id ");
-	index += sprintf(request + index, "      GROUP BY g.id) as sc, ");
+	index += sprintf(request + index, " LEFT JOIN");
+	index += sprintf(request + index, "     (SELECT g.id, count(sc.id) as nb_scorrs ");
+	index += sprintf(request + index, "      FROM games as g LEFT JOIN scorrs as sc ");
+	index += sprintf(request + index, "      ON g.id = sc.game_id ");
+	index += sprintf(request + index, "      GROUP BY g.id) as sc");
+	index += sprintf(request + index, "  ON sc.id = g.id ");
 	//scorr_discovery
-	index += sprintf(request + index, "     (SELECT g.id, count(*) as nb_scorr_discovery ");
-	index += sprintf(request + index, "      FROM games g, scorr_discovery scd ");
-	index += sprintf(request + index, "      WHERE g.id == scd.game_id ");
+	index += sprintf(request + index, " LEFT JOIN");
+	index += sprintf(request + index, "     (SELECT g.id, count(scd.id) as nb_scorr_discovery ");
+	index += sprintf(request + index, "      FROM games as g LEFT JOIN scorr_discovery as scd ");
+	index += sprintf(request + index, "      ON g.id = scd.game_id ");
 	index += sprintf(request + index, "      GROUP BY g.id) as scd ");
-	index += sprintf(request + index, "WHERE sd.id  == g.id ");
-	index += sprintf(request + index, "  AND sdd.id == g.id ");
-	index += sprintf(request + index, "  AND sc.id == g.id ");
-	index += sprintf(request + index, "  AND scd.id == g.id;");
+	index += sprintf(request + index, "  ON scd.id = g.id");
 
 	char * err_msg;
 
