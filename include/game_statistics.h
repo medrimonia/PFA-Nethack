@@ -9,10 +9,6 @@
 #ifndef GAME_STATISTICS_H
 #define GAME_STATISTICS_H
 
-// Comment if there's no access to nethack files
-// This is used typically for test outside of nethack kernel
-#define NETHACK_ACCESS
-
 /* Initialize the game statistic module */
 void gs_init();
 
@@ -26,7 +22,7 @@ void gs_new_level();
 /* For unitary tests, access to nethack isn't required, but creating random
  * datas allows to fill the database with some "realistic" input
  */
-#ifndef NETHACK_ACCESS
+#ifdef NO_NETHACK_ACCESS
 /* srand initialization is not provided by game_statistics, it should be done
  * by the caller.
  */

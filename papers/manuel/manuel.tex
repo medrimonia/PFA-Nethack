@@ -1,6 +1,8 @@
 \documentclass[10pt,a4paper]{report}
 \usepackage[utf8]{inputenc}
 \usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{float}
 
 \begin{document}
 
@@ -8,18 +10,105 @@
 \section{Génération des exécutables}
 TODO David/Benoit
 \section{Lancer une partie avec un bot}
-TODO Ludo
+TODO
 \section{Paramétrer l'exécution de nethack}
-TODO Ludo
+TODO
 \section{Lancer plusieurs parties grâce à un script}
-TODO Ludo
+Le script \emph{game\_runner.sh} permet à l'utilisateur de lancer facilement
+un grand nombre de parties qui ne diffèrent que par la graine aléatoire
+utilisée.
+\\
+Il est possible de lancer plusieurs instances de ce script en simultané, et ce
+même si elles enregistrent leurs résultats dans la même base de donnée. Chaque
+script créé un dossier dans /tmp/ avant d'y copier le code de nethack ainsi que
+le bot, ceci permet de continuer à travailler sur les bots ou sur le code de
+nethack sans risquer d'interférer avec les parties déjà lancées. Si ce
+comportement n'est pas souhaité, il est relativement simple de commenter la
+partie du code qui y est associé.
+\\
+Plusieurs options peuvent être utilisées pour ce script, il est possible
+d'obtenir plus de détails facilement en utilisant la commande suivante :
+\emph{game\_runner.sh -h}.
 \section{Remplir une base de donnée}
-TODO Ludo
+Le script \emph{data\_builder.sh} permet de générer facilement une base de
+données contenant les résultats d'un grand nombre de parties. Ce script n'est
+pas paramétré, mais il est aisément modifiable à la main, son but est
+principalement de fournir une base pour permettre à un utilisateur novice
+d'ajouter ou de supprimer des bots où des nombres de mouvements autorisés à
+l'ensemble des parties à lancer.
+\\
+Bien que lui même ne lance pas plusieurs processus, ce script peut
+parfaitement être exécuté $N$ fois, $N$ étant le nombre de processeur
+disponible. Cependant l'affichage n'a pas été prévu pour gérer plusieurs
+processus à l'aide d'un seul terminal, ainsi, si l'on souhaite observer
+l'évolution des exécutions, il est conseillé des les exécuter dans $N$
+terminaux différents.
 \section{Revoir une partie}
 TODO Benoit
-\section{Générer des graphes}
-\subsection{Graphes analysant un bot}
-\subsection{Graphes comparant des bots}
+\section{Générer des graphiques}
+Afin de jauger les performances des différents bots, mais aussi afin de
+déceler des bugs, il peut être pratique de générer des graphiques illustrant les
+données qui ont été générées par les parties jouées. Ces graphiques peuvent
+non seulement permettre d'évaluer la répartition des résultats d'un bot,
+mais aussi de comparer les performances moyennes des bots entre eux. Il existe
+un dernier type de graphe qui permet de jauger la répartition des portes
+secrètes et des couloirs secrets en fonction de la position dans la carte.
+
+\subsection{Graphiques analysant un bot}
+Le script \emph{impulse\_graph.sh} permet de créer un grand nombre de
+graphiques indiquant la répartition des performances du bot, ces graphiques
+sont générés à l'aide de gnuplot et se présentent sous cette forme.
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{impulse_graph.eps}}
+	\caption{\label{fig:impulse_graph} Un exemple de fichier produit par impulse\_graph.sh}
+\end{figure}
+
+Lors de son exécution, ce script créé un dossier présent par bot trouvé dans
+la base de donnée passée en paramètre et y ajoute tous les graphiques le
+concernant. En conséquence, il est hautement recommandé que le dossier ne
+contienne que la base de donnée lorsque celui-ci est exécuté.
+
+\subsection{Graphiques comparant des bots}
+Afin de comparer les performances des bots dans différents domaines, il est
+possible d'utiliser le script \emph{move\_graph.sh}. Celui-ci génère des
+graphiques pour les principales performances générées par les bots, les
+résultats se présentent sous cette forme.
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{move_graph.eps}}
+	\caption{\label{fig:move_graph} Un exemple de fichier produit par move\_graph.sh}
+\end{figure}
+
+\subsection{Graphiques indiquant la répartition de différents objets}
+Afin d'évaluer la répartition des portes secrètes ou des couloirs secrets,
+quatres scripts sont mis à dispositions :
+
+\begin{itemize}
+\item 2d\_doors\_graph.sh
+\item 3d\_doors\_graph.sh
+\item 2d\_scorrs\_graph.sh
+\item 3d\_scorrs\_graph.sh
+\end{itemize}
+
+Les scripts \emph{2d} produisent un graphique indiquant le nombre de cases
+correspondant à la catégorie demandée sur chaque ligne et un autre par rapport
+aux colonnes. 
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{2d_graph.eps}}
+	\caption{\label{fig:2d_graph} Un exemple de graphique 2d}
+\end{figure}
+
+
+Les scripts \emph{3d} ne produisent pas de fichiers, mais ils ouvrent une
+fenêtre gnuplot permettant de visualiser un graphe indiquant le nombre de cases
+de la catégorie demandée pour chaque position. 
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{3d_graph.eps}}
+	\caption{\label{fig:3d_graph} Un exemple de visualisation en 3d}
+\end{figure}
 
 \chapter{Les bots}
 \section{Le starter package java}
