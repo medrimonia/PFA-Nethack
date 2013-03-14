@@ -3,6 +3,7 @@ use warnings;
 
 my $header = <<'EOH';
 \documentclass[landscape]{article}
+\usepackage[paperwidth=12in, paperheight=4in]{geometry}
 \usepackage{tikz}
 \begin{document}
 EOH
@@ -33,6 +34,7 @@ my @tmp;
 }
 
 my $map = [];
+my $max = 1;
 my $btcnt = [];
 
 for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
@@ -45,6 +47,7 @@ for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 			$map->[$x]->[$y] = $g;
 		} elsif ($c < 400) {
 			$btcnt->[$x]->[$y] += 1;
+			$max = ($max > $btcnt->[$x]->[$y]) ? $max : $btcnt->[$x]->[$y];
 		}
 
 		$j += 5;
@@ -52,13 +55,17 @@ for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 }
 
 print $header;
-print '\begin{tikzpicture} [scale=0.4]', "\n";
+print '\begin{tikzpicture} [scale=0.3]', "\n";
 
 for my $x (0 .. $#{$map}) {
 	my $line = $map->[$x];
 	for my $y (0 .. $#{$line}) {
 		my $glyph = $line->[$y];
-		node($x, $y, $glyph) if (defined $glyph);
+		my $cnt = $btcnt->[$x]->[$y];
+		my $color = (defined $cnt)
+			? int(100 * $cnt / $max)
+			: 0;
+		node($x, $y, $glyph, $color) if (defined $glyph);
 	}
 }
 
@@ -67,7 +74,7 @@ print $footer;
 
 
 sub node {
-	my ($x, $y, $label) = @_;
+	my ($x, $y, $label, $color) = @_;
 	# Don't forget the rotation!
-	print '\node at (', $y, ', ', -$x, ') {\\verb!', $label, "!};\n";
+	print '\node', " [fill=red!$color!white] at ($y, -$x) {\\verb!$label!};\n";
 }
