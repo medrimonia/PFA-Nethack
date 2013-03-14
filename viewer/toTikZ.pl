@@ -64,7 +64,7 @@ for my $x (0 .. $#{$map}) {
 		my $cnt = $btcnt->[$x]->[$y];
 		my $color = (defined $cnt)
 			? int(100 * $cnt / $max)
-			: 0;
+			: undef;
 		node($x, $y, $glyph, $color) if (defined $glyph);
 	}
 }
@@ -76,5 +76,11 @@ print $footer;
 sub node {
 	my ($x, $y, $label, $color) = @_;
 	# Don't forget the rotation!
-	print '\node', " [fill=red!$color!white] at ($y, -$x) {\\verb!$label!};\n";
+	print '\node ';
+
+	if (defined $color) {
+		print "[fill=red!$color!yellow] ";
+	}
+	
+	print "at ($y, -$x) {\\verb!$label!};\n";
 }
