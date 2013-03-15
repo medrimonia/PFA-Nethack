@@ -14,12 +14,12 @@ if ($#ARGV < 0) {
 }
 
 
-my @cmds;
-my @cmds_reversed;
-my @coms;
-my @coms_reversed;
+my @cmds;           # commands for each turn (clear screen etc)
+my @cmds_reversed;  # commands when going backward
+my @coms;           # array of glyphs to display for each turn
+my @coms_reversed;  # array of glyphs that cancel those stored in @coms
 
-{	my @level_marks = (0);
+{	my @level_marks = (0); # store turn numbers upon level change
 
 	sub level_push {
 		my ($turn, $coms) = @_;
@@ -39,35 +39,37 @@ my @coms_reversed;
 		cls();
 
 		# re-print everything from the previous level
+		local $| = 0;
 		my $start = $level_marks[$#level_marks];
 		print_glyphs($_, \@coms) for ($start .. $turn)
 	}
+}
 
-	sub print_glyphs {
-		local $| = 0;
-		my ($turn, $coms) = @_;
-		my $glyphs = $coms->[$turn];
 
-		unless (defined $glyphs) {
-			carp "No glyphs!";
-			return;
-		}
-		
-		for (@$glyphs) {
-			my ($y, $x, $g) = @$_;
+sub print_glyphs {
+	local $| = 0;
+	my ($turn, $coms) = @_;
+	my $glyphs = $coms->[$turn];
 
-			if (defined $g) {
-				locate $x+2, $y+1;
-				print $g;
-			}
+	unless (defined $glyphs) {
+		carp "No glyphs!";
+		return;
+	}
+	
+	for (@$glyphs) {
+		my ($y, $x, $g) = @$_;
+
+		if (defined $g) {
+			locate $x+2, $y+1;
+			print $g;
 		}
 	}
 }
 
-{
-	my @tmp;
 
-	{	# slurp from $file
+{	my @tmp;
+
+	{	# slurp from file
 		local $/ = undef;
 
 		my $filename = $ARGV[0];
@@ -80,14 +82,15 @@ my @coms_reversed;
 	}
 
 	# build @coms and @coms_reversed
-	my $glyphs = [];
-	my $glyphs_r = [];
+	my $tmpmap = [];   # remember glyphs position
+	my $glyphs = [];   # glyphs for one turn
+	my $glyphs_r = []; # glyphs to cancel those stored in $glyphs
 
-	my $tmpmap = []; # remember what was where
+	for (my ($i, $j) = (0, 0); $j < @tmp; $j++) {
 
-	for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
+		if (($tmp[$j] eq 'g') && ($j + 5 < @tmp)) {
 
-		if (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
+			# g<x:byte><y:byte><glyph:byte><code:short> : total = 5 bytes
 			my $glyph = join('', @tmp[$j+1 .. $j+5]);
 			my ($y, $x, $g, $c) = unpack("CCaS", $glyph);
 
@@ -106,6 +109,7 @@ my @coms_reversed;
 		}
 
 		elsif ($tmp[$j] eq 'E') {
+			# 'E' marks the end of an update for a turn
 			$coms[$i]          = $glyphs;
 			$coms_reversed[$i] = $glyphs_r;
 
@@ -199,15 +203,32 @@ while (1) {
 			chomp $cmd;
 			ReadMode('cbreak');
 
-			if ($cmd =~ /^\d+$/ && $cmd <= $#coms) {
+			if ($cmd =~ /^\d+$/ && $cmd < @coms) {
 				# goto turn number in $cmd
+				local $| = 0;
+
 				if ($turn <= $cmd) {
+					# going forward
 					while ($turn != $cmd) {
 						$turn++;
 						$_->($turn, \@coms)
 							foreach (@{ $cmds[$turn] });
 					}
-				} else {
+				}
+				
+				elsif (($turn - $cmd) > $cmd) {
+					# going backward but faster to redraw from turn 0
+					cls();
+					$turn = -1;
+					while ($turn != $cmd) {
+						$turn++;
+						$_->($turn, \@coms)
+							foreach (@{ $cmds[$turn] });
+					}
+				}
+
+				else {
+					# going backward
 					while ($turn != $cmd) {
 						$turn--;
 						$_->($turn+1, \@coms_reversed)
