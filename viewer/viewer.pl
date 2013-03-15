@@ -19,15 +19,12 @@ my @cmds_reversed;
 my @coms;
 my @coms_reversed;
 
-{	# let's build some closures
-
-	my @level_marks = (0);
+{	my @level_marks = (0);
 
 	sub level_push {
 		my ($turn, $coms) = @_;
 		push @level_marks, $turn;
 		cls();
-		print_glyphs($turn, \@coms);
 	}
 
 	sub level_pop {
@@ -40,6 +37,8 @@ my @coms_reversed;
 		}
 
 		cls();
+
+		# re-print everything from the previous level
 		my $start = $level_marks[$#level_marks];
 		print_glyphs($_, \@coms) for ($start .. $turn)
 	}
