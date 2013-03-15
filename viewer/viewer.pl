@@ -2,6 +2,7 @@ use v5.10;
 use strict;
 use warnings;
 
+use Carp;
 use Term::ReadKey;
 use Time::HiRes qw/sleep/;
 use Term::ANSIScreen qw/:cursor :screen/;
@@ -13,13 +14,61 @@ if ($#ARGV < 0) {
 }
 
 
+my @cmds;
+my @cmds_reversed;
 my @coms;
 my @coms_reversed;
+
+{	# let's build some closures
+
+	my @level_marks = (0);
+
+	sub level_push {
+		my ($turn, $coms) = @_;
+		push @level_marks, $turn;
+		cls();
+		print_glyphs($turn, \@coms);
+	}
+
+	sub level_pop {
+		my ($turn, $coms) = @_;
+		pop @level_marks;
+
+		unless (@level_marks > 0) {
+			carp "Poping non existant level!";
+			return;
+		}
+
+		cls();
+		my $start = $level_marks[$#level_marks];
+		print_glyphs($_, \@coms) for ($start .. $turn)
+	}
+
+	sub print_glyphs {
+		local $| = 0;
+		my ($turn, $coms) = @_;
+		my $glyphs = $coms->[$turn];
+
+		unless (defined $glyphs) {
+			carp "No glyphs!";
+			return;
+		}
+		
+		for (@$glyphs) {
+			my ($y, $x, $g) = @$_;
+
+			if (defined $g) {
+				locate $x+2, $y+1;
+				print $g;
+			}
+		}
+	}
+}
 
 {
 	my @tmp;
 
-	{	# slurp from $filename
+	{	# slurp from $file
 		local $/ = undef;
 
 		my $filename = $ARGV[0];
@@ -46,13 +95,23 @@ my @coms_reversed;
 			push    @$glyphs,   [$y, $x, $g];
 			unshift @$glyphs_r, [$y, $x, $tmpmap->[$x]->[$y] // " "];
 
-			$j += 5;
 			$tmpmap->[$x]->[$y] = $g;
+			$j += 5;
+		}
+
+		elsif ($tmp[$j] eq 'C') {
+			# clear window instruction
+			$tmpmap = [];
+			push @{ $cmds[$i] },          \&level_push;
+			push @{ $cmds_reversed[$i] }, \&level_pop;
 		}
 
 		elsif ($tmp[$j] eq 'E') {
 			$coms[$i]          = $glyphs;
 			$coms_reversed[$i] = $glyphs_r;
+
+			push @{ $cmds[$i] },         \&print_glyphs;
+			push @{ $cmds_reversed[$i]}, \&print_glyphs;
 
 			$glyphs   = [];
 			$glyphs_r = [];
@@ -71,7 +130,7 @@ my $slideshow = 0;
 my $slideshow_reversed = 0;
 
 # print first set of glyphs (initial map)
-print_glyphs($coms[0]);
+print_glyphs(0, \@coms);
 
 ReadMode('cbreak');
 
@@ -84,7 +143,8 @@ while (1) {
 			sleep(1./$slideshow);
 
 			$turn++;
-			print_glyphs($coms[$turn]);
+			$_->($turn, \@coms)
+				foreach (@{ $cmds[$turn] });
 
 			$slideshow = 0 if (defined ReadKey(-1));
 		}
@@ -99,7 +159,8 @@ while (1) {
 			sleep(1./$slideshow_reversed);
 
 			$turn--;
-			print_glyphs($coms_reversed[$turn+1]);
+			$_->($turn+1, \@coms_reversed)
+				foreach (@{ $cmds_reversed[$turn+1] });
 
 			$slideshow_reversed = 0 if (defined ReadKey(-1));
 		}
@@ -114,12 +175,14 @@ while (1) {
 
 		if ($key eq 'j' && $turn < $#coms) {
 			$turn++;
-			print_glyphs($coms[$turn]);
+			$_->($turn, \@coms)
+				foreach (@{ $cmds[$turn] });
 		}
 
 		elsif ($key eq 'k' && $turn > 0) {
 			$turn--;
-			print_glyphs($coms_reversed[$turn+1]);
+			$_->($turn+1, \@coms_reversed)
+				foreach (@{ $cmds_reversed[$turn+1] });
 		}
 
 		elsif ($key eq ':') {
@@ -137,12 +200,14 @@ while (1) {
 				if ($turn <= $cmd) {
 					while ($turn != $cmd) {
 						$turn++;
-						print_glyphs($coms[$turn]);
+						$_->($turn, \@coms)
+							foreach (@{ $cmds[$turn] });
 					}
 				} else {
 					while ($turn != $cmd) {
 						$turn--;
-						print_glyphs($coms_reversed[$turn+1]);
+						$_->($turn+1, \@coms_reversed)
+							foreach (@{ $cmds_reversed[$turn+1] });
 					}
 				}
 			}
@@ -159,17 +224,3 @@ while (1) {
 }
 
 
-
-sub print_glyphs {
-	local $| = 0;
-	my ($ref) = @_;
-
-	for (@{$ref}) {
-		my ($y, $x, $g) = @$_;
-
-		if (defined $g) {
-			locate $x+2, $y+1;
-			print $g;
-		}
-	}
-}

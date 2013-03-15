@@ -369,6 +369,11 @@ mm_clear_nhwindow(window)
     winid window;
 {
 	mm_vlog("mm_clear_nhwindow: %d", window);
+
+	if (window == winmapid && replay > 0) {
+		// Clear
+		write(replay, "C", 1);
+	}
 }
 
 void
