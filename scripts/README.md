@@ -37,6 +37,8 @@ This script takes the following parameters :
 	* _Default : "/tmp/test.db"_
 * -l          : Activate the logger
 	* _Default : Desactivated_
+* -r          : Activate the replay
+	* _Default : Desactivated_
 
 ### Data Builder
 The script _data\_builder.sh_ is mainly designed to be hand modified, it will

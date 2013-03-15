@@ -4,6 +4,7 @@
 NH_MAX_MOVES=200
 NH_BOT_NAME="java sp"
 NH_MM_LOGGING=0
+NH_MM_REPLAY=0
 NH_DATABASE_PATH="/tmp/test.db"
 NB_GAMES=10
 BOT_PATH="java_starter_package/Bot.jar"
@@ -27,6 +28,8 @@ usage() {
 	echo -e "\t            (Default \"$NH_DATABASE_PATH\")"
 	echo -e "\t-l          Activate the logger"
 	echo -e "\t            (Default Desactivated)"
+	echo -e "\t-r          Activate the replay"
+	echo -e "\t            (Default Desactivated)"
 	echo "Exemple: $0 -b \"python sp\" -p \"pythonsp/bot.py\" -c \"python\""
 }
 
@@ -38,7 +41,7 @@ usage() {
 #p specifies the bot path
 #c specifies the bot launching cmd
 #d specifies the database path
-while getopts "g:m:b:p:c:d:lh" opt; do
+while getopts "g:m:b:p:c:d:lrh" opt; do
 		case $opt in
 				h)
 						usage;
@@ -64,6 +67,9 @@ while getopts "g:m:b:p:c:d:lh" opt; do
 						;;
 				l)
 						NH_MM_LOGGING=1;
+						;;
+				r)
+						export NH_MM_REPLAY=1;
 						;;
 		esac
 done
