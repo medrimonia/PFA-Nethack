@@ -184,6 +184,11 @@ while (1) {
 				foreach (@{ $cmds_reversed[$turn+1] });
 		}
 
+		elsif ($key eq 'q') {
+			cls();
+			last;
+		}
+
 		elsif ($key eq ':') {
 			my $cmd;
 
@@ -222,4 +227,4 @@ while (1) {
 	}
 }
 
-
+ReadMode('normal');
