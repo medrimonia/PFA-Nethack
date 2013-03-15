@@ -15,6 +15,7 @@ Commands are:
 * `j` : go to next turn
 * `k` : go to previous turn
 * `:` : show the prompt for more complex commands
+* `q` : quit
 
 The prompt accepts these commands:
 * `N` : goto turn number N.
