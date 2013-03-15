@@ -3,7 +3,7 @@ use warnings;
 
 my $header = <<'EOH';
 \documentclass[landscape]{article}
-\usepackage[paperwidth=12in, paperheight=4in]{geometry}
+\usepackage[paperwidth=12in]{geometry}
 \usepackage{tikz}
 \begin{document}
 EOH
@@ -33,15 +33,24 @@ my @tmp;
 	@tmp = split('', $replay);
 }
 
+# offset used to display multiple levels
+my $offset = 0;
+
 my $map = [];
 my $max = 1;
 my $btcnt = [];
 
 for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
-	if (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
+	if ($tmp[$j] eq 'C') {
+		$offset += 25;
+	}
+
+	elsif (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
 		my $glyph = join('', @tmp[$j+1 .. $j+5]);
 		my ($y, $x, $g, $c) = unpack("CCaS", $glyph);
+
+		$x += $offset;
 
 		if ($g ne '@') {
 			$map->[$x]->[$y] = $g;
