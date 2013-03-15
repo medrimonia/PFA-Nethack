@@ -2,8 +2,7 @@ use strict;
 use warnings;
 
 my $header = <<'EOH';
-\documentclass[landscape]{article}
-\usepackage[paperwidth=12in]{geometry}
+\documentclass[border=10pt]{standalone}
 \usepackage{tikz}
 \begin{document}
 EOH
