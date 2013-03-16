@@ -4,6 +4,7 @@
 NH_MAX_MOVES=200
 NH_BOT_NAME="java sp"
 NH_MM_LOGGING=0
+NH_MM_REPLAY=0
 NH_DATABASE_PATH="/tmp/test.db"
 NB_GAMES=10
 BOT_PATH="java_starter_package/Bot.jar"
@@ -12,19 +13,23 @@ BOT_CMD="java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"
 usage() {
 	echo "Usage: $0 [options]"
 	echo "Options:"
-	echo -e "\t-h        Display this help"
-	echo -e "\t-g <nb>   The number of games to play"
-	echo -e "\t          (Default 10)"
-	echo -e "\t-m <nb>   The maximum number of moves allowed for the bot"
-	echo -e "\t          (Default 200)"
-	echo -e "\t-p <path> The path to the Bot main file"
-	echo -e "\t          (Default \"java_starter_package/Bot.jar\")"
-	echo -e "\t-c <cmd>  The command used to launch the Bot"
-	echo -e "\t          (Default \"java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar\")"
-	echo -e "\t-d <path> Define the path to the database where results will be inserted"
-	echo -e "\t          (Default \"/tmp/test.db\")"
-	echo -e "\t-l        Activate the logger"
-	echo -e "\t          (Default Desactivated)"
+	echo -e "\t-h          Display this help"
+	echo -e "\t-g <nb>     The number of games to play"
+	echo -e "\t            (Default $NB_GAMES)"
+	echo -e "\t-m <nb>     The maximum number of moves allowed for the bot"
+	echo -e "\t            (Default $NH_MAX_MOVES)"
+	echo -e "\t-p <path>   The path to the Bot main file"
+	echo -e "\t            (Default \"$BOT_PATH\")"
+	echo -e "\t-c <cmd>    The command used to launch the Bot"
+	echo -e "\t            (Default \"$BOT_CMD\")"
+	echo -e "\t-b <string> The Bot name"
+	echo -e "\t            (Default \"$NH_BOT_NAME\")"
+	echo -e "\t-d <path>   Define the path to the database where results will be inserted"
+	echo -e "\t            (Default \"$NH_DATABASE_PATH\")"
+	echo -e "\t-l          Activate the logger"
+	echo -e "\t            (Default Desactivated)"
+	echo -e "\t-r          Activate the replay"
+	echo -e "\t            (Default Desactivated)"
 	echo "Exemple: $0 -b \"python sp\" -p \"pythonsp/bot.py\" -c \"python\""
 }
 
@@ -36,7 +41,7 @@ usage() {
 #p specifies the bot path
 #c specifies the bot launching cmd
 #d specifies the database path
-while getopts "g:m:b:p:c:d:lh" opt; do
+while getopts "g:m:b:p:c:d:lrh" opt; do
 		case $opt in
 				h)
 						usage;
@@ -62,6 +67,9 @@ while getopts "g:m:b:p:c:d:lh" opt; do
 						;;
 				l)
 						NH_MM_LOGGING=1;
+						;;
+				r)
+						export NH_MM_REPLAY=1;
 						;;
 		esac
 done

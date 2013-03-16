@@ -23,17 +23,21 @@ Example :
 ```
 
 This script takes the following parameters :
-* -g <nb>   : The number of games to play
+* -g <nb>     : The number of games to play
 	* _Default : 10_
-* -m <nb>   : The maximum number of moves allowed for the bot
+* -m <nb>     : The maximum number of moves allowed for the bot
  	* _Default : 200_
-* -p <path> : The path to the Bot main file
+* -p <path>   : The path to the Bot main file
 	* _Default : "java_starter_package/Bot.jar"_
-* -c <cmd>  : The command used to launch the Bot
-	* _Default : "java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"
-* -d <path> : Define the path to the database where results will be inserted
+* -c <cmd>    : The command used to launch the Bot
+	* _Default : "java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"_
+* -b <string> : The Bot name
+	* _Default : "java sp"_
+* -d <path>   : Define the path to the database where results will be inserted
 	* _Default : "/tmp/test.db"_
-* -l        : Activate the logger
+* -l          : Activate the logger
+	* _Default : Desactivated_
+* -r          : Activate the replay
 	* _Default : Desactivated_
 
 ### Data Builder
