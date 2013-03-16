@@ -18,6 +18,8 @@ public final class Protocole {
 	public static final char MAP_SIZE_TOKEN = 'm';
 	
 	public static final char GLYPH_TOKEN = 'g';
+
+	public static final char CLEAR_TOKEN = 'C';
 	
 	
 	// OUTPUT TOKENS

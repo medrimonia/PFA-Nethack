@@ -89,6 +89,7 @@ class InputOutputUnit{
 				case Protocole.GLYPH_TOKEN: parseGlyph(b); break;
 				case Protocole.SEED_TOKEN: parseSeed(b); break;
 				case Protocole.MAP_SIZE_TOKEN: parseMapSize(b); break;
+				case Protocole.CLEAR_TOKEN: break;
 				default: throw new InvalidMessageException("Invalid submessage token :");
 				}
 			}
