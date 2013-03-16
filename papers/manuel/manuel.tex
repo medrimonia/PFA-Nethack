@@ -138,7 +138,7 @@ résultats se présentent sous cette forme.
 
 \begin{figure}[H]
   \center{\includegraphics[width=\textwidth]{move_graph.eps}}
-	\caption{\label{fig:move_graph} Un exemple de fichier produit par move\_graph.sh}
+  \caption{\label{fig:move_graph} Un exemple de fichier produit par move\_graph.sh}
 \end{figure}
 
 \subsection{Graphiques indiquant la répartition de différents objets}
@@ -158,7 +158,7 @@ aux colonnes.
 
 \begin{figure}[H]
   \center{\includegraphics[width=\textwidth]{2d_graph.eps}}
-	\caption{\label{fig:2d_graph} Un exemple de graphique 2d}
+  \caption{\label{fig:2d_graph} Un exemple de graphique 2d}
 \end{figure}
 
 
@@ -168,7 +168,7 @@ de la catégorie demandée pour chaque position.
 
 \begin{figure}[H]
   \center{\includegraphics[width=\textwidth]{3d_graph.eps}}
-	\caption{\label{fig:3d_graph} Un exemple de visualisation en 3d}
+  \caption{\label{fig:3d_graph} Un exemple de visualisation en 3d}
 \end{figure}
 
 \chapter{Les bots}
@@ -183,19 +183,20 @@ de pouvoir tester différentes stratégie sans avoir à implémenter à nouveau 
 réception et l'envoi de message aux bots.
 
 \section{Le bot diffusion}
-Le principe de ce bot est d'établir des scores pour chaque cases et de diffuser ensuite
-les valeurs à tous les voisins, ainsi la principale différence avec les autres bots est
-que la complexité est bien plus élevée étant donnée que pour choisir la prochaine
-action, il n'y a pas que le voisinage immédiat qui est observé. Ce surcoût de temps
-permet en revanche d'avoir des meilleurs résultats et la possibilité de modifier les
-scores facilement permet de changer les objectifs en changeant uniquement des
-constantes.
+Le principe de ce bot est d'établir des scores pour chaque cases et de diffuser
+ensuite les valeurs à tous les voisins, ainsi la principale différence avec les
+autres bots est que la complexité est bien plus élevée étant donnée que pour
+choisir la prochaine action, il n'y a pas que le voisinage immédiat qui est
+observé. Ce surcoût de temps permet en revanche d'avoir des meilleurs résultats
+et la possibilité de modifier les scores facilement permet de changer les
+objectifs en changeant uniquement des constantes.
 \\
-Une fois tous les scores calculés et la diffusion effectuée, l'action choisie est celle
-ayant le score le plus élevé parmi celles qui sont autorisées. Ce bot est donc
-totalement déterministe. Quelques attentions ont été portées à l'optimisation afin de
-réduire légèrement le temps d'exécution, cependant, il est certainement possible
-d'améliorer encore grandement les performances en optimisant certaines parties
+Une fois tous les scores calculés et la diffusion effectuée, l'action choisie
+est celle ayant le score le plus élevé parmi celles qui sont autorisées. Ce bot
+est donc totalement déterministe. Quelques attentions ont été portées à
+l'optimisation afin de réduire légèrement le temps d'exécution, cependant, il
+est certainement possible d'améliorer encore grandement les performances en
+optimisant certaines parties du code.
 
 \section{Le starter package python}
 TODO Benoît
@@ -210,30 +211,53 @@ TODO David
 TODO hook etc
 
 \subsection{Les patchs facultatifs}
-TODO mode de jeu etc (cf doc de spec
+TODO mode de jeu etc (cf doc de spec)
 
 \section{Stockage des résultats}
+Les résultats des parties sont stockés dans une base de données afin de ne pas perdre
+trop d'informations et de pouvoir effectuer toute sorte de traitements dessus. Une vue
+fournissant certains détails supplémentaires \footnote{Nombre de portes secrètes,
+nombre de portes secrètes trouvées, nombre de couloirs secrets et nombre de couloirs
+secrets trouvés.} est aussi disponible afin de faciliter l'utilisation de celle-ci.
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{../../database_details/schema.eps}}
+	\caption{\label{fig:database} Schéma de la base de données}
+\end{figure}
 
 \chapter{Apporter ses propres modifications au code existant}
 \section{Modifier du code source contenu dans les hooks}
+Il est aisé de modifier du code source à l'intérieur des différents hooks
+fournis car le script \emph{nh-setup.sh} permet de recompiler l'exécutable
+nethack en recompilant tous les fichiers sources nécessaires. Ainsi, il n'y aura
+pas de modifications plus profonde à faire dans ce cas là. Cependant, si un
+nouveau fichier est utilisé, il faudra néanmoins modifier le Makefile présent
+dans le dossier \emph{install/nh/src} afin que les dépendances soient prises en
+compte. Comme le fichier Makefile n'est pas recopié par défaut vers sa
+destination, il faudra aussi spécifier à nethack que l'on ne souhaite pas
+réutiliser le code existant (ou copier le Makefile avant afin de gagner du temps
+de compilation).
 
 \section{Modifier les données stockées}
 
 \section{Ajouter de nouveau patchs}
 
+
 \chapter{Dysfonctionnements connus}
 \section{Sémaphore bloquée de façon permanente}
-Lorsqu'un utilisateur tue un processus de nethack, le processus peut se terminer alors
-qu'il est dans une zone critique, il ne libère donc pas l'accès à la base de données,
-une solution peut être implémentée à l'aide d'un gestionnaire de signal, cependant au vu
-des appels à une bibliothèque externe, il est possible que cela ne suffise pas.
-Actuellement, la meilleure solution dans ce cas est d'effacer la sémaphore afin que les
-nouveaux processus de nethack ne soit pas bloqués lorsqu'ils tentent d'écrire dans la
-base de données. Sur certains systèmes, les fichiers de sémaphore nommées peuvent être
-trouvés dans \emph{/dev/shm/}, dans le cas où l'utilisateur ne parvient pas à trouver
-comment effacer les sémaphore nommées, il existe deux autres solutions : renommer la
-base de données afin de changer le nom de sémaphore associé ou redémarrer
-\footnote{attention, si la base de données est dans les fichiers temporaires, il est
+Lorsqu'un utilisateur tue un processus de nethack, le processus peut se terminer
+alors qu'il est dans une zone critique, il ne libère donc pas l'accès à la base
+de données, une solution peut être implémentée à l'aide d'un gestionnaire de
+signal, cependant au vu des appels à une bibliothèque externe, il est possible
+que cela ne suffise pas. Actuellement, la meilleure solution dans ce cas est
+d'effacer la sémaphore afin que les nouveaux processus de nethack ne soient pas
+bloqués lorsqu'ils tentent d'écrire dans la base de données. Sur certains
+systèmes, les fichiers de sémaphore nommées peuvent être trouvés dans 
+\emph{/dev/shm/}, dans le cas où l'utilisateur ne parvient pas à trouver
+comment effacer les sémaphore nommées, il existe deux autres solutions :
+renommer la base de données afin de changer le nom de sémaphore associé ou
+redémarrer \footnote{attention, si la base de données est dans les fichiers
+temporaires, il est 
 conseillé de la déplacer avant}.
 
 \end{document}
