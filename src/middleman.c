@@ -370,10 +370,11 @@ mm_clear_nhwindow(window)
 {
 	mm_vlog("mm_clear_nhwindow: %d", window);
 
-	if (window == winmapid && replay > 0) {
-		// Clear
-		write(replay, "C", 1);
+	if (window == winmapid) {
 		write(client, "C", 1);
+		if (replay > 0) {
+			write(replay, "C", 1);
+		}
 	}
 }
 
