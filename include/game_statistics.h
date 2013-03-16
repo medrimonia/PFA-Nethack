@@ -12,7 +12,7 @@
 /* Initialize the game statistic module */
 void gs_init();
 
-/* Free all the ressources dedicated to the game statistic module */
+/* Free all the resources dedicated to the game statistic module */
 void gs_terminate();
 
 /* Must be called each time a new level is reached in order to update stats
