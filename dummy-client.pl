@@ -85,6 +85,10 @@ else {
 
 				$i += 5;
 			}
+
+			elsif ($tmp[$i] eq 'C') {
+				cls();
+			}
 		}
 
 		print_glyphs(\@glyphs);
