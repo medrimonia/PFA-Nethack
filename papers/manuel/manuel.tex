@@ -235,6 +235,17 @@ réutiliser le code existant (ou copier le Makefile avant afin de gagner du temp
 de compilation).
 
 \section{Modifier les données stockées}
+Chaque table de la base de données possède son propre fichier \emph{.def} afin
+d'ajouter un champ dans une table, il est donc nécessaire d'ajouter une entrée
+dans ce fichier. Il faut aussi changer le nombre de champs de la table dans les
+fichiers \emph{database\_manager.c} et \emph{game\_result.c}, il est aussi
+nécessaire de fournir un getter pour chaque champs indiqué dans la base de
+données. Cette architecture permet d'éviter trop de redondance de code en se
+servant des macros. En revanche, pour ajouter une table, il est nécessaire de se
+plonger plus profondément dans le code afin d'éviter tout désagrément, mais la
+ligne de conduite principale reste d'ajouter un fichier \emph{.def}
+\footnote{Attention aux dépendances dans le Makefile} et de copier le
+comportement utilisé pour les autres tables.
 
 \section{Ajouter de nouveau patchs}
 
