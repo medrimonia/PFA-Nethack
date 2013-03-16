@@ -13,7 +13,7 @@ Before running those scripts, make sure that the Bot used files are up to date.
 The script _game\_runner.sh_ has been created to run massive games with one bot.
 It will launch a certain number of games and insert the results in a database.
 
-In order to allow multiple exection of game runner to run simultaneously, and
+In order to allow multiple executions of game runner to run simultaneously, and
 also to allow developers to recompile bots and nethack while a script is
 running, all necessary datas are copied to a new folder in _/tmp/_.
 
