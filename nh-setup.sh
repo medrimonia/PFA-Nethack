@@ -52,6 +52,12 @@ else
     dl_nethack
 fi
 
+# nhdir/nethack needs to be removed in order to recompile what's needed
+if [ -f $nhdir/nethack ]; then
+		rm -f $nhdir/nethack
+fi
+
+
 
 if [ $reuse = 0 ]; then
     echo "Running NetHack's setup script... "
