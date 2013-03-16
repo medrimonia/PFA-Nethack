@@ -3,16 +3,70 @@
 \usepackage[french]{babel}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{geometry}
+
+\geometry{margin=2cm}
 
 \begin{document}
+\begin{center}
+\begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} r}
+
+  \includegraphics [width=40mm]{ENSEIRB-MATMECA.ps} &
+  \raisebox{0.75\height}
+           {\includegraphics [width=40mm]{logo-LaBRI-couleur.ps}}
+
+\end{tabular*}
+
+\vspace{\stretch{1}}
+
+\textsc{\Huge Manuel d'utilisation de PFA-Nethack}\\[0.5cm]
+\rule{0.4\textwidth}{1pt}
+
+\vspace{\stretch{1}}
+
+\begin{center}
+  
+  \begin{flushleft}
+    \large
+    \emph{Auteurs :}\\
+    \begin{itemize}
+    \item Benoît Ruelle
+    \item David Bitonneau
+    \item Ludovic Hofer
+    \end{itemize}
+  \end{flushleft}
+  
+  
+  \begin{flushright}
+    \large
+    \emph{Responsables :}\\
+    Pédagogique - M.~Renault\\
+    Client - M.~Le Borgne\\
+  \end{flushright}
+\end{center}
+
+\vspace{\stretch{1}}
+                  
+{\large Deuxième année, filière informatique}
+
+~
+
+{\large 16 octobre 2012 - 29 mars 2013}\\
+                  
+\end{center}
+\thispagestyle{empty}
+\pagebreak
 
 \chapter{Utilisation du code fourni}
 \section{Génération des exécutables}
 TODO David/Benoit
+
 \section{Lancer une partie avec un bot}
 TODO
+
 \section{Paramétrer l'exécution de nethack}
 TODO
+
 \section{Lancer plusieurs parties grâce à un script}
 Le script \emph{game\_runner.sh} permet à l'utilisateur de lancer facilement
 un grand nombre de parties qui ne diffèrent que par la graine aléatoire
@@ -29,6 +83,7 @@ partie du code qui y est associé.
 Plusieurs options peuvent être utilisées pour ce script, il est possible
 d'obtenir plus de détails facilement en utilisant la commande suivante :
 \emph{game\_runner.sh -h}.
+
 \section{Remplir une base de donnée}
 Le script \emph{data\_builder.sh} permet de générer facilement une base de
 données contenant les résultats d'un grand nombre de parties. Ce script n'est
@@ -43,8 +98,10 @@ disponible. Cependant l'affichage n'a pas été prévu pour gérer plusieurs
 processus à l'aide d'un seul terminal, ainsi, si l'on souhaite observer
 l'évolution des exécutions, il est conseillé des les exécuter dans $N$
 terminaux différents.
+
 \section{Revoir une partie}
 TODO Benoit
+
 \section{Générer des graphiques}
 Afin de jauger les performances des différents bots, mais aussi afin de
 déceler des bugs, il peut être pratique de générer des graphiques illustrant les
@@ -77,7 +134,7 @@ résultats se présentent sous cette forme.
 
 \begin{figure}[H]
   \center{\includegraphics[width=\textwidth]{move_graph.eps}}
-	\caption{\label{fig:move_graph} Un exemple de fichier produit par move\_graph.sh}
+  \caption{\label{fig:move_graph} Un exemple de fichier produit par move\_graph.sh}
 \end{figure}
 
 \subsection{Graphiques indiquant la répartition de différents objets}
@@ -97,7 +154,7 @@ aux colonnes.
 
 \begin{figure}[H]
   \center{\includegraphics[width=\textwidth]{2d_graph.eps}}
-	\caption{\label{fig:2d_graph} Un exemple de graphique 2d}
+  \caption{\label{fig:2d_graph} Un exemple de graphique 2d}
 \end{figure}
 
 
@@ -107,34 +164,107 @@ de la catégorie demandée pour chaque position.
 
 \begin{figure}[H]
   \center{\includegraphics[width=\textwidth]{3d_graph.eps}}
-	\caption{\label{fig:3d_graph} Un exemple de visualisation en 3d}
+  \caption{\label{fig:3d_graph} Un exemple de visualisation en 3d}
 \end{figure}
 
 \chapter{Les bots}
 \section{Le starter package java}
-TODO Ludovic
+Afin de pouvoir rapidement commencer à coder des bots, un \emph{starter package}
+en java est fourni, les fonctionnalités fournies sont principalement la lecture
+de la carte et la vérification de la validité des mouvements.
+\\
+Ce bot se contente de lister les actions possibles et d'en choisir une de façon
+aléatoire, avec tout de même certaines actions prioritaires. Cette base permet
+de pouvoir tester différentes stratégie sans avoir à implémenter à nouveau la
+réception et l'envoi de message aux bots.
+
 \section{Le bot diffusion}
-TODO Ludovic
+Le principe de ce bot est d'établir des scores pour chaque cases et de diffuser
+ensuite les valeurs à tous les voisins, ainsi la principale différence avec les
+autres bots est que la complexité est bien plus élevée étant donnée que pour
+choisir la prochaine action, il n'y a pas que le voisinage immédiat qui est
+observé. Ce surcoût de temps permet en revanche d'avoir des meilleurs résultats
+et la possibilité de modifier les scores facilement permet de changer les
+objectifs en changeant uniquement des constantes.
+\\
+Une fois tous les scores calculés et la diffusion effectuée, l'action choisie
+est celle ayant le score le plus élevé parmi celles qui sont autorisées. Ce bot
+est donc totalement déterministe. Quelques attentions ont été portées à
+l'optimisation afin de réduire légèrement le temps d'exécution, cependant, il
+est certainement possible d'améliorer encore grandement les performances en
+optimisant certaines parties du code.
+
 \section{Le starter package python}
 TODO Benoît
+
 \section{Le bot spécialisé}
 TODO David
 
 \chapter{Description technique}
 \section{Les patchs du noyau de nethack}
+
 \subsection{Les patchs nécessaires}
 TODO hook etc
+
 \subsection{Les patchs facultatifs}
-TODO mode de jeu etc (cf doc de spec
+TODO mode de jeu etc (cf doc de spec)
+
 \section{Stockage des résultats}
+Les résultats des parties sont stockés dans une base de données afin de ne pas perdre
+trop d'informations et de pouvoir effectuer toute sorte de traitements dessus. Une vue
+fournissant certains détails supplémentaires \footnote{Nombre de portes secrètes,
+nombre de portes secrètes trouvées, nombre de couloirs secrets et nombre de couloirs
+secrets trouvés.} est aussi disponible afin de faciliter l'utilisation de celle-ci.
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{../../database_details/schema.eps}}
+	\caption{\label{fig:database} Schéma de la base de données}
+\end{figure}
 
 \chapter{Apporter ses propres modifications au code existant}
 \section{Modifier du code source contenu dans les hooks}
+Il est aisé de modifier du code source à l'intérieur des différents hooks
+fournis car le script \emph{nh-setup.sh} permet de recompiler l'exécutable
+nethack en recompilant tous les fichiers sources nécessaires. Ainsi, il n'y aura
+pas de modifications plus profonde à faire dans ce cas là. Cependant, si un
+nouveau fichier est utilisé, il faudra néanmoins modifier le Makefile présent
+dans le dossier \emph{install/nh/src} afin que les dépendances soient prises en
+compte. Comme le fichier Makefile n'est pas recopié par défaut vers sa
+destination, il faudra aussi spécifier à nethack que l'on ne souhaite pas
+réutiliser le code existant (ou copier le Makefile avant afin de gagner du temps
+de compilation).
+
 \section{Modifier les données stockées}
+Chaque table de la base de données possède son propre fichier \emph{.def} afin
+d'ajouter un champ dans une table, il est donc nécessaire d'ajouter une entrée
+dans ce fichier. Il faut aussi changer le nombre de champs de la table dans les
+fichiers \emph{database\_manager.c} et \emph{game\_result.c}, il est aussi
+nécessaire de fournir un getter pour chaque champs indiqué dans la base de
+données. Cette architecture permet d'éviter trop de redondance de code en se
+servant des macros. En revanche, pour ajouter une table, il est nécessaire de se
+plonger plus profondément dans le code afin d'éviter tout désagrément, mais la
+ligne de conduite principale reste d'ajouter un fichier \emph{.def}
+\footnote{Attention aux dépendances dans le Makefile} et de copier le
+comportement utilisé pour les autres tables.
+
 \section{Ajouter de nouveau patchs}
+
 
 \chapter{Dysfonctionnements connus}
 \section{Sémaphore bloquée de façon permanente}
-TODO Ludovic
+Lorsqu'un utilisateur tue un processus de nethack, le processus peut se terminer
+alors qu'il est dans une zone critique, il ne libère donc pas l'accès à la base
+de données, une solution peut être implémentée à l'aide d'un gestionnaire de
+signal, cependant au vu des appels à une bibliothèque externe, il est possible
+que cela ne suffise pas. Actuellement, la meilleure solution dans ce cas est
+d'effacer la sémaphore afin que les nouveaux processus de nethack ne soient pas
+bloqués lorsqu'ils tentent d'écrire dans la base de données. Sur certains
+systèmes, les fichiers de sémaphore nommées peuvent être trouvés dans 
+\emph{/dev/shm/}, dans le cas où l'utilisateur ne parvient pas à trouver
+comment effacer les sémaphore nommées, il existe deux autres solutions :
+renommer la base de données afin de changer le nom de sémaphore associé ou
+redémarrer \footnote{attention, si la base de données est dans les fichiers
+temporaires, il est 
+conseillé de la déplacer avant}.
 
 \end{document}
