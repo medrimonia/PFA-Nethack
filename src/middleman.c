@@ -373,6 +373,7 @@ mm_clear_nhwindow(window)
 	if (window == winmapid && replay > 0) {
 		// Clear
 		write(replay, "C", 1);
+		write(client, "C", 1);
 	}
 }
 
