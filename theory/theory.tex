@@ -64,6 +64,13 @@ being the range of research.
   \end{tikzpicture}
 \end{center}
 
-
+Obviously, it's impossible to cover each square with a potential secret door
+with less squares, because all the corners are used and there isn't any square
+being ``covered'' by two different squares. If we ignore the cost of moves,
+considering only the cost of research, the best policy seems to be always
+looking first in the corners and after in the other spots, if all have the same
+number of research at starts. But it's not obvious that the chance of finding a
+secret door in a corner with $n+1$ researches is always lower than the chance
+of finding a secret door in a wall with $n$ researches.
 
 \end{document}
