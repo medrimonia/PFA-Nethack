@@ -217,7 +217,17 @@ fait des appels de fonctions dont le code est fourni dans les fichiers du
 dossier \emph{src} et qui peuvent donc être modifiés indépendamment des patchs.
 
 \subsection{Les patchs facultatifs}
-TODO mode de jeu etc (cf doc de spec)
+Un ensemble de patchs a également été créé afin d'apporter des fonctionnalités
+facultatives ou de restreindre la complexité de nethack. Ces patchs se
+trouvent dans le dossier \emph{patches} et peuvent être appliqués
+indépendamment les uns des autres. Lors de l'installation, avec le script
+\emph{nh-setup.sh}, il peut être choisi d'appliquer l'ensemble des patchs
+listés dans le fichier \emph{patches/patch.conf} ou de choisir
+individuellement ceux qui doivent être appliqués.
+La plupart de ces patchs servent dans la définition d'un mode de jeu en
+enlevant diverses contraintes de nethack telles que la faim, les montres, les
+pièges ou les objets. Cela permet ainsi de construire des bots qui évoluent sur
+une version simplifiée du jeu.
 
 \section{Stockage des résultats}
 Les résultats des parties sont stockés dans une base de données afin de ne pas perdre
