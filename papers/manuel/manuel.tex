@@ -204,9 +204,17 @@ TODO David
 
 \chapter{Description technique}
 \section{Les patchs du noyau de nethack}
+Afin de pouvoir facilement repartir d'une version originale du jeu, les
+modifications du code de nethack sont effectuées sous la forme de patchs. Il
+est ainsi plus aisé de repérer les portions de codes qui ont été modifiées.
 
 \subsection{Les patchs nécessaires}
-TODO hook etc
+Un ensemble de modifications du noyau de nethack sont nécessaires au
+fonctionnement des divers modules. Ces patchs sont regroupés dans le dossier
+\emph{install} et définissent pour la plupart des \emph{hooks}, c'est-à-dire des
+points d'entrée dans le cœur du code de nethack. Ces points d'entrée sont en
+fait des appels de fonctions dont le code est fourni dans les fichiers du
+dossier \emph{src} et qui peuvent donc être modifiés indépendamment des patchs.
 
 \subsection{Les patchs facultatifs}
 TODO mode de jeu etc (cf doc de spec)
