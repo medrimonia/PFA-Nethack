@@ -2,13 +2,6 @@
 \usepackage{tikz}
 \usetikzlibrary{trees}
 
-% Set the overall layout of the tree
-\tikzstyle{level 1}=[level distance=3.5cm, sibling distance=3.5cm]
-\tikzstyle{level 2}=[level distance=3.5cm, sibling distance=2cm]
-
-% Define styles for bags and leafs
-\tikzstyle{bag} = [text width=4em, text centered]
-\tikzstyle{end} = [circle, minimum width=3pt,fill, inner sep=0pt]
 \begin{document}
 
 \section{Description of the problem}
@@ -41,13 +34,22 @@ where a secret door might be found.
   \end{tikzpicture}
 \end{center}
 
+Being sure that we have the best solution to the problem can be quite tricky,
+that is the reason why we will try to find a lower bound as first objective.
+Once one has been found, we can compare it with our bots results. At the same
+time, we can try to :
+\begin{itemize}
+\item Increase the lower bound with some theoric addition
+\item Decrease the upper bound by improving the bot
+\end{itemize}
+
 \section{Dominating the room}
 It is possible to fix some squares where research would be performed, trying to
 use the lowest number of squares and avoiding two possible research on the
 same square \footnote{This notion is close to the notion of domination set in
-graph theory}. We can then obtain following result, with the filled orange squares
-being the squares where research would be performed. And the empty orange squares
-being the range of research.
+graph theory}. We can then obtain following result, with the filled orange
+squares being the squares where research would be performed. And the empty
+orange squares being the range of research.
 
 \begin{center}
   \begin{tikzpicture}[scale=.5]
@@ -114,6 +116,13 @@ We can then get the following tree after one research on position $1$.
 \item $F$ means door has been found
 \item $NF$ means nothing has been found
 \end{itemize}
+% Set the overall layout of the tree
+\tikzstyle{level 1}=[level distance=3.5cm, sibling distance=3.5cm]
+\tikzstyle{level 2}=[level distance=3.5cm, sibling distance=2cm]
+
+% Define styles for bags and leafs
+\tikzstyle{bag} = [text width=4em, text centered]
+\tikzstyle{end} = [circle, minimum width=3pt,fill, inner sep=0pt]
 \begin{center}
   \begin{tikzpicture}[grow=right, sloped]
     \node[bag] {Overall}
@@ -138,14 +147,7 @@ We can then get the following tree after one research on position $1$.
       node[below]  {$\frac{1}{2}$}
     }
     child {
-      node[bag] {Door in $2$}        
-%      child {
-%        node[end, label=right:
-%          {$$}] {}
-%        edge from parent
-%        node[above] {$F$}
-%        node[below]  {$\frac{3}{9}$}
-%      }
+      node[bag] {Door in $2$}
       child {
         node[end, label=right:
           {$$}] {}
@@ -200,7 +202,114 @@ We just need to find what we have to use for $favorable\;cases_k$ and for
 $possibles\;cases$ now. The two following formulas comes quite naturally :
 \begin{itemize}
 \item $favorable\;cases_k = (1-p)^{R_k}$
-\item $possible\;cases_k = \sum_{k=0}^{|W| - 1} (1-p) ^{R_k}$
+\item $possible\;cases = \sum\limits_{k=0}^{|W| - 1}{(1-p) ^{R_k}}$
+\end{itemize}
+
+This ends up with a single formula calculating the probability to find a secret
+door when performing a research on a square :
+$$ P(Pos(D) = k) = \frac{(1-p)^{R_k}}{\sum\limits_{k=0}^{|W| - 1}{(1-p) ^{R_k}}}$$
+For all squares, the number of $possibles\;cases$ will be the same, this allow
+us to compare different squares only with the value of $favorable\;cases_k$.
+\\
+If we consider that we're only doing our researchs on the previously mentioned
+squares, the value of a corner is $4 \times (1-p)^{R_k}$ and the value of
+another spot of research is $3 \times (1-p)^{R_k}$. This means that if we choose
+a $i$ satisfying $(1-p)^i = \frac{3}{4}$~\footnote{For $p = 1/7$,
+value of $i$ is $\frac{\log(\frac{3}{4})}{\log(\frac{6}{7})} = 1,866$}, we
+have :
+$$ CornerScore(k + i) = BorderScore (k) $$
+An important implication of this formula is that it means that independently of
+$p$, the ideal number of research on the corners will differ from the ideal
+number of research on a border only by a constant.
+
+\section{Simplifying the system}
+According to the previous information, it's possible to simplify our problem
+with the following probability tree where each of the leaf represents a spot
+where research can be performed.
+
+\tikzstyle{level 1}=[level distance=12cm, sibling distance=1.7cm]
+\tikzstyle{bag} = [text width=4em, text centered]
+\begin{center}
+  \begin{tikzpicture}[grow=right, sloped]
+    \node[bag] {Overall}
+    child {
+      node[bag] {Door near $\{1,1\}$}
+      edge from parent
+      node[below]  {$\frac{4}{40}$}
+    }
+    child {
+      node[bag] {Door near $\{1,10\}$}
+      edge from parent
+      node[below]  {$\frac{4}{40}$}
+    }
+    child {
+      node[bag] {Door near $\{10,1\}$}
+      edge from parent
+      node[below]  {$\frac{4}{40}$}
+    }
+    child {
+      node[bag] {Door near $\{10,10\}$}
+      edge from parent
+      node[below]  {$\frac{4}{40}$}
+    }
+    child {
+      node[bag] {Door near $\{1,4\}$}
+      edge from parent
+      node[below]  {$\frac{3}{40}$}
+    }
+    child {
+      node[bag] {Door near $\{1,7\}$}
+      edge from parent
+      node[below]  {$\frac{3}{40}$}
+    }
+    child {
+      node[bag] {Door near $\{10,4\}$}
+      edge from parent
+      node[below]  {$\frac{3}{40}$}
+    }
+    child {
+      node[bag] {Door near $\{10,7\}$}
+      edge from parent
+      node[below]  {$\frac{3}{40}$}
+    }
+    child {
+      node[bag] {Door near $\{4,1\}$}
+      edge from parent
+      node[below]  {$\frac{3}{40}$}
+    }
+    child {
+      node[bag] {Door near $\{7,1\}$}
+      edge from parent
+      node[below]  {$\frac{3}{40}$}
+    }
+    child {
+      node[bag] {Door near $\{4,10\}$}
+      edge from parent
+      node[below]  {$\frac{3}{40}$}
+    }
+    child {
+      node[bag] {Door near $\{7,10\}$}
+      edge from parent
+      node[below]  {$\frac{3}{40}$}
+    }
+    ;
+  \end{tikzpicture}
+\end{center}
+
+All the research done after will change the probability of each leaf according
+to the rule we found before. With the theoric content given, it's easy enough
+to determine the best strategy to minimize the number of research. For each
+research, we will just research on the branch with the highest score. This will
+lead to the following formulas.
+$$P_{k+1} = P_k + (1 - P_k) * P(door) * p$$
+$$R_{k+1} = P_{k+1} - P_{k}$$
+with :
+\begin{itemize}
+\item $P_k$ : Probability to find the door with $k$ moves or less.
+\item $R_k$ : Probability to find the door in exactly $k$ moves. ($R_0 = 0$)
+\item $P(door)$ : Probability that the door is in the place we searched at step
+  $k+1$.
+\item $p$ : The probability to find a door if the door is in range.
 \end{itemize}
 
 \end{document}
