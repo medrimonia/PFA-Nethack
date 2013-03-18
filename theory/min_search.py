@@ -52,4 +52,5 @@ p_sum = 0.0
 for i in range(len(r_found)):
     p_sum += i * r_found[i]
 avg = p_sum / sum(r_found)
-print ("average :", avg) 
+# The '#' at beginning allow to plot without issue from gnuplot
+print ("# average :", avg) 
