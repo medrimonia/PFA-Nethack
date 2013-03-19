@@ -56,9 +56,18 @@ Le \verb!@! désigne le joueur, les caractères \verb!|! et \verb!-! sont des mu
 
 Cette interface fonctionne à l'aide de caractères d'échapement normalisés \footnote{http://www.inwap.com/pdp10/ansicode.txt} permettant de contrôler la position du curseur dans un terminal et d'afficher des caractères à l'endroit souhaité. Par exemple, une séquence '\verb![46;50H|...+#!' affichera la chaîne de caractères '\verb!|...+#!' en commançant à la ligne 46, colone 50. Il est alors facile de reconstituer une carte envoyée par le jeu: le '\verb!|!' est aux coordonnées (46, 50), le '\verb!+!' est situé à (46, 54), etc.
 	
-	Le projet TAEB (Tactical Amulet Extraction Bot) \footnote{https://github.com/sartak/TAEB} utilise ce principe pour reconstituer la carte à l'aide d'un module sachant interpréter ces séquences de caractères \footnote{https://metacpan.org/module/Term::VT102}.
+	Le projet TAEB (Tactical Amulet Extraction Bot) \footnote{https://github.com/sartak/TAEB} utilise ce principe pour reconstituer la carte à l'aide d'un module sachant interpréter ces séquences de caractères \footnote{https://metacpan.org/module/Term::VT102}. Une première approche fut donc de copier ce procédé.
+
+\subsubsection*{Pseudo-terminal}
+
+Pour empêcher certaines formes de tricheries, NetHack procède à quelques vérifications pour vérifier qu'il est bien lancé depuis un terminal, ce qui empêchent les redirections de son entrée/sortie. Les quelques lignes responsables peuvent être désactivées sans conséquence notable sur le reste du jeu mais cela nécessite de modifier le code original. Pour rediriger à la fois l'entrée et la sortie du jeu sans modifier le jeu, il est nécessaire de 'tromper' NetHack à l'aide d'un pseudo terminal.
+
+Un pseudo terminal (ptry) est une paire de pseudo périphériques dont l'un est appelé 'maître' et l'autre 'esclave'. Le maître est utilisé comme un terminal standard sur lequel on peut écrire ou lire du texte. L'esclave communique avec l'application et sert simplement de rapporteur entre la partie 'maître' et NetHack. Ainsi, le jeu est satisfait puisqu'il est lancé depuis un terminal et il peut maintenant être contrôlé depuis la partie 'master' du pty sur laquelle on souhaite brancher un bot.
 
 \subsection{Interface finale}
+
+Décomposition, archi, hooks, choix sur les glyphes (ambiguitées), systèmes de
+patchs (simplicité, intégration).
 
 \begin{itemize}
 \item Choix pour l'interface (sockets, etc).
@@ -67,10 +76,19 @@ Cette interface fonctionne à l'aide de caractères d'échapement normalisés \f
 
 \subsection{Développement de bots.}
 
+BDD, outils d'analyse, généricité (protocole, socket, différents langages).
+
+Algos de bots.
+
 
 \section{Analyses}
 
-Outils d'analyse, graphes, sous-section pour chaque "mode"
+graphes, sous-section pour chaque "mode". Reprendre étude pièce rectangulaire.
 
+
+\section{Travail en équipe, organisation}
+
+Utilisation de git.
+Comparer avec le travail en plus grande équipe.
 
 \end{document}
