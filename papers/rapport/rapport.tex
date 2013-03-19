@@ -13,7 +13,7 @@
 
 \section{Introduction}
 
-NetHack est un rogue-like \footnote{inspiré du jeu vidéo \emph{Rogue} (1980)}
+NetHack est un rogue-like (jeu inspiré du jeu vidéo \emph{Rogue} - 1980)
 sorti en 1987. Le joueur incarne un aventurier chargé de récupérer une
 amulette dans un donjon peuplé de monstres.
 
@@ -21,6 +21,42 @@ amulette dans un donjon peuplé de monstres.
 \section{Environnement de création de bots}
 
 \subsection{Prototypage}
+
+NetHack propose, dès sa première version, une interface ASCII qui représente un donjon sous la forme suivante:
+
+\begin{verbatim}
+                                     Weapons
+                                     a - a blessed +1 mace (weapon in hand)
+                                     Armor
+   -------        ------------       b - a +0 robe (being worn)
+   .......         ........>.|       c - a +0 small shield (being worn)
+   |.....|        |..........|       Comestibles
+   |......#       |@.........|       e - a clove of garlic
+   |<....|#       |..........+       f - a sprig of wolfsbane
+   |.....|#       -.---- -----       Spellbooks
+   -------############               g - a spellbook of create monster
+         #############               h - a spellbook of detect food
+         # #        ##               Potions
+                                     d - 4 potions of holy water
+                      .              Tools
+                      ..             i - an oil lamp
+                       ..            (end) 
+                       ...
+                       ...
+                       ----
+
+JohnDoe the Aspirant          St:11 Dx:14 Co:13 In:11 Wi:15 Ch:11  Chaotic
+Dlvl:1  $:0  HP:14(14) Pw:8(8) AC:7  Exp:1
+\end{verbatim}
+
+Le \verb!@! désigne le joueur, les caractères \verb!|! et \verb!-! sont des murs, les \verb!#! des couloirs, un \verb!+! symbolyse une porte, etc.
+
+
+\subsubsection*{Séquences d'échapement ANSI}
+
+Cette interface fonctionne à l'aide de caractères d'échapement normalisés \footnote{http://www.inwap.com/pdp10/ansicode.txt} permettant de contrôler la position du curseur dans un terminal et d'afficher des caractères à l'endroit souhaité. Par exemple, une séquence '\verb![46;50H|...+#!' affichera la chaîne de caractères '\verb!|...+#!' en commançant à la ligne 46, colone 50. Il est alors facile de reconstituer une carte envoyée par le jeu: le '\verb!|!' est aux coordonnées (46, 50), le '\verb!+!' est situé à (46, 54), etc.
+	
+	Le projet TAEB (Tactical Amulet Extraction Bot) \footnote{https://github.com/sartak/TAEB} utilise ce principe pour reconstituer la carte à l'aide d'un module sachant interpréter ces séquences de caractères \footnote{https://metacpan.org/module/Term::VT102}.
 
 \subsection{Interface finale}
 
