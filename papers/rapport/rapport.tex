@@ -1,14 +1,64 @@
-\documentclass{article}
+\documentclass[a4paper]{report}
 \usepackage[frenchb]{babel}
 \usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+%Problem with latex and dvipdf:
+%\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{geometry}
 
-\title{Des bots pour NetHack}
+\geometry{margin=2cm}
 
 \begin{document}
-\maketitle
-\tableofcontents
+\begin{center}
+\begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} r}
 
+  \includegraphics [width=40mm]{./images/ENSEIRB-MATMECA.ps} &
+  \raisebox{0.75\height}
+           {\includegraphics [width=40mm]{./images/logo-LaBRI-couleur.ps}}
+
+\end{tabular*}
+
+\vspace{\stretch{1}}
+
+\textsc{\Huge Des bots pour NetHack}\\[0.5cm]
+\rule{0.4\textwidth}{1pt}
+
+\vspace{\stretch{1}}
+
+\begin{center}
+  
+  \begin{flushleft}
+    \large
+    \emph{Auteurs :}\\
+    \begin{itemize}
+    \item Benoît Ruelle
+    \item David Bitonneau
+    \item Ludovic Hofer
+    \end{itemize}
+  \end{flushleft}
+  
+  
+  \begin{flushright}
+    \large
+    \emph{Responsables :}\\
+    Pédagogique - M.~Renault\\
+    Client - M.~Le Borgne\\
+  \end{flushright}
+\end{center}
+
+\vspace{\stretch{1}}
+                  
+{\large Deuxième année, filière informatique}
+
+~
+
+{\large 16 octobre 2012 - 29 mars 2013}\\
+                  
+\end{center}
+\thispagestyle{empty}
+\pagebreak
+
+\tableofcontents
 \pagebreak
 
 \section{Introduction}
