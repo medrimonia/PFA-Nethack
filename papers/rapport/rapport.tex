@@ -1,4 +1,4 @@
-\documentclass[a4paper]{article}
+\documentclass[a4paper,11pt]{article}
 \usepackage[frenchb]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
@@ -73,22 +73,22 @@ amulette dans un donjon peuplé de monstres.
 NetHack propose, dès sa première version, une interface ASCII qui représente un donjon sous la forme suivante:
 
 \begin{verbatim}
-                                     Weapons
-                                     a - a blessed +1 mace (weapon in hand)
-                                     Armor
-   -------        ------------       b - a +0 robe (being worn)
-   .......         ........>.|       c - a +0 small shield (being worn)
-   |.....|        |..........|       Comestibles
-   |......#       |@.........|       e - a clove of garlic
-   |<....|#       |..........+       f - a sprig of wolfsbane
-   |.....|#       -.---- -----       Spellbooks
-   -------############               g - a spellbook of create monster
-         #############               h - a spellbook of detect food
-         # #        ##               Potions
-                                     d - 4 potions of holy water
-                      .              Tools
-                      ..             i - an oil lamp
-                       ..            (end) 
+                                           Weapons
+                                           a - a blessed +1 mace (weapon in hand)
+                                           Armor
+   -------        ------------             b - a +0 robe (being worn)
+   .......         ........>.|             c - a +0 small shield (being worn)
+   |.....|        |..........|             Comestibles
+   |......#       |@.........|             e - a clove of garlic
+   |<....|#       |..........+             f - a sprig of wolfsbane
+   |.....|#       -.---- -----             Spellbooks
+   -------############                     g - a spellbook of create monster
+         #############                     h - a spellbook of detect food
+         # #        ##                     Potions
+                                           d - 4 potions of holy water
+                      .                    Tools
+                      ..                   i - an oil lamp
+                       ..                  (end) 
                        ...
                        ...
                        ----
@@ -106,11 +106,51 @@ Cette interface fonctionne à l'aide de caractères d'échapement normalisés \f
 	
 	Le projet TAEB (Tactical Amulet Extraction Bot) \footnote{https://github.com/sartak/TAEB} utilise ce principe pour reconstituer la carte à l'aide d'un module sachant interpréter ces séquences de caractères \footnote{https://metacpan.org/module/Term::VT102}. Une première approche fut donc de copier ce procédé.
 
+
 \subsubsection*{Pseudo-terminal}
 
-Pour empêcher certaines formes de tricheries, NetHack procède à quelques vérifications pour vérifier qu'il est bien lancé depuis un terminal, ce qui empêchent les redirections de son entrée/sortie. Les quelques lignes responsables peuvent être désactivées sans conséquence notable sur le reste du jeu mais cela nécessite de modifier le code original. Pour rediriger à la fois l'entrée et la sortie du jeu sans modifier le jeu, il est nécessaire de 'tromper' NetHack à l'aide d'un pseudo terminal.
+Pour empêcher certaines formes de tricheries, NetHack procède à quelques vérifications pour vérifier qu'il est bien lancé depuis un terminal, ce qui empêchent les redirections de son entrée/sortie. Les quelques lignes de code responsables peuvent être désactivées sans conséquence notable sur le reste du jeu mais cela nécessite de modifier le code original. Pour rediriger à la fois l'entrée et la sortie du jeu sans modifier le jeu, il est nécessaire de 'tromper' NetHack à l'aide d'un pseudo terminal.
 
-Un pseudo terminal (ptry) est une paire de pseudo périphériques dont l'un est appelé 'maître' et l'autre 'esclave'. Le maître est utilisé comme un terminal standard sur lequel on peut écrire ou lire du texte. L'esclave communique avec l'application et sert simplement de rapporteur entre la partie 'maître' et NetHack. Ainsi, le jeu est satisfait puisqu'il est lancé depuis un terminal et il peut maintenant être contrôlé depuis la partie 'master' du pty sur laquelle on souhaite brancher un bot.
+Un pseudo terminal (pty) est une paire de pseudo périphériques dont l'un est appelé 'maître' et l'autre 'esclave'. Le maître est utilisé comme un terminal standard sur lequel on peut écrire ou lire du texte. L'esclave communique avec l'application et sert simplement de rapporteur entre la partie 'maître' et NetHack. Ainsi, le jeu est satisfait puisqu'il est lancé depuis un terminal et il peut maintenant être contrôlé depuis la partie 'master' du pty sur laquelle on souhaite brancher un bot \footnote{Plus de détails avec la page de manuel pty(7) ou sur http://rachid.koucha.free.fr/tech\_corner/pty\_pdip.html}.
+
+
+\subsubsection*{Branchement d'un bot}
+
+Cette interface permettait à un bot de communiquer avec NetHack depuis une machine distante (UDP ou TCP interchangeables) sans aucune modification du jeu original. Dans la version présentée dans le premier livrable, l'intégralité de la carte était retransmise au bot et les échanges avec le jeu souffraient de l'overhead des packets TCP ou UDP lorsque le bot et NetHack tournaient sur la même machine. Des améliorations alors envisagées étaient d'établir un protocole de communication plus complexe pour n'envoyer que les éléments ayant changé et de recourir aux sockets Unix pour des communications locales.
+
+Les communications entre l'interface et un bot utilisaient le protocole suivant.
+\paragraph{interface vers bot:} À chaque tour, l'information envoyée par l'interface commence par \verb!START! et se termine par \verb!END!. Pour toutes les différentes transmissions, il existe deux possibilités différentes :
+\begin{itemize}
+	\item Mono-ligne \verb!<NOM_VARIABLE> <VARIABLE_1> <VARIABLE_2> ...!
+	\item Multi-ligne
+		\begin{verbatim}
+		START <NOM_VARIABLE>
+		...
+		...
+		END <NOM_VARIABLE>
+		\end{verbatim}
+\end{itemize}
+
+\paragraph{bot vers interface:} À chaque tour le bot peut accomplir une et une seule action. Une action est définie par son type et ses paramètres (ex : l'action d'attaquer est définie par son type 'attaque' et la direction de l'attaque).  Cette action peut être transmise de deux façons différentes, comme précédemment :
+\begin{itemize}
+	\item Mono-ligne \verb!<NOM_VARIABLE> <VARIABLE_1> <VARIABLE_2> ...!
+	\item Multi-ligne
+		\begin{verbatim}
+		START <NOM_VARIABLE>
+		...
+		...
+		END <NOM_VARIABLE>
+		\end{verbatim}
+\end{itemize}
+
+\noindent Les actions possibles étaient définies par un langage faisant abstraction des commandes au clavier de NetHack :
+\begin{itemize}
+	\item Déplacement : \verb!MOVE <direction>!
+	\item Ouvrir porte : \verb!OPEN <direction>!
+	\item Lancer une recherche : \verb!SEARCH!
+	\item Forcer une porte : \verb!FORCE <direction>! (permet d'ouvrir les portes verrouillées)
+\end{itemize}
+\noindent La direction était un élément parmi \verb!NORTH!, \verb!SOUTH!, \verb!WEST!, \verb!EAST!, \verb!NORTH_WEST!, \verb!NORTH_EAST!, \verb!SOUTH_WEST!, \verb!SOUTH_EAST!, \verb!UP!, \verb!DOWN!.
 
 \subsection{Interface finale}
 
