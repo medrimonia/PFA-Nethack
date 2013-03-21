@@ -63,15 +63,6 @@
 \section{Génération des exécutables}
 TODO David/Benoit
 
-\section{Lancer une partie}
-
-\subsection{Lancement manuel}
-
-Tout d'abord, le jeu doit être lancé (avec les paramètres nécessaires, voir ci-après) avant le bot. NetHack attendra alors qu'un bot se connecte. Le bot choisi ou le dummy-client peuvent alors être lancés manuellement.
-
-\subsection{Lancement d'une série de parties automatiquement}
-
-TODO
 
 \section{Paramétrer l'exécution de nethack}
 
@@ -85,8 +76,13 @@ comportement du jeu :
 	\item \verb!NH_MM_TIMEOUT! : spécifie le timeout en secondes pour les communications avec le bot. Si le bot met un temps en secondes supérieur à cette valeur, le middleman quitte la partie. Par défaut, cette variables est mise à 2 secondes.
 \end{itemize}
 
+\section{Lancer une partie}
 
-\section{Lancer plusieurs parties grâce à un script}
+\subsection{Lancement manuel}
+
+Tout d'abord, le jeu doit être lancé (avec les paramètres nécessaires, voir ci-après) avant le bot. NetHack attendra alors qu'un bot se connecte. Le bot choisi ou le dummy-client peuvent alors être lancés manuellement.
+
+\subsection{Lancer plusieurs parties grâce à un script}
 Le script \emph{game\_runner.sh} permet à l'utilisateur de lancer facilement
 un grand nombre de parties qui ne diffèrent que par la graine aléatoire
 utilisée.
