@@ -273,6 +273,13 @@ destination, il faudra aussi spécifier à nethack que l'on ne souhaite pas
 réutiliser le code existant (ou copier le Makefile avant afin de gagner du temps
 de compilation).
 
+
+\section{Considérations pour la création de bots}
+
+L'interface ne supporte pas les commandes commençant par le caractère '\verb!#!'. Ceci est dû au code original de NetHack qui cherche à réaliser des traîtements particuliers pour ce type de commande (auto completion, etc) que nous n'avons pas jugé utile d'implémenter. Tout caractère '\verb!#!' est donc ignoré par l'interface.
+
+Un bot peut envoyer plusieurs commandes à la foi ce qui peut se montrer utile pour diminuer le nombre d'échanges avec le jeu. Par exemple, envoyer les commandes '\verb!jjkl!' aura le même effet que d'envoyer chacune des lettres séparément et fera bouger le joueur deux fois vers le bas, une fois vers le haut et une fois vers la droite.
+
 \section{Modifier les données stockées}
 Chaque table de la base de données possède son propre fichier \emph{.def} afin
 d'ajouter un champ dans une table, il est donc nécessaire d'ajouter une entrée
