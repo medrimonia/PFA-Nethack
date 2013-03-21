@@ -8,7 +8,7 @@ doxygen:
 	make -C documentation
 
 clean:
-	@rm -f $~;
+	@rm -f *~;
 	@for FILE in $(SUBDIRS); do \
 	  $(MAKE) -C $$FILE clean;  \
 	done
