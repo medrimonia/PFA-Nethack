@@ -181,9 +181,21 @@ Plusieurs outils ont été mis à disposition pour faciliter le développement d
 
 Parler de l'extraction de la graine.
 
-\subsubsection*{Replay d'une partie}
+\subsubsection*{Revoir d'une partie}
 
-Parler de viewer.pl, toTikZ.pl
+	Si la sauvegarde du replay a été activée lors du lancement du jeu (à l'aide de la variable d'environnement \verb!NH_MM_REPLAY!), un fichier nethackdir/replay est créé. Il contient tous les échanges de l'interface vers le bot, selon le même protocole, pour être capable de reconstituer le déroulement d'une partie.
+
+Le programme viewer.pl permet d'interpréter ce fichier en décomposant son contenu par tour de jeu. Ses fonctionnalitées sont :
+\begin{itemize}
+	\item reconstitution tour par tour
+	\item revenir en arrière tour par tour
+	\item saut direct à un numéro de tour donné
+	\item 'diaporama' par incrémentation ou décrémentation d'un nombre de tours par seconde donné
+\end{itemize}
+
+Un échange entre l'interface et le bot au tour $N$ ne permet pas de reconstituer l'état de la partie au tour $N$ car seules les mises à jour sont transmises. Il est donc nécessaire de traîter tous les échanges depuis le début de la partie pour connaître l'état du jeu à un tour donné. La reconstitution de longues parties peut alors devenir lente pour des opérations simples. Par exemple, passer du tour 2000 au tour 1999 nécessiterais de rejouer 1999 tours pour faire un simple saut en arrière.
+
+Une meilleure exploitation des informations contenues dans le fichier de replay est de calculer l'inverse des mises à jour qu'il contient et/ou de stocker des états paliers du jeu (tous les 100 tours par exemple). Dans \verb!viewer.pl! seule la méthode des mises à jour inverses est implémentée. Elles permettent de revenir en arrière rapidement et un passage d'un tour $N$ à un tour $M$ se fait simplement en traitant tous les tours de $N$ à $M$ que $N$ précède $M$ ou non.
 
 \subsubsection*{Scripts de génération de graphes}
 
