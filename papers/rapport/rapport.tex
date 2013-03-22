@@ -1,6 +1,7 @@
 \documentclass[a4paper,11pt]{article}
 \usepackage[frenchb]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage{float}
 \usepackage{graphicx}
 \usepackage{geometry}
 
@@ -114,6 +115,56 @@ Pour empêcher certaines formes de tricheries, NetHack procède à quelques vér
 Un pseudo terminal (pty) est une paire de pseudo périphériques dont l'un est appelé 'maître' et l'autre 'esclave'. Le maître est utilisé comme un terminal standard sur lequel on peut écrire ou lire du texte. L'esclave communique avec l'application et sert simplement de rapporteur entre la partie 'maître' et NetHack. Ainsi, le jeu est satisfait puisqu'il est lancé depuis un terminal et il peut maintenant être contrôlé depuis la partie 'master' du pty sur laquelle on souhaite brancher un bot \footnote{Plus de détails avec la page de manuel pty(7) ou sur http://rachid.koucha.free.fr/tech\_corner/pty\_pdip.html}.
 
 
+\subsubsection*{Décomposition de l'affichage}
+
+Lorsqu'il est lancé depuis un terminal, l'interface ASCII détecte le nombre de lignes et de colonnes disponibles afin de faire des défilements ou des superpositions de menus lorsque nécessaire \footnote{voir termcap}. Cela pose problème avec la méthode consistant à interpréter les séquences d'échappement car il faut être capable détecter lorsque deux éléments se chevauchent.
+
+\begin{figure}[H]
+	\caption{Exemple d'un menu recouvrant une partie de la carte}
+	\begin{verbatim}
+                                     Weapons
+                                     a - a blessed +1 mace (weapon in hand)
+             ------                  i - a crude bow
+             |...[|                  Armor
+ -------     |..<..###############`  b - a +0 robe (being worn)
+ |......-    .....|       ---------- c - a +0 small shield (being worn)
+ |           -.----      #.........| Comestibles
+              ##       ###|........| e - a clove of garlic
+               #       #  |........| f - a sprig of wolfsbane
+               ###   ###  |........| Spellbooks
+                 #   #    |........| g - a spellbook of detect food
+                 ### #    |........| h - a spellbook of clairvoyance
+                ?  # #    --.------- Potions
+               ----.-#      ###@#### d - 4 potions of holy water
+               |....|#               j - a blessed black potion
+               |....|#               (end) 
+               +.....#                         |..... ..$|
+               |....|                          |.........|
+               ------                          |.........|
+                                               -----------
+
+JohnDoe the Aspirant          St:10 Dx:14 Co:13 In:9 Wi:18 Ch:11  Chaotic
+Dlvl:1  $:0  HP:14(14) Pw:7(7) AC:7  Exp:1
+	\end{verbatim}
+\end{figure}
+
+Une façon de supprimer cette difficulté est de tromper une nouvelle fois NetHack en manipulant la taille effective du pseudo terminal qui n'est en rien liée à sa taille réelle à l'écran. Avec une taille assez grande, il n'y a jamais de chevauchement.
+
+Nous pouvons ainsi séparer l'écran comme suit en forçant une taille de 24 lignes par 160 colonnes :
+
+\begin{verbatim}
+               Messages line ................ --more--
+               ----------------------------------------
+               |                  |                   |
+               |                  |                   |
+               |    MAP 21x80     |     MENU 21x80    |
+               |                  |                   |
+               |                  |                   |
+               ----------------------------------------
+               Status line 1 .........................
+               Status line 2 .........................
+\end{verbatim}
+
 \subsubsection*{Branchement d'un bot}
 
 Cette interface permettait à un bot de communiquer avec NetHack depuis une machine distante (UDP ou TCP interchangeables) sans aucune modification du jeu original. Dans la version présentée dans le premier livrable, l'intégralité de la carte était retransmise au bot et les échanges avec le jeu souffraient de l'overhead des packets TCP ou UDP lorsque le bot et NetHack tournaient sur la même machine. Des améliorations alors envisagées étaient d'établir un protocole de communication plus complexe pour n'envoyer que les éléments ayant changé et de recourir aux sockets Unix pour des communications locales.
@@ -160,6 +211,10 @@ END
 
 \subsection{Interface finale}
 
+À la demande du client et du responsable pédagogique, l'utilisation d'une interface intégrée directement dans le jeu fut implémentée. Elle permet d'économiser une étape d'entrée/sortie lors de la communication avec un bot mais a le désaventage de rendre impossible l'utilisation du projet sur une version originale du jeu.
+
+Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant des pointeurs de fonction à appeler lors d'un évènement à communiquer au joueur. C'est sur ce mécanisme que repose la plupart des interfaces graphiques existantes pour le jeu.
+
 Décomposition, archi, env variables, hooks, choix sur les glyphes (ambiguitées), systèmes de
 patchs (simplicité, intégration).
 
@@ -195,7 +250,7 @@ Le programme viewer.pl permet d'interpréter ce fichier en décomposant son cont
 
 Un échange entre l'interface et le bot au tour $N$ ne permet pas de reconstituer l'état de la partie au tour $N$ car seules les mises à jour sont transmises. Il est donc nécessaire de traîter tous les échanges depuis le début de la partie pour connaître l'état du jeu à un tour donné. La reconstitution de longues parties peut alors devenir lente pour des opérations simples. Par exemple, passer du tour 2000 au tour 1999 nécessiterais de rejouer 1999 tours pour faire un simple saut en arrière.
 
-Une meilleure exploitation des informations contenues dans le fichier de replay est de calculer l'inverse des mises à jour qu'il contient et/ou de stocker des états paliers du jeu (tous les 100 tours par exemple). Dans \verb!viewer.pl! seule la méthode des mises à jour inverses est implémentée. Elles permettent de revenir en arrière rapidement et un passage d'un tour $N$ à un tour $M$ se fait simplement en traitant tous les tours de $N$ à $M$ que $N$ précède $M$ ou non.
+Une meilleure exploitation des informations contenues dans le fichier de replay est de calculer l'inverse des mises à jour qu'il contient et/ou de stocker des états paliers du jeu (tous les 100 tours par exemple). Dans \verb!viewer.pl! seule la méthode des mises à jour inverses est implémentée. Elles permettent de revenir en arrière rapidement et un passage d'un tour $N$ à un tour $M$ se fait simplement en traitant tous les tours de $N$ à $M$ si $|N-M| < M$ ou de $0$ à $M$ sinon. Certains paliers sont tout de même utilisés lors du changement de niveaux pour ne pas avoir à retracer les sales des niveaux inférieurs qui seront de toute manière effacées lors d'un retour en arrière.
 
 \subsubsection*{Scripts de génération de graphes}
 
