@@ -229,7 +229,7 @@ bots qui sont plus "généralistes".
 
 Afin d'utiliser ce bot dans les bonnes conditions, il est nécessaire d'avoir
 compilé une version du jeu dans laquelle le patch
-\emph{patches/create_level.patch} a été appliqué. Ce patch modifie le donjon
+\emph{patches/create\_level.patch} a été appliqué. Ce patch modifie le donjon
 de telle sorte que le premier niveau ne contienne qu'une seule salle de la
 forme décrite précédemment\footnote{ce niveau ne contient pas d'escalier pour descendre
 dans les niveaux suivants}.
@@ -287,13 +287,13 @@ réutiliser le code existant (ou copier le Makefile avant afin de gagner du temp
 de compilation).
 
 
-\section{Considérations pour la création de bots}
+\section{Considérations pour la création de bots} \label{sec:creer-bot}
 
 L'interface ne supporte pas les commandes commençant par le caractère '\verb!#!'. Ceci est dû au code original de NetHack qui cherche à réaliser des traitements particuliers pour ce type de commande (auto complétion, etc.) que nous n'avons pas jugé utile d'implémenter. Tout caractère '\verb!#!' est donc ignoré par l'interface.
 
 Un bot peut envoyer plusieurs commandes à la fois ce qui peut se montrer utile pour diminuer le nombre d'échanges avec le jeu. Par exemple, envoyer les commandes '\verb!jjkl!' aura le même effet que d'envoyer chacune des lettres séparément et fera bouger le joueur deux fois vers le bas, une fois vers le haut et une fois vers la droite.
 
-\section{Modifier les données stockées}
+\section{Modifier les données stockées} \label{sec:modif-bdd}
 Chaque table de la base de données possède son propre fichier \emph{.def} afin
 d'ajouter un champ dans une table, il est donc nécessaire d'ajouter une entrée
 dans ce fichier. Il faut aussi changer le nombre de champs de la table dans les
@@ -308,8 +308,37 @@ comportement utilisé pour les autres tables.
 
 \section{Créer un nouveau mode de jeu}
 Les bases ont été posées afin de définir facilement des modes de jeu.
+Un mode de jeu est défini de la façon suivante :
+\begin{itemize}
+		\item Un ensemble de modifications du jeu de base afin de
+			rajouter/restreindre des fonctionnalités.
+		\item Un ensemble de paramètres d'évaluation.
+		\item Un ensemble d'objectifs ou conditions de fin de jeu.
+		\item Un jeu d'actions autorisées pour les bots.
+\end{itemize}
 
-Ajouter de nouveau patchs
+Les modifications du jeu de bases sont fournies sous la forme de patchs (ex :
+un patch pour désactiver les montres, un autre pour désactiver la faim).
+Chaque patch désactive une fonction particulière du jeu, ainsi différents
+modes de jeu peuvent réutiliser les mêmes patchs. Par exemple, le mode de jeu
+de recherche des portes secrètes nécessite la désactivation de tout ce qui
+peut tuer le joueur c'est-à-dire les montres, les pièges, les objets et la
+faim. Il serait aisé de définir un nouveau mode de jeu réexploitant les
+différents patchs fourni, par exemple un mode combat dans lequel le but serait
+de combattre des vagues de montres jusqu'à la mort pourrait nécessiter la
+désactivation des autres sources de mort que les montres.
+
+Pour définir un mode de jeu particulier voici ce qu'il faut faire :
+\begin{itemize}
+	\item Créer l'ensemble des patchs (cf. section numéro~\ref{sec:creer-patch} page~\pageref{sec:creer-patch}) modifiant le noyau de NetHack et nécessaires au mode de jeu.
+	\item Ajouter des entrées dans la base de données pour les nouvelles données/statistiques à relever (cf. section numéro~\ref{sec:modif-bdd} page~\pageref{sec:modif-bdd}).
+	\item Créer de nouveaux bots spécifiques à ce mode de jeu (cf. section numéro~\ref{sec:creer-bot} page~\pageref{sec:creer-bot}).
+	\item Modifier si besoin le middleman afin, par exemple, d'ajouter des choses au protocole de communication entre les bots et le noyau de NetHack.
+\end{itemize}
+
+\section{Créer un patch} \label{sec:creer-patch}
+
+\textbf{\_\_Exemple de successions de commandes permettant de créer un patch\_\_}.
 
 \section{Ajouter des niveaux spéciaux}
 
