@@ -209,19 +209,29 @@ END
 \noindent La direction étant un élément parmi \verb!NORTH!, \verb!SOUTH!, \verb!WEST!, \verb!EAST!, \verb!NORTH_WEST!, \verb!NORTH_EAST!, \verb!SOUTH_WEST!, \verb!SOUTH_EAST!, \verb!UP!, \verb!DOWN!.
 
 
-\subsection{Interface finale}
+\subsection{Modifications de NetHack}
 
-À la demande du client et du responsable pédagogique, l'utilisation d'une interface intégrée directement dans le jeu fut implémentée. Elle permet d'économiser une étape d'entrée/sortie lors de la communication avec un bot mais a le désaventage de rendre impossible l'utilisation du projet sur une version originale du jeu.
+\subsubsection{Architecture}
+
+Archi et Décomposition de la version modifiée de NetHack.
+
+\subsubsection{Interface finale}
+
+\paragraph{}À la demande du client et du responsable pédagogique, l'utilisation d'une interface intégrée directement dans le jeu fut implémentée. Elle permet d'économiser une étape d'entrée/sortie lors de la communication avec un bot mais a le désaventage de rendre impossible l'utilisation du projet sur une version originale du jeu.
 
 Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant des pointeurs de fonction à appeler lors d'un évènement à communiquer au joueur. C'est sur ce mécanisme que repose la plupart des interfaces graphiques existantes pour le jeu.
 
-Décomposition, archi, env variables, hooks, choix sur les glyphes (ambiguitées), systèmes de
-patchs (simplicité, intégration).
-
+\paragraph{}Le paramétrage se fait avec des variables d'environnement :
 \begin{itemize}
-\item Choix pour l'interface (sockets, etc).
-\item Protocole.
+	\item ...
 \end{itemize}
+
+\paragraph{}Protocole: choix sur les glyphes (ambiguitées), 
+
+\subsubsection*{Développement par les patchs}
+
+ hooks, systèmes de patchs (simplicité, intégration).
+
 
 \subsection{Développement de bots.}
 
@@ -232,11 +242,11 @@ Algos de bots.
 
 Plusieurs outils ont été mis à disposition pour faciliter le développement des bots et l'analyse de leurs performances.
 
-\subsubsection*{Rejouer une partie}
+\subsubsection{Rejouer une partie}
 
 Parler de l'extraction de la graine.
 
-\subsubsection*{Revoir d'une partie}
+\subsubsection{Revoir d'une partie}
 
 	Si la sauvegarde du replay a été activée lors du lancement du jeu (à l'aide de la variable d'environnement \verb!NH_MM_REPLAY!), un fichier nethackdir/replay est créé. Il contient tous les échanges de l'interface vers le bot, selon le même protocole, pour être capable de reconstituer le déroulement d'une partie.
 
