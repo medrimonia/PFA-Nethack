@@ -64,15 +64,15 @@
 TODO David/Benoit
 
 
-\section{Paramétrer l'exécution de nethack}
+\section{Paramétrer l'exécution de Nethack}
 
 Des variables d'environnement peuvent être utilisées pour modifier le
 comportement du jeu :
 
 \begin{itemize}
-	\item \verb!NH_MM_SOCKPATH! : spécifier un chemin pour la socket unix (permettant la communication entre nethack et les bots) à créer. Par défaut, le middleman crée /tmp/mmsock.
-	\item \verb!NH_MM_REPLAY! : si mise à une valeur différente de 0, cette variable active l'enregistrement de la partie dans le fichier nethackdir/replay. Désactivée par défaut.
-	\item \verb!NH_MM_LOGGING! : si mise à une valeur différente de 0, cette variable active l'enregistrement de logs du middleman dans le fichier nethackdir/mm.log. Désactivée par défaut.
+	\item \verb!NH_MM_SOCKPATH! : spécifier un chemin pour la socket unix (permettant la communication entre Nethack et les bots) à créer. Par défaut, le middleman créé \emph{/tmp/mmsock}.
+	\item \verb!NH_MM_REPLAY! : si mise à une valeur différente de 0, cette variable active l'enregistrement de la partie dans le fichier \emph{nethackdir/replay}. Désactivée par défaut.
+	\item \verb!NH_MM_LOGGING! : si mise à une valeur différente de 0, cette variable active l'enregistrement de logs du middleman dans le fichier \emph{nethackdir/mm.log}. Désactivée par défaut.
 	\item \verb!NH_MM_TIMEOUT! : spécifie le timeout en secondes pour les communications avec le bot. Si le bot met un temps en secondes supérieur à cette valeur, le middleman quitte la partie. Par défaut, cette variables est mise à 2 secondes.
 \end{itemize}
 
@@ -89,9 +89,9 @@ utilisée.
 \\
 Il est possible de lancer plusieurs instances de ce script en simultané, et ce
 même si elles enregistrent leurs résultats dans la même base de donnée. Chaque
-script créé un dossier dans /tmp/ avant d'y copier le code de nethack ainsi que
+script créé un dossier dans \emph{/tmp/} avant d'y copier le code de Nethack ainsi que
 le bot, ceci permet de continuer à travailler sur les bots ou sur le code de
-nethack sans risquer d'interférer avec les parties déjà lancées. Si ce
+Nethack sans risquer d'interférer avec les parties déjà lancées. Si ce
 comportement n'est pas souhaité, il est relativement simple de commenter la
 partie du code qui y est associé.
 \\
@@ -116,7 +116,9 @@ terminaux différents.
 
 \section{Revoir une partie}
 
-Un fichier nethackdir/replay peut être générer en mettant la variable d'environnement \verb!NH_MM_REPLAY! à une valeur différente de 0 lors du lancement du jeu. Le programme viewer/viewer.pl permet d'exploiter ce fichier afin de visualiser la partie enregistrée. Voir le README correspondant.
+Un fichier \emph{nethackdir/replay} peut être générer en mettant la variable
+d'environnement \verb!NH_MM_REPLAY! à une valeur différente de 0 lors du
+lancement du jeu. Le programme \emph{viewer/viewer.pl} permet d'exploiter ce fichier afin de visualiser la partie enregistrée. Voir le README correspondant.
 
 \section{Générer des graphiques}
 Afin de jauger les performances des différents bots, mais aussi afin de
@@ -218,29 +220,29 @@ Ce bot propose un squelette pour l'interprétation des messages venant du jeu et
 TODO David
 
 \chapter{Description technique}
-\section{Les patchs du noyau de nethack}
+\section{Les patchs du noyau de Nethack}
 Afin de pouvoir facilement repartir d'une version originale du jeu, les
-modifications du code de nethack sont effectuées sous la forme de patchs. Il
+modifications du code de Nethack sont effectuées sous la forme de patchs. Il
 est ainsi plus aisé de repérer les portions de codes qui ont été modifiées.
 
 \subsection{Les patchs nécessaires}
-Un ensemble de modifications du noyau de nethack sont nécessaires au
+Un ensemble de modifications du noyau de Nethack sont nécessaires au
 fonctionnement des divers modules. Ces patchs sont regroupés dans le dossier
 \emph{install} et définissent pour la plupart des \emph{hooks}, c'est-à-dire des
-points d'entrée dans le cœur du code de nethack. Ces points d'entrée sont en
+points d'entrée dans le cœur du code de Nethack. Ces points d'entrée sont en
 fait des appels de fonctions dont le code est fourni dans les fichiers du
 dossier \emph{src} et qui peuvent donc être modifiés indépendamment des patchs.
 
 \subsection{Les patchs facultatifs}
 Un ensemble de patchs a également été créé afin d'apporter des fonctionnalités
-facultatives ou de restreindre la complexité de nethack. Ces patchs se
+facultatives ou de restreindre la complexité de Nethack. Ces patchs se
 trouvent dans le dossier \emph{patches} et peuvent être appliqués
 indépendamment les uns des autres. Lors de l'installation, avec le script
 \emph{nh-setup.sh}, il peut être choisi d'appliquer l'ensemble des patchs
 listés dans le fichier \emph{patches/patch.conf} ou de choisir
 individuellement ceux qui doivent être appliqués.
 La plupart de ces patchs servent dans la définition d'un mode de jeu en
-enlevant diverses contraintes de nethack telles que la faim, les montres, les
+enlevant diverses contraintes de Nethack telles que la faim, les montres, les
 pièges ou les objets. Cela permet ainsi de construire des bots qui évoluent sur
 une version simplifiée du jeu.
 
@@ -260,12 +262,12 @@ secrets trouvés.} est aussi disponible afin de faciliter l'utilisation de celle
 \section{Modifier du code source contenu dans les hooks}
 Il est aisé de modifier du code source à l'intérieur des différents hooks
 fournis car le script \emph{nh-setup.sh} permet de recompiler l'exécutable
-nethack en recompilant tous les fichiers sources nécessaires. Ainsi, il n'y aura
+Nethack en recompilant tous les fichiers sources nécessaires. Ainsi, il n'y aura
 pas de modifications plus profonde à faire dans ce cas là. Cependant, si un
 nouveau fichier est utilisé, il faudra néanmoins modifier le Makefile présent
 dans le dossier \emph{install/nh/src} afin que les dépendances soient prises en
 compte. Comme le fichier Makefile n'est pas recopié par défaut vers sa
-destination, il faudra aussi spécifier à nethack que l'on ne souhaite pas
+destination, il faudra aussi spécifier à Nethack que l'on ne souhaite pas
 réutiliser le code existant (ou copier le Makefile avant afin de gagner du temps
 de compilation).
 
@@ -295,12 +297,12 @@ comportement utilisé pour les autres tables.
 
 \chapter{Dysfonctionnements connus}
 \section{Sémaphore bloquée de façon permanente}
-Lorsqu'un utilisateur tue un processus de nethack, le processus peut se terminer
+Lorsqu'un utilisateur tue un processus de Nethack, le processus peut se terminer
 alors qu'il est dans une zone critique, il ne libère donc pas l'accès à la base
 de données, une solution peut être implémentée à l'aide d'un gestionnaire de
 signal, cependant au vu des appels à une bibliothèque externe, il est possible
 que cela ne suffise pas. Actuellement, la meilleure solution dans ce cas est
-d'effacer la sémaphore afin que les nouveaux processus de nethack ne soient pas
+d'effacer la sémaphore afin que les nouveaux processus de Nethack ne soient pas
 bloqués lorsqu'ils tentent d'écrire dans la base de données. Sur certains
 systèmes, les fichiers de sémaphore nommées peuvent être trouvés dans 
 \emph{/dev/shm/}, dans le cas où l'utilisateur ne parvient pas à trouver
