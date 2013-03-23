@@ -116,9 +116,11 @@ terminaux différents.
 
 \section{Revoir une partie}
 
-Un fichier \emph{nethackdir/replay} peut être générer en mettant la variable
+Un fichier \emph{nethackdir/replay} peut être généré en mettant la variable
 d'environnement \verb!NH_MM_REPLAY! à une valeur différente de 0 lors du
-lancement du jeu. Le programme \emph{viewer/viewer.pl} permet d'exploiter ce fichier afin de visualiser la partie enregistrée. Voir le README correspondant.
+lancement du jeu (ou en lançant le script \emph{game\_runner.sh} avec l'option
+-r). Le programme \emph{viewer/viewer.pl} permet d'exploiter ce fichier afin
+de visualiser la partie enregistrée. Voir le README correspondant.
 
 \section{Générer des graphiques}
 Afin de jauger les performances des différents bots, mais aussi afin de
@@ -274,7 +276,7 @@ de compilation).
 
 \section{Considérations pour la création de bots}
 
-L'interface ne supporte pas les commandes commençant par le caractère '\verb!#!'. Ceci est dû au code original de NetHack qui cherche à réaliser des traitements particuliers pour ce type de commande (auto complétion, etc) que nous n'avons pas jugé utile d'implémenter. Tout caractère '\verb!#!' est donc ignoré par l'interface.
+L'interface ne supporte pas les commandes commençant par le caractère '\verb!#!'. Ceci est dû au code original de NetHack qui cherche à réaliser des traitements particuliers pour ce type de commande (auto complétion, etc.) que nous n'avons pas jugé utile d'implémenter. Tout caractère '\verb!#!' est donc ignoré par l'interface.
 
 Un bot peut envoyer plusieurs commandes à la fois ce qui peut se montrer utile pour diminuer le nombre d'échanges avec le jeu. Par exemple, envoyer les commandes '\verb!jjkl!' aura le même effet que d'envoyer chacune des lettres séparément et fera bouger le joueur deux fois vers le bas, une fois vers le haut et une fois vers la droite.
 
