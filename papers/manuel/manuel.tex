@@ -219,7 +219,20 @@ optimisant certaines parties du code.
 Ce bot propose un squelette pour l'interprétation des messages venant du jeu et un algorithme simple pour l'exploration 'rapide' d'un niveau en maintenant un compteur pour chaque case visitée. Le bot se déplace en priorité sur les cases les moins visitées.
 
 \section{Le bot spécialisé}
-TODO David
+Ce bot, écrit en python, n'a pas vocation à être utilisé dans des conditions
+"normales" de jeu. C'est un bot dédié à la résolution optimale d'un problème
+particulier : trouver, en un nombre de tours minimal, la porte secrète cachée
+de façon aléatoire dans une salle carrée de taille 10x10. Une étude théorique
+de ce problème a été réalisée et ce bot a pour but de s'approcher de la
+solution optimale. Ceci permet d'effectuer une comparaison avec les autres
+bots qui sont plus "généralistes".
+
+Afin d'utiliser ce bot dans les bonnes conditions, il est nécessaire d'avoir
+compilé une version du jeu dans laquelle le patch
+\emph{patches/create_level.patch} a été appliqué. Ce patch modifie le donjon
+de telle sorte que le premier niveau ne contienne qu'une seule salle de la
+forme décrite précédemment\footnote{ce niveau ne contient pas d'escalier pour descendre
+dans les niveaux suivants}.
 
 \chapter{Description technique}
 \section{Les patchs du noyau de NetHack}
@@ -263,8 +276,8 @@ secrets trouvés.} est aussi disponible afin de faciliter l'utilisation de celle
 \chapter{Apporter ses propres modifications au code existant}
 \section{Modifier du code source contenu dans les hooks}
 Il est aisé de modifier du code source à l'intérieur des différents hooks
-fournis car le script \emph{nh-setup.sh} permet de recompiler l'exécutable
-NetHack en recompilant tous les fichiers sources nécessaires. Ainsi, il n'y aura
+fournis car le script \emph{nh-setup.sh} permet de générer l'exécutable
+\emph{nethack} en recompilant tous les fichiers sources nécessaires. Ainsi, il n'y aura
 pas de modifications plus profonde à faire dans ce cas là. Cependant, si un
 nouveau fichier est utilisé, il faudra néanmoins modifier le Makefile présent
 dans le dossier \emph{install/nh/src} afin que les dépendances soient prises en
@@ -293,7 +306,10 @@ ligne de conduite principale reste d'ajouter un fichier \emph{.def}
 \footnote{Attention aux dépendances dans le Makefile} et de copier le
 comportement utilisé pour les autres tables.
 
-\section{Ajouter de nouveau patchs}
+\section{Créer un nouveau mode de jeu}
+Les bases ont été posées afin de définir facilement des modes de jeu.
+
+Ajouter de nouveau patchs
 
 \section{Ajouter des niveaux spéciaux}
 
