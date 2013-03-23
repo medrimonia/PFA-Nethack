@@ -8,11 +8,11 @@ manual: ${MANUAL}
 report: ${REPORT}
 
 %.pdf: %.dvi
-	dvipdf $^ $@ & dvipdf $^ $@
+	dvipdf $^ $@ 
 	@rm -f *~ *.aux *.log *.toc *.dvi
 
 %.dvi: %.tex
-	latex $^ & latex $^
+	latex $^ && latex $^
 	@cp *.dvi $@
 
 clean:
