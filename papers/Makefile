@@ -1,15 +1,20 @@
-MANUAL=manuel/manuel.pdf
-REPORT=rapport/rapport.pdf
+SUBDIRS =   \
+	manuel  \
+	rapport \
 
-all: ${MANUAL} ${REPORT}
-
-manual: ${MANUAL}
-
-report: ${REPORT}
-
-%.pdf: %.tex
-	pdflatex $^ $@ 
-	@rm -f *~ *.aux *.log *.toc *.dvi
+all: 
+	@for FILE in $(SUBDIRS); do \
+	  $(MAKE) -C $$FILE;        \
+	done
 
 clean:
-	@rm -f ${MANUAL} ${REPORT}
+	@rm -f *~;
+	@for FILE in $(SUBDIRS); do \
+	  $(MAKE) -C $$FILE clean;  \
+	done
+
+mrproper:
+	@rm -f *~;
+	@for FILE in $(SUBDIRS); do   \
+	  $(MAKE) -C $$FILE mrproper; \
+	done
