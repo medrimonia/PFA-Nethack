@@ -7,13 +7,9 @@ manual: ${MANUAL}
 
 report: ${REPORT}
 
-%.pdf: %.dvi
-	dvipdf $^ $@ 
+%.pdf: %.tex
+	pdflatex $^ $@ 
 	@rm -f *~ *.aux *.log *.toc *.dvi
-
-%.dvi: %.tex
-	latex $^ && latex $^
-	@cp *.dvi $@
 
 clean:
 	@rm -f ${MANUAL} ${REPORT}

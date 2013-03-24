@@ -1,9 +1,14 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage[frenchb]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc} 
 \usepackage{float}
 \usepackage{graphicx}
 \usepackage{geometry}
+\usepackage{amsmath}
+\usepackage{tikz}
+\usetikzlibrary{trees}
+
 
 \geometry{margin=2cm}
 
@@ -11,9 +16,9 @@
 \begin{center}
 \begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} r}
 
-  \includegraphics [width=40mm]{./images/ENSEIRB-MATMECA.ps} &
+  \includegraphics [width=40mm]{./images/ENSEIRB-MATMECA.jpg} &
   \raisebox{0.75\height}
-           {\includegraphics [width=40mm]{./images/logo-LaBRI-couleur.ps}}
+           {\includegraphics [width=40mm]{./images/logo-LaBRI-couleur.jpg}}
 
 \end{tabular*}
 
@@ -310,6 +315,325 @@ Expliquer les scripts
 \section{Analyses}
 
 graphes, sous-section pour chaque "mode". Reprendre étude pièce rectangulaire.
+\section{Problème simplifié : sortie d'une salle}
+
+Afin d'étudier le problème de la recherche des portes secrètes de façon plus
+théorique, nous avons réduit le nombre de paramètres aléatoires et simplifié
+volontairement la situation.
+\\
+Dans ce niveau particulier :
+\begin{itemize}
+\item Le personnage apparaît au milieu d'une salle de $10$ lignes par $10$
+  colonnes.
+\item La salle est entourée de murs et un seul de ceux-ci contient une porte
+  secrète.
+  \footnote{Il y a {\em exactement} une porte secrète}
+\item Tous les emplacements ont la même probabilité de contenir la porte
+  secrète.
+  \footnote{Ce point a été vérifié par l'expérience en générant un grand nombre
+    de parties et en observant la répartition des portes secrètes}
+\item Effectuer une recherche dans une des cases adjacentes au mur contenant la
+  porte secrète a une probabilité de révéler celle-ci de $\frac{1}{7}$.
+\item Le personnage est placé aléatoirement dans la pièce.
+\end{itemize}
+
+Voici un aperçu de l'apparence de la pièce, les carrés violets étant ceux où la
+porte secrète peut se trouver.
+
+\begin{center}
+  \begin{tikzpicture}[scale=.5]
+    % Drawing Walls part
+    \foreach \x in {1,...,10}{
+      \draw [fill=violet] (\x,  0) rectangle (\x + 1,  1);
+      \draw [fill=violet] (\x, 11) rectangle (\x + 1, 12);
+    }
+    \foreach \y in {1,...,10}{
+      \draw [fill=violet] ( 0, \y) rectangle ( 1, \y + 1);
+      \draw [fill=violet] (11, \y) rectangle (12, \y + 1);
+    }
+    % Drawing internal grid
+    \foreach \x in {1,...,10}{
+      \foreach \y in {1,...,10}{
+        \draw (\x,\y) rectangle (\x + 1,\y + 1);
+      }
+    }
+  \end{tikzpicture}
+\end{center}
+
+Être certain d'avoir la meilleure stratégie étant trop complexe à nos yeux, nous
+avons décider de chercher plutôt à définir une borne inférieure. Une fois
+celle-ci obtenue, il est donc possible de la comparer aux résultats obtenus par
+les bots. La différence entre ces deux résultats pourra être réduite de deux
+façons :
+\begin{itemize}
+\item En augmentant la borne inférieure par des résultats théoriques.
+\item En diminuant la borne supérieure par des modifications du bot.
+\end{itemize}
+
+\subsection{Approche théorique}
+
+\subsubsection{Dominer la pièce}
+Il est possible de fixer certaines cases où les recherches seront effectuées en
+cherchant à minimiser ce nombre de cases, tout en ayant à portée tous les murs.
+\footnote{Cette notion est comparable à la domination en théorie des graphes,
+  les différences principales étant que l'on ne peut pas choisir n'importe quel
+  sommet, certains sommets étant interdits et qu'il n'est pas nécessaire de
+  dominer tous les sommets, mais uniquement les interdits.}
+\\
+En colorant en orange les cases où les recherches seront effectuées, et en
+indiquant la portée des recherches par les carrés oranges transparents, le
+résultat obtenu est le suivant :
+
+\begin{center}
+  \begin{tikzpicture}[scale=.5]
+    % Drawing Walls part
+    \foreach \x in {1,...,10}{
+      \draw [fill=violet] (\x,  0) rectangle (\x + 1,  1);
+      \draw [fill=violet] (\x, 11) rectangle (\x + 1, 12);
+    }
+    \foreach \y in {1,...,10}{
+      \draw [fill=violet] ( 0, \y) rectangle ( 1, \y + 1);
+      \draw [fill=violet] (11, \y) rectangle (12, \y + 1);
+    }
+    % Drawing internal grid
+    \foreach \x in {1,...,10}{
+      \foreach \y in {1,...,10}{
+        \draw (\x,\y) rectangle (\x + 1,\y + 1);
+      }
+    }
+    % Coloring squares and ranges of research
+    \foreach \x in {1,4,7,10}{
+      \draw [fill=orange] (\x,  1) rectangle (\x + 1,  2);
+      \draw [fill=orange] (\x, 10) rectangle (\x + 1, 11);
+      \draw [ultra thick, orange] (\x - 0.5, 0.5) rectangle (\x + 1.5,  2.5);
+      \draw [ultra thick, orange] (\x - 0.5, 9.5) rectangle (\x + 1.5, 11.5);
+    }
+    \foreach \y in {1,4,7,10}{
+      \draw [fill=orange] ( 1, \y) rectangle ( 2, \y + 1);
+      \draw [fill=orange] (10, \y) rectangle (11, \y + 1);
+      \draw [ultra thick, orange] (0.5, \y - 0.5) rectangle ( 2.5, \y + 1.5);
+      \draw [ultra thick, orange] (9.5, \y - 0.5) rectangle (11.5, \y + 1.5);
+    }
+  \end{tikzpicture}
+\end{center}
+Il est assez évident qu'il est impossible de recouvrir chaque cases contenant
+potentiellement une porte avec moins de carrés, car tous les coins\footnote{Ce
+sont eux qui sont a portées du plus grand nombre de sommets à dominer.} sont
+utilisés et aucune case n'est à portée de deux emplacements de recherches.
+
+\subsubsection{Évolution des probabilités}
+Si l'on ignore le coût des déplacements, prenant en compte uniquement les coûts
+de recherche, le meilleur comportement semble être de commencer par chercher
+dans les coins et d'utiliser ensuite les autres emplacements, ceci en
+considérant qu'ils ont tous le même nombre de recherche au début. Il n'est en
+revanche pas évident de déterminer si un coin sur lequel $n+1$ recherches ont
+été effectuées a une chance plus élevée d'être à proximité d'une porte secrète
+qu'un bord où $n$ recherches ont été effectuées.
+\\
+La probabilité initiale de découvrir une porte est égale à 
+$\frac{1}{40} \times \frac{1}{7}$, la probabilité initiale de trouver une porte
+secrète dans un coin est donc de : $4 \times \frac{1}{40} \times \frac{1}{7}$.
+Lorsque des recherches sont effectuées, la partie représentant la probabilité de
+trouver la porte secrète en sachant que l'on a cherché au bon endroit ne sera
+pas modifiée ($\frac{1}{7}$). En revanche, la probabilité que la porte secrète
+soit sur une case spécifique dépendra du nombre et de l'emplacement des
+recherches déjà effectuées\footnote{Ce problème est semblable au fameux
+problème de Mounty Hall, le point clé étant que l'on {\em sait} qu'il y a 
+{\em exactement} une porte secrète parmi les 40 cases de murs}. Une intuition de
+ce fait peut être donnée par l'exemple suivant : 10'000 recherches ont été
+effectuées sur chacun des emplacements de recherches excepté sur celui se
+situant en haut à gauche où aucune recherche n'a été effectuée, la probabilité
+qu'une recherche sur cette case aboutissent est clairement de plus de 
+$\frac{1}{10}$.
+\\
+Afin de présenter une preuve de cette différence de probabilité, nous allons
+simplifier ce problème en considérant qu'il existe uniquement deux emplacements
+où la porte secrète peut se trouver et que chaque recherche ne peut être à
+portée que d'un seul d'entre eux.\\
+On considère les notations suivantes :
+\begin{itemize}
+\item $Pos(P)$ est la position de la porte.
+\item $T$ signifie que la porte a été trouvée.
+\item $PT$ signifie que la porte n'a pas été trouvée.
+\end{itemize}
+Après une recherche en position $1$, on obtient l'arbre de probabilité suivant:
+
+% Set the overall layout of the tree
+\tikzstyle{level 1}=[level distance=3.5cm, sibling distance=3.5cm]
+\tikzstyle{level 2}=[level distance=3.5cm, sibling distance=2cm]
+
+% Define styles for bags and leafs
+\tikzstyle{bag} = [text width=4em, text centered]
+\tikzstyle{end} = [circle, minimum width=3pt,fill, inner sep=0pt]
+\begin{center}
+  \begin{tikzpicture}[grow=right, sloped]
+    \node[bag] {Overall}
+    child {
+      node[bag] {Porte en $1$}        
+      child {
+        node[end] {}
+        edge from parent
+        node[above] {$T$}
+        node[below]  {$\frac{1}{7}$}
+      }
+      child {
+        node[end] {}
+        edge from parent
+        node[above] {$NT$}
+        node[below]  {$\frac{6}{7}$}
+      }
+      edge from parent 
+      node[above] {$Pos(P) = 1$}
+      node[below]  {$\frac{1}{2}$}
+    }
+    child {
+      node[bag] {Porte en $2$}
+      child {
+        node[end] {}
+        edge from parent
+        node[above] {$NT$}
+        node[below]  {$1$}
+      }
+      edge from parent         
+      node[above] {$Pos(P) = 2$}
+      node[below]  {$\frac{1}{2}$}
+    };
+  \end{tikzpicture}
+\end{center}
+
+Si la première recherche a terminée sans que la porte n'ait été trouvée, les
+nouvelles probabilités peuvent être aisément calculées :
+\begin{itemize}
+\item $P(Pos(P) = 1) = \frac{\frac{1}{2} \times \frac{6}{7}}
+                            {\frac{1}{2} \times \frac{6}{7} +
+                             \frac{1}{2}}
+                     = \frac{6}{13}$
+\item $P(Pos(P) = 2) = \frac{\frac{1}{2}}
+                            {\frac{1}{2} \times \frac{6}{7} +
+                             \frac{1}{2}}
+                     = \frac{7}{13}$
+\end{itemize}
+
+\subsubsection{Calcul de la probabilité}
+Nous avons déjà démontré que deux emplacements ne sont plus équiprobables si
+plus de recherches ont été effectués sur l'un que sur l'autre. Il est aussi
+évident que la méthode présentée ci-dessus sera très difficile à appliquer sur
+un grand nombre de recherches. C'est pour cette raison que nous avons développé
+une autre approche, permettant de calculer les probabilités de façon plus simple
+et aussi beaucoup plus rapide pour un ordinateur.\\
+À partir de l'arbre de probabilité présentés précédemment, il est facile de voir
+que la probabilité qu'une recherche soit fructueuse dépend uniquement de la
+probabilité qu'une porte cachée se situe à portée de l'endroit où est effectuée
+la recherche.
+\\
+Afin de résoudre ce problème dans un cas plus général, nous définissons
+certaines notations :
+\begin{itemize}
+\item $W$ est l'ensemble des emplacements de recherches.
+  $W = \{W_0,W_1, ... , W_{|W| -1} \}$
+\item $R(W_k)$ représente le nombre de recherche faîtes sur l'emplacement $W_k$.
+\item $V(W_k)$ représente le nombre de voisins de l'emplacement $W_k$
+  susceptibles de contenir une porte secrètes.
+\item $P(W_k = V)$ représente la probabilité que la porte secrète soit voisine
+  de l'emplacement $W_k$.
+\item $p$ est la probabilité de trouver une porte sachant qu'un de ses voisins
+  contient la porte secrète.\footnote{$\frac{1}{7}$ dans le cas étudié ici.}
+\end{itemize}
+
+En accord avec les règles de probabilités, on définit donc la probabilité
+qu'une recherche aboutisse ainsi :
+$$P(W_k = V) = \frac{\text{cas favorables}(W_k)}{\text{cas possibles}}$$
+Ces deux éléments peuvent être définis ainsi :
+\begin{itemize}
+\item $\text{cas favorables}(W_k) = V(W_k) * (1-p)^{R(W_k)}$
+\item $\text{cas possibles} = \sum\limits_{k=0}^{|W| - 1}{V(W_k) * (1-p)^{R(W_k)}}$
+\end{itemize}
+
+On aboutit donc à la formule suivante pour définir la probabilité que la porte
+soit à portée de l'emplacement $W_k$:
+$$ P(W_k = V) = \frac{V(W_k) *(1-p)^{R_k}}{\sum\limits_{k=0}^{|W| - 1}{V(W_k) * (1-p) ^{R_k}}}$$
+Comme $\text{cas possibles}$ n'est pas fonction de $k$, il est possible de
+comparer l'intérêt de différentes cases uniquement en comparant les valeurs de
+$\text{cas favorables}(W_k)$.
+\\
+Dans notre situation:
+\begin{itemize}
+\item Pour les coins, $V(W_k) = 4$.
+\item Pour les bords, $V(W_k) = 3$.
+\end{itemize}
+Soient $k_1$ et $k_2$ tels que:
+\begin{itemize}
+\item $W_{k_1}$ est un coin.
+\item $W_{k_2}$ est un bord.
+\item $R(W_{k_1}) - R(W_{k_2}) = i$ avec $(1-p)^i = \frac{3}{4}$ ce qui implique
+  que $i = \frac{\log(\frac{3}{4})}{\log(1-p)}$.\footnote{$i = 1,866$ dans notre
+    cas.}
+\end{itemize}
+On obtient
+$$\begin{array}{l c l}
+\text{cas favorables}(W_{k_1})
+&= &V(W_{k_1}) * (1-p)^{R(W_{k_1})}\\
+&= &4 * (1-p)^{R(W_{k_2}) + i}\\
+&= &4 * (1-p)^{R(W_{k_2})} * (1-p)^i\\
+&= &4 * (1-p)^{R(W_{k_2})} * \frac{3}{4}\\
+&= &3 * (1-p)^{R(W_{k_2})}\\
+&= &V(W_{k_2}) * (1-p)^{R(W_{k_2})}\\
+&= &\text{cas favorables}(W_{k_2})
+\end{array}$$
+Une implication importante de ce résultat est que pour un nombre de recherches
+$n$, l'idéal sera que chaque coin ait eu $i$ recherches de plus que chaque bord.
+De plus, la valeur de ce $i$ dépendra uniquement de $p$.
+
+\subsubsection{Minoration du nombre moyen de recherches}
+Si l'on désire minimiser le nombre moyen de recherches\footnote{Sans prendre du
+  tout en compte le nombre de déplacements nécessaires}, il faut toujours
+rechercher à l'emplacement ayant la plus haute probabilité d'être proche d'une
+porte secrète. En effet, les chances que la porte soit trouvée sont maximales
+pour un nombre de recherches $k$ si l'on se trouve dans un cas où les différents
+emplacements de recherches ont des probabilités aussi proches que possibles.
+\\
+Nous noterons :
+\begin{itemize}
+\item $P_k$ : La probabilité de trouver la porte secrète en $k$ recherches au
+  maximum.
+\item $R_k$ : La probabilité de trouver la porte secrète en exactement $k$
+  recherches.
+\item $P(door)$ : La probabilité que la porte soit à l'emplacement de la
+  recherche, cet emplacement est choisi comme étant le plus probable au moment
+  de la recherche. Cette probabilité est calculée à l'aide de la formule trouvée
+  précédemment.
+\item $p$ : La probabilité de trouver la porte sachant qu'elle est voisine de la
+  case où la recherche a été effectuée.
+\end{itemize}
+On obtient donc :
+$$P_{k+1} = P_k + (1 - P_k) * P(door) * p$$
+$$R_{k+1} = P_{k+1} - P_{k}$$
+Quelque soit la stratégie choisie, il est donc évident que le nombre moyen de
+recherches sera supérieur ou égal à $\sum\limits_{k=0}^{\infty} k * R_k$.
+\\
+Nous avons minoré cette valeur à l'aide d'un programme faisant l'addition de ces
+termes tant que $R_k > 10^{-10}$ et nous avons obtenu environ $77,75$.
+
+\subsection{Comparaison des résultats expérimentaux avec les valeurs théoriques}
+La moyenne du nombre d'actions nécessaire au bot diffusion pour ouvrir la porte
+sur 100 parties était de $158$, ce résultat est relativement proche de la borne
+inférieure ($77,75$) si l'on prend en compte que la borne inférieure a été
+calculée en ignorant totalement le coût des mouvements. En effet, afin
+d'optimiser le nombre d'action moyen, le bot est obligé d'effectuer plusieurs
+recherches sur un emplacement tandis que la stratégie utilisée pour calculer la
+borne inférieure coûterait un nombre d'action très élevé en raison du nombre de
+déplacements élevés qu'elle utilise.
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{images/compare.png}}
+	\caption{\label{fig:compare} Graphique comparant les valeurs expérimentales du
+  bot diffusion aux valeurs obtenues.}
+\end{figure}
+
+Une possibilité d'augmenter la borne inférieure pourrait être de minorer le
+nombre de mouvement moyen. En effet, si l'on ignore totalement le coût des
+recherches, il reste tout de même un nombre de mouvement non négligeable à
+effectuer afin d'arriver à portée de la porte secrète (dont on ignore la
+position).
 
 \section{Documentation}
 Utilisation de Doxygen, manuel d'utilisation, nombreux README, commentaires de
