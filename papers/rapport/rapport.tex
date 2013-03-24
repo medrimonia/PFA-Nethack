@@ -98,12 +98,12 @@ JohnDoe the Aspirant          St:11 Dx:14 Co:13 In:11 Wi:15 Ch:11  Chaotic
 Dlvl:1  $:0  HP:14(14) Pw:8(8) AC:7  Exp:1
 \end{verbatim}
 
-Le \verb!@! désigne le joueur, les caractères \verb!|! et \verb!-! sont des murs, les \verb!#! des couloirs, un \verb!+! symbolyse une porte, etc.
+Le \verb!@! désigne le joueur, les caractères \verb!|! et \verb!-! sont des murs, les \verb!#! des couloirs, un \verb!+! symbolise une porte, etc.
 
 
-\subsubsection*{Séquences d'échapement ANSI}
+\subsubsection*{Séquences d'échappement ANSI}
 
-Cette interface fonctionne à l'aide de caractères d'échapement normalisés \footnote{http://www.inwap.com/pdp10/ansicode.txt} permettant de contrôler la position du curseur dans un terminal et d'afficher des caractères à l'endroit souhaité. Par exemple, une séquence '\verb![46;50H|...+#!' affichera la chaîne de caractères '\verb!|...+#!' en commançant à la ligne 46, colone 50. Il est alors facile de reconstituer une carte envoyée par le jeu: le '\verb!|!' est aux coordonnées (46, 50), le '\verb!+!' est situé à (46, 54), etc.
+Cette interface fonctionne à l'aide de caractères d'échappement normalisés \footnote{http://www.inwap.com/pdp10/ansicode.txt} permettant de contrôler la position du curseur dans un terminal et d'afficher des caractères à l'endroit souhaité. Par exemple, une séquence '\verb![46;50H|...+#!' affichera la chaîne de caractères '\verb!|...+#!' en commençant à la ligne 46, colonne 50. Il est alors facile de reconstituer une carte envoyée par le jeu: le '\verb!|!' est aux coordonnées (46, 50), le '\verb!+!' est situé à (46, 54), etc.
 	
 	Le projet TAEB (Tactical Amulet Extraction Bot) \footnote{https://github.com/sartak/TAEB} utilise ce principe pour reconstituer la carte à l'aide d'un module sachant interpréter ces séquences de caractères \footnote{https://metacpan.org/module/Term::VT102}. Une première approche fut donc de copier ce procédé.
 
@@ -217,13 +217,13 @@ Archi et Décomposition de la version modifiée de NetHack.
 
 \subsubsection{Interface finale}
 
-\paragraph{}À la demande du client et du responsable pédagogique, l'utilisation d'une interface intégrée directement dans le jeu fut implémentée. Elle permet d'économiser une étape d'entrée/sortie lors de la communication avec un bot mais a le désaventage de rendre impossible l'utilisation du projet sur une version originale du jeu.
+\paragraph{}À la demande du client et du responsable pédagogique, l'utilisation d'une interface intégrée directement dans le jeu fut implémentée. Elle permet d'économiser une étape d'entrée/sortie lors de la communication avec un bot mais a le désavantage de rendre impossible l'utilisation du projet sur une version originale du jeu.
 
 Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant des pointeurs de fonction à appeler lors d'un évènement à communiquer au joueur. C'est sur ce mécanisme que repose la plupart des interfaces graphiques existantes pour le jeu. Les principales fonctions appelées sont les suivantes :
 \begin{itemize}
 	\item \verb!int *_create_nhwindows(type)! : cette fonction est appelée lors de la création d'une fenêtre (afficher un menu par exemple). Le type donné en paramètre donne la nature de la fenêtre et sa valeur peut être \verb!NHW_MAP!, \verb!NHW_SATUS!, \verb!NHW_MESSAGE!, \verb!NHW_MENU!, \verb!NHW_TEXT!. En comparaison avec le découpage de l'écran de l'interface précédente, cette façon de distinguer les différentes fenêtres est beaucoup moins sujette à erreur et ne devrait pas souffrir d'un changement d'organisation des fenêtres si un jour NetHack devait évoluer.
 	\item \verb!void *_clear_nhwindow(id)! : cette fonction ne fait qu'effacer le contenu d'une fenêtre mais elle est intéressante dans le cas où \verb!id! est l'identifiant de la fenêtre associée à la carte. En effet, c'est un moyen simple, bien que peu sûr, de détecter un changement d'étage au niveau de l'interface. La détection certaine d'un changement d'étage peut néanmoins se faire au niveau du client (le bot) qui comprendra qu'un effacement de la carte juste après une montée ou une descente d'une échelle correspond effectivement à un changement d'étage. Cela pourrait aussi être fait au niveau de l'interface mais cela aurait pour conséquence de complexifier le protocole et le code (savoir interpréter ce que le bot est en train de faire).
-	\item \verb!void *_print_glyph(id, x, y, glyph)! : cette fonction sert à communiquer au joueur qu'un glyph dans la fenêtre d'identifiant \verb!id! se situe aux coordonnées \verb!(x, y)!. \verb!glyph! est un entier unique à chaque élément du jeu. NetHack fourni une fonction \verb!map_glyph! qui le transforme en un caractère qui peut être directement affiché à l'écran (\verb!@! pour un joueur, \verb!+! pour une porte, etc). Cette dernière fonction peut retourner des caractères identiques pour des glyphs différents et cela est à prendre en compte lors de l'élaboration du protocole pour éviter des confusions au niveau du bot.
+	\item \verb!void *_print_glyph(id, x, y, glyph)! : cette fonction sert à communiquer au joueur qu'un glyph dans la fenêtre d'identifiant \verb!id! se situe aux coordonnées \verb!(x, y)!. \verb!glyph! est un entier unique à chaque élément du jeu. NetHack fourni une fonction \verb!map_glyph! qui le transforme en un caractère qui peut être directement affiché à l'écran (\verb!@! pour un joueur, \verb!+! pour une porte, etc.). Cette dernière fonction peut retourner des caractères identiques pour des glyphs différents et cela est à prendre en compte lors de l'élaboration du protocole pour éviter des confusions au niveau du bot.
 	\item \verb!char *_yn_function(query,resp, def)! : cette fonction est appelée dès lors que NetHack pose une question au client. Le nom est trompeur car elle ne sert pas seulement aux questions dont la réponse est 'yes' ou 'no'. Elle est utilisée par exemple pour savoir dans quelle direction frapper si le client donne l'ordre de combattre.
 	\item \verb!int *_nh_poskey(x, y, mod)! : cette fonction attend une commande de l'utilisateur. Les paramètres ne nous concernent pas car ils sont utilisés dans le cas où l'interface supporte la souris.
 \end{itemize}
@@ -260,7 +260,7 @@ Parler de l'extraction de la graine.
 
 	Si la sauvegarde du replay a été activée lors du lancement du jeu (à l'aide de la variable d'environnement \verb!NH_MM_REPLAY!), un fichier nethackdir/replay est créé. Il contient tous les échanges de l'interface vers le bot, selon le même protocole, pour être capable de reconstituer le déroulement d'une partie.
 
-Le programme viewer.pl permet d'interpréter ce fichier en décomposant son contenu par tour de jeu. Ses fonctionnalitées sont :
+Le programme viewer.pl permet d'interpréter ce fichier en décomposant son contenu par tour de jeu. Ses fonctionnalités sont :
 \begin{itemize}
 	\item reconstitution tour par tour
 	\item revenir en arrière tour par tour
@@ -268,7 +268,7 @@ Le programme viewer.pl permet d'interpréter ce fichier en décomposant son cont
 	\item 'diaporama' par incrémentation ou décrémentation d'un nombre de tours par seconde donné
 \end{itemize}
 
-Un échange entre l'interface et le bot au tour $N$ ne permet pas de reconstituer l'état de la partie au tour $N$ car seules les mises à jour sont transmises. Il est donc nécessaire de traîter tous les échanges depuis le début de la partie pour connaître l'état du jeu à un tour donné. La reconstitution de longues parties peut alors devenir lente pour des opérations simples. Par exemple, passer du tour 2000 au tour 1999 nécessiterais de rejouer 1999 tours pour faire un simple saut en arrière.
+Un échange entre l'interface et le bot au tour $N$ ne permet pas de reconstituer l'état de la partie au tour $N$ car seules les mises à jour sont transmises. Il est donc nécessaire de traiter tous les échanges depuis le début de la partie pour connaître l'état du jeu à un tour donné. La reconstitution de longues parties peut alors devenir lente pour des opérations simples. Par exemple, passer du tour 2000 au tour 1999 nécessiterais de rejouer 1999 tours pour faire un simple saut en arrière.
 
 Une meilleure exploitation des informations contenues dans le fichier de replay est de calculer l'inverse des mises à jour qu'il contient et/ou de stocker des états paliers du jeu (tous les 100 tours par exemple). Dans \verb!viewer.pl! seule la méthode des mises à jour inverses est implémentée. Elles permettent de revenir en arrière rapidement et un passage d'un tour $N$ à un tour $M$ se fait simplement en traitant tous les tours de $N$ à $M$ si $|N-M| < M$ ou de $0$ à $M$ sinon. Certains paliers sont tout de même utilisés lors du changement de niveaux pour ne pas avoir à retracer les sales des niveaux inférieurs qui seront de toute manière effacées lors d'un retour en arrière.
 
