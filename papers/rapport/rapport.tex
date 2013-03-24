@@ -1,4 +1,4 @@
-\documentclass[a4paper,11pt]{article}
+\documentclass[a4paper,12pt]{article}
 \usepackage[frenchb]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{float}
@@ -234,9 +234,10 @@ Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant d
 \item \verb!NH_MM_REPLAY! : si mise à une valeur différente de 0, cette variable active l'enregistrement de la partie dans le fichier \emph{nethackdir/replay}. Désactivée par défaut.
 \item \verb!NH_MM_LOGGING! : si mise à une valeur différente de 0, cette variable active l'enregistrement de logs du middleman dans le fichier \emph{nethackdir/mm.log}. Désactivée par défaut.
 \item \verb!NH_MM_TIMEOUT! : spécifie le timeout en secondes pour les communications avec le bot. Si le bot met un temps en secondes supérieur à cette valeur, le middleman quitte la partie. Par défaut, cette variables est mise à 2 secondes.
+\item \textbf{TODO: donner la graine pour rejouer une partie}
 \end{itemize}
 
-\paragraph{}Le protocole de communication entre un bot et le jeu a été modifié depuis le prototype. Il est demandé au développeur d'un bot de prendre en charge des patterns (expliquer).
+\paragraph{} \textbf{TODO:} Le protocole de communication entre un bot et le jeu a été modifié depuis le prototype. Il est demandé au développeur d'un bot de prendre en charge des patterns (expliquer).
 
 
 \subsubsection*{Développement par les patchs}
@@ -248,7 +249,10 @@ Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant d
 	\item Le dernier est placé dans la fonction \verb!terminate(status)! du fichier \verb!end.c! appelée lorsque NetHack quitte afin de nous donner l'occasion de terminer proprement (libération de la mémoire, fermeture des fichiers, etc). Il fait appel à \verb!pfa_end()!.
 \end{itemize}
 
-\paragraph{} TODO: systèmes de patchs (simplicité, intégration).
+\paragraph{} Nous souhaitions également pouvoir livrer nos modifications indépendamment du jeu lui même. Nous avons donc utilisé un système de patchs installant les point d'entrée aux endroits voulus. Ce même procédé est utilisé pour les modifications correspondant aux 'modes'. Le processus d'installation a été automatisé pour qu'à partir d'une archive originale de NetHack le code source soit patché pour prendre en compte nos ajouts et modifications.
+
+\textbf{
+TODO: configuration des patchs à appliquer pour chaque mode et expliquer ce que ces patchs font + donner un exemple de patch avec détail des lignes changées et l'effet sur le jeu.}
 
 
 \subsection{Développement de bots.}
