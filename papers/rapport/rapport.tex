@@ -219,14 +219,24 @@ Archi et Décomposition de la version modifiée de NetHack.
 
 \paragraph{}À la demande du client et du responsable pédagogique, l'utilisation d'une interface intégrée directement dans le jeu fut implémentée. Elle permet d'économiser une étape d'entrée/sortie lors de la communication avec un bot mais a le désaventage de rendre impossible l'utilisation du projet sur une version originale du jeu.
 
-Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant des pointeurs de fonction à appeler lors d'un évènement à communiquer au joueur. C'est sur ce mécanisme que repose la plupart des interfaces graphiques existantes pour le jeu.
+Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant des pointeurs de fonction à appeler lors d'un évènement à communiquer au joueur. C'est sur ce mécanisme que repose la plupart des interfaces graphiques existantes pour le jeu. Les principales fonctions appelées sont les suivantes :
+\begin{itemize}
+	\item \verb!int *_create_nhwindows(type)! : cette fonction est appelée lors de la création d'une fenêtre (afficher un menu par exemple). Le type donné en paramètre donne la nature de la fenêtre et sa valeur peut être \verb!NHW_MAP!, \verb!NHW_SATUS!, \verb!NHW_MESSAGE!, \verb!NHW_MENU!, \verb!NHW_TEXT!. En comparaison avec le découpage de l'écran de l'interface précédente, cette façon de distinguer les différentes fenêtres est beaucoup moins sujette à erreur et ne devrait pas souffrir d'un changement d'organisation des fenêtres si un jour NetHack devait évoluer.
+	\item \verb!void *_clear_nhwindow(id)! : cette fonction ne fait qu'effacer le contenu d'une fenêtre mais elle est intéressante dans le cas où \verb!id! est l'identifiant de la fenêtre associée à la carte. En effet, c'est un moyen simple, bien que peu sûr, de détecter un changement d'étage au niveau de l'interface. La détection certaine d'un changement d'étage peut néanmoins se faire au niveau du client (le bot) qui comprendra qu'un effacement de la carte juste après une montée ou une descente d'une échelle correspond effectivement à un changement d'étage. Cela pourrait aussi être fait au niveau de l'interface mais cela aurait pour conséquence de complexifier le protocole et le code (savoir interpréter ce que le bot est en train de faire).
+	\item \verb!void *_print_glyph(id, x, y, glyph)! : cette fonction sert à communiquer au joueur qu'un glyph dans la fenêtre d'identifiant \verb!id! se situe aux coordonnées \verb!(x, y)!. \verb!glyph! est un entier unique à chaque élément du jeu. NetHack fourni une fonction \verb!map_glyph! qui le transforme en un caractère qui peut être directement affiché à l'écran (\verb!@! pour un joueur, \verb!+! pour une porte, etc). Cette dernière fonction peut retourner des caractères identiques pour des glyphs différents et cela est à prendre en compte lors de l'élaboration du protocole pour éviter des confusions au niveau du bot.
+	\item \verb!char *_yn_function(query,resp, def)! : cette fonction est appelée dès lors que NetHack pose une question au client. Le nom est trompeur car elle ne sert pas seulement aux questions dont la réponse est 'yes' ou 'no'. Elle est utilisée par exemple pour savoir dans quelle direction frapper si le client donne l'ordre de combattre.
+	\item \verb!int *_nh_poskey(x, y, mod)! : cette fonction attend une commande de l'utilisateur. Les paramètres ne nous concernent pas car ils sont utilisés dans le cas où l'interface supporte la souris.
+\end{itemize}
 
 \paragraph{}Le paramétrage se fait avec des variables d'environnement :
 \begin{itemize}
-	\item ...
+\item \verb!NH_MM_SOCKPATH! : spécifier un chemin pour la socket unix (permettant la communication entre NetHack et les bots) à créer. Par défaut, le middleman créé \emph{/tmp/mmsock}.
+\item \verb!NH_MM_REPLAY! : si mise à une valeur différente de 0, cette variable active l'enregistrement de la partie dans le fichier \emph{nethackdir/replay}. Désactivée par défaut.
+\item \verb!NH_MM_LOGGING! : si mise à une valeur différente de 0, cette variable active l'enregistrement de logs du middleman dans le fichier \emph{nethackdir/mm.log}. Désactivée par défaut.
+\item \verb!NH_MM_TIMEOUT! : spécifie le timeout en secondes pour les communications avec le bot. Si le bot met un temps en secondes supérieur à cette valeur, le middleman quitte la partie. Par défaut, cette variables est mise à 2 secondes.
 \end{itemize}
 
-\paragraph{}Protocole: choix sur les glyphes (ambiguitées), 
+\paragraph{}Le protocole de communication entre un bot et le jeu a été modifié depuis le prototype. Il est demandé au développeur d'un bot de prendre en charge des patterns (expliquer).
 
 \subsubsection*{Développement par les patchs}
 
