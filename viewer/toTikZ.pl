@@ -1,6 +1,11 @@
 use strict;
 use warnings;
 
+use Getopt::Std;
+use Scalar::Util qw(looks_like_number);
+
+my $scale = 0.3;
+
 my $header = <<'EOH';
 \documentclass[border=10pt]{standalone}
 \usepackage{tikz}
@@ -13,10 +18,17 @@ EOF
 
 
 if ($#ARGV < 0) {
-	print "Usage: perl $0 <replay file>\n";
+	print "Usage: perl $0 [-f] <replay file>\n";
+	print "\t -f : generate full latex document with header, etc...\n";
+	print "\t -s : scale pictures (default 0.3)\n";
 	exit;
 }
 
+
+our ($opt_f, $opt_s);
+getopts("fs:");
+
+$scale = $opt_s if (defined $opt_s && looks_like_number($opt_s));
 
 my @tmp;
 
@@ -62,8 +74,11 @@ for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 	}
 }
 
-print $header;
-print '\begin{tikzpicture} [scale=0.3]', "\n";
+if (defined $opt_f) {
+	print $header;
+}
+
+print '\begin{tikzpicture}', "[scale=$scale]\n";
 
 for my $x (0 .. $#{$map}) {
 	my $line = $map->[$x];
@@ -78,7 +93,10 @@ for my $x (0 .. $#{$map}) {
 }
 
 print '\end{tikzpicture}', "\n";
-print $footer;
+
+if (defined $opt_f) {
+	print $footer;
+}
 
 
 sub node {
