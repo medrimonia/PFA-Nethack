@@ -65,7 +65,25 @@
 NetHack est un rogue-like (jeu inspiré du jeu vidéo \emph{Rogue} - 1980)
 sorti en 1987. Le joueur incarne un aventurier chargé de récupérer une
 amulette dans un donjon peuplé de monstres.
+Les enjeux du projet sont multiples : il s'agit tout d'abord de proposer une
+base au développement de bots pour NetHack puis, dans un second temps, de
+fournir des méthodes d'évaluation de ces bots. Pour cela la modification du code
+de NetHack est nécessaire afin d'établir un moyen de communication entre le
+noyau du jeu et les bots ; NetHack étant un jeu écrit en C et sous licence
+libre, son code source est disponibles et modifiable. Afin d'évaluer les bots
+différents outils de benchmarking ont été mis en place ; ces outils reposent
+sur la récupération de données et le stockage de celles-ci afin d'effectuer
+des statistiques et produire des graphiques de comparaison.
+Par ailleurs, un certain nombre de simplifications du jeu original ont été
+opérées dans le but de faciliter le développement des bots et permettre
+l'étude de problèmes plus spécifiques.  
 
+Le projet consiste donc en un ensemble de modifications du code du jeu
+original, d'ajout d'outils, de fonctionnalités et d'études théorique.
+
+\subsection*{Description du jeu}
+-> Ensembles de donjons, de niveau, de cases, etc.
+-> monstres, pièges, faims, quêtes, objets, personnages, etc.
 
 \section{Environnement de création de bots}
 
