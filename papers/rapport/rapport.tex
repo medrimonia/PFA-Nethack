@@ -7,6 +7,7 @@
 \usepackage{geometry}
 \usepackage{amsmath}
 \usepackage{tikz}
+\usepackage{pdfpages}
 \usetikzlibrary{trees}
 
 \graphicspath{{graphics}{../images/}}
@@ -136,7 +137,7 @@ Cette interface fonctionne à l'aide de caractères d'échappement normalisés \
 
 Pour empêcher certaines formes de tricheries, NetHack procède à quelques vérifications pour s'assurer qu'il est bien lancé depuis un terminal, ce qui empêche les redirections de son entrée/sortie. Les quelques lignes de code responsables peuvent être désactivées sans conséquence notable sur le reste du jeu mais cela nécessite de modifier le code original. Pour rediriger à la fois l'entrée et la sortie du jeu sans modifier le jeu, il est nécessaire de 'tromper' NetHack à l'aide d'un pseudo terminal.
 
-Un pseudo terminal (pty) est une paire de pseudo périphériques dont l'un est appelé 'maître' et l'autre 'esclave'. Le maître est utilisé comme un terminal standard sur lequel on peut écrire ou lire du texte. L'esclave communique avec l'application et sert simplement de rapporteur entre la partie 'maître' et NetHack. Ainsi, le jeu est satisfait puisqu'il est lancé depuis un terminal et il peut maintenant être contrôlé depuis la partie 'master' du pty sur laquelle on souhaite brancher un bot \footnote{Plus de détails avec la page de manuel pty(7) ou sur http://rachid.koucha.free.fr/tech\_corner/pty\_pdip.html}.
+Un pseudo terminal (pty) est une paire de pseudo périphériques dont l'un est appelé 'maître' et l'autre 'esclave'. Le maître est utilisé comme un terminal standard sur lequel on peut écrire ou lire du texte. L'esclave communique avec l'application et sert simplement de rapporteur entre la partie 'maître' et NetHack. Ainsi, le jeu est satisfait puisqu'il est lancé depuis un terminal et il peut maintenant être contrôlé depuis la partie 'master' du pty sur laquelle on souhaite brancher un bot \footnote{Plus de détails avec la page de manuel pty(7)}.
 
 
 \subsubsection*{Décomposition de l'affichage}
@@ -237,7 +238,10 @@ END
 
 \subsubsection{Architecture}
 
+\textbf{TODO}
 Archi et Décomposition de la version modifiée de NetHack.
+
+BDD, généricité (protocole, socket, différents langages).
 
 \subsubsection{Interface finale}
 
@@ -307,14 +311,15 @@ est certainement possible d'améliorer encore grandement les performances en
 optimisant certaines parties du code.
 
 \subsubsection{Le starter package python}
-TODO Benoît
+
+Ce bot propose un squelette pour l'interprétation des messages venant du jeu et un algorithme simple pour l'exploration 'rapide' d'un niveau en maintenant un compteur pour chaque case visitée. Le bot se déplace en priorité sur les cases les moins visitées.
 
 \subsubsection{Le bot spécialisé}
-TODO David
 
+Ce bot, écrit en python, n'a pas vocation à être utilisé dans des conditions "normales" de jeu. C'est un bot dédié à la résolution optimale d'un problème particulier : trouver, en un nombre de tours minimal, la porte secrète cachée de façon aléatoire dans une salle carrée de taille 10x10. Une étude théorique de ce problème a été réalisée et ce bot a pour but de s'approcher de la solution optimale. Ceci permet d'effectuer une comparaison avec les autres bots qui sont plus "généralistes".
 
-BDD, généricité (protocole, socket, différents langages).
-Algos de bots.
+Afin d'utiliser ce bot dans les bonnes conditions, il est nécessaire d'avoir compilé une version du jeu dans laquelle le patch \emph{patches/create\_level.patch} a été appliqué. Ce patch modifie le donjon de telle sorte que le premier niveau ne contienne qu'une seule salle de la forme décrite précédemment\footnote{ce niveau ne contient pas d'escalier pour descendre dans les niveaux suivants}.
+
 
 \subsection{Outils d'analyse et de deboguage}
 
@@ -328,7 +333,7 @@ Parler de l'extraction de la graine.
 
 	Si la sauvegarde du replay a été activée lors du lancement du jeu (à l'aide de la variable d'environnement \verb!NH_MM_REPLAY!), un fichier nethackdir/replay est créé. Il contient tous les échanges de l'interface vers le bot, selon le même protocole, pour être capable de reconstituer le déroulement d'une partie.
 
-Le programme viewer.pl permet d'interpréter ce fichier en décomposant son contenu par tour de jeu. Ses fonctionnalités sont :
+Le programme \verb!viewer.pl! permet d'interpréter ce fichier en décomposant son contenu par tour de jeu. Ses fonctionnalités sont :
 \begin{itemize}
 	\item reconstitution tour par tour
 	\item revenir en arrière tour par tour
@@ -339,6 +344,18 @@ Le programme viewer.pl permet d'interpréter ce fichier en décomposant son cont
 Un échange entre l'interface et le bot au tour $N$ ne permet pas de reconstituer l'état de la partie au tour $N$ car seules les mises à jour sont transmises. Il est donc nécessaire de traiter tous les échanges depuis le début de la partie pour connaître l'état du jeu à un tour donné. La reconstitution de longues parties peut alors devenir lente pour des opérations simples. Par exemple, passer du tour 2000 au tour 1999 nécessiterait de rejouer 1999 tours pour faire un simple saut en arrière.
 
 Une meilleure exploitation des informations contenues dans le fichier de replay est de calculer l'inverse des mises à jour qu'il contient et/ou de stocker des états paliers du jeu (tous les 100 tours par exemple). Dans \verb!viewer.pl! seule la méthode des mises à jour inverses est implémentée. Elles permettent de revenir en arrière rapidement et un passage d'un tour $N$ à un tour $M$ se fait simplement en traitant tous les tours de $N$ à $M$ si $|N-M| < M$ ou de $0$ à $M$ sinon. Certains paliers sont tout de même utilisés lors du changement de niveaux pour ne pas avoir à retracer les sales des niveaux inférieurs qui seront de toute manière effacées lors d'un retour en arrière.
+
+\subsubsection{Aperçu du nombre de visistes sur chaque case}
+
+Le fichier nethackdir/replay peut également être utilisé dans d'autres buts.
+Par exemple, un simple programme comptant le nombre de visite sur chaque
+coordonée permet de produire les images suivantes à l'aide de TikZ :
+
+\begin{figure}[H]
+	\caption{Nombre de visites sur chaque case sur deux niveaux du starter package java. En blanc les cases non visitées, en jaune clair les cases visitées peu de fois, en rouge les cases visitées un grand nombre de fois.}
+	\resizebox{\columnwidth}{!}{\input{tikz_exemple.tex}}
+\end{figure}
+
 
 \subsubsection{Stockage des résultats}
 Les résultats des parties sont stockés dans une base de données afin de ne pas
