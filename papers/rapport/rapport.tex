@@ -7,6 +7,7 @@
 \usepackage{geometry}
 \usepackage{amsmath}
 \usepackage{tikz}
+\usepackage{pdfpages}
 \usetikzlibrary{trees}
 
 \graphicspath{{graphics}{../images/}}
@@ -348,8 +349,12 @@ Une meilleure exploitation des informations contenues dans le fichier de replay 
 
 Le fichier nethackdir/replay peut également être utilisé dans d'autres buts.
 Par exemple, un simple programme comptant le nombre de visite sur chaque
-coordonée permet de produire les images suivantes :
+coordonée permet de produire les images suivantes à l'aide de TikZ :
 
+\begin{figure}[H]
+	\caption{Nombre de visites sur chaque case sur deux niveaux du starter package java. En blanc les cases non visitées, en jaune clair les cases visitées peu de fois, en rouge les cases visitées un grand nombre de fois.}
+	\resizebox{\columnwidth}{!}{\input{tikz_exemple.tex}}
+\end{figure}
 
 
 \subsubsection{Stockage des résultats}
