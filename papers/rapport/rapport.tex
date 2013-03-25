@@ -9,6 +9,7 @@
 \usepackage{tikz}
 \usetikzlibrary{trees}
 
+\graphicspath{{graphics}{../images/}}
 
 \geometry{margin=2cm}
 
@@ -16,9 +17,9 @@
 \begin{center}
 \begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} r}
 
-  \includegraphics [width=40mm]{../images/ENSEIRB-MATMECA.jpg} &
+  \includegraphics [width=40mm]{ENSEIRB-MATMECA.jpg} &
   \raisebox{0.75\height}
-           {\includegraphics [width=40mm]{../images/logo-LaBRI-couleur.jpg}}
+           {\includegraphics [width=40mm]{logo-LaBRI-couleur.jpg}}
 
 \end{tabular*}
 
@@ -353,7 +354,7 @@ certaines conclusions\footnote{Par exemple, les premières analyses nous ont fai
   vérifier cela sur les données obtenues, car le niveau atteint n'était pas
   stocké à ce moment là.}.
 \begin{figure}[H]
-  \center{\includegraphics[width=\textwidth]{../images/schema.png}}
+  \center{\includegraphics[width=\textwidth]{schema.png}}
 	\caption{\label{fig:schema} Schéma de la base de données utilisée.}
 \end{figure}
 Une vue
@@ -389,29 +390,53 @@ graphiques se séparent en deux catégories principales :
 Tous les graphiques sont générés à l'aide de {\em gnuplot}, le type de sortie
 peut facilement être modifié et permet ainsi de convenir à ce qui est attendu
 
-\subsection{Graphiques analysant un bot}
-Le script \emph{impulse\_graph.sh} permet de créer un grand nombre de
-graphiques indiquant la répartition des performances du bot, ces graphiques
-sont générés à l'aide de gnuplot et se présentent sous cette forme.
+\paragraph{Graphiques analysant un bot}
+
+\subparagraph{Exemple}
+Nous avons écrit un script permettant de générer un grand nombre de graphiques
+indiquant la répartition des performances du bot. Celui-ci génère un graphique
+par triplet $\{\text{Bot},\text{Nb mouvements autorisés},\text{Caractéristique}$
+, il faut par conséquent faire attention car suivant la base de données
+utilisée, le temps de génération peut être conséquent. Voici un exemple d'un des
+graphes produits par ce script.
 
 \begin{figure}[H]
-  %\center{\includegraphics[width=\textwidth]{./images/impulse_graph.png}}
-	\caption{\label{fig:impulse_graph} Un exemple de fichier produit par impulse\_graph.sh}
+  \center{\includegraphics[width=\textwidth]{m_10000_nb_squares_explored.png}}
+	\caption{\label{fig:impulse_graph} Un exemple de graphique montrant la
+    répartition des performances}
 \end{figure}
 
-Lors de son exécution, ce script créé un dossier présent par bot trouvé dans
-la base de donnée passée en paramètre et y ajoute tous les graphiques le
-concernant. En conséquence, il est hautement recommandé que le dossier ne
-contienne que la base de donnée lorsque celui-ci est exécuté.
+\subparagraph{Observation de caractéristiques du jeu}
+Il est important de noter que ce script ne génère pas des graphes de répartition
+que pour les performances du bot, il génère un graph similaire pour le résultat
+maximal de chaque caractéristique, ce qui permet aussi d'observer la répartition
+de celle-ci pour nethack. Nous avons ainsi constaté que la plupart des
+caractéristiques \footnote{Nombre de portes secrètes présentes sur un niveau,
+nombre de couloirs secrets présents sur un niveau et nombre de cases
+explorables} que nous avons observées suivaient une distribution ayant en tout
+cas l'apparence d'une gaussienne.
+\\
+Suivant les objectifs du bot, on peut donc imaginer qu'un bot se serve des
+résultats obtenus afin de déterminer s'il est probable qu'il existe une autre
+salle cachée où s'il a déjà tout visité. Cet aspect sera approfondi dans la
+section {\em Analyses}.
 
-\subsection{Graphiques comparant des bots}
+\subparagraph{Observation de caractéristiques du bot}
+Si l'exemple donné ci-dessus présente le nombre de cases explorées par le bot
+comme suivant une gaussienne, certains aspects de répartition peuvent donner
+plus d'informations, comme c'est le cas sur ce graphique.
+
+TODO inclure graphique
+
+
+\paragraph{Graphiques comparant des bots}
 Afin de comparer les performances des bots dans différents domaines, il est
 possible d'utiliser le script \emph{move\_graph.sh}. Celui-ci génère des
 graphiques pour les principales performances générées par les bots, les
 résultats se présentent sous cette forme.
 
 \begin{figure}[H]
-  %\center{\includegraphics[width=\textwidth]{./images/move_graph.png}}
+  %\center{\includegraphics[width=\textwidth]{move_graph.png}}
   \caption{\label{fig:move_graph} Un exemple de fichier produit par move\_graph.sh}
 \end{figure}
 
