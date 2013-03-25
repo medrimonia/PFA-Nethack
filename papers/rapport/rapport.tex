@@ -533,17 +533,94 @@ de vue.
     couloirs secrets en fonction de la position.}
 \end{figure}
 
-L'utilité de ce type de graphiques sera approfondie dans la partie
+L'utilité exacte de ce type de graphiques sera approfondie dans la partie
 {\em Analyses}.
 
 
 \section{Analyses}
 
-\subsection{Recherche de portes secrètes}
+Le code fourni nous a permis non seulement de comparer l'efficacité des bots
+existants dans différents modes de jeu, mais aussi d'analyser certains aspects
+de nethack. Pour tous ces tests, nous n'avons finalement utilisé qu'un seul
+ensemble de patchs, celui associé à l'exploration. Les modifications de
+l'expérience de jeu par rapport à la version originale de nethack sont les
+suivantes :
+%TODO check by David
+\begin{itemize}
+\item Désactivation de la faim.
+\item Désactivation de tous les monstres.
+\item Désactivation des objets normaux et spéciaux.
+\item Désactivation des pièges\footnote{Si le nombre de piège a été grandement
+  réduit, il reste malgré tout des portes piégées qui tuent ou assomment parfois
+  le personnage lorsque l'on descend dans les niveaux}
+\item Disparition des portes lorsqu'elles sont ouvertes ou défoncées
+  \footnote{Ce patch s'est révélé pratique afin de simplifier la distinction
+    entre les murs et les portes ouvertes, en effet, cela permet de ne pas
+    inclure les portes ouvertes dans le protocole.}.
+\end{itemize}
+
+\subsection{Recherche d'éléments secrets}
+Le but de ce mode est de retrouver toutes les portes secrètes et les couloirs
+secrets présents dans le niveau initial. Une des contraintes est donc de ne pas
+descendre d'étage. Les descentes accidentelles semblent effectivement avoir été
+évitées étant donné que sur plus de 18'000 parties jouées dans ce mode par trois
+bots différents, aucune n'a un niveau maximal atteint supérieur à 1.
+\\
+Nous avons aussi observé le pourcentage de cases visitées, même si ce n'était
+pas un but directement affiché, après plusieurs expériences, celle-ci semble
+naturellement suivre la même tendance que les deux autres.
+\\
+Afin de présenter des données à jour, nous avons lancé dans la dernière semaine
+plus de 18'000 parties dont les résultats ont servis à générer les graphiques
+qui seront présentés par la suite. Pour chacun de ceux-ci, tous les points
+représentent la moyenne des résultats sur au moins 1000 parties. Cet ordre de
+grandeur nous permet de réduire fortement le risque que les données présentées
+soient biaisées par un mauvais échantillons.
+\\
+Sur tous les graphiques de comparaisons, {\em java-sp} sert de référence, ce bot
+étant totalement aléatoire, il donne un exemple des résultats obtenus par un bot
+ne présentant aucune intelligence mais qui ne risque pas de tomber dans des
+boucles infinies.
+
+\subsubsection{Pourcentage de portes secrètes trouvées}
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{graph_percent_sdoors_found.png}}
+  \caption{\label{fig:sdoors_found} Pourcentage de portes secrètes trouvées en
+    fonction du nombre de mouvements autorisé}
+\end{figure}
+
+Les deux bots {\em évolués} ont des performances nettement meilleures que le bot
+aléatoire, ce qui est assez rassurant sur leur fiabilité. Cette différence
+montre aussi que même si le bot aléatoire augmente son pourcentage de détection
+lorsque le nombre maximal de mouvements augmente, il nécessitera un nombre de
+mouvement bien plus conséquent pour découvrir la moitié des portes secrètes.
+\\
+Bien que le bot {\em diffusion} trouve les portes plus rapidement que
+{\em python-sp}, cette différence ne vaut pas nécessairement le surcoût engendré
+par la différence de complexité asymptotique. Les données présentées ici
+permettent néanmoins de pouvoir orienter son choix en connaissance de cause.
+
+\subsubsection{Pourcentage de couloirs secrets trouvée}
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{graph_percent_scorrs_found.png}}
+  \caption{\label{fig:scorrs_found} Pourcentage de couloirs secrets trouvés en
+    fonction du nombre de mouvements autorisé}
+\end{figure}
+
+\subsubsection{Pourcentage de cases explorées}
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{graph_percent_explored.png}}
+  \caption{\label{fig:squares_explored} Pourcentage de cases explorées en
+    fonction du nombre de mouvements autorisé}
+\end{figure}
+
 
 \subsection{Descente dans les niveaux}
 
-\subsection{Éléments en fonction des emplacements}
+\subsection{Éléments indépendants des bots}
 
 graphes, sous-section pour chaque "mode". Reprendre étude pièce rectangulaire.
 
@@ -570,6 +647,9 @@ Dans ce niveau particulier :
 \item Le personnage est placé aléatoirement dans la pièce.
 \end{itemize}
 
+Ces conditions sont assurées par l'utilisation d'un patch supplémentaire, venant
+s'additionner à ceux mentionnés dans la partie {\em Analyses}.
+\\
 Voici un aperçu de l'apparence de la pièce, les carrés violets étant ceux où la
 porte secrète peut se trouver.
 
