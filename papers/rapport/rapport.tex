@@ -371,9 +371,49 @@ celui-ci n'étant pas trop volumineux, il était parfaitement concevable de nous
 %TODO Parler des .def etc?
 
 
-\subsubsection*{Scripts de génération de graphes}
+\subsubsection{Scripts de génération de graphiques}
 
-Expliquer les scripts
+Afin de visualiser les performances des différents bots et de pouvoir les
+comparer facilement, nous avons mis en place des scripts permettant de générer
+de façon automatique différents graphiques à partir de la base de données. Ces
+graphiques se séparent en deux catégories principales :
+\begin{itemize}
+\item Les graphiques permettant de mieux évaluer la répartition des performances
+  des bots. Ceux-ci permettant entre autre de détecter que le bot ne fonctionne
+  pas comme souhaité.
+\item Les graphiques permettant de comparer les bots entre eux. Ceux-ci
+  représentent la performance des bots sur un critère particulier en fonction du
+  nombre maximal de mouvements autorisés. Ils permettent de départager les
+  différentes stratégies par rapport à des objectifs.
+\end{itemize}
+Tous les graphiques sont générés à l'aide de {\em gnuplot}, le type de sortie
+peut facilement être modifié et permet ainsi de convenir à ce qui est attendu
+
+\subsection{Graphiques analysant un bot}
+Le script \emph{impulse\_graph.sh} permet de créer un grand nombre de
+graphiques indiquant la répartition des performances du bot, ces graphiques
+sont générés à l'aide de gnuplot et se présentent sous cette forme.
+
+\begin{figure}[H]
+  %\center{\includegraphics[width=\textwidth]{./images/impulse_graph.png}}
+	\caption{\label{fig:impulse_graph} Un exemple de fichier produit par impulse\_graph.sh}
+\end{figure}
+
+Lors de son exécution, ce script créé un dossier présent par bot trouvé dans
+la base de donnée passée en paramètre et y ajoute tous les graphiques le
+concernant. En conséquence, il est hautement recommandé que le dossier ne
+contienne que la base de donnée lorsque celui-ci est exécuté.
+
+\subsection{Graphiques comparant des bots}
+Afin de comparer les performances des bots dans différents domaines, il est
+possible d'utiliser le script \emph{move\_graph.sh}. Celui-ci génère des
+graphiques pour les principales performances générées par les bots, les
+résultats se présentent sous cette forme.
+
+\begin{figure}[H]
+  %\center{\includegraphics[width=\textwidth]{./images/move_graph.png}}
+  \caption{\label{fig:move_graph} Un exemple de fichier produit par move\_graph.sh}
+\end{figure}
 
 
 \section{Analyses}
