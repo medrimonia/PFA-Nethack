@@ -394,10 +394,11 @@ celui-ci n'étant pas trop volumineux, il était parfaitement concevable de nous
 
 \subsubsection{Scripts de génération de graphiques}
 
-Afin de visualiser les performances des différents bots et de pouvoir les
-comparer facilement, nous avons mis en place des scripts permettant de générer
-de façon automatique différents graphiques à partir de la base de données. Ces
-graphiques se séparent en deux catégories principales :
+Afin de visualiser les performances des différents bots, de pouvoir les comparer
+facilement et de pouvoir vérifier statistiquement des propriétés de nethack,
+nous avons mis en place des scripts permettant de générer de façon automatique
+différents graphiques à partir d'une base de données. Ces graphiques se séparent
+en trois catégories principales :
 \begin{itemize}
 \item Les graphiques permettant de mieux évaluer la répartition des performances
   des bots. Ceux-ci permettant entre autre de détecter que le bot ne fonctionne
@@ -406,6 +407,9 @@ graphiques se séparent en deux catégories principales :
   représentent la performance des bots sur un critère particulier en fonction du
   nombre maximal de mouvements autorisés. Ils permettent de départager les
   différentes stratégies par rapport à des objectifs.
+\item Les graphiques analysant des données qui ne sont pas spécifiques au bot
+  afin de permettre de vérifier certaines propriétés ou d'observer la
+  distribution de certains événements aléatoires propres à nethack.
 \end{itemize}
 Tous les graphiques sont générés à l'aide de {\em gnuplot}, le type de sortie
 peut facilement être modifié et permet ainsi de convenir à ce qui est attendu
@@ -415,10 +419,11 @@ peut facilement être modifié et permet ainsi de convenir à ce qui est attendu
 \subparagraph{Exemple}
 Nous avons écrit un script permettant de générer un grand nombre de graphiques
 indiquant la répartition des performances du bot. Celui-ci génère un graphique
-par triplet $\{\text{Bot},\text{Nb mouvements autorisés},\text{Caractéristique}$
-, il faut par conséquent faire attention car suivant la base de données
-utilisée, le temps de génération peut être conséquent. Voici un exemple d'un des
-graphes produits par ce script.
+par triplet
+$\{\text{Bot},\text{Nb mouvements autorisés},\text{Caractéristique} \}$, il
+faut par conséquent faire attention car suivant la base de données utilisée,
+le temps de génération peut être conséquent. Voici un exemple d'un des graphes
+produits par ce script.
 
 \begin{figure}[H]
   \center{\includegraphics[width=\textwidth]{m_10000_nb_squares_explored.png}}
@@ -446,19 +451,62 @@ Si l'exemple donné ci-dessus présente le nombre de cases explorées par le bot
 comme suivant une gaussienne, certains aspects de répartition peuvent donner
 plus d'informations, comme c'est le cas sur ce graphique.
 
-TODO inclure graphique
+\begin{figure}[H]
+  \center{\includegraphics[width=0.5\textwidth]{nb_squares_explored.png}}
+  \caption{\label{fig:nb_squares_explored} Un exemple de graphique montrant un
+  dysfonctionnement du bot.}
+\end{figure}
 
+Le fait que la répartition des résultats ne suit pas une gaussienne n'est pas
+forcément flagrant, en revanche, on distingue un nombre non négligeable de
+parties ayant un nombre de cases explorées inférieur à 50, ce qui est très
+faible en comparaison de la moyenne. En observant plus en détail une des
+parties ayant obtenu un tel résultat, nous nous sommes rendus compte que le
+problème venait du fait que les portes ne s'ouvraient plus, ce qui était dû à
+une légère erreur lors d'une modification du noyau. Ces graphiques peuvent
+donc aussi servir à détecter des dysfonctionnements lors de modifications du
+noyau.
 
 \paragraph{Graphiques comparant des bots}
-Afin de comparer les performances des bots dans différents domaines, il est
-possible d'utiliser le script \emph{move\_graph.sh}. Celui-ci génère des
-graphiques pour les principales performances générées par les bots, les
-résultats se présentent sous cette forme.
+Afin de comparer les performances des bots dans différents domaines, nous
+avons écrit un script générant des graphiques permettant de visualiser
+facilement les différences de résultats entre les différents bots. Celui-ci
+génère un graphe par caractéristique observée, permettant ainsi de réduire le
+nombre de manipulations à effectuer.
 
 \begin{figure}[H]
-  %\center{\includegraphics[width=\textwidth]{move_graph.png}}
-  \caption{\label{fig:move_graph} Un exemple de fichier produit par move\_graph.sh}
+  \center{\includegraphics[width=\textwidth]{graph_percent_scorrs_found.png}}
+  \caption{\label{fig:move_graph} Un exemple de graphique comparant des bots}
 \end{figure}
+
+Il est possible de donner des noms différents au même bot au fur et à mesure
+qu'il évolue, en ajoutant des données à la même base, ainsi il est possible de
+mesurer l'amélioration des performances. Ce raisonnement s'applique aussi à
+des modifications de paramètres sur le bot diffusion par exemple, ce qui
+pourrait permettre par exemple de faire de l'apprentissage sur les différents
+paramètres afin de trouver les valeurs idéales. Le problème du bot diffusion
+étant que lancer de nombreuses parties demande un temps d'exécution important.
+
+\paragraph{Graphiques analysant la distribution des portes et couloirs secrets}
+Afin d'observer des informations sur la distribution des portes et couloirs
+secrets, nous avons créé des scripts permettant de visualiser le nombre de
+portes secrètes ou de couloir secrets pour chaque emplacement. La possibilité de
+visualiser l'information en deux ou en trois dimensions est fournie. En deux
+dimensions, deux graphiques sont disponibles, l'un représentant le nombre
+d'éléments trouvés en fonction de la ligne, l'autre en fonction de la colonne.
+Seul le graphique en trois dimensions permet de visualiser les deux
+simultanément. S'appuyant sur {\em gnuplot}, les scripts générant les graphiques
+en trois dimensions proposent un mode interactif permettant de changer l'angle
+de vue.
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{3d_exemple.png}}
+  \caption{\label{fig:move_graph} Aperçu de la visualisation du nombre de
+    couloirs secrets en fonction de la position.}
+\end{figure}
+
+L'utilité de ce type de graphiques sera approfondie dans la partie
+{\em Analyses}.
 
 
 \section{Analyses}
