@@ -8,7 +8,8 @@ manual: ${MANUAL}
 report: ${REPORT}
 
 %.pdf: %.tex
-	pdflatex $^ $@ 
+	pdflatex $^ $@
+	pdflatex $^ $@
 	@rm -f *~ *.aux *.log *.toc *.dvi
 
 clean:
