@@ -20,17 +20,7 @@ other features of nethack. Those patches are mainly modifying the game
 experience but aren't needed to run bots (even if the bots performance are
 strongly increased by their application).
 
-The folder 'java\_starter\_package' contains the source code of a bot written
-in java, a script called build\_starter\_package.sh builds a Bot.jar file.
-
-The folder 'diffusion\_bot' contains the source code of a bot written in java,
-all kind of informations about this bot are gathered in this folder.
-
-The folder 'pythonsp' contains the source code of a bot written in python,
-more details about this bot can be found in the appropriate folder.
-
-The folder 'special_bot' contains the source code of a bot written in python, it
-is particularly designed for finding a door in a single room of 10*10 squares.
+The folder 'bots' contains all the bots developped during the project
 
 The folder 'include' contains the headers of the used in addition to the basic
 nethack version.
