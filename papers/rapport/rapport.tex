@@ -609,6 +609,20 @@ permettent néanmoins de pouvoir orienter son choix en connaissance de cause.
     fonction du nombre de mouvements autorisé}
 \end{figure}
 
+La tendance générale ressemble beaucoup à celle obtenue pour les portes
+secrètes, cependant en s'attardant un peu plus sur le graphique, on s'aperçoit
+que la différence entre les bots est plus importante. Ceci peut être expliqué
+par le fait que le bot {\em diffusion} accorde une priorité plus grande aux
+couloirs aboutissant à des cul-de-sac et que le bot {\em python-sp} une fois
+bloqué aura tendance à faire de nombreuses recherches, %TODO verify by Benoit
+en revanche, le bot aléatoire aura tendance à faire très peu de recherche dans
+ces emplacements là\footnote{Cette différence est illustrée dans la partie
+{\em Aperçu du nombre de visites sur chaque case}.}.
+\\
+On peut constater qu'effectivement le bot aléatoire découvre moins de 30\% des
+couloirs secrets avec 10'000 mouvements alors qu'il découvrait plus de 50\% des
+portes secrètes avec cette même limite.
+
 \subsubsection{Pourcentage de cases explorées}
 
 \begin{figure}[H]
