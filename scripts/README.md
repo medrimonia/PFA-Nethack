@@ -13,7 +13,7 @@ Before running those scripts, make sure that the Bot used files are up to date.
 The script _game\_runner.sh_ has been created to run massive games with one bot.
 It will launch a certain number of games and insert the results in a database.
 
-In order to allow multiple exection of game runner to run simultaneously, and
+In order to allow multiple executions of game runner to run simultaneously, and
 also to allow developers to recompile bots and nethack while a script is
 running, all necessary datas are copied to a new folder in _/tmp/_.
 
@@ -23,17 +23,21 @@ Example :
 ```
 
 This script takes the following parameters :
-* -g <nb>   : The number of games to play
+* -g <nb>     : The number of games to play
 	* _Default : 10_
-* -m <nb>   : The maximum number of moves allowed for the bot
+* -m <nb>     : The maximum number of moves allowed for the bot
  	* _Default : 200_
-* -p <path> : The path to the Bot main file
-	* _Default : "java_starter_package/Bot.jar"_
-* -c <cmd>  : The command used to launch the Bot
-	* _Default : "java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"
-* -d <path> : Define the path to the database where results will be inserted
+* -p <path>   : The path to the Bot main file
+	* _Default : "bots/java_sp/Bot.jar"_
+* -c <cmd>    : The command used to launch the Bot
+	* _Default : "java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"_
+* -b <string> : The Bot name
+	* _Default : "java sp"_
+* -d <path>   : Define the path to the database where results will be inserted
 	* _Default : "/tmp/test.db"_
-* -l        : Activate the logger
+* -l          : Activate the logger
+	* _Default : Desactivated_
+* -r          : Activate the replay
 	* _Default : Desactivated_
 
 ### Data Builder

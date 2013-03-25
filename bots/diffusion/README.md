@@ -1,7 +1,7 @@
 DIFFUSION BOT
 =============
 
-This folder contains everything needed to build the diffusion bot. The bot
+This folder contains everything needed to build the diffusion bot.
 
 ## Building the bot
 A script is present to ensure easy compilation, it uses the file in unix.jar to

@@ -5,6 +5,10 @@
 
 #include "extern.h" // from nethack
 
+# if defined(__APPLE__) || defined(BSD) || defined(LINUX) || defined(ULTRIX) || defined(CYGWIN32)
+#include <sys/time.h>
+#endif
+
 void
 pfa_setrandom(void)
 {
@@ -26,7 +30,9 @@ pfa_setrandom(void)
 #   endif
 			seed = time((long *)0);
 #  else
-			seed = time((time_t *)0);
+			struct timeval tv;
+			gettimeofday(&tv, NULL);
+			seed = (int) tv.tv_sec + (tv.tv_usec/10000)*1000000;
 #  endif
 		}
 		else {

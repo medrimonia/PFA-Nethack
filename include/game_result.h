@@ -23,9 +23,9 @@ typedef struct game_result * game_result_p;
 
 /* The number and the names of properties will be set according to the table
  * specified.
- * Table names should be choosen between those available according to the source
+ * Table names should be chosen between those available according to the source
  * file.  
- * Table content is not free on delete
+ * Table content is not freed on delete
  */
 game_result_p new_game_result(const char * table);
 

@@ -2,7 +2,6 @@ use 5.010;
 use strict;
 use warnings;
 
-use IO::Select;
 use Term::ReadKey;
 use IO::Socket::UNIX;
 use Term::ANSIScreen qw/:cursor :screen/;

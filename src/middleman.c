@@ -684,79 +684,88 @@ int mm_recv()
 	char buf[BUFSIZE];
 	int i, cmd, nb_received;
 
-	if (first == last) { // buffer empty
-		first = 0;
-		last = 0;
+	while (1) {
+		if (first == last) { // buffer empty
+			first = last = 0;
 
-		mm_log("send()", "E");
+			mm_log("send()", "E");
 
-		if (replay > 0) {
-			write(replay, "E", 1);
-		}
-
-		// select stuff
-		fd_set sel;
-		struct timeval tvtimeout;
-
-		FD_ZERO(&sel);
-		FD_SET(client, &sel);
-		tvtimeout.tv_usec = 0;
-		tvtimeout.tv_sec  = timeout;
-
-		// start timer
-		struct timeval tmp1, tmp2;
-		gettimeofday(&tmp1, NULL);
-
-		size = send(client, "E", 1, 0);
-		if (size < 1) {
-			mm_log("send()", "Client disconnected.");
-			return -1;
-		}
-
-		select(client+1, &sel, NULL, NULL, &tvtimeout);
-
-		if (!FD_ISSET(client, &sel)) {
-			mm_log("select()", "Client timeout.");
-			return -1;
-		}
-
-		nb_received = recv(client, buf, BUFSIZE, 0);
-
-		// stop timer
-		gettimeofday(&tmp2, NULL);
-
-		// compute time
-		tvsub(&tmp2, &tmp2, &tmp1);
-		tvadd(&tvbot, &tvbot, &tmp2);
-
-		buf[nb_received] = '\0';
-		if (nb_received < 1) {
-			mm_log("recv()", "Client disconnected.");
-			return -1;
-		} else {
-			mm_log("recv()", buf);
-		}
-
-		mm_log("send()", "S");
-		size = send(client, "S", 1, 0);
-		if (size < 1) {
-			mm_log("send()", "Client disconnected.");
-			return -1;
-		} else {
-			// put extra chars in a buffer
-			for (i = 1; i < nb_received; i++) {
-				cmdbuf[++last % BUFSIZE] = buf[i];
+			if (replay > 0) {
+				write(replay, "E", 1);
 			}
 
-			cmd = buf[0];
+			// select stuff
+			fd_set sel;
+			struct timeval tvtimeout;
+
+			FD_ZERO(&sel);
+			FD_SET(client, &sel);
+			tvtimeout.tv_usec = 0;
+			tvtimeout.tv_sec  = timeout;
+
+			// start timer
+			struct timeval tmp1, tmp2;
+			gettimeofday(&tmp1, NULL);
+
+			size = send(client, "E", 1, 0);
+			if (size < 1) {
+				mm_log("send()", "Client disconnected.");
+				return -1;
+			}
+
+			select(client+1, &sel, NULL, NULL, &tvtimeout);
+
+			if (!FD_ISSET(client, &sel)) {
+				mm_log("select()", "Client timeout.");
+				return -1;
+			}
+
+			nb_received = recv(client, buf, BUFSIZE, 0);
+
+			// stop timer
+			gettimeofday(&tmp2, NULL);
+
+			// compute time
+			tvsub(&tmp2, &tmp2, &tmp1);
+			tvadd(&tvbot, &tvbot, &tmp2);
+
+			buf[nb_received] = '\0';
+			if (nb_received < 1) {
+				mm_log("recv()", "Client disconnected.");
+				return -1;
+			} else {
+				mm_log("recv()", buf);
+			}
+
+			mm_log("send()", "S");
+			size = send(client, "S", 1, 0);
+			if (size < 1) {
+				mm_log("send()", "Client disconnected.");
+				return -1;
+			} else {
+				// put extra chars in a buffer
+				for (i = 1; i < nb_received; i++) {
+					cmdbuf[++last % BUFSIZE] = buf[i];
+				}
+
+				cmd = buf[0];
+			}
+
+			if (replay > 0) {
+				write(replay, "S", 1);
+			}
+		}
+		
+		else {
+			cmd = cmdbuf[++first % BUFSIZE];
 		}
 
-		if (replay > 0) {
-			write(replay, "S", 1);
+		if (cmd != '#') {
+			break;
+		} else {
+			fprintf(stderr, "Warning: '#' commands are NOT supported!\n");
+			continue;
 		}
-
-	} else {
-		cmd = cmdbuf[++first % BUFSIZE];
 	}
 
 	return cmd;

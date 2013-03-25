@@ -59,7 +59,7 @@ do
 						# File used
 						RESULT_FILE=${BOT_FOLDER}/${FIELDS[i]}_result.txt
 						AVERAGE_FILE=${BOT_FOLDER}/${FIELDS[i]}_average.txt
-						OUTPUT_FILE=${BOT_FOLDER}/m_${MAX_MOVES[m]}_${FIELDS[i]}.eps
+						OUTPUT_FILE=${BOT_FOLDER}/m_${MAX_MOVES[m]}_${FIELDS[i]}
 
 						# Getting results
 						REQUEST="'select ${FIELDS[i]}, count(*) as nb
@@ -92,7 +92,7 @@ do
 						
 						gnuplot -persist <<PLOT
 
-set title "Distribution of collected data over ${NB_GAMES} games with bot '${BOT[b]}' having ${MAX_MOVES[m]} moves allowed"
+set title "Distribution of collected data over ${NB_GAMES} games with bot '${BOT_NAME}' having ${MAX_MOVES[m]} moves allowed"
 
 set yrange [0:*]
 set xrange [-1:*]
@@ -106,8 +106,12 @@ set datafile separator "|"
 set tics out
 
 #In case for building an eps-file ...
-set terminal postscript enhanced color solid eps 15
-set output "${OUTPUT_FILE}"
+#set terminal postscript enhanced color solid eps 15
+#set output "${OUTPUT_FILE}.eps"
+
+#In case for building a png-file ...
+set terminal png size 1024,768
+set output "${OUTPUT_FILE}.png"
 
 plot '${RESULT_FILE}' with impulses title "games results", '${AVERAGE_FILE}' with impulses lc rgb "blue" lw 3 title "average"
 

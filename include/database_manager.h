@@ -4,7 +4,7 @@
  *
  * Some ideas have still to be respected if the client wants performances
  * and/or multi-processes easy support : 
- * - All Inserts should be done togetĥer (avoid isolated inserts)
+ * - All Inserts should be done together (avoid isolated inserts)
  * - Multiple insert should be enclosed in a transaction
  * - The database manager should be initialized as late as possible
  * - The database manager should be closed as soon as possible
@@ -49,10 +49,10 @@ int update_db_time();
  * This function call may block if another process is using the database
  * The time elapsed between start_transaction and commit_transaction should
  * be as short as possible.
- * Additionnally to the semaphore handling, transaction allows multiple
+ * Additionally to the semaphore handling, transaction allows multiple
  * inserts to be a lot faster. (cf sqlite3 faq and doc)
  * Only a dozen of transaction can be done by second.
- * Nested start_transaction must absolutly be avoided
+ * Nested start_transaction must absolutely be avoided
  *
  * WARNING : Comportment hasn't been tested if database is used simultaneously
  *           with another API.
@@ -64,7 +64,7 @@ void start_transaction();
  */
 void commit_transaction();
 
-/* Free all ressources associated to the database manager
+/* Free all resources associated to the database manager
  * On success : return 0
  * On failure : print an error message and return 1
  */
