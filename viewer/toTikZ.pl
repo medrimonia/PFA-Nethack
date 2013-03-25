@@ -16,6 +16,8 @@ my $footer = <<'EOF';
 \end{document}
 EOF
 
+our ($opt_f, $opt_s);
+getopts("fs:");
 
 if ($#ARGV < 0) {
 	print "Usage: perl $0 [-f] <replay file>\n";
@@ -23,10 +25,6 @@ if ($#ARGV < 0) {
 	print "\t -s : scale pictures (default 0.3)\n";
 	exit;
 }
-
-
-our ($opt_f, $opt_s);
-getopts("fs:");
 
 $scale = $opt_s if (defined $opt_s && looks_like_number($opt_s));
 
