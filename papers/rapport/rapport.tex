@@ -311,7 +311,7 @@ TODO Benoît
 \subsubsection{Le bot spécialisé}
 TODO David
 
-\subsection{Stockage des résultats}
+
 BDD, généricité (protocole, socket, différents langages).
 Algos de bots.
 
@@ -323,7 +323,7 @@ Plusieurs outils ont été mis à disposition pour faciliter le développement d
 
 Parler de l'extraction de la graine.
 
-\subsubsection{Revoir d'une partie}
+\subsubsection{Revoir une partie}
 
 	Si la sauvegarde du replay a été activée lors du lancement du jeu (à l'aide de la variable d'environnement \verb!NH_MM_REPLAY!), un fichier nethackdir/replay est créé. Il contient tous les échanges de l'interface vers le bot, selon le même protocole, pour être capable de reconstituer le déroulement d'une partie.
 
@@ -339,6 +339,14 @@ Un échange entre l'interface et le bot au tour $N$ ne permet pas de reconstitue
 
 Une meilleure exploitation des informations contenues dans le fichier de replay est de calculer l'inverse des mises à jour qu'il contient et/ou de stocker des états paliers du jeu (tous les 100 tours par exemple). Dans \verb!viewer.pl! seule la méthode des mises à jour inverses est implémentée. Elles permettent de revenir en arrière rapidement et un passage d'un tour $N$ à un tour $M$ se fait simplement en traitant tous les tours de $N$ à $M$ si $|N-M| < M$ ou de $0$ à $M$ sinon. Certains paliers sont tout de même utilisés lors du changement de niveaux pour ne pas avoir à retracer les sales des niveaux inférieurs qui seront de toute manière effacées lors d'un retour en arrière.
 
+\subsubsection{Stockage des résultats}
+TODO texte accompagnant le schéma
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{../images/schema.png}}
+	\caption{\label{fig:schema} Schéma de la base de données utilisée.}
+\end{figure}
+
+
 \subsubsection*{Scripts de génération de graphes}
 
 Expliquer les scripts
@@ -347,6 +355,8 @@ Expliquer les scripts
 \section{Analyses}
 
 graphes, sous-section pour chaque "mode". Reprendre étude pièce rectangulaire.
+
+
 \section{Problème simplifié : sortie d'une salle}
 
 Afin d'étudier le problème de la recherche des portes secrètes de façon plus
