@@ -236,7 +236,10 @@ END
 
 \subsubsection{Architecture}
 
+\textbf{TODO}
 Archi et Décomposition de la version modifiée de NetHack.
+
+BDD, généricité (protocole, socket, différents langages).
 
 \subsubsection{Interface finale}
 
@@ -306,14 +309,15 @@ est certainement possible d'améliorer encore grandement les performances en
 optimisant certaines parties du code.
 
 \subsubsection{Le starter package python}
-TODO Benoît
+
+Ce bot propose un squelette pour l'interprétation des messages venant du jeu et un algorithme simple pour l'exploration 'rapide' d'un niveau en maintenant un compteur pour chaque case visitée. Le bot se déplace en priorité sur les cases les moins visitées.
 
 \subsubsection{Le bot spécialisé}
-TODO David
 
+Ce bot, écrit en python, n'a pas vocation à être utilisé dans des conditions "normales" de jeu. C'est un bot dédié à la résolution optimale d'un problème particulier : trouver, en un nombre de tours minimal, la porte secrète cachée de façon aléatoire dans une salle carrée de taille 10x10. Une étude théorique de ce problème a été réalisée et ce bot a pour but de s'approcher de la solution optimale. Ceci permet d'effectuer une comparaison avec les autres bots qui sont plus "généralistes".
 
-BDD, généricité (protocole, socket, différents langages).
-Algos de bots.
+Afin d'utiliser ce bot dans les bonnes conditions, il est nécessaire d'avoir compilé une version du jeu dans laquelle le patch \emph{patches/create\_level.patch} a été appliqué. Ce patch modifie le donjon de telle sorte que le premier niveau ne contienne qu'une seule salle de la forme décrite précédemment\footnote{ce niveau ne contient pas d'escalier pour descendre dans les niveaux suivants}.
+
 
 \subsection{Outils d'analyse et de deboguage}
 
