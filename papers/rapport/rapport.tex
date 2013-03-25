@@ -279,7 +279,39 @@ TODO: configuration des patchs à appliquer pour chaque mode et expliquer ce que
 
 
 \subsection{Développement de bots.}
+\subsubsection{Le starter package java}
+Afin de pouvoir rapidement commencer à coder des bots, un \emph{starter package}
+en java est fourni, les fonctionnalités fournies sont principalement la lecture
+de la carte et la vérification de la validité des mouvements.
+\\
+Ce bot se contente de lister les actions possibles et d'en choisir une de façon
+aléatoire, avec tout de même certaines actions prioritaires. Cette base permet
+de pouvoir tester différentes stratégie sans avoir à implémenter à nouveau la
+réception et l'envoi de message aux bots.
 
+\subsubsection{Le bot diffusion}
+Le principe de ce bot est d'établir des scores pour chaque cases et de diffuser
+ensuite les valeurs à tous les voisins, ainsi la principale différence avec les
+autres bots est que la complexité est bien plus élevée étant donnée que pour
+choisir la prochaine action, il n'y a pas que le voisinage immédiat qui est
+observé. Ce surcoût de temps permet en revanche d'avoir des meilleurs résultats
+et la possibilité de modifier les scores facilement permet de changer les
+objectifs en changeant uniquement des constantes.
+\\
+Une fois tous les scores calculés et la diffusion effectuée, l'action choisie
+est celle ayant le score le plus élevé parmi celles qui sont autorisées. Ce bot
+est donc totalement déterministe. Quelques attentions ont été portées à
+l'optimisation afin de réduire légèrement le temps d'exécution, cependant, il
+est certainement possible d'améliorer encore grandement les performances en
+optimisant certaines parties du code.
+
+\subsubsection{Le starter package python}
+TODO Benoît
+
+\subsubsection{Le bot spécialisé}
+TODO David
+
+\subsection{Stockage des résultats}
 BDD, généricité (protocole, socket, différents langages).
 Algos de bots.
 
