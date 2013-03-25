@@ -292,7 +292,15 @@ de compilation).
 
 L'interface ne supporte pas les commandes commençant par le caractère '\verb!#!'. Ceci est dû au code original de NetHack qui cherche à réaliser des traitements particuliers pour ce type de commande (auto complétion, etc.) que nous n'avons pas jugé utile d'implémenter. Tout caractère '\verb!#!' est donc ignoré par l'interface.
 
-Un bot peut envoyer plusieurs commandes à la fois ce qui peut se montrer utile pour diminuer le nombre d'échanges avec le jeu. Par exemple, envoyer les commandes '\verb!jjkl!' aura le même effet que d'envoyer chacune des lettres séparément et fera bouger le joueur deux fois vers le bas, une fois vers le haut et une fois vers la droite.
+Un bot peut envoyer plusieurs commandes à la fois ce qui peut se montrer utile pour diminuer le nombre d'échanges avec le jeu. Par exemple, envoyer les commandes '\verb!jjkl!' aura le même effet que d'envoyer chacune des lettres séparément et fera bouger le joueur deux fois vers le bas, une fois vers le haut et une fois vers la droite. Il est donc recommandé au développeur d'un bot de prendre en charge des patterns : \verb!oj! pour ouvrir une porte au sud, etc.
+
+Quant au protocole concernant les échanges depuis l'interface vers le bot, nous avons établi les règles suivantes :
+\begin{itemize}
+	\item \verb!S! marque le début d'une transmission
+	\item \verb!E! marque la fin d'une transmission et indique que l'interface attend une commande du client.
+	\item \verb!g<x><y><glyph><code>! indique qu'un élément du jeu représenté par le caractère \verb!glyph! et ayant pour code identificateur \verb!code! se trouve aux coordonnées \verb!(x, y)!.
+	\item \verb!C! indique que la carte doit être effacée. Un bot peut interpréter cette information comme étant un changement d'étage réussi s'il venait d'envoyer une commande descente ou montée d'escalier.
+\end{itemize}
 
 \section{Modifier les données stockées} \label{sec:modif-bdd}
 Chaque table de la base de données possède son propre fichier \emph{.def} afin
