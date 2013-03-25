@@ -395,10 +395,11 @@ peut facilement être modifié et permet ainsi de convenir à ce qui est attendu
 \subparagraph{Exemple}
 Nous avons écrit un script permettant de générer un grand nombre de graphiques
 indiquant la répartition des performances du bot. Celui-ci génère un graphique
-par triplet $\{\text{Bot},\text{Nb mouvements autorisés},\text{Caractéristique}$
-, il faut par conséquent faire attention car suivant la base de données
-utilisée, le temps de génération peut être conséquent. Voici un exemple d'un des
-graphes produits par ce script.
+par triplet
+$\{\text{Bot},\text{Nb mouvements autorisés},\text{Caractéristique} \}$, il
+faut par conséquent faire attention car suivant la base de données utilisée,
+le temps de génération peut être conséquent. Voici un exemple d'un des graphes
+produits par ce script.
 
 \begin{figure}[H]
   \center{\includegraphics[width=\textwidth]{m_10000_nb_squares_explored.png}}
@@ -426,14 +427,28 @@ Si l'exemple donné ci-dessus présente le nombre de cases explorées par le bot
 comme suivant une gaussienne, certains aspects de répartition peuvent donner
 plus d'informations, comme c'est le cas sur ce graphique.
 
-TODO inclure graphique
+\begin{figure}[H]
+  \center{\includegraphics[width=0.5\textwidth]{nb_squares_explored.png}}
+  \caption{\label{fig:nb_squares_explored} Un exemple de graphique montrant un
+  dysfonctionnement du bot.}
+\end{figure}
 
+Le fait que la répartition des résultats ne suit pas une gaussienne n'est pas
+forcément flagrant, en revanche, on distingue un nombre non négligeable de
+parties ayant un nombre de cases explorées inférieur à 50, ce qui est très
+faible en comparaison de la moyenne. En observant plus en détail une des
+parties ayant obtenu un tel résultat, nous nous sommes rendus compte que le
+problème venait du fait que les portes ne s'ouvraient plus, ce qui était dû à
+une légère erreur lors d'une modification du noyau. Ces graphiques peuvent
+donc aussi servir à détecter des dysfonctionnements lors de modifications du
+noyau.
 
 \paragraph{Graphiques comparant des bots}
-Afin de comparer les performances des bots dans différents domaines, il est
-possible d'utiliser le script \emph{move\_graph.sh}. Celui-ci génère des
-graphiques pour les principales performances générées par les bots, les
-résultats se présentent sous cette forme.
+Afin de comparer les performances des bots dans différents domaines, nous
+avons écrit un script générant des graphiques permettant de visualiser
+facilement les différences de résultats entre les différents bots. Celui-ci
+génère un graphe par caractéristique observée, permettant ainsi de réduire le
+nombre de manipulations à effectuer.
 
 \begin{figure}[H]
   %\center{\includegraphics[width=\textwidth]{move_graph.png}}
