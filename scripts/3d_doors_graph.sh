@@ -57,7 +57,11 @@ set tics out
 
 #In case for building an eps-file ...
 #set terminal postscript enhanced color solid eps 15
-#set output "3d_graph.eps"
+#set output "3d_sdoors_graph.eps"
+
+#In case for building a png-file ...
+#set terminal png size 1024,768
+#set output "3d_sdoors_graph.png"
 
 set view 0,90
 

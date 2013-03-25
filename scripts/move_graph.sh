@@ -80,8 +80,12 @@ set key autotitle columnhead
 set tics out
 
 #In case for building an eps-file ...
-set terminal postscript enhanced color solid eps 15
-set output "graph_${FIELDS[i]}.eps"
+#set terminal postscript enhanced color solid eps 15
+#set output "graph_${FIELDS[i]}.eps"
+
+#In case for building a png-file ...
+set terminal png size 1024,768
+set output "graph_${FIELDS[i]}.png"
 
 plot for [bot in "${BOT_FILE[@]}"] bot.".csv" using ${MOVE_COLUMN}:${DATA_COLUMN[i]} with linespoints lw 3 title bot
 quit

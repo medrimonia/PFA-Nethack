@@ -46,8 +46,12 @@ set tics out
 set style fill solid
 
 #In case for building an eps-file ...
-set terminal postscript enhanced color solid eps 15
-set output "${DB_PATH}/sd_line_graph.eps"
+#set terminal postscript enhanced color solid eps 15
+#set output "${DB_PATH}/sd_line_graph.eps"
+
+#In case for building a png-file ...
+set terminal png size 1024,768
+set output "${DB_PATH}/sd_line_graph.png"
 
 plot '${LINE_DATA}' with boxes
 quit
@@ -68,8 +72,12 @@ set tics out
 set style fill solid
 
 #In case for building an eps-file ...
-set terminal postscript enhanced color solid eps 15
-set output "${DB_PATH}/sd_column_graph.eps"
+#set terminal postscript enhanced color solid eps 15
+#set output "${DB_PATH}/sd_column_graph.eps"
+
+#In case for building a png-file ...
+set terminal png size 1024,768
+set output "${DB_PATH}/sd_column_graph.png"
 
 plot '${COLUMN_DATA}' with boxes
 quit
