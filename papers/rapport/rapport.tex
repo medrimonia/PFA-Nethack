@@ -335,16 +335,40 @@ Le programme viewer.pl permet d'interpréter ce fichier en décomposant son cont
 	\item 'diaporama' par incrémentation ou décrémentation d'un nombre de tours par seconde donné
 \end{itemize}
 
-Un échange entre l'interface et le bot au tour $N$ ne permet pas de reconstituer l'état de la partie au tour $N$ car seules les mises à jour sont transmises. Il est donc nécessaire de traiter tous les échanges depuis le début de la partie pour connaître l'état du jeu à un tour donné. La reconstitution de longues parties peut alors devenir lente pour des opérations simples. Par exemple, passer du tour 2000 au tour 1999 nécessiterais de rejouer 1999 tours pour faire un simple saut en arrière.
+Un échange entre l'interface et le bot au tour $N$ ne permet pas de reconstituer l'état de la partie au tour $N$ car seules les mises à jour sont transmises. Il est donc nécessaire de traiter tous les échanges depuis le début de la partie pour connaître l'état du jeu à un tour donné. La reconstitution de longues parties peut alors devenir lente pour des opérations simples. Par exemple, passer du tour 2000 au tour 1999 nécessiterait de rejouer 1999 tours pour faire un simple saut en arrière.
 
 Une meilleure exploitation des informations contenues dans le fichier de replay est de calculer l'inverse des mises à jour qu'il contient et/ou de stocker des états paliers du jeu (tous les 100 tours par exemple). Dans \verb!viewer.pl! seule la méthode des mises à jour inverses est implémentée. Elles permettent de revenir en arrière rapidement et un passage d'un tour $N$ à un tour $M$ se fait simplement en traitant tous les tours de $N$ à $M$ si $|N-M| < M$ ou de $0$ à $M$ sinon. Certains paliers sont tout de même utilisés lors du changement de niveaux pour ne pas avoir à retracer les sales des niveaux inférieurs qui seront de toute manière effacées lors d'un retour en arrière.
 
 \subsubsection{Stockage des résultats}
-TODO texte accompagnant le schéma
+Les résultats des parties sont stockés dans une base de données afin de ne pas
+perdre trop d'informations et de pouvoir effectuer toute sorte d'analyses à
+partir de ceux-ci. Nous avons cherché à conserver toutes les informations
+présentant une certaine utilité à nos yeux plutôt que de ne conserver que celles
+que nous utilisons directement. Ce choix nous permet d'avoir plus de liberté
+lors du choix des analyses et de ne pas avoir à relancer d'autres parties en
+nous apercevant qu'une autre donnée serait nécessaire pour pouvoir tirer
+certaines conclusions\footnote{Par exemple, les premières analyses nous ont fait
+  penser que certains bots descendaient au second niveau alors que les bots
+  n'utilisaient pas l'ordre permettant de descendre. Il nous était impossible de
+  vérifier cela sur les données obtenues, car le niveau atteint n'était pas
+  stocké à ce moment là.}.
 \begin{figure}[H]
   \center{\includegraphics[width=\textwidth]{../images/schema.png}}
 	\caption{\label{fig:schema} Schéma de la base de données utilisée.}
 \end{figure}
+Une vue
+fournissant certains détails supplémentaires \footnote{Nombre de portes
+secrètes, nombre de portes secrètes trouvées, nombre de couloirs secrets et
+nombre de couloirs secrets trouvés.} est aussi disponible afin de faciliter
+l'utilisation de la base de données.
+\\
+Nous avons choisi d'utiliser une base de données {\em sqlite3}, celle-ci étant
+assez simple à interfacer avec du {\em c}, mais aussi à interroger directement
+par ligne de commande. Le grand avantage pour notre situation est aussi que les
+bases de données {\em sqlite3} se présentent sous la forme d'un unique fichier,
+celui-ci n'étant pas trop volumineux, il était parfaitement concevable de nous
+échanger les bases de données de manière simple.
+%TODO Parler des .def etc?
 
 
 \subsubsection*{Scripts de génération de graphes}
