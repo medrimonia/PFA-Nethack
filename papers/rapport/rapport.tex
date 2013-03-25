@@ -247,6 +247,7 @@ BDD, généricité (protocole, socket, différents langages).
 
 \paragraph{}À la demande du client et du responsable pédagogique, l'utilisation d'une interface intégrée directement dans le jeu fut implémentée. Elle permet d'économiser une étape d'entrée/sortie lors de la communication avec un bot mais a le désavantage de rendre impossible l'utilisation du projet sur une version originale du jeu.
 
+
 Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant des pointeurs de fonction à appeler lors d'un évènement à communiquer au joueur. C'est sur ce mécanisme que repose la plupart des interfaces graphiques existantes pour le jeu. Les principales fonctions appelées sont les suivantes :
 \begin{itemize}
 	\item \verb!int *_create_nhwindows(type)! : cette fonction est appelée lors de la création d'une fenêtre (afficher un menu par exemple). Le type donné en paramètre donne la nature de la fenêtre et sa valeur peut être \verb!NHW_MAP!, \verb!NHW_SATUS!, \verb!NHW_MESSAGE!, \verb!NHW_MENU!, \verb!NHW_TEXT!. En comparaison avec le découpage de l'écran de l'interface précédente, cette façon de distinguer les différentes fenêtres est beaucoup moins sujette à erreur et ne devrait pas souffrir d'un changement d'organisation des fenêtres si un jour NetHack devait évoluer.
@@ -278,6 +279,10 @@ Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant d
 \item \textbf{TODO: donner la graine pour rejouer une partie}
 \end{itemize}
 
+\paragraph{} Cette nouvelle interface ne permet plus d'observer depuis NetHack le comportement du bot. Le jeu propose diverses interfaces graphiques, une solution aurait donc très bien pu être de rediriger les appels aux fonctions de l'interface que nous avons développée vers celles d'une interface existante. Cependant, cela pose un problème non négligeable : les différentes interfaces graphiques s'autorisent des fonctions bloquantes (fenêtre de dialogue propres à chacune d'elles par exemple). A moins de supprimer ou d'adapter les fonctions gênantes, il n'est pas envisageable d'utiliser cette solution avec un bot.
+
+Une autre solution aurait été de permettre un affichage simple dans le terminal. Cela n'a pas été retenu car cela aurait consisté à faire des traitements supplémentaires pour reconstituer la carte et cela reviendrait à dupliquer le travail que le bot doit faire de lui même.
+
 \paragraph{} \textbf{TODO:} Le protocole de communication entre un bot et le jeu a été modifié depuis le prototype. Il est demandé au développeur d'un bot de prendre en charge des patterns (expliquer).
 
 
@@ -285,20 +290,23 @@ Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant d
 
 \paragraph{} L'un de nos objectifs était d'adapter NetHack en ayant la plus petite empreinte possible sur le code existant. C'est dans ce but que nous avons opté pour l'installation de 'hooks' dans le code source faisant appels à nos fonctions définies dans leur propre emplacement, dans un répertoire séparé. Ces points d'entrés sont placés à des endroits stratégiques :
 \begin{itemize}
-	\item Le premier est installé dans la fonction \verb!moveloop()! de \verb!allmain.c! du jeu qui est exécutée par toutes les architectures supportées. Elle fait alors appel à \verb!pfa_init()! du fichier \verb!pfamain.c! juste avant la boucle principale. \verb!pfa_init()! regroupe toutes les procédures d'initialisation nécessaires au modules que nous avons développés.
-	\item Le second se trouve au début la boucle principale de \verb!moveloop()! pour nous permettre d'effectuer des traitements à chaque tour de jeu. Il fqit appel à \verb!pfa_newloop()!.
+	\item Le premier est installé dans la fonction \verb!moveloop()! de \verb!allmain.c! du jeu qui est exécutée par toutes les architectures supportées. Elle fait alors appel à \verb!pfa_init()! du fichier \verb!pfamain.c! et se situe juste avant la boucle principale. \verb!pfa_init()! regroupe toutes les procédures d'initialisation nécessaires au modules que nous avons développés.
+	\item Le second se trouve au début la boucle principale de \verb!moveloop()! pour nous permettre d'effectuer des traitements à chaque tour de jeu. Il fait appel à \verb!pfa_newloop()!.
 	\item Le dernier est placé dans la fonction \verb!terminate(status)! du fichier \verb!end.c! appelée lorsque NetHack quitte afin de nous donner l'occasion de terminer proprement (libération de la mémoire, fermeture des fichiers, etc). Il fait appel à \verb!pfa_end()!.
 \end{itemize}
 
-\paragraph{} Nous souhaitions également pouvoir livrer nos modifications indépendamment du jeu lui même. Nous avons donc utilisé un système de patchs installant les point d'entrée aux endroits voulus. Ce même procédé est utilisé pour les modifications correspondant aux 'modes'. Le processus d'installation a été automatisé pour qu'à partir d'une archive originale de NetHack le code source soit patché pour prendre en compte nos ajouts et modifications.
+\paragraph{} Nous souhaitions également pouvoir livrer nos modifications indépendamment du jeu lui même. Nous avons donc utilisé un système de patchs installant les points d'entrée aux endroits voulus. Ce même procédé est utilisé pour les modifications correspondant aux 'modes' (suppression des monstres, suppression des objets, etc). Le processus d'installation a été automatisé pour qu'à partir d'une archive originale de NetHack le code source soit patché pour prendre en compte nos ajouts et modifications.
 
 \textbf{
-TODO: configuration des patchs à appliquer pour chaque mode et expliquer ce que ces patchs font + donner un exemple de patch avec détail des lignes changées et l'effet sur le jeu.}
+TODO David: configuration des patchs à appliquer pour chaque mode et expliquer ce que ces patchs font + donner un exemple de patch avec détail des lignes changées et l'effet sur le jeu.}
 
 
 \subsection{Développement de bots.}
 
 \subsubsection{'Bot' contrôlé à la main}
+
+L'interface développée ne permet plus de jouer au jeu à la main et donc de tester nous même les modifications apportées au jeu. Nous avons donc développé un client adapté au protocole mis en place. Il s'agit du programme \verb!dummy-client.pl!. Il accepte les mêmes commandes que le jeu original et nous a permis, entre autre, de tester l'effet des patchs sur une partie.
+
 
 \subsubsection{Le starter package java}
 Afin de pouvoir rapidement commencer à coder des bots, un \emph{starter package}
@@ -371,6 +379,8 @@ coordonée permet de produire les images suivantes à l'aide de TikZ :
 	\caption{Nombre de visites sur chaque case sur deux niveaux du starter package java. En blanc les cases non visitées, en jaune clair les cases visitées peu de fois, en rouge les cases visitées un grand nombre de fois.}
 	\resizebox{\columnwidth}{!}{\input{javasp_tikz_exemple.tex}}
 \end{figure}
+
+En comparaison avec le bot diffusion, on distingue deux comportements bien différents : l'exploration totalement aléatoire du starter package visite toutes les cases ou presque en passant beaucoup de temps dans chaque sale, tandis que le bot diffusion passe beaucoup de temps dans les couloirs et moins dans les sales.
 
 \begin{figure}[H]
 	\caption{Nombre de visites sur chaque case sur deux niveaux du bot diffusion.}
