@@ -42,7 +42,7 @@ while 1:
 
 	i = 0
 	while (i < dlen):
-		if (data[i] == 'S'):
+		if (data[i] == 'S' or data[i] == 'C'):
 			i += 1
 			continue
 
