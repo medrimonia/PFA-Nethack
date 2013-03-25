@@ -28,7 +28,7 @@ This script takes the following parameters :
 * -m <nb>     : The maximum number of moves allowed for the bot
  	* _Default : 200_
 * -p <path>   : The path to the Bot main file
-	* _Default : "java_starter_package/Bot.jar"_
+	* _Default : "bots/java_sp/Bot.jar"_
 * -c <cmd>    : The command used to launch the Bot
 	* _Default : "java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"_
 * -b <string> : The Bot name

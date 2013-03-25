@@ -7,7 +7,7 @@ NH_MM_LOGGING=0
 NH_MM_REPLAY=0
 NH_DATABASE_PATH="/tmp/test.db"
 NB_GAMES=10
-BOT_PATH="java_starter_package/Bot.jar"
+BOT_PATH="bots/java_sp/Bot.jar"
 BOT_CMD="java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"
 
 usage() {
@@ -30,7 +30,7 @@ usage() {
 	echo -e "\t            (Default Desactivated)"
 	echo -e "\t-r          Activate the replay"
 	echo -e "\t            (Default Desactivated)"
-	echo "Exemple: $0 -b \"python sp\" -p \"pythonsp/bot.py\" -c \"python\""
+	echo "Exemple: $0 -b \"python sp\" -p \"bots/python_sp/bot.py\" -c \"python\""
 }
 
 
@@ -105,7 +105,7 @@ cd ..
 cd $BASEDIR
 cp $BOT_PATH $TEST_FOLDER
 #dirtyhack
-cp pythonsp/nhmap.py $TEST_FOLDER
+cp bots/python_sp/nhmap.py $TEST_FOLDER
 
 printf "Done : 0 of %d" $NB_GAMES
 for ((i = 1; i <= NB_GAMES; i++))

@@ -1,13 +1,13 @@
 #!/bin/bash
 
 BOT[0]="diffusion"
-BOT_PATH[0]="diffusion_bot/Bot.jar"
+BOT_PATH[0]="bots/diffusion/Bot.jar"
 BOT_CMD[0]="java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"
 BOT[1]="java sp"
-BOT_PATH[1]="java_starter_package/Bot.jar"
+BOT_PATH[1]="bots/java_sp/Bot.jar"
 BOT_CMD[1]="java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"
 BOT[2]="python sp"
-BOT_PATH[2]="pythonsp/bot.py"
+BOT_PATH[2]="bots/python_sp/bot.py"
 BOT_CMD[2]="python"
 
 
