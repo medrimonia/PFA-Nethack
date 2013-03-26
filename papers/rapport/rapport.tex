@@ -148,6 +148,7 @@ Les échanges entre les bots et le middle-man sont effectués à l'aide d'une
 socket unix, le protocole utilisé entre eux est détaillé dans ce rapport et doit
 pouvoir permettre des créer des bots dans d'autres langages.
 
+
 \paragraph{Patches :}
 L'utilisation des patches permet de visualiser facilement quels sont les
 modifications apportées à nethack. Pour une plus grande facilité de
@@ -1204,17 +1205,44 @@ quelques tentatives infructueuses de test de couverture (gcov), de profilage
 
 \section{Travail en équipe, organisation}
 
-Utilisation de git.
-Comparer avec le travail en plus grande équipe.
+{\em Bien que la conception du programme se soit effectuée au sein d'un groupe
+de sept personnes, une séparation a eu lieu à mi-parcours, et c'est à trois que
+s'est déroulée la phase de développement. Sans s'attarder sur les raisons de
+cette séparation, il est nécessaire de l'évoquer afin de comprendre les
+comparaisons qui seront faîtes.}
+\paragraph{Utilisation de git :}
+Lors de la première partie du projet, nous avions trois profils différents par
+rapport à git :
+\begin{itemize}
+\item Ceux qui ne connaissait pas git et qui n'ont pas réussi à apprendre à s'en
+  servir.
+\item Ceux qui ne connaissait pas ou peu git et qui ont appréhendé réellement
+  cet outil pendant cette phase.
+\item Ceux qui connaissaient déjà git.
+\end{itemize}
+Au cours de la seconde partie en revanche, chacun de nous a pu apprendre à mieux
+se servir de cet outil, se familiarisant plus avec la notion de branches et nous
+avons réussi à comprendre de mieux en mieux les commits des autres, en essayant
+de privilégier autant que possible des commits légers.
+\\
+L'utilisation des branches et des diff de git nous ont permis de créer les
+patchs facilement sans interférer sur d'autres travaux. Nous avons pu réduire
+rapidement le nombre de branche et travailler plus facilement les uns avec les
+autres\footnote{Ceci étant peut-être dû à la taille de l'équipe.}.
+
+TODO Comparer avec le travail en plus grande équipe.
 
 \subsection{Conventions}
+TODO
 Commentaires en anglais, respect des conventions employées par les
 développeurs de NetHack lors des modifications du code source du jeu,
 utilisations des espaces vs tab, convention de nommage, positionnement des
 accolades, etc.
 
 \section{Améliorations possibles}
+TODO
 
 \section{Conclusion}
+TODO
 
 \end{document}
