@@ -1,0 +1,9 @@
+# File name for this level
+LEVEL: "ring"
+
+# Dungeon Description
+# ROOM: "type" , lighted, rough pos, align, size
+ROOM: "ordinary" , lit, (3,3), (center,center), (10,10)
+# Doors
+# DOOR: secret, state, wall(north, east, south, west or random), pos
+DOOR: true, closed, random, random

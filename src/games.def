@@ -1,0 +1,15 @@
+#if defined(DATABASE_FIELD)
+/* DATABASE_FIELD(name, cType, sqlType) */
+DATABASE_FIELD(nb_squares_explored , int   , integer)
+DATABASE_FIELD(nb_squares_reachable, int   , integer)
+DATABASE_FIELD(used_moves          , int   , integer)
+DATABASE_FIELD(max_moves           , int   , integer)
+DATABASE_FIELD(level_reached       , int   , integer)
+DATABASE_FIELD(seed                , int   , integer)
+DATABASE_FIELD(bot_name            , char *, text   )
+DATABASE_FIELD(mode_name           , char *, text   )
+DATABASE_FIELD(nethack_time        , int   , integer)
+DATABASE_FIELD(bot_time            , int   , integer)
+DATABASE_FIELD(db_time             , int   , integer)
+#undef DATABASE_FIELD
+#endif /* define(DATABASE_FIELD) */

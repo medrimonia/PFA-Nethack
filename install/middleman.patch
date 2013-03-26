@@ -1,0 +1,22 @@
+--- nethack-3.4.3.b/src/windows.c	2003-12-08 00:39:13.000000000 +0100
++++ nethack-3.4.3/src/windows.c	2013-01-29 20:30:53.579039253 +0100
+@@ -3,6 +3,7 @@
+ /* NetHack may be freely redistributed.  See license for details. */
+ 
+ #include "hack.h"
++#include "middleman.h"
+ #ifdef TTY_GRAPHICS
+ #include "wintty.h"
+ #endif
+@@ -100,7 +101,10 @@
+ 
+     for(i=0; winchoices[i].procs; i++)
+ 	if (!strcmpi(s, winchoices[i].procs->name)) {
+-	    windowprocs = *winchoices[i].procs;
++		mm_init();
++		windowprocs = middleman;
++		real_winprocs = *winchoices[i].procs;
++	    //windowprocs = *winchoices[i].procs;
+ 	    if (winchoices[i].ini_routine) (*winchoices[i].ini_routine)();
+ 	    return;
+ 	}

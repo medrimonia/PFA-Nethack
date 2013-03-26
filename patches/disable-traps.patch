@@ -1,0 +1,14 @@
+diff --git nethack-3.4.3.b/src/trap.c nethack-3.4.3/src/trap.c
+index d336276..6caf440 100644
+--- nethack-3.4.3.b/src/trap.c
++++ nethack-3.4.3/src/trap.c
+@@ -234,6 +234,9 @@ struct trap *
+ maketrap(x,y,typ)
+ register int x, y, typ;
+ {
++	/* Disable traps */
++	return ((struct trap *)0);
++
+ 	register struct trap *ttmp;
+ 	register struct rm *lev;
+ 	register boolean oldplace;

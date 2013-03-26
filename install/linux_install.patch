@@ -1,0 +1,43 @@
+diff -ur nethack-3.4.3.back/Makefile nethack-3.4.3/Makefile
+--- nethack-3.4.3.back/Makefile	2012-12-19 21:31:49.517900230 +0100
++++ nethack-3.4.3/Makefile	2012-12-19 21:30:09.571753153 +0100
+@@ -14,11 +14,11 @@
+ # MAKE = make
+ 
+ # make NetHack
+-PREFIX	 = /usr
++PREFIX	 = $(shell pwd)
+ GAME     = nethack
+ # GAME     = nethack.prg
+-GAMEUID  = games
+-GAMEGRP  = bin
++GAMEUID  = `id -un`
++GAMEGRP  = `id -gn`
+ 
+ # Permissions - some places use setgid instead of setuid, for instance
+ # See also the option "SECURE" in include/config.h
+@@ -35,9 +35,9 @@
+ # therefore there should not be anything in GAMEDIR that you want to keep
+ # (if there is, you'll have to do the installation by hand or modify the
+ # instructions)
+-GAMEDIR  = $(PREFIX)/games/lib/$(GAME)dir
++GAMEDIR  = $(PREFIX)/$(GAME)dir
+ VARDIR  = $(GAMEDIR)
+-SHELLDIR = $(PREFIX)/games
++SHELLDIR = $(PREFIX)
+ 
+ # per discussion in Install.X11 and Install.Qt
+ VARDATND = 
+ 
+diff -ur nethack-3.4.3.back/include/unixconf.h nethack-3.4.3/include/unixconf.h
+--- nethack-3.4.3.back/include/unixconf.h	2012-10-27 16:03:27.242696944 +0200
++++ nethack-3.4.3/include/unixconf.h	2012-10-27 16:04:37.075661517 +0200
+@@ -37,7 +37,7 @@
+ #define NETWORK		/* if running on a networked system */
+ 			/* e.g. Suns sharing a playground through NFS */
+ /* #define SUNOS4 */	/* SunOS 4.x */
+-/* #define LINUX */	/* Another Unix clone */
++#define LINUX	/* Another Unix clone */
+ /* #define CYGWIN32 */	/* Unix on Win32 -- use with case sensitive defines */
+ /* #define GENIX */	/* Yet Another Unix Clone */
+ /* #define HISX */	/* Bull Unix for XPS Machines */
