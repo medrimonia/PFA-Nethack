@@ -1463,11 +1463,45 @@ plus grandes. En revanche, pendant la seconde phase, nous avons bien réussi à
 collaborer et à apprendre les uns des autres.
 
 \subsection{Conventions}
-TODO
-Commentaires en anglais, respect des conventions employées par les
-développeurs de NetHack lors des modifications du code source du jeu,
-utilisations des espaces vs tab, convention de nommage, positionnement des
-accolades, etc.
+Comme une partie de notre projet consiste à créer des patchs et à s'insérer dans
+du code existant, il nous semblait naturel de chercher à adopter les conventions
+utilisées par Nethack afin d'obtenir une certaine homogéneité dans celui-ci.
+Les standards de codage variant à l'intérieur du projet et étant assez loin de
+ceux auxquels nous sommes habitués, nous avons donc décidé trouver un juste
+milieu en s'axant sur certains critères.
+\begin{itemize}
+\item {\em La langue :}
+  Bien que le manuel et le rapport soient écrit en français,
+  nous avons décidé de conserver l'anglais aussi bien pour le code et ses
+  commentaires que pour les readme. Ce choix permet d'éviter de trop mélanger
+  les appellations.
+\item {\em L'utilisation des tabulations et des espaces :}
+  Nethack mêlant les tabulations et les espaces, nous avons décidé de vérifier
+  que quelque soit la taille d'affichage de la tabulation, nos patchs modifient
+  le code de façon cohérente avec le code environnant. Pour le code extérieur à
+  Nethack, nous avons choisi d'utiliser des tabulations pour marquer
+  l'indentation et des espaces pour l'alignement, permettant ainsi aux
+  utilisateurs de visualiser le code avec l'indentation qu'ils préfèrent, sans
+  pour autant gâcher les alignements.
+\item {\em La largeur de ligne maximale :}
+  Dans la plupart de nos fichiers textes\footnote{Fichiers sources, README,
+    fichiers tex, etc...} nous avons cherché à éviter que les lignes dépassent
+  80 caractères, non seulement pour faciliter la lecture quelque soit l'outil
+  utilisé, mais aussi pour permettre de visualiser plus facilement les
+  différences apportées par des commits.
+\item {\em Le nommage des variables et des fonctions :}
+  Mis à part pour le code des bots en java qui suit un nommage CamelCase,
+  nous avons décidé d'adopté un nommage à base d'underscore, comme utilisé dans
+  nethack.
+\item {\em Les accolades}
+  Nous avons uniformisés le positionnement des accolades afin de faciliter la
+  lecture du code.
+\end{itemize}
+
+Toutes les règles présentées ci-dessus sont celles que nous avons essayé de
+respecter, néanmoins, nous avons plus considérés ces règles comme des sortes de
+guides que comme une procédure stricte, il existe donc certainement des
+exceptions à celles-ci dans le projet.
 
 \section{Améliorations possibles}
 TODO
