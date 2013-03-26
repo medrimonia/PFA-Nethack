@@ -123,14 +123,38 @@ en {\em C} mais moins complète}.
 	\caption{\label{fig:architecture} Diagramme de l'architecture finale.}
 \end{figure}
 
+\paragraph{Communication avec les bots :}
 Les échanges entre les bots et le middle-man sont effectués à l'aide d'une
 socket unix, le protocole utilisé entre eux est détaillé dans ce rapport et doit
 pouvoir permettre des créer des bots dans d'autres langages.
 
-\textbf{TODO}
-Archi et Décomposition de la version modifiée de NetHack.
+\paragraph{Patches :}
+L'utilisation des patches permet de visualiser facilement quels sont les
+modifications apportées à nethack. Pour une plus grande facilité de
+développement, mais aussi pour plus de clarté, nous avons utilisé autant que
+possibles des 'hooks', ceux-ci passant tous par pfamain afin de réduire au
+maximum le nombre d'include ajoutés dans les patches.
 
-BDD, généricité (protocole, socket, différents langages).
+\paragraph{Obtention de données par game statistics :}
+Afin d'obtenir les données internes au jeu, game statistics doit nécessairement
+se servir d'une part du code existant de nethack, afin de connaître le nombre de
+cases explorables par exemple.
+
+\paragraph{Gestion de la base de données :}
+Les modules {\em game\_result} et {\em database\_manager} sont étroitements
+liés, car tous deux se basent sur la description des différentes tables pour
+générer leur code.
+
+\paragraph{Fichier de replay :}
+Afin de pouvoir revoir une partie qui s'est jouée, le middle-man fournit une
+option permettant de sauvegarder les données envoyées au bot. Celles-ci peuvent
+aussi être lues pour créer une visualisation de l'exploration à l'aide du script
+perl {\em toTikz.pl}.%TODO ok Benoît?
+
+\paragraph{Scripts :}
+Même s'ils ne sont pas présentés sur ce schéma car ils ne font pas partie
+intégrante du logiciel, des scripts bash permettent de créer des graphiques à
+partir de base de données qui ont été alimentées par cette version de nethack.
 
 \section{Environnement de création de bots}
 
