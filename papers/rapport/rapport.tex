@@ -440,7 +440,7 @@ Le programme \verb!viewer.pl! permet d'interpréter ce fichier en décomposant s
 
 Un échange entre l'interface et le bot au tour $N$ ne permet pas de reconstituer l'état de la partie au tour $N$ car seules les mises à jour sont transmises. Il est donc nécessaire de traiter tous les échanges depuis le début de la partie pour connaître l'état du jeu à un tour donné. La reconstitution de longues parties peut alors devenir lente pour des opérations simples. Par exemple, passer du tour 2000 au tour 1999 nécessiterait de rejouer 1999 tours pour faire un simple saut en arrière.
 
-Une meilleure exploitation des informations contenues dans le fichier de replay est de calculer l'inverse des mises à jour qu'il contient et/ou de stocker des états paliers du jeu (tous les 100 tours par exemple). Dans \verb!viewer.pl! seule la méthode des mises à jour inverses est implémentée. Elles permettent de revenir en arrière rapidement et un passage d'un tour $N$ à un tour $M$ se fait simplement en traitant tous les tours de $N$ à $M$ si $|N-M| < M$ ou de $0$ à $M$ sinon. Certains paliers sont tout de même utilisés lors du changement de niveaux pour ne pas avoir à retracer les sales des niveaux inférieurs qui seront de toute manière effacées lors d'un retour en arrière.
+Une meilleure exploitation des informations contenues dans le fichier de replay est de calculer l'inverse des mises à jour qu'il contient et/ou de stocker des états paliers du jeu (tous les 100 tours par exemple). Dans \verb!viewer.pl! seule la méthode des mises à jour inverses est implémentée. Elles permettent de revenir en arrière rapidement et un passage d'un tour $N$ à un tour $M$ se fait simplement en traitant tous les tours de $N$ à $M$ si $|N-M| < M$ ou de $0$ à $M$ sinon. Certains paliers sont tout de même utilisés lors du changement de niveaux pour ne pas avoir à retracer les salles des niveaux inférieurs qui seront de toute manière effacées lors d'un retour en arrière.
 
 \subsubsection{Aperçu du nombre de visistes sur chaque case}
 
@@ -453,7 +453,7 @@ coordonée permet de produire les images suivantes à l'aide de TikZ :
 	\resizebox{\columnwidth}{!}{\input{javasp_tikz_exemple.tex}}
 \end{figure}
 
-En comparaison avec le bot diffusion, on distingue deux comportements bien différents : l'exploration totalement aléatoire du starter package visite toutes les cases ou presque en passant beaucoup de temps dans chaque sale, tandis que le bot diffusion passe beaucoup de temps dans les couloirs et moins dans les sales.
+En comparaison avec le bot diffusion, on distingue deux comportements bien différents : l'exploration totalement aléatoire du starter package visite toutes les cases ou presque en passant beaucoup de temps dans chaque salle, tandis que le bot diffusion passe beaucoup de temps dans les couloirs et moins dans les salles.
 
 \begin{figure}[H]
 	\caption{Nombre de visites sur chaque case sur deux niveaux du bot diffusion.}
