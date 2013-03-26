@@ -92,6 +92,7 @@ Le projet consiste donc en un ensemble de modifications du code du jeu
 original, d'ajout d'outils, de fonctionnalités et d'études théorique.
 
 \subsection*{Description du jeu}
+TODO
 -> Ensembles de donjons, de niveau, de cases, etc.
 -> monstres, pièges, faims, quêtes, objets, personnages, etc.
 
@@ -117,6 +118,29 @@ Les commandes les plus utilisées pour l'exploration d'un niveau sont les suivan
 Bien d'autres commandes sont disponibles, se référer à la documentation du
 jeu pour une liste complète.
 
+\subsection*{Définitions}
+
+%Les modes de jeu
+
+\paragraph{}
+\emph{Noyau (de NetHack)} : désigne de manière générale le code original de
+NetHack et de façon plus précise tout ce qui concerne la logique du jeu en
+faisant abstraction des diverses interfaces graphiques et portions dépendantes
+de l'architecture.
+
+\paragraph{}
+\emph{Hook} : terme désignant ici un point d'entrée dans du code. Ce terme est
+employé pour évoquer les appels de fonction rajoutée dans le cœur du code
+de NetHack afin de pouvoir effectuer des traitements personnalisés. Les
+'hooks' permettent par exemple de récupérer des statistiques issues du
+déroulement d'une partie, directement depuis le noyau de NetHack.
+
+\paragraph{}
+\emph{Starter package} : ici au sujet des bots, désigne un bot volontairement
+simpliste servant d'exemple à la création d'autres bot dans le même langage.
+La gestion de la communication avec le jeu étant déjà implémentée dans le
+"starter package", il suffit de reprendre le code afin de n'avoir à gérer que
+la stratégie.
 
 \section{Architecture finale}
 
