@@ -276,7 +276,13 @@ Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant d
 \item \verb!NH_MODE_NAME! :
   Permet d'indiquer le nom du mode utilisé afin de l'ajouter correctement à la
   base de données. Par défaut : la valeur est \emph{seek\_secret}.
-\item \textbf{TODO: donner la graine pour rejouer une partie}
+\item \verb!NH_SEED! :
+  Permet de donner la valeur de la graine à utiliser pour l'initialisation du
+  générateur de nombres aléatoires de NetHack. Par défaut, si cette
+  valeur n'est pas spécifiée, la graine utilisée est une combinaison du nombre
+  de secondes et de millisecondes écoulées depuis l'epoch \footnote{$1^{er}$ janvier
+  1970 à 0 heure (UTC)}.
+
 \end{itemize}
 
 \paragraph{} Cette nouvelle interface ne permet plus d'observer depuis NetHack le comportement du bot. Le jeu propose diverses interfaces graphiques, une solution aurait donc très bien pu être de rediriger les appels aux fonctions de l'interface que nous avons développée vers celles d'une interface existante. Cependant, cela pose un problème non négligeable : les différentes interfaces graphiques s'autorisent des fonctions bloquantes (fenêtre de dialogue propres à chacune d'elles par exemple). A moins de supprimer ou d'adapter les fonctions gênantes, il n'est pas envisageable d'utiliser cette solution avec un bot.
@@ -292,10 +298,10 @@ Une autre solution aurait été de permettre un affichage simple dans le termina
 \begin{itemize}
 	\item Le premier est installé dans la fonction \verb!moveloop()! de \verb!allmain.c! du jeu qui est exécutée par toutes les architectures supportées. Elle fait alors appel à \verb!pfa_init()! du fichier \verb!pfamain.c! et se situe juste avant la boucle principale. \verb!pfa_init()! regroupe toutes les procédures d'initialisation nécessaires au modules que nous avons développés.
 	\item Le second se trouve au début la boucle principale de \verb!moveloop()! pour nous permettre d'effectuer des traitements à chaque tour de jeu. Il fait appel à \verb!pfa_newloop()!.
-	\item Le dernier est placé dans la fonction \verb!terminate(status)! du fichier \verb!end.c! appelée lorsque NetHack quitte afin de nous donner l'occasion de terminer proprement (libération de la mémoire, fermeture des fichiers, etc). Il fait appel à \verb!pfa_end()!.
+	\item Le dernier est placé dans la fonction \verb!terminate(status)! du fichier \verb!end.c! appelée lorsque NetHack quitte afin de nous donner l'occasion de terminer proprement (libération de la mémoire, fermeture des fichiers, etc.). Il fait appel à \verb!pfa_end()!.
 \end{itemize}
 
-\paragraph{} Nous souhaitions également pouvoir livrer nos modifications indépendamment du jeu lui même. Nous avons donc utilisé un système de patchs installant les points d'entrée aux endroits voulus. Ce même procédé est utilisé pour les modifications correspondant aux 'modes' (suppression des monstres, suppression des objets, etc). Le processus d'installation a été automatisé pour qu'à partir d'une archive originale de NetHack le code source soit patché pour prendre en compte nos ajouts et modifications.
+\paragraph{} Nous souhaitions également pouvoir livrer nos modifications indépendamment du jeu lui même. Nous avons donc utilisé un système de patchs installant les points d'entrée aux endroits voulus. Ce même procédé est utilisé pour les modifications correspondant aux 'modes' (suppression des monstres, suppression des objets, etc.). Le processus d'installation a été automatisé pour qu'à partir d'une archive originale de NetHack le code source soit patché pour prendre en compte nos ajouts et modifications.
 
 \textbf{
 TODO David: configuration des patchs à appliquer pour chaque mode et expliquer ce que ces patchs font + donner un exemple de patch avec détail des lignes changées et l'effet sur le jeu.}
