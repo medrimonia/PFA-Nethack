@@ -112,6 +112,9 @@ Les commandes les plus utilisées pour l'exploration d'un niveau sont les suivan
 	\item \verb!>! emprunter l'escalier menant au niveau inférieur
 \end{itemize}
 
+Bien d'autres commandes sont disponibles, se référer à la documentation du
+jeu pour une liste complète.
+
 
 \section{Architecture finale}
 
@@ -452,7 +455,7 @@ Plusieurs outils ont été mis à disposition pour faciliter le développement d
 
 \subsubsection{Rejouer une partie}
 
-Parler de l'extraction de la graine.
+\textbf{TODO: David} Parler de l'extraction de la graine.
 
 \subsubsection{Revoir une partie}
 
@@ -478,14 +481,14 @@ coordonée permet de produire les images suivantes à l'aide de TikZ :
 
 \begin{figure}[H]
 	\caption{Nombre de visites sur chaque case sur deux niveaux du starter package java. En blanc les cases non visitées, en jaune clair les cases visitées peu de fois, en rouge les cases visitées un grand nombre de fois.}
-	\resizebox{\columnwidth}{!}{\input{javasp_tikz_exemple.tex}}
+	\resizebox{\columnwidth}{!}{\input{../common/javasp_tikz_exemple.tex}}
 \end{figure}
 
 En comparaison avec le bot diffusion, on distingue deux comportements bien différents : l'exploration totalement aléatoire du starter package visite toutes les cases ou presque en passant beaucoup de temps dans chaque salle, tandis que le bot diffusion passe beaucoup de temps dans les couloirs et moins dans les salles.
 
 \begin{figure}[H]
 	\caption{Nombre de visites sur chaque case sur deux niveaux du bot diffusion.}
-	\resizebox{\columnwidth}{!}{\input{diffusion_tikz_exemple.tex}}
+	\resizebox{\columnwidth}{!}{\input{../common/diffusion_tikz_exemple.tex}}
 \end{figure}
 
 
