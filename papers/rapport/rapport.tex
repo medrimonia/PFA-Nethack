@@ -668,6 +668,16 @@ graphique}.
 
 TODO Données manquantes.
 
+\subsection{Évaluation des bots}
+Pour un temps de calcul du même ordre que le bot aléatoire, le bot
+{\em python-sp} offre une qualité d'exploration incomparablement supérieure.
+Cependant, il n'est pas fait pour être adapté à des changements d'objectifs
+rapidement contrairement au bot {\em diffusion} qui obtient des scores
+d'exploration élevés tout en permettant de changer les buts très facilement. Ces
+avantages ont en revanche un coût en complexité très élevé \footnote{ Il devrait
+néanmoins être possible d'améliorer grandement le temps d'exécution de ce bot
+avec des solutions algorithmiques plus poussées.}.
+
 \subsection{Éléments indépendants des bots}
 Certaines de nos analyses ne concernaient pas des bots, mais le jeu lui-même. En
 effet, bien que le jeu se base sur un générateur aléatoire, cela ne signifie pas
@@ -734,7 +744,24 @@ pas par rapport aux colonnes. Les emplacements à l'intérieur de ces bandes ne
 semblent pas équiprobables et la différence de probabilité y semble même assez
 élevée. La probabilité de trouver une porte secrète dans les bords semble nulle.
 
+\paragraph{Emplacement des couloirs secrets}
 
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{3d_scorr_graph.png}}
+  \caption{\label{fig:3d_scorr_graph} Nombre de couloirs secrets en fonction
+    de la ligne et de la colonne}
+\end{figure}
+
+Ce graphique indique que les colonnes au bord de la cartes sont très peu
+susceptibles de contenir des couloirs secrets tandis que la probabilité que les
+lignes aux bord de la carte en contiennent n'est pas négligeable. On peut aussi
+voir que les lignes centrales ont bien plus de chances de contenir un couloir
+secret que celles du bord\footnote{Peut-être est-ce parce qu'il y a simplement
+plus de couloirs au centre de la pièce que dans les bords, comme évoqué dans le
+paragraphe {\em Événéments indépendants}}.
+\\
+Ces observations encouragent aussi à approfondir les recherches générales sur
+Nethack afin de pouvoir les utiliser pour améliorer des bots.
 
 \section{Problème simplifié : sortie d'une salle}
 
