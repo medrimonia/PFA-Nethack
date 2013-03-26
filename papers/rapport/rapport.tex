@@ -631,8 +631,26 @@ portes secrètes avec cette même limite.
     fonction du nombre de mouvements autorisé}
 \end{figure}
 
+La différence entre le bot aléatoire et les autres est aussi grande que pour les
+deux catégories précédentes, cependant on peut observer que lorsque le nombre de
+mouvements autorisé est faible, le bot {\em python-sp} explore plus de cases que
+le bot {\em diffusion}. Cette différence s'explique assez facilement grâce aux
+différences de stratégie. Le bot {\em diffusion} n'a pas tendance à explorer
+toutes les cases à portée étant donné qu'elles ne sont pas toutes susceptibles
+d'être à proximité d'un couloir secret ou d'une porte secrète \footnote{À
+  nouveau, observer la visualisation de l'exploration du niveau permet de s'en
+  rendre compte rapidement}. Cette tendance s'inverse à un moment donné,
+sûrement lorsque le bot {\em python-sp} est bloqué car il doit découvrir une
+porte secrète ou un couloir secret encore tandis que le bot diffusion a
+découvert toutes les salles. Si l'on souhaite améliorer les performances du bot
+{\em diffusion} pour cette caractéristique, il suffit à priori de changer le
+score attribué à la découverte d'une nouvelle case\footnote{Celui-ci étant
+négligeable dans la version utilisée pour les parties concernées par ce
+graphique}.
 
 \subsection{Descente dans les niveaux}
+
+TODO Données manquantes.
 
 \subsection{Éléments indépendants des bots}
 
