@@ -92,6 +92,35 @@ original, d'ajout d'outils, de fonctionnalités et d'études théorique.
 -> Ensembles de donjons, de niveau, de cases, etc.
 -> monstres, pièges, faims, quêtes, objets, personnages, etc.
 
+\section{Architecture finale}
+
+Bien que le développement du projet ait majoritairement suivi le schéma
+défini dans le document de spécification, certaines détails ont légèrement
+changé. Par exemple, un effort a été fait pour réduire autant que possible
+le nombre de références à des fichiers externes dans les patchs sur le noyau
+de Nethack. Pour arriver à ce résultat, nous nous sommes servis du header
+{\em pfa\_main.h} comme point d'entrée.
+\footnote{Il est facile de vérifier les dépendances ajoutées à l'aide de
+l'instruction suivante : {\em grep "+#include \".*\"" install/*.patch}}
+\\
+Nous avons développé la majeure partie du code en {\em C}, mais certaines
+parties du code se sont tout de même révélées beaucoup plus simples à
+écrire en {\em bash}\footnote{Les scripts de générations de graphiques ou de
+  lancement d'un grand nombre de parties} ou en {\em perl}
+\footnote{Le viewer}, à cause de leur nature très variable et de la nature
+des tâches effectuées. Cependant, après avoir acquis plus d'expérience sur
+l'utilisation de gnuplot en {\em C}, il semble que transposer les codes de
+génération des graphiques en {\em C} pourrait assurer une meilleure
+maintenabilité\footnote{Nous n'avons pas fourni cet effort car en discutant
+avec le client, nous avons compris qu'il préférait obtenir plus de
+graphiques fournissant des informations que d'avoir une génération de graphe
+en {\em C} mais moins complète}.
+
+\textbf{TODO}
+Archi et Décomposition de la version modifiée de NetHack.
+
+BDD, généricité (protocole, socket, différents langages).
+
 \section{Environnement de création de bots}
 
 \subsection{Prototypage}
@@ -235,13 +264,6 @@ END
 
 
 \subsection{Modifications de NetHack}
-
-\subsubsection{Architecture}
-
-\textbf{TODO}
-Archi et Décomposition de la version modifiée de NetHack.
-
-BDD, généricité (protocole, socket, différents langages).
 
 \subsubsection{Interface finale}
 
