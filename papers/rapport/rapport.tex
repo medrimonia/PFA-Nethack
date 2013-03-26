@@ -669,8 +669,71 @@ graphique}.
 TODO Données manquantes.
 
 \subsection{Éléments indépendants des bots}
+Certaines de nos analyses ne concernaient pas des bots, mais le jeu lui-même. En
+effet, bien que le jeu se base sur un générateur aléatoire, cela ne signifie pas
+que toutes les positions ont la même probabilité de contenir une porte par
+exemple. Pour répondre à ce type de questions, le bot utilisé importe peu, il
+n'est même pas nécessaire d'utiliser un bot à priori, il suffit de générer la
+carte.
+\\
+Les éléments que nous avons choisis d'observer sont la probabilité qu'une case
+contienne une porte secrète ou un couloir secret en fonction de leurs positions.
 
-graphes, sous-section pour chaque "mode". Reprendre étude pièce rectangulaire.
+\paragraph{Événements dépendants}
+Avant de présenter certains résultats que nous avons obtenus, il est important
+de préciser quelques points théoriques. Pour ce faire, nous allons utiliser les
+notations suivantes :
+\begin{itemize}
+\item $C_{l,c}$ :
+  représente le contenu de la case à ligne $l$ et à la colonne $c$.
+\item $A_{l,c}$ :
+  représente {\em l'apparence}\footnote{L'apparence signifie ce que perçoit le
+    joueur, il peut par exemple percevoir un mur à une position alors que le
+    contenu est une porte secrète.} de la case à ligne $l$ et à la colonne $c$.
+\item $M$ :
+  représente le type {\em mur}.
+\item $PS$ :
+  représente le type {\em porte secrète}.
+\item $CS$ :
+  représente le type {\em couloir secret}.
+\end{itemize}
+
+Les données qui sont acquises vont donner une estimation pour tout couple
+$\{l,c\}$ de $P(C_{l,c} = PS)$ et de $P(C_{l,c} = CS)$. Cependant, ces estimations
+ne fournissent pas un résultat directement utilisable pour les bots, car la
+probabilité que le contenu soit d'un type donné dépend du type apparent.
+\footnote{$P(C_{l,c} = CS | A_{l,c} = M) \neq P(C_{l,c} = CS)$ de manière flagrante
+  car si l'apparence est un mur, le contenu ne peut pas être un couloir secret}
+\\
+Cette dépendance des variables implique que les valeurs qui nous intéressent
+réellement sont celles du type $P(C_{l,c} = ... | A_{l_c} = ...)$. Celles-ci ne
+peuvent pas être obtenues à partir de la base de données que nous avons
+utilisées car il est nécessaire de conserver une trace de l'apparence. En
+revanche, à partir du code fournit, il est possible d'apporter des modifications
+permettant de calculer ces probabilités.
+\\
+Bien que les graphiques obtenus ne soient pas directement applicables aux bots,
+ils présentent tout de même un intérêt.
+
+\paragraph{Emplacement des portes secrètes}
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{3d_sdoors_graph.png}}
+  \caption{\label{fig:3d_sdoors_graph} Nombre de portes secrètes en fonction
+    de la ligne et de la colonne}
+\end{figure}
+
+Ce graphique montre incontestablement que $P(C_{l,c} = PS)$ n'est pas indépendant
+de $\{l,c\}$. Cette information encourage à approfondir les recherches
+mentionnées ci-dessus, car il semble probable qu'il y ait des informations
+utilisables si l'on suit la démarche indiquée au paragraphe précédent.
+\\
+De plus, bien que la probabilité semble être plus élevée suivant deux bandes
+horizontales et faible aux alentours de la ligne 10, ce phénomène ne s'observe
+pas par rapport aux colonnes. Les emplacements à l'intérieur de ces bandes ne
+semblent pas équiprobables et la différence de probabilité y semble même assez
+élevée. La probabilité de trouver une porte secrète dans les bords semble nulle.
+
 
 
 \section{Problème simplifié : sortie d'une salle}
