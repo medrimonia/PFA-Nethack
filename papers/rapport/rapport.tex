@@ -820,7 +820,7 @@ paragraphe {\em Événéments indépendants}}.
 Ces observations encouragent aussi à approfondir les recherches générales sur
 Nethack afin de pouvoir les utiliser pour améliorer des bots.
 
-\section{Problème simplifié : sortie d'une salle}
+\subsection{Problème simplifié : sortie d'une salle}
 
 Afin d'étudier le problème de la recherche des portes secrètes de façon plus
 théorique, nous avons réduit le nombre de paramètres aléatoires et simplifié
@@ -878,9 +878,9 @@ façons :
 \item En diminuant la borne supérieure par des modifications du bot.
 \end{itemize}
 
-\subsection{Approche théorique}
+\subsubsection{Approche théorique}
 
-\subsubsection{Dominer la pièce}
+\paragraph{Dominer la pièce :}
 Il est possible de fixer certaines cases où les recherches seront effectuées en
 cherchant à minimiser ce nombre de cases, tout en ayant à portée tous les murs.
 \footnote{Cette notion est comparable à la domination en théorie des graphes,
@@ -929,7 +929,7 @@ potentiellement une porte avec moins de carrés, car tous les coins\footnote{Ce
 sont eux qui sont a portées du plus grand nombre de sommets à dominer.} sont
 utilisés et aucune case n'est à portée de deux emplacements de recherches.
 
-\subsubsection{Évolution des probabilités}
+\paragraph{Évolution des probabilités :}
 Si l'on ignore le coût des déplacements, prenant en compte uniquement les coûts
 de recherche, le meilleur comportement semble être de commencer par chercher
 dans les coins et d'utiliser ensuite les autres emplacements, ceci en
@@ -1022,7 +1022,7 @@ nouvelles probabilités peuvent être aisément calculées :
                      = \frac{7}{13}$
 \end{itemize}
 
-\subsubsection{Calcul de la probabilité}
+\paragraph{Calcul de la probabilité :}
 Nous avons déjà démontré que deux emplacements ne sont plus équiprobables si
 plus de recherches ont été effectués sur l'un que sur l'autre. Il est aussi
 évident que la méthode présentée ci-dessus sera très difficile à appliquer sur
@@ -1092,7 +1092,7 @@ Une implication importante de ce résultat est que pour un nombre de recherches
 $n$, l'idéal sera que chaque coin ait eu $i$ recherches de plus que chaque bord.
 De plus, la valeur de ce $i$ dépendra uniquement de $p$.
 
-\subsubsection{Minoration du nombre moyen de recherches}
+\paragraph{Minoration du nombre moyen de recherches :}
 Si l'on désire minimiser le nombre moyen de recherches\footnote{Sans prendre du
   tout en compte le nombre de déplacements nécessaires}, il faut toujours
 rechercher à l'emplacement ayant la plus haute probabilité d'être proche d'une
@@ -1122,7 +1122,8 @@ recherches sera supérieur ou égal à $\sum\limits_{k=0}^{\infty} k * R_k$.
 Nous avons minoré cette valeur à l'aide d'un programme faisant l'addition de ces
 termes tant que $R_k > 10^{-10}$ et nous avons obtenu environ $77,75$.
 
-\subsection{Comparaison des résultats expérimentaux avec les valeurs théoriques}
+\subsubsection{Comparaison des résultats expérimentaux avec les valeurs
+  théoriques}
 La moyenne du nombre d'actions nécessaire au bot diffusion pour ouvrir la porte
 sur 100 parties était de $158$, ce résultat est relativement proche de la borne
 inférieure ($77,75$) si l'on prend en compte que la borne inférieure a été
@@ -1144,7 +1145,7 @@ effectuer afin d'arriver à portée de la porte secrète (dont on ignore la
 position).
 
 \section{Documentation}
-Utilisation de Doxygen, manuel d'utilisation, nombreux README, commentaires de
+TODO: Utilisation de Doxygen, manuel d'utilisation, nombreux README, commentaires de
 code (hors Doxygen), etc.
 
 \section{Tests}
