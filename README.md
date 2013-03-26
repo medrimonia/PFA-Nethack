@@ -7,8 +7,8 @@ nh-setup.sh script.
 The folder 'collected_data' contains some games databases and some graphs
 illustrating their content.
 
-The folder 'database_details' contains more informations about the database used
-to store all the games details.
+The folder 'architecture' contains more informations about the architecture and
+the database used to store all the games details.
 
 The folder 'install' contains some patches needed to work with this modified
 version of nethack, those patches are mainly adding hooks in the game. A

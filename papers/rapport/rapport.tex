@@ -8,6 +8,7 @@
 \usepackage{amsmath}
 \usepackage{tikz}
 \usepackage{pdfpages}
+\usepackage{bigfoot}
 \usetikzlibrary{trees}
 
 \graphicspath{{graphics}{../images/}}
@@ -101,7 +102,8 @@ le nombre de références à des fichiers externes dans les patchs sur le noyau
 de Nethack. Pour arriver à ce résultat, nous nous sommes servis du header
 {\em pfa\_main.h} comme point d'entrée.
 \footnote{Il est facile de vérifier les dépendances ajoutées à l'aide de
-l'instruction suivante : {\em grep "+#include \".*\"" install/*.patch}}
+  l'instruction suivante :\\
+{\verb*|grep "+#include \".*\"" install/*.patch|}}
 \\
 Nous avons développé la majeure partie du code en {\em C}, mais certaines
 parties du code se sont tout de même révélées beaucoup plus simples à
@@ -115,6 +117,15 @@ maintenabilité\footnote{Nous n'avons pas fourni cet effort car en discutant
 avec le client, nous avons compris qu'il préférait obtenir plus de
 graphiques fournissant des informations que d'avoir une génération de graphe
 en {\em C} mais moins complète}.
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{architecture-finale.png}}
+	\caption{\label{fig:architecture} Diagramme de l'architecture finale.}
+\end{figure}
+
+Les échanges entre les bots et le middle-man sont effectués à l'aide d'une
+socket unix, le protocole utilisé entre eux est détaillé dans ce rapport et doit
+pouvoir permettre des créer des bots dans d'autres langages.
 
 \textbf{TODO}
 Archi et Décomposition de la version modifiée de NetHack.
