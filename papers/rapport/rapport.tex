@@ -1149,8 +1149,26 @@ TODO: Utilisation de Doxygen, manuel d'utilisation, nombreux README, commentaire
 code (hors Doxygen), etc.
 
 \section{Tests}
-Quelques tests unitaires, tests via dummy client, tests du genre "je lance, ça
-plante pas", tests avec les bots, etc.
+Bien que nous n'ayons pas développés à proprement parler de tests unitaires au
+cours de notre projet, nous n'avons pas négligé le fait de tester notre code. Au
+fur et à mesure que notre projet avançait, les possibilités de tester
+automatiquement le code et de le tester de manière fiable se sont améliorées.
+Commençant par jouer des parties à la main pour vérifier l'absence d'erreur,
+nous avons terminé par pouvoir comparer les distributions obtenues pour certains
+bots avec les distributions attendues. Nous avons aussi pu collecter les graines
+des parties qui posaient certains problèmes et les réutiliser pour vérifier que
+nos interventions résolvaient effectivement les problèmes et que nos
+modifications n'en faisaient pas réapparaître d'autres.
+\paragraph{}
+Afin de diagnostiquer les erreurs, nous avons entre autre pu nous servir du
+{\em dummy client}, le principal défaut de tous ces tests étant qu'ils restent
+des tests experts et ne peuvent donc pas être lancés par n'importe qui, validant
+simplement les modifications.
+\paragraph{}
+Le {\em viewer} et les fichiers de logs nous ont aussi permis d'analyser des
+dysfonctionnements qui provenaient des bots afin de les corriger. Le module de
+visualisation de l'exploration {\em toTikz} permet aussi de mieux comprendre les
+problèmes du bot.
 
 \subsection*{Repérage des problèmes}
 Utilisation du viewer pour comprendre ce qui ne va pas, utilisation de gdb,
