@@ -1470,12 +1470,12 @@ Les standards de codage variant à l'intérieur du projet et étant assez loin d
 ceux auxquels nous sommes habitués, nous avons donc décidé trouver un juste
 milieu en s'axant sur certains critères.
 \begin{itemize}
-\item {\em La langue :}
+\item {\em La langue :}\\
   Bien que le manuel et le rapport soient écrit en français,
   nous avons décidé de conserver l'anglais aussi bien pour le code et ses
   commentaires que pour les readme. Ce choix permet d'éviter de trop mélanger
   les appellations.
-\item {\em L'utilisation des tabulations et des espaces :}
+\item {\em L'utilisation des tabulations et des espaces :}\\
   Nethack mêlant les tabulations et les espaces, nous avons décidé de vérifier
   que quelque soit la taille d'affichage de la tabulation, nos patchs modifient
   le code de façon cohérente avec le code environnant. Pour le code extérieur à
@@ -1483,17 +1483,17 @@ milieu en s'axant sur certains critères.
   l'indentation et des espaces pour l'alignement, permettant ainsi aux
   utilisateurs de visualiser le code avec l'indentation qu'ils préfèrent, sans
   pour autant gâcher les alignements.
-\item {\em La largeur de ligne maximale :}
+\item {\em La largeur de ligne maximale :}\\
   Dans la plupart de nos fichiers textes\footnote{Fichiers sources, README,
     fichiers tex, etc...} nous avons cherché à éviter que les lignes dépassent
   80 caractères, non seulement pour faciliter la lecture quelque soit l'outil
   utilisé, mais aussi pour permettre de visualiser plus facilement les
   différences apportées par des commits.
-\item {\em Le nommage des variables et des fonctions :}
+\item {\em Le nommage des variables et des fonctions :}\\
   Mis à part pour le code des bots en java qui suit un nommage CamelCase,
   nous avons décidé d'adopté un nommage à base d'underscore, comme utilisé dans
   nethack.
-\item {\em Les accolades}
+\item {\em Les accolades}\\
   Nous avons uniformisés le positionnement des accolades afin de faciliter la
   lecture du code.
 \end{itemize}
@@ -1504,7 +1504,24 @@ guides que comme une procédure stricte, il existe donc certainement des
 exceptions à celles-ci dans le projet.
 
 \section{Améliorations possibles}
-TODO
+\subsection{Fonctionnement de Nethack}
+\subsubsection{Désactiver les niveaux spéciaux}
+Certains niveaux semblent demander la résolution de quête, il serait peut-être
+envisageable de les désactiver et que tous les niveau générés soient aléatoires.
+\subsubsection{Éviter les portes piégées}
+\subsubsection{Stocker la cause de la fin de la partie}
+\subsubsection{Ajouter des causes de fin de partie}
+\subsubsection{Ajouter de modes différents}
+\subsubsection{Résoudre le problème du sémaphore}
+\subsubsection{Conserver plus d'historiques}
+\subsection{Bots}
+\subsubsection{Diminuer le temps de calcul du bot diffusion}
+\subsubsection{Développer d'autres starter packages}
+\subsubsection{Complexifier le problème}
+\subsection{Analyse}
+\subsubsection{Approfondir l'étude de la pièce spécifique}
+\subsubsection{Générer des données utililisables par les bots}
+
 
 \section{Conclusion}
 TODO
