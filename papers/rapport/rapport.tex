@@ -2,6 +2,8 @@
 \usepackage[frenchb]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc} 
+%Pour avoir un rendu plus beau
+\usepackage{lmodern}
 \usepackage{float}
 \usepackage{graphicx}
 \usepackage{geometry}
@@ -108,7 +110,7 @@ Les commandes les plus utilisées pour l'exploration d'un niveau sont les suivan
 	\item \verb!n! (direction) diagonale vers le bas à droite
 	\item \verb!o<direction>! ouvrir la porte se trouvant dans la direction donnée
 	\item \verb!^D<direction>! enfoncer la porte se trouvant dans la direction donnée
-	\item \verb!<! emprunter l'escalier menant au niveau suppérieur
+	\item \verb!<! emprunter l'escalier menant au niveau supérieur
 	\item \verb!>! emprunter l'escalier menant au niveau inférieur
 \end{itemize}
 
@@ -132,12 +134,12 @@ Nous avons développé la majeure partie du code en {\em C}, mais certaines
 parties du code se sont tout de même révélées beaucoup plus simples à
 écrire en {\em bash}\footnote{Les scripts de générations de graphiques ou de
   lancement d'un grand nombre de parties} ou en {\em perl}
-\footnote{Le viewer et l'outil toTikZ}, à cause de leur nature très variable et de la nature
-des tâches effectuées. Cependant, après avoir acquis plus d'expérience sur
-l'utilisation de gnuplot en {\em C}, il semble que transposer les codes de
-génération des graphiques en {\em C} pourrait assurer une meilleure
-maintenabilité\footnote{Nous n'avons pas fourni cet effort car en discutant
-avec le client, nous avons compris qu'il préférait obtenir plus de
+\footnote{Le viewer et l'outil toTikZ}, à cause de leur nature très variable
+et de la nature des tâches effectuées. Cependant, après avoir acquis plus
+d'expérience sur l'utilisation de gnuplot en {\em C}, il semble que transposer
+les codes de génération des graphiques en {\em C} pourrait assurer une
+meilleure maintenabilité\footnote{Nous n'avons pas fourni cet effort car en
+discutant avec le client, nous avons compris qu'il préférait obtenir plus de
 graphiques fournissant des informations que d'avoir une génération de graphe
 en {\em C} mais moins complète}.
 
@@ -165,7 +167,7 @@ se servir d'une part du code existant de nethack, afin de connaître le nombre d
 cases explorables par exemple.
 
 \paragraph{Gestion de la base de données :}
-Les modules {\em game\_result} et {\em database\_manager} sont étroitements
+Les modules {\em game\_result} et {\em database\_manager} sont étroitement
 liés, car tous deux se basent sur la description des différentes tables pour
 générer leur code.
 
@@ -185,7 +187,8 @@ partir de base de données qui ont été alimentées par cette version de nethac
 
 \subsection{Prototypage}
 
-NetHack propose, dès sa première version, une interface ASCII qui représente un donjon sous la forme suivante:
+NetHack propose, dès sa première version, une interface ASCII qui représente
+un donjon sous la forme suivante:
 
 \begin{figure}[H]
 \begin{verbatim}
@@ -214,26 +217,56 @@ Dlvl:1  $:0  HP:14(14) Pw:8(8) AC:7  Exp:1
 \end{verbatim}
 \end{figure}
 
-Le \verb!@! désigne le joueur, les caractères \verb!|! et \verb!-! sont des murs, les \verb!#! des couloirs, un \verb!+! symbolise une porte, etc.
+Le \verb!@! désigne le joueur, les caractères \verb!|! et \verb!-! sont des
+murs, les \verb!#! des couloirs, un \verb!+! symbolise une porte, etc.
 
 
 \subsubsection*{Séquences d'échappement ANSI}
 
-Cette interface fonctionne à l'aide de caractères d'échappement normalisés \footnote{http://www.inwap.com/pdp10/ansicode.txt} permettant de contrôler la position du curseur dans un terminal et d'afficher des caractères à l'endroit souhaité. Par exemple, une séquence '\verb![46;50H|...+#!' affichera la chaîne de caractères '\verb!|...+#!' en commençant à la ligne 46, colonne 50. Il est alors facile de reconstituer une carte envoyée par le jeu: le '\verb!|!' est aux coordonnées (46, 50), le '\verb!+!' est situé à (46, 54), etc.
+Cette interface fonctionne à l'aide de caractères d'échappement normalisés
+\footnote{http://www.inwap.com/pdp10/ansicode.txt} permettant de contrôler la
+position du curseur dans un terminal et d'afficher des caractères à l'endroit
+souhaité. Par exemple, une séquence '\verb![46;50H|...+#!' affichera la chaîne
+de caractères '\verb!|...+#!' en commençant à la ligne 46, colonne 50. Il est
+alors facile de reconstituer une carte envoyée par le jeu: le '\verb!|!' est
+aux coordonnées (46, 50), le '\verb!+!' est situé à (46, 54), etc.
 	
-	Le projet TAEB (Tactical Amulet Extraction Bot) \footnote{https://github.com/sartak/TAEB} utilise ce principe pour reconstituer la carte à l'aide d'un module sachant interpréter ces séquences de caractères \footnote{https://metacpan.org/module/Term::VT102}. Une première approche fut donc de copier ce procédé.
+Le projet TAEB (Tactical Amulet Extraction Bot)
+\footnote{https://github.com/sartak/TAEB} utilise ce principe pour
+reconstituer la carte à l'aide d'un module sachant interpréter ces séquences
+de caractères \footnote{https://metacpan.org/module/Term::VT102}. Une première
+approche fut donc de copier ce procédé.
 
 
 \subsubsection*{Pseudo-terminal}
 
-Pour s'assurer de la disponibilité de certaines fonctionnalités lorsqu'il est utilisé avec son interface ASCII, NetHack procède à quelques vérifications pour s'assurer qu'il est bien lancé depuis un terminal. Cela empêche les redirections de son entrée/sortie car il refuse alors de s'executer. Les quelques lignes de code responsables peuvent être désactivées sans conséquence notable sur le reste du jeu mais cela nécessite de modifier le code original. Pour rediriger à la fois l'entrée et la sortie du jeu sans modifier le jeu, il est nécessaire de 'tromper' NetHack à l'aide d'un pseudo terminal.
+Pour s'assurer de la disponibilité de certaines fonctionnalités lorsqu'il est
+utilisé avec son interface ASCII, NetHack procède à quelques vérifications
+pour s'assurer qu'il est bien lancé depuis un terminal. Cela empêche les
+redirections de son entrée/sortie car il refuse alors de s'exécuter. Les
+quelques lignes de code responsables peuvent être désactivées sans conséquence
+notable sur le reste du jeu mais cela nécessite de modifier le code original.
+Pour rediriger à la fois l'entrée et la sortie du jeu sans modifier le jeu, il
+est nécessaire de 'tromper' NetHack à l'aide d'un pseudo terminal.
 
-Un pseudo terminal (pty) est une paire de pseudo périphériques dont l'un est appelé 'maître' et l'autre 'esclave'. Le maître est utilisé comme un terminal standard sur lequel on peut écrire ou lire du texte. L'esclave communique avec l'application et sert simplement de rapporteur entre la partie 'maître' et NetHack. Ainsi, le jeu est satisfait puisqu'il est lancé depuis un terminal et il peut maintenant être contrôlé depuis la partie 'master' du pty sur laquelle on souhaite brancher un bot \footnote{Plus de détails avec la page de manuel pty(7)}.
+Un pseudo terminal (pty) est une paire de pseudo périphériques dont l'un est
+appelé 'maître' et l'autre 'esclave'. Le maître est utilisé comme un terminal
+standard sur lequel on peut écrire ou lire du texte. L'esclave communique avec
+l'application et sert simplement de rapporteur entre la partie 'maître' et
+NetHack. Ainsi, le jeu est satisfait puisqu'il est lancé depuis un terminal et
+il peut maintenant être contrôlé depuis la partie 'master' du pty sur laquelle
+on souhaite brancher un bot \footnote{Plus de détails avec la page de manuel
+pty(7)}.
 
 
 \subsubsection*{Décomposition de l'affichage}
 
-Lorsqu'il est lancé depuis un terminal, l'interface ASCII détecte le nombre de lignes et de colonnes disponibles afin de faire des défilements ou des superpositions de menus lorsque nécessaire \footnote{voir libtermcap}. Cela pose problème avec la méthode consistant à interpréter les séquences d'échappement car il faut être capable détecter lorsque deux éléments se chevauchent.
+Lorsqu'il est lancé depuis un terminal, l'interface ASCII détecte le nombre de
+lignes et de colonnes disponibles afin de faire des défilements ou des
+superpositions de menus lorsque nécessaire \footnote{voir libtermcap}. Cela
+pose problème avec la méthode consistant à interpréter les séquences
+d'échappement car il faut être capable détecter lorsque deux éléments se
+chevauchent.
 
 \begin{figure}[h]
 	\caption{Exemple d'un menu recouvrant une partie de la carte}
@@ -264,9 +297,13 @@ Dlvl:1  $:0  HP:14(14) Pw:7(7) AC:7  Exp:1
 	\end{verbatim}
 \end{figure}
 
-Une façon de supprimer cette difficulté est de tromper une nouvelle fois NetHack en manipulant la taille effective du pseudo terminal qui n'est en rien liée à sa taille réelle à l'écran. Avec une taille assez grande, il n'y a jamais de chevauchement.
+Une façon de supprimer cette difficulté est de tromper une nouvelle fois
+NetHack en manipulant la taille effective du pseudo terminal qui n'est en rien
+liée à sa taille réelle à l'écran. Avec une taille assez grande, il n'y a
+jamais de chevauchement.
 
-Nous pouvons ainsi séparer l'écran comme suit en forçant une taille de 24 lignes par 160 colonnes :
+Nous pouvons ainsi séparer l'écran comme suit en forçant une taille de 24
+lignes par 160 colonnes :
 
 \begin{figure}[H]
 \begin{verbatim}
@@ -285,11 +322,22 @@ Nous pouvons ainsi séparer l'écran comme suit en forçant une taille de 24 lig
 
 \subsubsection*{Branchement d'un bot}
 
-Cette interface permettait à un bot de communiquer avec NetHack depuis une machine distante (UDP ou TCP interchangeables) sans aucune modification du jeu original. Dans la version présentée dans le premier livrable, l'intégralité de la carte était retransmise au bot et les échanges avec le jeu souffraient de l'overhead des packets TCP ou UDP lorsque le bot et NetHack tournaient sur la même machine. Des améliorations alors envisagées étaient d'établir un protocole de communication plus complexe pour n'envoyer que les éléments ayant changé et de recourir aux sockets Unix pour des communications locales.
+Cette interface permettait à un bot de communiquer avec NetHack depuis une
+machine distante (UDP ou TCP interchangeables) sans aucune modification du jeu
+original. Dans la version présentée dans le premier livrable, l'intégralité de
+la carte était retransmise au bot et les échanges avec le jeu souffraient de
+l'overhead des packets TCP ou UDP lorsque le bot et NetHack tournaient sur la
+même machine. Des améliorations alors envisagées étaient d'établir un
+protocole de communication plus complexe pour n'envoyer que les éléments ayant
+changé et de recourir aux sockets Unix pour des communications locales.
 
-Les communications entre l'interface et un bot utilisaient le protocole suivant.
+Les communications entre l'interface et un bot utilisaient le protocole
+suivant.
 
-\paragraph{interface vers bot:} À chaque tour, l'information envoyée par l'interface commence par \verb!START! et se termine par \verb!END!. Pour toutes les différentes transmissions, il existe deux possibilités différentes :
+\paragraph{interface vers bot:} À chaque tour, l'information envoyée par
+l'interface commence par \verb!START! et se termine par \verb!END!. Pour
+toutes les différentes transmissions, il existe deux possibilités différentes
+:
 \begin{itemize}
 	\item Mono-ligne \verb!<NOM_VARIABLE> <VARIABLE_1> <VARIABLE_2> ...!
 	\item Multi-ligne
@@ -319,38 +367,92 @@ END
 \end{verbatim}
 \end{figure}
 
-\paragraph{bot vers interface:} À chaque tour le bot peut accomplir une et une seule action. Une action est définie par son type et ses paramètres (ex : l'action d'attaquer est définie par son type 'attaque' et la direction de l'attaque). Les actions possibles étaient définies par un langage faisant abstraction des commandes au clavier de NetHack :
+\paragraph{bot vers interface:} À chaque tour le bot peut accomplir une et une
+seule action. Une action est définie par son type et ses paramètres (ex :
+l'action d'attaquer est définie par son type 'attaque' et la direction de
+l'attaque). Les actions possibles étaient définies par un langage faisant
+abstraction des commandes au clavier de NetHack :
 \begin{itemize}
 	\item Déplacement : \verb!MOVE <direction>!
 	\item Ouvrir porte : \verb!OPEN <direction>!
 	\item Lancer une recherche : \verb!SEARCH!
 	\item Forcer une porte : \verb!FORCE <direction>! (permet d'ouvrir les portes verrouillées)
 \end{itemize}
-\noindent La direction étant un élément parmi \verb!NORTH!, \verb!SOUTH!, \verb!WEST!, \verb!EAST!, \verb!NORTH_WEST!, \verb!NORTH_EAST!, \verb!SOUTH_WEST!, \verb!SOUTH_EAST!, \verb!UP!, \verb!DOWN!.
+\noindent La direction étant un élément parmi \verb!NORTH!, \verb!SOUTH!,
+\verb!WEST!, \verb!EAST!, \verb!NORTH_WEST!, \verb!NORTH_EAST!,
+\verb!SOUTH_WEST!, \verb!SOUTH_EAST!, \verb!UP!, \verb!DOWN!.
 
 
 \subsection{Modifications de NetHack}
 
 \subsubsection{Interface finale}
 
-\paragraph{}À la demande du client et du responsable pédagogique, l'utilisation d'une interface intégrée directement dans le jeu fut implémentée. Elle permet d'économiser une étape d'entrée/sortie lors de la communication avec un bot mais a le désavantage de rendre impossible l'utilisation du projet sur une version originale du jeu.
+\paragraph{}À la demande du client et du responsable pédagogique,
+l'utilisation d'une interface intégrée directement dans le jeu fut
+implémentée. Elle permet d'économiser une étape d'entrée/sortie lors de la
+communication avec un bot mais a le désavantage de rendre impossible
+l'utilisation du projet sur une version originale du jeu.
 
 
-Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant des pointeurs de fonction à appeler lors d'un évènement à communiquer au joueur. C'est sur ce mécanisme que repose la plupart des interfaces graphiques existantes pour le jeu. Les principales fonctions appelées sont les suivantes :
+Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant
+des pointeurs de fonction à appeler lors d'un évènement à communiquer au
+joueur. C'est sur ce mécanisme que repose la plupart des interfaces graphiques
+existantes pour le jeu. Les principales fonctions appelées sont les suivantes
+:
 \begin{itemize}
-	\item \verb!int *_create_nhwindows(type)! : cette fonction est appelée lors de la création d'une fenêtre (afficher un menu par exemple). Le type donné en paramètre donne la nature de la fenêtre et sa valeur peut être \verb!NHW_MAP!, \verb!NHW_SATUS!, \verb!NHW_MESSAGE!, \verb!NHW_MENU!, \verb!NHW_TEXT!. En comparaison avec le découpage de l'écran de l'interface précédente, cette façon de distinguer les différentes fenêtres est beaucoup moins sujette à erreur et ne devrait pas souffrir d'un changement d'organisation des fenêtres si un jour NetHack devait évoluer.
-	\item \verb!void *_clear_nhwindow(id)! : cette fonction ne fait qu'effacer le contenu d'une fenêtre mais elle est intéressante dans le cas où \verb!id! est l'identifiant de la fenêtre associée à la carte. En effet, c'est un moyen simple, bien que peu sûr, de détecter un changement d'étage au niveau de l'interface. La détection certaine d'un changement d'étage peut néanmoins se faire au niveau du client (le bot) qui comprendra qu'un effacement de la carte juste après une montée ou une descente d'une échelle correspond effectivement à un changement d'étage.
-	\item \verb!void *_print_glyph(id, x, y, glyph)! : cette fonction sert à communiquer au joueur qu'un glyph dans la fenêtre d'identifiant \verb!id! se situe aux coordonnées \verb!(x, y)!. \verb!glyph! est un entier unique à chaque élément du jeu. NetHack fourni une fonction \verb!map_glyph! qui le transforme en un caractère qui peut être directement affiché à l'écran (\verb!@! pour un joueur, \verb!+! pour une porte, etc.). Cette dernière fonction peut retourner des caractères identiques pour des glyphs différents et cela est à prendre en compte lors de l'élaboration du protocole pour éviter des confusions au niveau du bot.
-	\item \verb!char *_yn_function(query,resp, def)! : cette fonction est appelée dès lors que NetHack pose une question au client. Le nom est trompeur car elle ne sert pas seulement aux questions dont la réponse est 'yes' ou 'no'. Elle est utilisée par exemple pour savoir dans quelle direction frapper si le client donne l'ordre de combattre.
-	\item \verb!int *_nh_poskey(x, y, mod)! : cette fonction attend une commande de l'utilisateur. Les paramètres ne nous concernent pas car ils sont utilisés dans le cas où l'interface supporte la souris.
+	\item \verb!int *_create_nhwindows(type)! : cette fonction est appelée
+		lors de la création d'une fenêtre (afficher un menu par exemple). Le
+		type donné en paramètre donne la nature de la fenêtre et sa valeur
+		peut être \verb!NHW_MAP!, \verb!NHW_SATUS!, \verb!NHW_MESSAGE!,
+		\verb!NHW_MENU!, \verb!NHW_TEXT!. En comparaison avec le découpage de
+		l'écran de l'interface précédente, cette façon de distinguer les
+		différentes fenêtres est beaucoup moins sujette à erreur et ne devrait
+		pas souffrir d'un changement d'organisation des fenêtres si un jour
+		NetHack devait évoluer.
+	\item \verb!void *_clear_nhwindow(id)! : cette fonction ne fait qu'effacer
+		le contenu d'une fenêtre mais elle est intéressante dans le cas où
+		\verb!id! est l'identifiant de la fenêtre associée à la carte. En
+		effet, c'est un moyen simple, bien que peu sûr, de détecter un
+		changement d'étage au niveau de l'interface. La détection certaine
+		d'un changement d'étage peut néanmoins se faire au niveau du client
+		(le bot) qui comprendra qu'un effacement de la carte juste après une
+		montée ou une descente d'une échelle correspond effectivement à un
+		changement d'étage.
+	\item \verb!void *_print_glyph(id, x, y, glyph)! : cette fonction sert à
+		communiquer au joueur qu'un glyph dans la fenêtre d'identifiant
+		\verb!id! se situe aux coordonnées \verb!(x, y)!. \verb!glyph! est un
+		entier unique à chaque élément du jeu. NetHack fourni une fonction
+		\verb!map_glyph! qui le transforme en un caractère qui peut être
+		directement affiché à l'écran (\verb!@! pour un joueur, \verb!+! pour
+		une porte, etc.). Cette dernière fonction peut retourner des
+		caractères identiques pour des glyphs différents et cela est à prendre
+		en compte lors de l'élaboration du protocole pour éviter des
+		confusions au niveau du bot.
+	\item \verb!char *_yn_function(query,resp, def)! : cette fonction est
+		appelée dès lors que NetHack pose une question au client. Le nom est
+		trompeur car elle ne sert pas seulement aux questions dont la réponse
+		est 'yes' ou 'no'. Elle est utilisée par exemple pour savoir dans
+		quelle direction frapper si le client donne l'ordre de combattre.
+	\item \verb!int *_nh_poskey(x, y, mod)! : cette fonction attend une
+		commande de l'utilisateur. Les paramètres ne nous concernent pas car
+		ils sont utilisés dans le cas où l'interface supporte la souris.
 \end{itemize}
 
 \paragraph{}Le paramétrage se fait avec des variables d'environnement :
 \begin{itemize}
-\item \verb!NH_MM_SOCKPATH! : spécifier un chemin pour la socket unix (permettant la communication entre NetHack et les bots) à créer. Par défaut, le middleman créé \emph{/tmp/mmsock}.
-\item \verb!NH_MM_REPLAY! : si mise à une valeur différente de 0, cette variable active l'enregistrement de la partie dans le fichier \emph{nethackdir/replay}. Désactivée par défaut.
-\item \verb!NH_MM_LOGGING! : si mise à une valeur différente de 0, cette variable active l'enregistrement de logs du middleman dans le fichier \emph{nethackdir/mm.log}. Désactivée par défaut.
-\item \verb!NH_MM_TIMEOUT! : spécifie le timeout en secondes pour les communications avec le bot. Si le bot met un temps en secondes supérieur à cette valeur, le middleman quitte la partie. Par défaut, cette variables est mise à 2 secondes.
+\item \verb!NH_MM_SOCKPATH! : spécifier un chemin pour la socket unix
+	(permettant la communication entre NetHack et les bots) à créer. Par
+	défaut, le middleman créé \emph{/tmp/mmsock}.
+\item \verb!NH_MM_REPLAY! : si mise à une valeur différente de 0, cette
+	variable active l'enregistrement de la partie dans le fichier
+	\emph{nethackdir/replay}. Désactivée par défaut.
+\item \verb!NH_MM_LOGGING! : si mise à une valeur différente de 0, cette
+	variable active l'enregistrement de logs du middleman dans le fichier
+	\emph{nethackdir/mm.log}. Désactivée par défaut.
+\item \verb!NH_MM_TIMEOUT! : spécifie le timeout en secondes pour les
+	communications avec le bot. Si le bot met un temps en secondes supérieur à
+	cette valeur, le middleman quitte la partie. Par défaut, cette variables
+	est mise à 2 secondes.
 \item \verb!NH_MAX_MOVES! :
   Ce paramètre spécifie le nombre de mouvement maximal autorisé au bot, sachant
   que le bot n'est pas sensé mourir, c'est la définition de ce paramètre qui
@@ -368,48 +470,105 @@ Pour cela, nous avons utilisé une structure fournie par le NetHack regroupant d
   Permet de donner la valeur de la graine à utiliser pour l'initialisation du
   générateur de nombres aléatoires de NetHack. Par défaut, si cette
   valeur n'est pas spécifiée, la graine utilisée est une combinaison du nombre
-  de secondes et de millisecondes écoulées depuis l'epoch \footnote{$1^{er}$ janvier
-  1970 à 0 heure (UTC)}.
+  de secondes et de millisecondes écoulées depuis l'epoch \footnote{$1^{er}$
+  janvier 1970 à 0 heure (UTC)}.
 
 \end{itemize}
 
-\paragraph{} Cette nouvelle interface ne permet plus d'observer, depuis NetHack, le comportement du bot. Le jeu propose diverses interfaces graphiques, une solution aurait donc très bien pu être de rediriger les appels aux fonctions de l'interface que nous avons développée vers celles d'une interface existante. Cependant, cela pose un problème non négligeable : les différentes interfaces graphiques s'autorisent des fonctions bloquantes (fenêtre de dialogue propres à chacune d'elles par exemple). A moins de supprimer ou d'adapter les fonctions gênantes, il n'est pas envisageable d'utiliser cette solution avec un bot.
+\paragraph{} Cette nouvelle interface ne permet plus d'observer, depuis
+NetHack, le comportement du bot. Le jeu propose diverses interfaces
+graphiques, une solution aurait donc très bien pu être de rediriger les appels
+aux fonctions de l'interface que nous avons développée vers celles d'une
+interface existante. Cependant, cela pose un problème non négligeable : les
+différentes interfaces graphiques s'autorisent des fonctions bloquantes
+(fenêtre de dialogue propres à chacune d'elles par exemple). A moins de
+supprimer ou d'adapter les fonctions gênantes, il n'est pas envisageable
+d'utiliser cette solution avec un bot.
 
-Une autre solution aurait été de permettre un affichage simple dans le terminal. Cela n'a pas été retenu car cela aurait consisté à faire des traitements supplémentaires pour reconstituer la carte et cela reviendrait à dupliquer le travail que le bot doit déjà faire de lui même.
+Une autre solution aurait été de permettre un affichage simple dans le
+terminal. Cela n'a pas été retenu car cela aurait consisté à faire des
+traitements supplémentaires pour reconstituer la carte et cela reviendrait à
+dupliquer le travail que le bot doit déjà faire de lui même.
 
-\paragraph{} Le protocole de communication entre un bot et le jeu a été modifié depuis le prototype. L'interface retransmet à l'identique au noyau de NetHack les commandes transmises par le bot. C'est à dire que le client doit utiliser les commandes originales du jeu et que le langage faisant abstraction de celles-ci a été abandonné. Exception est faite des commandes commançant par '\verb!#!' qui ne sont pas supportées. Ceci est dû au code original de NetHack qui cherche à réaliser des traitements particuliers pour ce type de commande (auto complétion, etc.) que nous n'avons pas jugé utile d'implémenter.
+\paragraph{} Le protocole de communication entre un bot et le jeu a été
+modifié depuis le prototype. L'interface retransmet à l'identique au noyau de
+NetHack les commandes transmises par le bot. C'est à dire que le client doit
+utiliser les commandes originales du jeu et que le langage faisant abstraction
+de celles-ci a été abandonné. Exception est faite des commandes commençant par
+'\verb!#!' qui ne sont pas supportées. Ceci est dû au code original de NetHack
+qui cherche à réaliser des traitements particuliers pour ce type de commande
+(auto complétion, etc.) que nous n'avons pas jugé utile d'implémenter.
 
-Un bot peut envoyer plusieurs commandes à la fois ce qui peut se montrer utile pour diminuer le nombre d'échanges avec le jeu et ou d'appels systèmes pour un gain de performances. Les commandes à envoyer en une seule fois est toutefois limitée à 64 octets. Par exemple, envoyer les commandes '\verb!jjkl!' aura le même effet que d'envoyer chacune des lettres séparément et fera bouger le joueur deux fois vers le bas, une fois vers le haut et une fois vers la droite. Il est donc recommandé au développeur d'un bot de prendre en charge des patterns : '\verb!oj!' pour ouvrir une porte au sud, etc.
+Un bot peut envoyer plusieurs commandes à la fois ce qui peut se montrer utile
+pour diminuer le nombre d'échanges avec le jeu et ou d'appels systèmes pour un
+gain de performances. Les commandes à envoyer en une seule fois est toutefois
+limitée à 64 octets. Par exemple, envoyer les commandes '\verb!jjkl!' aura le
+même effet que d'envoyer chacune des lettres séparément et fera bouger le
+joueur deux fois vers le bas, une fois vers le haut et une fois vers la
+droite. Il est donc recommandé au développeur d'un bot de prendre en charge
+des patterns : '\verb!oj!' pour ouvrir une porte au sud, etc.
 
-Quant au protocole concernant les échanges depuis l'interface vers le bot, nous avons établi les règles suivantes :
+Quant au protocole concernant les échanges depuis l'interface vers le bot,
+nous avons établi les règles suivantes :
 \begin{itemize}
 	\item \verb!S! marque le début d'une transmission
-	\item \verb!E! marque la fin d'une transmission et indique que l'interface attend une commande du client.
-	\item \verb!g<x><y><glyph><code>! indique qu'un élément du jeu représenté par le caractère \verb!glyph! et ayant pour code identificateur \verb!code! \footnote{Voir annexe pour les différents codes importants} se trouve aux coordonnées \verb!(x, y)!.
-	\item \verb!C! indique que la carte doit être effacée. Un bot peut interpréter cette information comme étant un changement d'étage réussi s'il venait d'envoyer une commande descente ou montée d'escalier.
+	\item \verb!E! marque la fin d'une transmission et indique que l'interface
+		attend une commande du client.
+	\item \verb!g<x><y><glyph><code>! indique qu'un élément du jeu représenté
+		par le caractère \verb!glyph! et ayant pour code identificateur
+		\verb!code! \footnote{Voir annexe pour les différents codes
+		importants} se trouve aux coordonnées \verb!(x, y)!.
+	\item \verb!C! indique que la carte doit être effacée. Un bot peut
+		interpréter cette information comme étant un changement d'étage réussi
+		s'il venait d'envoyer une commande descente ou montée d'escalier.
 \end{itemize}
 
 
 \subsubsection*{Développement par les patchs}
 
-\paragraph{} L'un de nos objectifs était d'adapter NetHack en ayant la plus petite empreinte possible sur le code existant. C'est dans ce but que nous avons opté pour l'installation de 'hooks' dans le code source faisant appels à nos fonctions définies dans leur propre emplacement, dans un répertoire séparé. Ces points d'entrés sont placés à des endroits stratégiques :
+\paragraph{} L'un de nos objectifs était d'adapter NetHack en ayant la plus
+petite empreinte possible sur le code existant. C'est dans ce but que nous
+avons opté pour l'installation de 'hooks' dans le code source faisant appels à
+nos fonctions définies dans leur propre emplacement, dans un répertoire
+séparé. Ces points d'entrés sont placés à des endroits stratégiques :
 \begin{itemize}
-	\item Le premier est installé dans la fonction \verb!moveloop()! de \verb!allmain.c! du jeu qui est exécutée par toutes les architectures supportées. Elle fait alors appel à \verb!pfa_init()! du fichier \verb!pfamain.c! et se situe juste avant la boucle principale. \verb!pfa_init()! regroupe toutes les procédures d'initialisation nécessaires au modules que nous avons développés.
-	\item Le second se trouve au début la boucle principale de \verb!moveloop()! pour nous permettre d'effectuer des traitements à chaque tour de jeu. Il fait appel à \verb!pfa_newloop()!.
-	\item Le dernier est placé dans la fonction \verb!terminate(status)! du fichier \verb!end.c! appelée lorsque NetHack quitte afin de nous donner l'occasion de terminer proprement (libération de la mémoire, fermeture des fichiers, etc.). Il fait appel à \verb!pfa_end()!.
+	\item Le premier est installé dans la fonction \verb!moveloop()! de
+		\verb!allmain.c! du jeu qui est exécutée par toutes les architectures
+		supportées. Elle fait alors appel à \verb!pfa_init()! du fichier
+		\verb!pfamain.c! et se situe juste avant la boucle principale.
+		\verb!pfa_init()! regroupe toutes les procédures d'initialisation
+		nécessaires au modules que nous avons développés.
+	\item Le second se trouve au début la boucle principale de
+		\verb!moveloop()! pour nous permettre d'effectuer des traitements à
+		chaque tour de jeu. Il fait appel à \verb!pfa_newloop()!.
+	\item Le dernier est placé dans la fonction \verb!terminate(status)! du
+		fichier \verb!end.c! appelée lorsque NetHack quitte afin de nous
+		donner l'occasion de terminer proprement (libération de la mémoire,
+		fermeture des fichiers, etc.). Il fait appel à \verb!pfa_end()!.
 \end{itemize}
 
-\paragraph{} Nous souhaitions également pouvoir livrer nos modifications indépendamment du jeu lui même. Nous avons donc utilisé un système de patchs installant les points d'entrée aux endroits voulus. Ce même procédé est utilisé pour les modifications correspondant aux 'modes' (suppression des monstres, suppression des objets, etc.). Le processus d'installation a été automatisé pour qu'à partir d'une archive originale de NetHack le code source soit patché pour prendre en compte nos ajouts et modifications.
+\paragraph{} Nous souhaitions également pouvoir livrer nos modifications
+indépendamment du jeu lui même. Nous avons donc utilisé un système de patchs
+installant les points d'entrée aux endroits voulus. Ce même procédé est
+utilisé pour les modifications correspondant aux 'modes' (suppression des
+monstres, suppression des objets, etc.). Le processus d'installation a été
+automatisé pour qu'à partir d'une archive originale de NetHack le code source
+soit patché pour prendre en compte nos ajouts et modifications.
 
-\textbf{
-TODO David: configuration des patchs à appliquer pour chaque mode et expliquer ce que ces patchs font + donner un exemple de patch avec détail des lignes changées et l'effet sur le jeu.}
+\textbf{TODO David: configuration des patchs à appliquer pour chaque mode et
+	expliquer ce que ces patchs font + donner un exemple de patch avec détail
+	des lignes changées et l'effet sur le jeu.}
 
 
 \subsection{Développement de bots.}
 
 \subsubsection{'Bot' contrôlé à la main}
 
-L'interface développée ne permet plus de jouer au jeu à la main et donc de tester nous même les modifications apportées au jeu. Nous avons donc développé un client adapté au protocole mis en place. Il s'agit du programme \verb!dummy-client.pl!. Il accepte les mêmes commandes que le jeu original et nous a permis, entre autre, de tester l'effet des patchs sur une partie.
+L'interface développée ne permet plus de jouer au jeu à la main et donc de
+tester nous même les modifications apportées au jeu. Nous avons donc développé
+un client adapté au protocole mis en place. Il s'agit du programme
+\verb!dummy-client.pl!. Il accepte les mêmes commandes que le jeu original et
+nous a permis, entre autre, de tester l'effet des patchs sur une partie.
 
 
 \subsubsection{Le starter package java}
@@ -440,18 +599,33 @@ optimisant certaines parties du code.
 
 \subsubsection{Le starter package python}
 
-Ce bot propose un squelette pour l'interprétation des messages venant du jeu et un algorithme simple pour l'exploration 'rapide' d'un niveau en maintenant un compteur pour chaque case visitée. Le bot se déplace en priorité sur les cases les moins visitées.
+Ce bot propose un squelette pour l'interprétation des messages venant du jeu
+et un algorithme simple pour l'exploration 'rapide' d'un niveau en maintenant
+un compteur pour chaque case visitée. Le bot se déplace en priorité sur les
+cases les moins visitées.
 
 \subsubsection{Le bot spécialisé}
 
-Ce bot, écrit en python, n'a pas vocation à être utilisé dans des conditions "normales" de jeu. C'est un bot dédié à la résolution optimale d'un problème particulier : trouver, en un nombre de tours minimal, la porte secrète cachée de façon aléatoire dans une salle carrée de taille 10x10. Une étude théorique de ce problème a été réalisée et ce bot a pour but de s'approcher de la solution optimale. Ceci permet d'effectuer une comparaison avec les autres bots qui sont plus "généralistes".
+Ce bot, écrit en python, n'a pas vocation à être utilisé dans des conditions
+"normales" de jeu. C'est un bot dédié à la résolution optimale d'un problème
+particulier : trouver, en un nombre de tours minimal, la porte secrète cachée
+de façon aléatoire dans une salle carrée de taille 10x10. Une étude théorique
+de ce problème a été réalisée et ce bot a pour but de s'approcher de la
+solution optimale. Ceci permet d'effectuer une comparaison avec les autres
+bots qui sont plus "généralistes".
 
-Afin d'utiliser ce bot dans les bonnes conditions, il est nécessaire d'avoir compilé une version du jeu dans laquelle le patch \emph{patches/create\_level.patch} a été appliqué. Ce patch modifie le donjon de telle sorte que le premier niveau ne contienne qu'une seule salle de la forme décrite précédemment\footnote{ce niveau ne contient pas d'escalier pour descendre dans les niveaux suivants}.
+Afin d'utiliser ce bot dans les bonnes conditions, il est nécessaire d'avoir
+compilé une version du jeu dans laquelle le patch
+\emph{patches/create\_level.patch} a été appliqué. Ce patch modifie le donjon
+de telle sorte que le premier niveau ne contienne qu'une seule salle de la
+forme décrite précédemment\footnote{ce niveau ne contient pas d'escalier pour
+descendre dans les niveaux suivants}.
 
 
 \subsection{Outils d'analyse et de deboguage}
 
-Plusieurs outils ont été mis à disposition pour faciliter le développement des bots et l'analyse de leurs performances.
+Plusieurs outils ont été mis à disposition pour faciliter le développement des
+bots et l'analyse de leurs performances.
 
 \subsubsection{Rejouer une partie}
 
@@ -459,32 +633,58 @@ Plusieurs outils ont été mis à disposition pour faciliter le développement d
 
 \subsubsection{Revoir une partie}
 
-	Si la sauvegarde du replay a été activée lors du lancement du jeu (à l'aide de la variable d'environnement \verb!NH_MM_REPLAY!), un fichier nethackdir/replay est créé. Il contient tous les échanges de l'interface vers le bot, selon le même protocole, pour être capable de reconstituer le déroulement d'une partie.
+Si la sauvegarde du replay a été activée lors du lancement du jeu (à l'aide de
+la variable d'environnement \verb!NH_MM_REPLAY!), un fichier nethackdir/replay
+est créé. Il contient tous les échanges de l'interface vers le bot, selon le
+même protocole, pour être capable de reconstituer le déroulement d'une partie.
 
-Le programme \verb!viewer.pl! permet d'interpréter ce fichier en décomposant son contenu par tour de jeu. Ses fonctionnalités sont :
+Le programme \verb!viewer.pl! permet d'interpréter ce fichier en décomposant
+son contenu par tour de jeu. Ses fonctionnalités sont :
 \begin{itemize}
 	\item reconstitution tour par tour
 	\item revenir en arrière tour par tour
 	\item saut direct à un numéro de tour donné
-	\item 'diaporama' par incrémentation ou décrémentation d'un nombre de tours par seconde donné
+	\item 'diaporama' par incrémentation ou décrémentation d'un nombre de
+		tours par seconde donné
 \end{itemize}
 
-Un échange entre l'interface et le bot au tour $N$ ne permet pas de reconstituer l'état de la partie au tour $N$ car seules les mises à jour sont transmises. Il est donc nécessaire de traiter tous les échanges depuis le début de la partie pour connaître l'état du jeu à un tour donné. La reconstitution de longues parties peut alors devenir lente pour des opérations simples. Par exemple, passer du tour 2000 au tour 1999 nécessiterait de rejouer 1999 tours pour faire un simple saut en arrière.
+Un échange entre l'interface et le bot au tour $N$ ne permet pas de
+reconstituer l'état de la partie au tour $N$ car seules les mises à jour sont
+transmises. Il est donc nécessaire de traiter tous les échanges depuis le
+début de la partie pour connaître l'état du jeu à un tour donné. La
+reconstitution de longues parties peut alors devenir lente pour des opérations
+simples. Par exemple, passer du tour 2000 au tour 1999 nécessiterait de
+rejouer 1999 tours pour faire un simple saut en arrière.
 
-Une meilleure exploitation des informations contenues dans le fichier de replay est de calculer l'inverse des mises à jour qu'il contient et/ou de stocker des états paliers du jeu (tous les 100 tours par exemple). Dans \verb!viewer.pl! seule la méthode des mises à jour inverses est implémentée. Elles permettent de revenir en arrière rapidement et un passage d'un tour $N$ à un tour $M$ se fait simplement en traitant tous les tours de $N$ à $M$ si $|N-M| < M$ ou de $0$ à $M$ sinon. Certains paliers sont tout de même utilisés lors du changement de niveaux pour ne pas avoir à retracer les salles des niveaux inférieurs qui seront de toute manière effacées lors d'un retour en arrière.
+Une meilleure exploitation des informations contenues dans le fichier de
+replay est de calculer l'inverse des mises à jour qu'il contient et/ou de
+stocker des états paliers du jeu (tous les 100 tours par exemple). Dans
+\verb!viewer.pl! seule la méthode des mises à jour inverses est implémentée.
+Elles permettent de revenir en arrière rapidement et un passage d'un tour $N$
+à un tour $M$ se fait simplement en traitant tous les tours de $N$ à $M$ si
+$|N-M| < M$ ou de $0$ à $M$ sinon. Certains paliers sont tout de même utilisés
+lors du changement de niveaux pour ne pas avoir à retracer les salles des
+niveaux inférieurs qui seront de toute manière effacées lors d'un retour en
+arrière.
 
-\subsubsection{Aperçu du nombre de visistes sur chaque case}
+\subsubsection{Aperçu du nombre de visites sur chaque case}
 
 Le fichier nethackdir/replay peut également être utilisé dans d'autres buts.
 Par exemple, un simple programme comptant le nombre de visite sur chaque
-coordonée permet de produire les images suivantes à l'aide de TikZ :
+coordonnée permet de produire les images suivantes à l'aide de TikZ :
 
 \begin{figure}[H]
-	\caption{Nombre de visites sur chaque case sur deux niveaux du starter package java. En blanc les cases non visitées, en jaune clair les cases visitées peu de fois, en rouge les cases visitées un grand nombre de fois.}
+	\caption{Nombre de visites sur chaque case sur deux niveaux du starter
+	package java. En blanc les cases non visitées, en jaune clair les cases
+visitées peu de fois, en rouge les cases visitées un grand nombre de fois.}
 	\resizebox{\columnwidth}{!}{\input{../common/javasp_tikz_exemple.tex}}
 \end{figure}
 
-En comparaison avec le bot diffusion, on distingue deux comportements bien différents : l'exploration totalement aléatoire du starter package visite toutes les cases ou presque en passant beaucoup de temps dans chaque salle, tandis que le bot diffusion passe beaucoup de temps dans les couloirs et moins dans les salles.
+En comparaison avec le bot diffusion, on distingue deux comportements bien
+différents : l'exploration totalement aléatoire du starter package visite
+toutes les cases ou presque en passant beaucoup de temps dans chaque salle,
+tandis que le bot diffusion passe beaucoup de temps dans les couloirs et moins
+dans les salles.
 
 \begin{figure}[H]
 	\caption{Nombre de visites sur chaque case sur deux niveaux du bot diffusion.}
@@ -649,7 +849,7 @@ de nethack. Pour tous ces tests, nous n'avons finalement utilisé qu'un seul
 ensemble de patchs, celui associé à l'exploration. Les modifications de
 l'expérience de jeu par rapport à la version originale de nethack sont les
 suivantes :
-%TODO check by David
+
 \begin{itemize}
 \item Désactivation de la faim.
 \item Désactivation de tous les monstres.
@@ -770,7 +970,7 @@ avec des solutions algorithmiques plus poussées.}.
 Certaines de nos analyses ne concernaient pas des bots, mais le jeu lui-même. En
 effet, bien que le jeu se base sur un générateur aléatoire, cela ne signifie pas
 que toutes les positions ont la même probabilité de contenir une porte par
-exemple. Pour répondre à ce type de questions, le bot utilisé importe peu, il
+exemple. Pour répondre à ce type de question, le bot utilisé importe peu, il
 n'est même pas nécessaire d'utiliser un bot à priori, il suffit de générer la
 carte.
 \\
@@ -846,7 +1046,7 @@ lignes aux bord de la carte en contiennent n'est pas négligeable. On peut aussi
 voir que les lignes centrales ont bien plus de chances de contenir un couloir
 secret que celles du bord\footnote{Peut-être est-ce parce qu'il y a simplement
 plus de couloirs au centre de la pièce que dans les bords, comme évoqué dans le
-paragraphe {\em Événéments indépendants}}.
+paragraphe {\em Événements indépendants}}.
 \\
 Ces observations encouragent aussi à approfondir les recherches générales sur
 Nethack afin de pouvoir les utiliser pour améliorer des bots.
@@ -1243,7 +1443,7 @@ Nous avons aussi utilisé les {\em issues} github pour noter les problèmes qui
 apparaissaient, entre autre afin de ne pas oublier qu'ils n'étaient pas traités.
 
 \subsection{Différences d'organisation :}
-Le fait que l'équipe ait été séparée en deux a modifier la nature du projet et
+Le fait que l'équipe ait été séparée en deux a modifié la nature du projet et
 des difficultés auxquels nous avons du faire face. Il est en effet évident que
 les problématiques de gestion de groupe qui se posent lors du développement à
 sept personnes ne sont pas les mêmes qu'à trois.
