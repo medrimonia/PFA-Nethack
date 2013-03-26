@@ -1406,12 +1406,12 @@ quelques tentatives infructueuses de test de couverture (gcov), de profilage
 
 \section{Travail en équipe, organisation}
 
-{\em Bien que la conception du programme se soit effectuée au sein d'un groupe
+Bien que la conception du programme se soit effectuée au sein d'un groupe
 de sept personnes, une séparation a eu lieu à mi-parcours, et c'est à trois que
 s'est déroulée la phase de développement. Sans s'attarder sur les raisons de
 cette séparation, il est nécessaire de l'évoquer afin de comprendre les
-comparaisons qui seront faîtes.}
-\paragraph{Utilisation de git :}
+comparaisons qui seront faîtes.
+\subsection{Utilisation de git :}
 Lors de la première partie du projet, nous avions trois profils différents par
 rapport à git :
 \begin{itemize}
@@ -1429,9 +1429,36 @@ de privilégier autant que possible des commits légers.
 L'utilisation des branches et des diff de git nous ont permis de créer les
 patchs facilement sans interférer sur d'autres travaux. Nous avons pu réduire
 rapidement le nombre de branche et travailler plus facilement les uns avec les
-autres\footnote{Ceci étant peut-être dû à la taille de l'équipe.}.
+autres\footnote{Ceci étant peut-être dû à la taille de l'équipe.}. Cette façon
+de travailler nous a permis de garder en permanence une branche fonctionnelle
+tout en réglant certains problèmes en plusieurs commits.
+\\
+Lorsque nous modifions des détails dans le protocole, en ouvrant une autre
+branche, chacun pouvait apporter les modifications nécessaires pour que tous les
+bots acceptent ce changement.
+\\
+Nous avons aussi utilisé les {\em issues} github pour noter les problèmes qui
+apparaissaient, entre autre afin de ne pas oublier qu'ils n'étaient pas traités.
 
-TODO Comparer avec le travail en plus grande équipe.
+\subsection{Différences d'organisation :}
+Le fait que l'équipe ait été séparée en deux a modifier la nature du projet et
+des difficultés auxquels nous avons du faire face. Il est en effet évident que
+les problématiques de gestion de groupe qui se posent lors du développement à
+sept personnes ne sont pas les mêmes qu'à trois.
+\\
+Durant la première partie du développement, bien que les tâches aient été
+attribuées, l'équipe n'a pas fonctionné comme elle l'aurait dû. Nous avons
+néanmoins pu planifier l'organisation. Les raisons de l'échec organisationnel de
+cette première partie ne peuvent pas être définies aisément, mais il est
+évident que notre groupe a pu beaucoup mieux fonctionner au cours de cette
+seconde partie.
+\\
+Nous éprouvons tous une certaine frustration quand au fait que cette séparation
+ait été nécessaire. En effet, malgré nos efforts, nous n'avons pas réussi à
+faire fonctionner cette équipe et nous n'avons donc pas pu nous frotter
+réellement aux difficultés qui apparaissent lors du travail dans des équipes
+plus grandes. En revanche, pendant la seconde phase, nous avons bien réussi à
+collaborer et à apprendre les uns des autres.
 
 \subsection{Conventions}
 TODO
