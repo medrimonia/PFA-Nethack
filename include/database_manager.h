@@ -23,7 +23,7 @@
 /** 
  * @brief Create or open the database with the default name.
  *
- * On success : return 0.\n
+ * On success : return 0.@n
  * On failure : print an error message and exit.
  */
 int init_db_manager();
@@ -31,7 +31,7 @@ int init_db_manager();
 /** 
  * @brief Insert the game given as parameter in the database.
  *
- * On success : return the id of the game inserted.\n
+ * On success : return the id of the game inserted.@n
  * On failure : Print an error message and return -1.
  *
  * @param e The result of the game.
@@ -41,7 +41,7 @@ int add_game(game_result_p e);
 /** 
  * @brief Add the specified game details to the current database
  *
- * On success : return 0.\n
+ * On success : return 0.@n
  * On failure : print an error message and return -1.
  *
  * @param e The result of the game.
@@ -52,7 +52,7 @@ int add_game_details(game_result_p e);
  * @brief In current game entry, update the db_time field with the value received by
  * get_db_time in game_statistics.
  *
- * On success : return 0.\n
+ * On success : return 0.@n
  * On failure : print an error message and return -1.
  */
 int update_db_time();
@@ -85,7 +85,7 @@ void commit_transaction();
 /** 
  * @brief Free all resources associated to the database manager
  *
- * On success : return 0.\n
+ * On success : return 0.@n
  * On failure : print an error message and return 1.
  */
 int close_db_manager();
