@@ -1563,7 +1563,41 @@ nécessaire de faire un patch de plus, assurant que ce type particulier de pièg
 disparaisse.
 
 \subsubsection{Stocker la cause de la fin de la partie}
+Bien que la plupart des parties se terminent car le nombre de tours autorisés
+est épuisé, il est possible que certains événements \footnote{Par exemple la
+  mort du personnage, ou la détection d'un trop grand nombre d'ordres
+  invalides.} entraînent une fin précoce. Dans ces cas, il serait intéressant
+de pouvoir enregistrer la raison de cette fin dans la base de donnée, en vue de
+produire des statistiques où simplement pour rejouer ces parties afin de
+chercher à résoudre des failles éventuelles.
+
 \subsubsection{Ajouter des causes de fin de partie}
+Actuellement, il existe uniquement 3 causes possibles pour qu'une partie se
+termine :
+\begin{itemize}
+\item Utilisation de l'intégralité des mouvements disponibles.
+\item Mort du personnage.\footnote{Ceci n'est pas un événement habituel étant
+  donné que nous souhaitions retirer toutes les causes potentielles de morts du
+  personnage.}
+\item Détection d'une boucle infinie.\footnote{Ceci est simplement fait dans le
+  cas où un bot envoie trop d'ordre invalides à la suite}
+\end{itemize}
+
+Cependant, suivant le mode utilisé, certains événements pourraient déclencher
+une fin anticipée afin d'épargner du temps de calcul utilisé inutilement. La
+contrainte de ces détections étant de ne pas risquer de modifier les
+performances du bot.
+\\
+Dans le mode qui consiste à rechercher les portes secrètes et les couloirs
+secrets d'un niveau, les parties pourraient être arrêté dès que toutes les
+portes et les couloirs secrets ont été trouvés. On peut aussi imaginer que
+l'ordre de descendre les escaliers entraîne une fin prématurée pour cause
+d'action interdite.
+\\
+Dans le mode où le bot doit chercher la seule porte cachée, il est aussi
+possible d'arrêter le jeu dès que celle-ci a été trouvée, réduisant ainsi de
+manière significative la durée moyenne des parties.
+
 \subsubsection{Ajouter de modes différents}
 \subsubsection{Résoudre le problème du sémaphore}
 \subsubsection{Conserver plus d'historiques}
