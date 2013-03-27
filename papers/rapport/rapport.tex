@@ -1656,7 +1656,21 @@ les portes ouvertes ne disparaissent pas ou les monstres.
 
 \subsection{Analyse}
 \subsubsection{Approfondir l'étude de la pièce spécifique}
-\subsubsection{Générer des données utililisables par les bots}
+Dans ce rapport, l'étude de la pièce spécifique évalue la borne inférieure en
+utilisant uniquement le nombre de recherche moyen minimal pour minorer la
+moyenne d'actions, il est possible de réaliser une étude similaire sur le nombre
+de mouvements minimal à effectuer en moyenne, en additionnant les deux on
+devrait pouvoir augmenter légèrement la borne inférieure\footnote{Une première
+estimation serait que l'on obtiendrait de l'ordre de 20 mouvements nécessaire en
+moyenne, mais cela nécessite d'être vérifié.}. On peut aussi affiner la borne
+maximale en essayant d'optimiser encore un bot sur ce problème, en lui faisant
+appliquer une routine à l'aide d'un programme à l'image de celui qui permet de
+calculer le nombre de recherches minimales. Cette version théorique pourrait
+aussi être comparée à la version pratique en implémentant la même stratégie dans
+un bot. Cela permettrait de valider que le modèle de Nethack correspond bien au
+modèle théorique.
+
+\subsubsection{Générer des données utilisables par les bots}
 
 
 \section{Conclusion}
