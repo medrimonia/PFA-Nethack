@@ -1,4 +1,5 @@
-/** @file database_manager.h
+/**
+ * @file database_manager.h
  *
  * This header concerns the implementation of the database manager,
  * the whole idea behind this module is to ensure that the client doesn't need
@@ -19,14 +20,16 @@
 
 #include "game_result.h"
 
-/** @brief Create or open the database with the default name.
+/** 
+ * @brief Create or open the database with the default name.
  *
  * On success : return 0.\n
  * On failure : print an error message and exit.
  */
 int init_db_manager();
 
-/** @brief Insert the game given as parameter in the database.
+/** 
+ * @brief Insert the game given as parameter in the database.
  *
  * On success : return the id of the game inserted.\n
  * On failure : Print an error message and return -1.
@@ -35,7 +38,8 @@ int init_db_manager();
  */
 int add_game(game_result_p e);
 
-/** @brief Add the specified game details to the current database
+/** 
+ * @brief Add the specified game details to the current database
  *
  * On success : return 0.\n
  * On failure : print an error message and return -1.
@@ -44,7 +48,8 @@ int add_game(game_result_p e);
  */
 int add_game_details(game_result_p e);
 
-/** @brief In current game entry, update the db_time field with the value received by
+/** 
+ * @brief In current game entry, update the db_time field with the value received by
  * get_db_time in game_statistics.
  *
  * On success : return 0.\n
@@ -52,7 +57,8 @@ int add_game_details(game_result_p e);
  */
 int update_db_time();
 
-/** @brief Start a transaction with the database.
+/** 
+ * @brief Start a transaction with the database.
  *
  * It should always be called before calling an add_game_result when multiple
  * processes might access to the same database, because it avoids to have
@@ -70,12 +76,14 @@ int update_db_time();
  */
 void start_transaction();
 
-/** @brief Validate the transaction started by start_transaction and allows
+/** 
+ * @brief Validate the transaction started by start_transaction and allows
  * other processes using the same API to start their transaction.
  */
 void commit_transaction();
 
-/** @brief Free all resources associated to the database manager
+/** 
+ * @brief Free all resources associated to the database manager
  *
  * On success : return 0.\n
  * On failure : print an error message and return 1.
