@@ -1597,7 +1597,7 @@ contrainte de ces détections étant de ne pas risquer de modifier les
 performances du bot.
 \\
 Dans le mode qui consiste à rechercher les portes secrètes et les couloirs
-secrets d'un niveau, les parties pourraient être arrêté dès que toutes les
+secrets d'un niveau, les parties pourraient être arrêtées dès que toutes les
 portes et les couloirs secrets ont été trouvés. On peut aussi imaginer que
 l'ordre de descendre les escaliers entraîne une fin prématurée pour cause
 d'action interdite.
@@ -1606,7 +1606,7 @@ Dans le mode où le bot doit chercher la seule porte cachée, il est aussi
 possible d'arrêter le jeu dès que celle-ci a été trouvée, réduisant ainsi de
 manière significative la durée moyenne des parties.
 
-\subsubsection{Ajouter de modes différents}
+\subsubsection{Ajouter des modes différents}
 Tous les modes présents actuellement se ressemble beaucoup, puisqu'ils
 concernent tous l'exploration et ne diffèrent que par leurs objectifs ou par le
 contenu des niveaux. Ajouter des modes où le personnage devrait par exemple
@@ -1644,7 +1644,7 @@ optimal. La version utilisée est simple à implémenter mais utilise beaucoup p
 de ressources que nécessaire.
 \\
 Si l'on souhaite obtenir de meilleure performances, une des solutions serait
-d'éviter recalculer le maximum à chaque fois et d'insérer les cases dans un
+d'éviter de recalculer le maximum à chaque fois et d'insérer les cases dans un
 {\em tas max}\footnote{L'agencement des noeuds se faisant bien évidemment sur le
   score.}. Il faut ensuite faire attention à bien retirer les voisins pour les
 réinsérer si leur valeur doit être mise à jour. Cette optique devrait permettre
