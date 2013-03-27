@@ -1606,8 +1606,36 @@ possible d'arrêter le jeu dès que celle-ci a été trouvée, réduisant ainsi 
 manière significative la durée moyenne des parties.
 
 \subsubsection{Ajouter de modes différents}
+Tous les modes présents actuellement se ressemble beaucoup, puisqu'ils
+concernent tous l'exploration et ne diffèrent que par leurs objectifs ou par le
+contenu des niveaux. Ajouter des modes où le personnage devrait par exemple
+combattre ou encore ramasser le plus d'or possible permettrait une plus grande
+diversité et peut-être qu'en combinant les différents bots ensemble, il serait
+possible d'obtenir un bot capable d'explorer une version non-modifiée de
+Nethack.
+
 \subsubsection{Résoudre le problème du sémaphore}
+Dans la version actuelle du projet, lorsqu'un utilisateur tue un processus de
+Nethack alors que celui-ci était en train d'écrire dans la base de donnée, il se
+termine immédiatement, sans même prendre le temps de libérer le sémaphore qu'il
+a bloqué en entrant dans la section critique qu'est l'ajout d'une entrée à la
+base de données. À l'aide d'un gestionnaire de signaux, il est peut-être
+possible d'assurer le fait que le sémaphore soit tout de même libéré avant
+l'extinction de Nethack. Comme cette zone critique contient des appels à des
+fonctions appartenant à la bibliothèque {\verb|sqlite3|}, il est envisageable
+que la gestion des signaux de celle-ci interfère avec celle définie pour régler
+le problème du sémaphore.
+
 \subsubsection{Conserver plus d'historiques}
+Lorsqu'une série de partie intensive est lancée à partir d'un script, les
+historiques permettant de rejouer une partie ne peuvent pas être conservés.
+Fournir aux utilisateurs une fonctionnalité leur permettant de pouvoir revoir la
+partie sans avoir à la rejouer peut se révéler utile, pour cela, il est possible
+soit d'utiliser une variable d'environnement pour transmettre à Nethack le
+chemin désiré pour ce fichier. Soit de déplacer ce fichier après chaque
+exécution de Nethack afin de le conserver.
+%TODO est-ce envisageable avec la taille du fichier?
+
 \subsection{Bots}
 \subsubsection{Diminuer le temps de calcul du bot diffusion}
 \subsubsection{Développer d'autres starter packages}
