@@ -1620,6 +1620,15 @@ que la gestion des signaux de celle-ci interfère avec celle définie pour régl
 le problème du sémaphore.
 
 \subsubsection{Conserver plus d'historiques}
+Lorsqu'une série de partie intensive est lancée à partir d'un script, les
+historiques permettant de rejouer une partie ne peuvent pas être conservés.
+Fournir aux utilisateurs une fonctionnalité leur permettant de pouvoir revoir la
+partie sans avoir à la rejouer peut se révéler utile, pour cela, il est possible
+soit d'utiliser une variable d'environnement pour transmettre à Nethack le
+chemin désiré pour ce fichier. Soit de déplacer ce fichier après chaque
+exécution de Nethack afin de le conserver.
+%TODO est-ce envisageable avec la taille du fichier?
+
 \subsection{Bots}
 \subsubsection{Diminuer le temps de calcul du bot diffusion}
 \subsubsection{Développer d'autres starter packages}
