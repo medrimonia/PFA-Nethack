@@ -149,7 +149,7 @@ défini dans le document de spécification, certaines détails ont légèrement
 changé. Par exemple, un effort a été fait pour réduire autant que possible
 le nombre de références à des fichiers externes dans les patchs sur le noyau
 de Nethack. Pour arriver à ce résultat, nous nous sommes servis du header
-{\em pfa\_main.h} comme point d'entrée.
+{\verb|pfa_main.h|} comme point d'entrée.
 \footnote{Il est facile de vérifier les dépendances ajoutées à l'aide de
   l'instruction suivante :\\
 {\verb*|grep "+#include \".*\"" install/*.patch|}}
@@ -191,7 +191,7 @@ se servir d'une part du code existant de nethack, afin de connaître le nombre d
 cases explorables par exemple.
 
 \paragraph{Gestion de la base de données :}
-Les modules {\em game\_result} et {\em database\_manager} sont étroitement
+Les modules {\verb|game_result|} et {\verb|database_manager|} sont étroitement
 liés, car tous deux se basent sur la description des différentes tables pour
 générer leur code.
 
@@ -199,7 +199,7 @@ générer leur code.
 Afin de pouvoir revoir une partie qui s'est jouée, le middle-man fournit une
 option permettant de sauvegarder les données envoyées au bot. Celles-ci peuvent
 aussi être lues pour créer une visualisation de l'exploration à l'aide du script
-perl {\em toTikz.pl}.%TODO ok Benoît?
+perl {\verb|toTikz.pl|}.%TODO ok Benoît?
 
 \paragraph{Scripts :}
 Même s'ils ne sont pas présentés sur ce schéma car ils ne font pas partie
@@ -466,13 +466,13 @@ existantes pour le jeu. Les principales fonctions appelées sont les suivantes
 \begin{itemize}
 \item \verb!NH_MM_SOCKPATH! : spécifier un chemin pour la socket unix
 	(permettant la communication entre NetHack et les bots) à créer. Par
-	défaut, le middleman créé \emph{/tmp/mmsock}.
+	défaut, le middleman créé {\verb|/tmp/mmsock|}.
 \item \verb!NH_MM_REPLAY! : si mise à une valeur différente de 0, cette
 	variable active l'enregistrement de la partie dans le fichier
-	\emph{nethackdir/replay}. Désactivée par défaut.
+	{\verb|nethackdir/replay|}. Désactivée par défaut.
 \item \verb!NH_MM_LOGGING! : si mise à une valeur différente de 0, cette
 	variable active l'enregistrement de logs du middleman dans le fichier
-	\emph{nethackdir/mm.log}. Désactivée par défaut.
+	{\verb|nethackdir/mm.log|}. Désactivée par défaut.
 \item \verb!NH_MM_TIMEOUT! : spécifie le timeout en secondes pour les
 	communications avec le bot. Si le bot met un temps en secondes supérieur à
 	cette valeur, le middleman quitte la partie. Par défaut, cette variables
@@ -483,13 +483,13 @@ existantes pour le jeu. Les principales fonctions appelées sont les suivantes
   spécifiera la durée de la partie. Par défaut, cette variable vaut 20000.
 \item \verb!NH_DATABASE_PATH! :
   Spécifie le chemin d'accès pour la base de données à laquelle les résultats
-  seront ajoutés. Par défaut, ce chemin vaut \emph{/tmp/test.db}.
+  seront ajoutés. Par défaut, ce chemin vaut {\verb|/tmp/test.db|}.
 \item \verb!NH_BOT_NAME! :
   Permet d'indiquer le nom du bot afin d'ajouter une entrée complète à la base
   de données. Par défaut : la valeur est \emph{unknown}.
 \item \verb!NH_MODE_NAME! :
   Permet d'indiquer le nom du mode utilisé afin de l'ajouter correctement à la
-  base de données. Par défaut : la valeur est \emph{seek\_secret}.
+  base de données. Par défaut : la valeur est {\verb|seek_secret|}.
 \item \verb!NH_SEED! :
   Permet de donner la valeur de la graine à utiliser pour l'initialisation du
   générateur de nombres aléatoires de NetHack. Par défaut, si cette
@@ -640,7 +640,7 @@ bots qui sont plus "généralistes".
 
 Afin d'utiliser ce bot dans les bonnes conditions, il est nécessaire d'avoir
 compilé une version du jeu dans laquelle le patch
-\emph{patches/create\_level.patch} a été appliqué. Ce patch modifie le donjon
+{\verb|patches/create_level.patch|} a été appliqué. Ce patch modifie le donjon
 de telle sorte que le premier niveau ne contienne qu'une seule salle de la
 forme décrite précédemment\footnote{ce niveau ne contient pas d'escalier pour
 descendre dans les niveaux suivants}.
@@ -740,7 +740,7 @@ nombre de couloirs secrets trouvés.} est aussi disponible afin de faciliter
 l'utilisation de la base de données.
 \\
 Nous avons choisi d'utiliser une base de données {\em sqlite3}, celle-ci étant
-assez simple à interfacer avec du {\em c}, mais aussi à interroger directement
+assez simple à interfacer avec du {\em C}, mais aussi à interroger directement
 par ligne de commande. Le grand avantage pour notre situation est aussi que les
 bases de données {\em sqlite3} se présentent sous la forme d'un unique fichier,
 celui-ci n'étant pas trop volumineux, il était parfaitement concevable de nous
@@ -1639,11 +1639,46 @@ exécution de Nethack afin de le conserver.
 
 \subsection{Bots}
 \subsubsection{Diminuer le temps de calcul du bot diffusion}
+La partie propagation du bot diffusion n'utilise pas un algorithme de diffusion
+optimal. La version utilisée est simple à implémenter mais utilise beaucoup plus
+de ressources que nécessaire.
+\\
+Si l'on souhaite obtenir de meilleure performances, une des solutions serait
+d'éviter recalculer le maximum à chaque fois et d'insérer les cases dans un
+{\em tas max}\footnote{L'agencement des noeuds se faisant bien évidemment sur le
+  score.}. Il faut ensuite faire attention à bien retirer les voisins pour les
+réinsérer si leur valeur doit être mise à jour. Cette optique devrait permettre
+de gagner des performances de façon significative.
+
 \subsubsection{Développer d'autres starter packages}
+Actuellement, le code présenté permet de commencer assez facilement à coder un
+bot en {\em java} ou en {\em python} sans avoir à se soucier de réimplémenter
+une compréhension du protocole. Afin de diffuser ce problème à un plus large
+public, développer des starter packages dans d'autres langages permettrait un
+plus grand choix pour les utilisateurs.
+
 \subsubsection{Complexifier le problème}
+Afin de s'approcher de la résolution réelle de Nethack, il est possible
+d'ajouter peu à peu des difficultés, par exemple en réintroduisant le fait que
+les portes ouvertes ne disparaissent pas ou les monstres.
+
 \subsection{Analyse}
 \subsubsection{Approfondir l'étude de la pièce spécifique}
-\subsubsection{Générer des données utililisables par les bots}
+Dans ce rapport, l'étude de la pièce spécifique évalue la borne inférieure en
+utilisant uniquement le nombre de recherche moyen minimal pour minorer la
+moyenne d'actions, il est possible de réaliser une étude similaire sur le nombre
+de mouvements minimal à effectuer en moyenne, en additionnant les deux on
+devrait pouvoir augmenter légèrement la borne inférieure\footnote{Une première
+estimation serait que l'on obtiendrait de l'ordre de 20 mouvements nécessaire en
+moyenne, mais cela nécessite d'être vérifié.}. On peut aussi affiner la borne
+maximale en essayant d'optimiser encore un bot sur ce problème, en lui faisant
+appliquer une routine à l'aide d'un programme à l'image de celui qui permet de
+calculer le nombre de recherches minimales. Cette version théorique pourrait
+aussi être comparée à la version pratique en implémentant la même stratégie dans
+un bot. Cela permettrait de valider que le modèle de Nethack correspond bien au
+modèle théorique.
+
+\subsubsection{Générer des données utilisables par les bots}
 
 
 \section{Conclusion}
