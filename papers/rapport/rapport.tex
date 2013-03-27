@@ -1528,10 +1528,24 @@ guides que comme une procédure stricte, il existe donc certainement des
 exceptions à celles-ci dans le projet.
 
 \section{Améliorations possibles}
+TODO
 \subsection{Fonctionnement de Nethack}
 \subsubsection{Désactiver les niveaux spéciaux}
-Certains niveaux semblent demander la résolution de quête, il serait peut-être
-envisageable de les désactiver et que tous les niveau générés soient aléatoires.
+Aucun des patchs que nous avons créé ne modifie la génération des niveaux
+original. Si ce fait ne nous a pas posé de problèmes lorsque les bots se
+limitaient à l'exploration du premier niveau, cela s'est révélé être un problème
+lorsque le but donné aux bots était de descendre dans le niveau le plus bas
+possible. En effet, il se retrouvait toujours arrêté par des niveaux prédéfinis
+qui présentait une spécificité\footnote{Pour certains niveaux, il était
+nécessaire d'accomplir une quête pour pouvoir déverrouiller des portes, ces
+interactions n'étant pas spécifiées par notre protocole, il était impossible que
+le bot atteigne le niveau suivant.}.
+\\
+Si l'on souhaite atteindre le niveau le plus profond sans demander aux bots de
+faire ces interactions, il peut être nécessaire de désactiver dans le noyau de
+Nethack le risque que des niveaux spécifiques soient utilisés, s'assurant ainsi
+que tous les niveaux sont générés aléatoirement.
+
 \subsubsection{Éviter les portes piégées}
 \subsubsection{Stocker la cause de la fin de la partie}
 \subsubsection{Ajouter des causes de fin de partie}
