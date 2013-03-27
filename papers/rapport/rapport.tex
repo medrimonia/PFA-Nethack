@@ -1528,7 +1528,13 @@ guides que comme une procédure stricte, il existe donc certainement des
 exceptions à celles-ci dans le projet.
 
 \section{Améliorations possibles}
-TODO
+Ce projet peut servir de base pour essayer différents bots d'exploration,
+et pour valider leur efficacité par des expériences pratiques. Il peut aussi
+être enrichi afin de présenter plus de fonctionnalités, de modes, de bots ou
+encore d'étude théorique. Plusieurs de ces perspectives de continuation seront
+décrites ici afin de donner des pistes à quiconque souhaiterait enrichir ce
+projet.
+
 \subsection{Fonctionnement de Nethack}
 \subsubsection{Désactiver les niveaux spéciaux}
 Aucun des patchs que nous avons créé ne modifie la génération des niveaux
@@ -1546,7 +1552,16 @@ faire ces interactions, il peut être nécessaire de désactiver dans le noyau d
 Nethack le risque que des niveaux spécifiques soient utilisés, s'assurant ainsi
 que tous les niveaux sont générés aléatoirement.
 
-\subsubsection{Éviter les portes piégées}
+\subsubsection{Désactiver les portes piégées}
+Bien que nous ayons pu vérifier par l'expérience que les bots ne rencontraient
+plus de pièges dans le premier niveau une fois le patch {\verb|disable-traps|}
+appliqué, nous avons encore rencontré des portes piégées dans les niveaux
+inférieurs\footnote{Ceci est probablement dû au fait que les pièges au sol ne
+sont pas traités de la même façon que les pièges placés sur les portes.}. Afin
+d'éviter ces événements qui ne respectent pas la présentation du mode, il serait
+nécessaire de faire un patch de plus, assurant que ce type particulier de pièges
+disparaisse.
+
 \subsubsection{Stocker la cause de la fin de la partie}
 \subsubsection{Ajouter des causes de fin de partie}
 \subsubsection{Ajouter de modes différents}
