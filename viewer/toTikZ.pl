@@ -16,13 +16,14 @@ my $footer = <<'EOF';
 \end{document}
 EOF
 
-our ($opt_f, $opt_s);
-getopts("fs:");
+our ($opt_f, $opt_e, $opt_s);
+getopts("fes:");
 
 if ($#ARGV < 0) {
 	print "Usage: perl $0 [-f] <replay file>\n";
 	print "\t -f : generate full latex document with header, etc...\n";
 	print "\t -s : scale pictures (default 0.3)\n";
+	print "\t -e : level exploration mode\n";
 	exit;
 }
 
@@ -49,10 +50,17 @@ my $map = [];
 my $max = 1;
 my $btcnt = [];
 
+my $turn = 0;
+my $discov_turn = [];
+
 for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
 	if ($tmp[$j] eq 'C') {
 		$offset += 25;
+	}
+
+	elsif ($tmp[$j] eq 'E') {
+		$turn++;
 	}
 
 	elsif (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
@@ -63,6 +71,7 @@ for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
 		if ($g ne '@') {
 			$map->[$x]->[$y] = $g;
+			$discov_turn->[$x]->[$y] //= $turn;
 		} elsif ($c < 400) {
 			$btcnt->[$x]->[$y] += 1;
 			$max = ($max > $btcnt->[$x]->[$y]) ? $max : $btcnt->[$x]->[$y];
@@ -78,14 +87,28 @@ if (defined $opt_f) {
 
 print '\begin{tikzpicture}', "[scale=$scale]\n";
 
+
+
 for my $x (0 .. $#{$map}) {
 	my $line = $map->[$x];
 	for my $y (0 .. $#{$line}) {
+		my $color;
 		my $glyph = $line->[$y];
-		my $cnt = $btcnt->[$x]->[$y];
-		my $color = (defined $cnt)
-			? int(100 * $cnt / $max)
-			: undef;
+
+		if (defined $opt_e) {
+			my $cnt = $discov_turn->[$x]->[$y];
+			$color = (defined $cnt)
+				? int(100 * $cnt / $turn)
+				: undef;
+		}
+
+		else {
+			my $cnt = $btcnt->[$x]->[$y];
+			$color = (defined $cnt)
+				? int(100 * $cnt / $max)
+				: undef;
+		}
+
 		node($x, $y, $glyph, $color) if (defined $glyph);
 	}
 }
