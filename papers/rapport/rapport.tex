@@ -1631,6 +1631,17 @@ exécution de Nethack afin de le conserver.
 
 \subsection{Bots}
 \subsubsection{Diminuer le temps de calcul du bot diffusion}
+La partie propagation du bot diffusion n'utilise pas un algorithme de diffusion
+optimal. La version utilisée est simple à implémenter mais utilise beaucoup plus
+de ressources que nécessaire.
+\\
+Si l'on souhaite obtenir de meilleure performances, une des solutions serait
+d'éviter recalculer le maximum à chaque fois et d'insérer les cases dans un
+{\em tas max}\footnote{L'agencement des noeuds se faisant bien évidemment sur le
+  score.}. Il faut ensuite faire attention à bien retirer les voisins pour les
+réinsérer si leur valeur doit être mise à jour. Cette optique devrait permettre
+de gagner des performances de façon significative.
+
 \subsubsection{Développer d'autres starter packages}
 \subsubsection{Complexifier le problème}
 \subsection{Analyse}
