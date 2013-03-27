@@ -51,6 +51,7 @@ my $max = 1;
 my $btcnt = [];
 
 my $turn = 0;
+my $max_discov_turn = 0;
 my $discov_turn = [];
 
 for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
@@ -71,8 +72,14 @@ for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
 		if ($g ne '@') {
 			$map->[$x]->[$y] = $g;
-			$discov_turn->[$x]->[$y] //= $turn;
-		} elsif ($c < 400) {
+			if (! defined $discov_turn->[$x]->[$y]) {
+				$max_discov_turn = $turn;
+				$discov_turn->[$x]->[$y] = $turn;
+			}
+		}
+		
+		# codes below 400 with @ as a glyph are codes used for the player
+		elsif ($c < 400) {
 			$btcnt->[$x]->[$y] += 1;
 			$max = ($max > $btcnt->[$x]->[$y]) ? $max : $btcnt->[$x]->[$y];
 		}
@@ -98,7 +105,7 @@ for my $x (0 .. $#{$map}) {
 		if (defined $opt_e) {
 			my $cnt = $discov_turn->[$x]->[$y];
 			$color = (defined $cnt)
-				? int(100 * $cnt / $turn)
+				? int(100 * $cnt / $max_discov_turn)
 				: undef;
 		}
 
