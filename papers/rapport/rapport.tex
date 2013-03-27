@@ -1608,6 +1608,17 @@ possible d'obtenir un bot capable d'explorer une version non-modifiée de
 Nethack.
 
 \subsubsection{Résoudre le problème du sémaphore}
+Dans la version actuelle du projet, lorsqu'un utilisateur tue un processus de
+Nethack alors que celui-ci était en train d'écrire dans la base de donnée, il se
+termine immédiatement, sans même prendre le temps de libérer le sémaphore qu'il
+a bloqué en entrant dans la section critique qu'est l'ajout d'une entrée à la
+base de données. À l'aide d'un gestionnaire de signaux, il est peut-être
+possible d'assurer le fait que le sémaphore soit tout de même libéré avant
+l'extinction de Nethack. Comme cette zone critique contient des appels à des
+fonctions appartenant à la bibliothèque {\verb|sqlite3|}, il est envisageable
+que la gestion des signaux de celle-ci interfère avec celle définie pour régler
+le problème du sémaphore.
+
 \subsubsection{Conserver plus d'historiques}
 \subsection{Bots}
 \subsubsection{Diminuer le temps de calcul du bot diffusion}
