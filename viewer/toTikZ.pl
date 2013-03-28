@@ -70,7 +70,9 @@ for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
 		$x += $offset;
 
-		if ($g ne '@') {
+		# glyphs codes between 2344 and 2410 are part of a dungeon. See the
+		# dumped symbol list.
+		if ($c >= 2344 && $c <= 2410 ) {
 			$map->[$x]->[$y] = $g;
 			if (! defined $discov_turn->[$x]->[$y]) {
 				$max_discov_turn = $turn;
@@ -79,7 +81,7 @@ for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 		}
 		
 		# codes below 400 with @ as a glyph are codes used for the player
-		elsif ($c < 400) {
+		elsif ($c < 400 && $glyph eq '@') {
 			$btcnt->[$x]->[$y] += 1;
 			$max = ($max > $btcnt->[$x]->[$y]) ? $max : $btcnt->[$x]->[$y];
 		}
@@ -94,29 +96,29 @@ if (defined $opt_f) {
 
 print '\begin{tikzpicture}', "[scale=$scale]\n";
 
-
-
 for my $x (0 .. $#{$map}) {
 	my $line = $map->[$x];
 	for my $y (0 .. $#{$line}) {
-		my $color;
+		my $colorvalue;
 		my $glyph = $line->[$y];
+
+		next unless (defined $glyph);
 
 		if (defined $opt_e) {
 			my $cnt = $discov_turn->[$x]->[$y];
-			$color = (defined $cnt)
+			$colorvalue = (defined $cnt)
 				? int(100 * $cnt / $max_discov_turn)
 				: undef;
+			node($x, $y, $glyph, $colorvalue, "blue", "yellow");
 		}
 
 		else {
 			my $cnt = $btcnt->[$x]->[$y];
-			$color = (defined $cnt)
+			$colorvalue = (defined $cnt)
 				? int(100 * $cnt / $max)
 				: undef;
+			node($x, $y, $glyph, $colorvalue, "red", "yellow");
 		}
-
-		node($x, $y, $glyph, $color) if (defined $glyph);
 	}
 }
 
@@ -128,13 +130,15 @@ if (defined $opt_f) {
 
 
 sub node {
-	my ($x, $y, $label, $color) = @_;
-	# Don't forget the rotation!
+	my ($x, $y, $label, $colorvalue, $color1, $color2) = @_;
+	$color1 //= "red";
+	$color2 //= "yellow";
 	print '\node ';
 
-	if (defined $color) {
-		print "[fill=red!$color!yellow] ";
+	if (defined $colorvalue) {
+		print "[fill=$color1!$colorvalue!$color2] ";
 	}
 	
+	# Don't forget the rotation!
 	print "at ($y, -$x) {\\verb!$label!};\n";
 }
