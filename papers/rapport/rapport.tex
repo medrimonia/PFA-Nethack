@@ -150,7 +150,7 @@ afin d'y ajouter des modules (via les 'hooks') et de personnaliser certaines
 fonctionnalités (voir 'Les modes de jeu').
 
 \paragraph{Les modes de jeu :} 
-
+\textbf{TODO David}
 
 \section{Architecture finale}
 
@@ -653,8 +653,25 @@ compilé une version du jeu dans laquelle le patch
 {\verb|patches/create_level.patch|} a été appliqué. Ce patch modifie le donjon
 de telle sorte que le premier niveau ne contienne qu'une seule salle de la
 forme décrite précédemment\footnote{Ce niveau ne contient pas d'escalier pour
-descendre dans les niveaux suivants}.
+descendre dans les niveaux suivants.}.
 
+\subsubsection{Ajouter un bot}
+
+Plusieurs facilités ont été offertes pour de futurs ajouts de bots. La
+première est la possibilité d'intégrer automatiquement la compilation de ce
+nouveau bots à celle des autres. En effet, un \verb!Makefile! se trouve dans le
+dossier \verb!bots/! et permet de compiler l'ensemble des bots pour lesquels
+cela est nécessaire\footnote{Par exemple les bots écris en Java.}. Lorsque la
+commande \verb!make! est exécutée depuis dossier, l'ensemble des sous dossiers
+est exploré automatiquement afin de repérer ceux possédant un fichier nommé
+\verb!Makefile!. Dans chacun de ces dossiers\footnote{Chaque dossier
+correspond à un bot particulier.} est exécutée la commande \verb!make! afin de
+compiler les sources du bot en question.
+
+Ainsi, lors de la création d'un nouveau bot, il suffit de créer un dossier
+dédié à ce bot dans \verb!bots/! et d'écrire le fichier \verb!Makefile! qui
+permet de compiler ses sources, si besoin\footnote{Un bot écrit dans un
+langage interprété tel que Python n'aura pas besoin du \verb!Makefile!.}.
 
 \subsection{Outils d'analyse et de deboguage}
 
