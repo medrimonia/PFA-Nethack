@@ -57,7 +57,7 @@ my $discov_turn = [];
 for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
 	if ($tmp[$j] eq 'C') {
-		$offset += 25;
+		$offset += 23;
 	}
 
 	elsif ($tmp[$j] eq 'E') {
