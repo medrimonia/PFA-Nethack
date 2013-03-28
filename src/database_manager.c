@@ -185,7 +185,7 @@ int init_db_manager(){
 	char * next = db_name;
 	do{
 		basename = next;
-		printf("basename : %s\n", basename);
+		fprintf(stderr, "basename : %s\n", basename);
 		next = strstr(next,"/");
 		if (next != NULL)
 			next++;
@@ -193,7 +193,7 @@ int init_db_manager(){
 	// Initializing database semaphore
 	char sem_name[SEM_NAME_SIZE];
 	sprintf(sem_name, "/%s.lock", basename);
-	printf("semaphore name : '%s'\n", sem_name);
+	fprintf(stderr, "semaphore name : '%s'\n", sem_name);
 	sem = sem_open(sem_name , O_CREAT, 0666, 1);
 	if (sem == SEM_FAILED){
 		perror("Error : Can't open nor create the database semaphore");
@@ -315,7 +315,7 @@ void create_table(table_descriptor_p td, const char * table_name){
 	index += sprintf(request + index,
 	                 ")");
 
-	//printf("Request : %s\n", request);
+	//fprintf(stderr, "Request : %s\n", request);
 	
 	char * err_msg;
 
@@ -401,7 +401,7 @@ int add_game_details(game_result_p gr){
 	
 	index += sprintf(request + index, ")");
 	
-	//printf("REQUEST: %s\n", request);
+	//fprintf(stderr, "REQUEST: %s\n", request);
 
 	char * err_msg;
 
@@ -544,6 +544,6 @@ int close_db_manager(){
 	free_table_descriptor(scorr_discovery_table);
 	free_table_descriptor(scorrs_table);
 	free_table_descriptor(games_table);
-	//printf("Database closed\n");
+	//fprintf(stderr, "Database closed\n");
 	return 0;
 }
