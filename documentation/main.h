@@ -20,7 +20,7 @@
  * directory and run this command from a shell:
  *
  * @code
- * git clone https://github.com/medrimonia/PFA-Nethack/
+ * git clone https://github.com/medrimonia/PFA-Nethack.git
  * @endcode
  *
  * @section getting_started Getting started
