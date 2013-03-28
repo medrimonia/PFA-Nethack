@@ -2,7 +2,16 @@ SUBDIRS = \
 	documentation \
 	src \
 	
-all: doxygen
+all: PFA-Nethack bots
+
+PFA-Nethack:
+	@./nh-setup.sh
+
+bots:
+	make -C bots
+
+run:
+	@./scripts/game_runner.sh
 
 doxygen:
 	make -C documentation
