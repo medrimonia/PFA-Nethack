@@ -1,4 +1,7 @@
-/* This header concerns the implementation of the database manager,
+/**
+ * @file database_manager.h
+ *
+ * This header concerns the implementation of the database manager,
  * the whole idea behind this module is to ensure that the client doesn't need
  * to keep in mind all the details specific to the database implementation.
  *
@@ -17,32 +20,46 @@
 
 #include "game_result.h"
 
-/* Create or open the database with the default name
- * On success : return 0
- * On failure : print an error message and exit
+/** 
+ * @brief Create or open the database with the default name.
+ *
+ * On success : return 0.@n
+ * On failure : print an error message and exit.
  */
 int init_db_manager();
 
-/* Insert the game given as parameter in the database
- * On success : return the id of the game inserted 
- * On failure : Print an error message and return -1
+/** 
+ * @brief Insert the game given as parameter in the database.
+ *
+ * On success : return the id of the game inserted.@n
+ * On failure : Print an error message and return -1.
+ *
+ * @param e The result of the game.
  */
 int add_game(game_result_p e);
 
-/* Add the specified game details to the current database
- * On success : return 0
- * On failure : print an error message and return -1
+/** 
+ * @brief Add the specified game details to the current database
+ *
+ * On success : return 0.@n
+ * On failure : print an error message and return -1.
+ *
+ * @param e The result of the game.
  */
 int add_game_details(game_result_p e);
 
-/* In current game entry, update the db_time field with the value received by
+/** 
+ * @brief In current game entry, update the db_time field with the value received by
  * get_db_time in game_statistics.
- * On success : return 0
- * On failure : print an error message and return -1
+ *
+ * On success : return 0.@n
+ * On failure : print an error message and return -1.
  */
 int update_db_time();
 
-/* Start a transaction with the database.
+/** 
+ * @brief Start a transaction with the database.
+ *
  * It should always be called before calling an add_game_result when multiple
  * processes might access to the same database, because it avoids to have
  * busy database errors. (Using a semaphore to ensure critical section)
@@ -59,14 +76,17 @@ int update_db_time();
  */
 void start_transaction();
 
-/* Validate the transaction started by start_transaction and allows other
- * processes using the same API to start their transaction.
+/** 
+ * @brief Validate the transaction started by start_transaction and allows
+ * other processes using the same API to start their transaction.
  */
 void commit_transaction();
 
-/* Free all resources associated to the database manager
- * On success : return 0
- * On failure : print an error message and return 1
+/** 
+ * @brief Free all resources associated to the database manager
+ *
+ * On success : return 0.@n
+ * On failure : print an error message and return 1.
  */
 int close_db_manager();
 

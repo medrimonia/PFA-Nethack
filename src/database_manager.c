@@ -179,7 +179,7 @@ int init_db_manager(){
 
 
 	// Getting the semaphore name
-  // found on http://stupefydeveloper.blogspot.ch/2009/02/linux-key-for-semopenshmopen.html
+	// found on http://stupefydeveloper.blogspot.ch/2009/02/linux-key-for-semopenshmopen.html
 	// semaphore name can't contain / anywhere, basically, here we get basename
 	char * basename;
 	char * next = db_name;
