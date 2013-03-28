@@ -9,13 +9,29 @@ use IO::Handle;
 use IO::Socket::UNIX;
 use Term::ANSIScreen qw/:cursor :screen/;
 
+my $usage = <<EOU;
+Usage: perl $0 [-h | -s [sockpath] | -f <filename>]
+-h             Display this help
+-f <filename>  Use a file as input (read only mode)
+-s [sockpath]  Connect to a Unix socket (default: /tmp/mmsock)
+
+Note: if data is piped to this program, it will run in read only mode and
+act the same as with -f. This can be used to view in real time what
+the bot is doing. The same can be achieved if a named pipe is used with -f.
+EOU
+
 
 my $handle;
 
-our ($opt_f, $opt_s);
-getopts("f:s:");
+our ($opt_f, $opt_s, $opt_h);
+getopts("f:s:h");
 
-# data being piped to the client (read only mode)
+if ($opt_h) {
+	print $usage;
+	exit 0;
+}
+
+# data piped to the client (read only mode)
 if (! -t STDIN) {
 	$handle = IO::Handle->new();
 	$handle->fdopen(fileno(STDIN),"r") or die "Can't read from STDIN: $!";
@@ -153,3 +169,4 @@ sub print_glyphs {
 		}
 	}
 }
+
