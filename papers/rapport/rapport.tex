@@ -197,9 +197,9 @@ générer leur code.
 
 \paragraph{Fichier de replay :}
 Afin de pouvoir revoir une partie qui s'est jouée, le middle-man fournit une
-option permettant de sauvegarder les données envoyées au bot. Celles-ci peuvent
-aussi être lues pour créer une visualisation de l'exploration à l'aide du script
-perl {\verb|toTikz.pl|}.%TODO ok Benoît?
+option permettant de sauvegarder les données envoyées au bot. Celles-ci
+peuvent aussi être utilisées pour revoir une partie ou créer une
+visualisation de l'exploration à l'aide du programme {\verb|toTikz.pl|}.
 
 \paragraph{Scripts :}
 Même s'ils ne sont pas présentés sur ce schéma car ils ne font pas partie
@@ -693,7 +693,7 @@ arrière.
 
 \subsubsection{Aperçu du nombre de visites sur chaque case}
 
-Le fichier nethackdir/replay peut également être utilisé dans d'autres buts.
+\paragraph{} Le fichier nethackdir/replay peut également être utilisé dans d'autres buts.
 Par exemple, un simple programme comptant le nombre de visite sur chaque
 coordonnée permet de produire les images suivantes à l'aide de TikZ :
 
@@ -713,6 +713,16 @@ dans les salles.
 \begin{figure}[H]
 	\caption{Nombre de visites sur chaque case sur deux niveaux du bot diffusion.}
 	\resizebox{\columnwidth}{!}{\input{../common/diffusion_tikz_exemple.tex}}
+\end{figure}
+
+\paragraph{} L'option \verb!-e! permet de visualiser dans quel ordre s'est
+faite l'exploration :
+
+\begin{figure}[H]
+	\caption{Ordre d'exploration de deux niveaux par le bot diffusion. En
+	jaune les cases découvertes en premier, en bleu celles découvertes en
+dernier.}
+	\resizebox{\columnwidth}{!}{\input{../common/diffusion_tikz_exploration.tex}}
 \end{figure}
 
 
