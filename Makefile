@@ -1,7 +1,9 @@
-SUBDIRS = \
-	documentation \
-	src \
-	
+SUBDIRS = documentation \
+		  src           \
+		  bots          \
+
+.PHONY: all PFA-Nethack bots run doxygen clean 
+
 all: PFA-Nethack bots
 
 PFA-Nethack:
