@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #default options
-NH_MAX_MOVES=200
+NH_MAX_MOVES=20000
 NH_BOT_NAME="java sp"
 NH_MM_LOGGING=0
 NH_MM_DUPMSGS=0
@@ -9,6 +9,7 @@ NH_DATABASE_PATH="/tmp/test.db"
 NB_GAMES=10
 BOT_PATH="bots/java_sp/Bot.jar"
 BOT_CMD="java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"
+DISPLAY=0
 
 usage() {
 	echo "Usage: $0 [options]"
@@ -30,6 +31,8 @@ usage() {
 	echo -e "\t            (Default Desactivated)"
 	echo -e "\t-r          Activate the replay"
 	echo -e "\t            (Default Desactivated)"
+	echo -e "\t-s          Activate game display"
+	echo -e "\t            (Default Desactivated)"
 	echo "Exemple: $0 -b \"python sp\" -p \"bots/python_sp/bot.py\" -c \"python\""
 }
 
@@ -41,7 +44,7 @@ usage() {
 #p specifies the bot path
 #c specifies the bot launching cmd
 #d specifies the database path
-while getopts "g:m:b:p:c:d:lrh" opt; do
+while getopts "g:m:b:p:c:d:lrhs" opt; do
 		case $opt in
 				h)
 						usage;
@@ -70,6 +73,10 @@ while getopts "g:m:b:p:c:d:lrh" opt; do
 						;;
 				r)
 						NH_MM_DUPMSGS=1;
+						;;
+				s)
+						NH_MM_REPLAY=1;
+						DISPLAY=1;
 						;;
 		esac
 done
@@ -117,6 +124,8 @@ do
 		#Running nethack
 		if [ $NH_MM_DUPMSGS -eq 0 ]; then
 			$TEST_FOLDER/$NH_DIR/nethack 2> $TEST_FOLDER/nh_log&
+		elif [ $DISPLAY -eq 1 ]; then 
+			$TEST_FOLDER/$NH_DIR/nethack 2> $TEST_FOLDER/nh_log | perl ./dummy-client.pl&
 		else
 			$TEST_FOLDER/$NH_DIR/nethack 1> $TEST_FOLDER/"replay$i" 2> $TEST_FOLDER/nh_log&
 		fi
