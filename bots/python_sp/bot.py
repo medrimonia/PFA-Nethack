@@ -1,6 +1,6 @@
+import sys
 import time
 import struct
-import string
 import random
 from socket import *
 
@@ -47,22 +47,41 @@ def build_cmd_list():
 	return cmds
 
 
+retries = 0;
+connected = False
 s = socket(AF_UNIX, SOCK_STREAM)
-if (len(sys.argv) < 2):
-	s.connect("/tmp/mmsock")
-else:
-	s.connect(sys.argv[1])
+
+while (not connected):
+	try:
+		if (len(sys.argv) < 2):
+			s.connect("/tmp/mmsock")
+		else:
+			s.connect(sys.argv[1])
+		connected = True
+	except error:
+		print "Could not connect. Will try again in 1 second"
+		retries += 1
+		time.sleep(1)
+	
+	if (retries >= 10):
+		print "Could not connect after 10 attempts, exiting."
+		sys.exit(1)
+		
 
 data = []
 random.seed()
 
-
 while 1:
 	
-	received = s.recv(128)
+	try:
+		received = s.recv(128)
+	except error:
+		print "Disconnected"
+		s.close()
+		sys.exit(1)
+
 	data.extend(received)
 	dlen = len(data)
-	#time.sleep(0.01)
 
 	if (dlen == 0):
 		break

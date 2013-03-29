@@ -1,6 +1,6 @@
+import sys
 import time
 import struct
-import string
 import random
 from socket import *
 
@@ -19,11 +19,25 @@ search_nb = 3          #number of searches on each tile
 search_step = 2        #lunch searches every 2 tiles
 
 
+retries = 0;
+connected = False
 s = socket(AF_UNIX, SOCK_STREAM)
-if (len(sys.argv) < 2):
-	s.connect("/tmp/mmsock")
-else:
-	s.connect(sys.argv[1])
+
+while (not connected):
+	try:
+		if (len(sys.argv) < 2):
+			s.connect("/tmp/mmsock")
+		else:
+			s.connect(sys.argv[1])
+		connected = True
+	except error:
+		print "Could not connect. Will try again in 1 second"
+		retries += 1
+		time.sleep(1)
+	
+	if (retries >= 10):
+		print "Could not connect after 10 attempts, exiting."
+		sys.exit(1)
 
 data = []
 random.seed()
@@ -32,7 +46,13 @@ tile_index = 0
 
 while 1:
 	
-	received = s.recv(128)
+	try:
+		received = s.recv(128)
+	except error:
+		print "Disconnected"
+		s.close()
+		sys.exit(1)
+
 	data.extend(received)
 	dlen = len(data)
 
