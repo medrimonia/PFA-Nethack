@@ -264,7 +264,7 @@ void mm_init()
 	// loop until a client is connected
 	ssize_t size;
 	char buf[BUFSIZE];
-	fprintf(stderr, "Waiting for a bot to connect...");
+	fprintf(stderr, "Waiting for a client to connect...\n");
 	while (client == -1) {
 		client = accept(mmsock, NULL, NULL);
 		if (client == -1) {
@@ -282,6 +282,7 @@ void mm_init()
 			}
 		}
 	}
+	fprintf(stderr, "Client connected.\n");
 
 	/* These are used to compute the ratio between nethack's execution time
 	 * and the bot's execution time */

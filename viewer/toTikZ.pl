@@ -4,6 +4,13 @@ use warnings;
 use Getopt::Std;
 use Scalar::Util qw(looks_like_number);
 
+my $usage = <<EOU;
+Usage: perl $0 [-f|-e] [-s <scale>] <replay file>
+	-f : generate full latex document with header, etc...
+	-s : scale pictures (default 0.3)
+	-e : level exploration mode
+EOU
+
 my $scale = 0.3;
 
 my $header = <<'EOH';
@@ -16,14 +23,11 @@ my $footer = <<'EOF';
 \end{document}
 EOF
 
-our ($opt_f, $opt_e, $opt_s);
-getopts("fes:");
+our ($opt_h, $opt_f, $opt_e, $opt_s);
+getopts("hfes:");
 
-if ($#ARGV < 0) {
-	print "Usage: perl $0 [-f] <replay file>\n";
-	print "\t -f : generate full latex document with header, etc...\n";
-	print "\t -s : scale pictures (default 0.3)\n";
-	print "\t -e : level exploration mode\n";
+if ($#ARGV < 0 || $opt_h) {
+	print $usage;
 	exit;
 }
 
