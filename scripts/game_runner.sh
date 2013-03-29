@@ -4,7 +4,7 @@
 NH_MAX_MOVES=200
 NH_BOT_NAME="java sp"
 NH_MM_LOGGING=0
-NH_MM_REPLAY=0
+NH_MM_DUPMSGS=0
 NH_DATABASE_PATH="/tmp/test.db"
 NB_GAMES=10
 BOT_PATH="bots/java_sp/Bot.jar"
@@ -69,7 +69,7 @@ while getopts "g:m:b:p:c:d:lrh" opt; do
 						NH_MM_LOGGING=1;
 						;;
 				r)
-						NH_MM_REPLAY=1;
+						NH_MM_DUPMSGS=1;
 						;;
 		esac
 done
@@ -77,7 +77,7 @@ done
 NH_MM_SOCKPATH="/tmp/mmsock"$$
 
 export NH_MM_SOCKPATH
-export NH_MM_REPLAY
+export NH_MM_DUPMSGS
 export NH_MAX_MOVES
 export NH_MM_LOGGING
 export NH_BOT_NAME
@@ -115,7 +115,7 @@ do
 		rm -f $TEST_FOLDER/$NH_DIR/nethackdir/mm.log
 
 		#Running nethack
-		if [ $NH_MM_REPLAY -eq 0 ]; then
+		if [ $NH_MM_DUPMSGS -eq 0 ]; then
 			$TEST_FOLDER/$NH_DIR/nethack 2> $TEST_FOLDER/nh_log&
 		else
 			$TEST_FOLDER/$NH_DIR/nethack 1> $TEST_FOLDER/"replay$i" 2> $TEST_FOLDER/nh_log&

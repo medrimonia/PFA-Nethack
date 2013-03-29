@@ -91,7 +91,7 @@ static winid winmapid;
 static FILE *log = NULL;
 static char use_logging = 0;
 
-static char record_replay = 0;
+static char dupmsgs = 0;
 
 static int timeout;
 static char *sockpath;
@@ -197,11 +197,11 @@ void mm_init()
 		use_logging = atoi(str);
 	}
 
-	str = getenv("NH_MM_REPLAY");
+	str = getenv("NH_MM_DUPMSGS");
 	if (str == NULL) {
-		record_replay = 0;
+		dupmsgs = 0;
 	} else {
-		record_replay = atoi(str);
+		dupmsgs = atoi(str);
 	}
 
 	str = getenv("NH_MM_TIMEOUT");
@@ -359,7 +359,7 @@ mm_clear_nhwindow(window)
 
 	if (window == winmapid) {
 		write(client, "C", 1);
-		if (record_replay > 0) {
+		if (dupmsgs) {
 			write(1, "C", 1);
 		}
 	}
@@ -510,7 +510,7 @@ mm_print_glyph(window, x, y, glyph)
 
 		send(client, buf, size + sizeof glyphcode, 0);
 
-		if (record_replay > 0) {
+		if (dupmsgs) {
 			write(STDOUT_FILENO, buf, size + sizeof glyphcode);
 		}
 	}
@@ -681,7 +681,7 @@ int mm_recv()
 
 			mm_log("send()", "E");
 
-			if (record_replay > 0) {
+			if (dupmsgs) {
 				write(1, "E", 1);
 			}
 
@@ -742,7 +742,7 @@ int mm_recv()
 				cmd = buf[0];
 			}
 
-			if (record_replay > 0) {
+			if (dupmsgs) {
 				write(STDOUT_FILENO, "S", 1);
 			}
 		}
