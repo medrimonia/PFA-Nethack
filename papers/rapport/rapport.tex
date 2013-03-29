@@ -566,7 +566,7 @@ nous avons établi les règles suivantes :
 \end{itemize}
 
 
-\subsubsection*{Développement par les patchs}
+\subsubsection{Développement par les patchs}
 
 \paragraph{} L'un de nos objectifs était d'adapter NetHack en ayant la plus
 petite empreinte possible sur le code existant. C'est dans ce but que nous
@@ -601,8 +601,23 @@ soit patché pour prendre en compte nos ajouts et modifications.
 \textbf{TODO David: configuration des patchs à appliquer pour chaque mode et
 	expliquer ce que ces patchs font + donner un exemple de patch avec détail
 	des lignes changées et l'effet sur le jeu.}
+Nous avons définis deux catégories de patchs : nécessaires ou facultatifs.
+Des patchs sont nécessaires lorsqu'ils permettent le fonctionnement des
+modules que nous avons ajoutés (ce sont notamment les patchs ajoutant des
+points d'entrée). Les patchs facultatifs sont majoritairement ceux qui
+définissent les modes de jeu or il est tout à fait possible de faire jouer les
+bots sur une version de nethack dans laquelle aucun danger n'est désactivé,
+ces derniers mourront plus rapidement.
 
+Les patchs nécessaires sont automatiquement appliqués au code de NetHack lors
+de la compilation du projet et sont regroupés dans le dossier \verb!install/!.
+Si de nouveaux modules devaient être ajoutés au projet, il faudrait donc créer
+les patchs correspondant (la création d'un patch est expliquée plus loin) et
+les placer dans le dossier \verb!install!. Le nom de ces patchs doit être de
+la forme \verb!<nom_du_patch>.patch! afin d'être automatiquement détectés par
+le script d'installation \verb!nh-setup.sh!. 
 
+\paragraph{Création de patchs :}
 
 \subsection{Développement de bots.}
 
