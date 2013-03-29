@@ -611,7 +611,7 @@ soit patché pour prendre en compte nos ajouts et modifications.
 L'interface développée ne permet plus de jouer au jeu à la main et donc de
 tester nous même les modifications apportées au jeu. Nous avons donc développé
 un client adapté au protocole mis en place. Il s'agit du programme
-\verb!dummy-client.pl!. Il accepte les mêmes commandes que le jeu original et
+\verb!bots/dummy-client.pl!. Il accepte les mêmes commandes que le jeu original et
 nous a permis, entre autre, de tester l'effet des patchs sur une partie.
 
 
@@ -700,8 +700,8 @@ bots et l'analyse de leurs performances.
 En mettant la variable d'environnement \verb!NH_MM_DUPMSGS! à une valeur
 différente de 0 lors du lancement du jeu, le middleman dupliquera tous les
 messages envoyées au bot vers la sortie standard. Cette sortie peut être
-redirigée vers le programme \verb!dummy-client.pl! qui s'exécutera alors en
-'lecture seule' \footnote{\verb!dummy-client.pl! a plusieurs modes
+redirigée vers le programme \verb!bots/dummy-client.pl! qui s'exécutera alors en
+'lecture seule' \footnote{\verb!bots/dummy-client.pl! a plusieurs modes
 d'exécution} et interprétera le flux pour afficher la carte correspondante à
 la partie en cours.
 
