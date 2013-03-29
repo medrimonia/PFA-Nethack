@@ -669,6 +669,7 @@ int mm_bot_time(){
 int mm_recv()
 {
 	static int cmdbuf[BUFSIZE];
+	static unsigned int cnt = 0;
 	static unsigned int first = 0;
 	static unsigned int last = 0;
 
@@ -676,15 +677,22 @@ int mm_recv()
 	char buf[BUFSIZE];
 	int i, cmd, nb_received;
 
+	if (dupmsgs) {
+		write(STDOUT_FILENO, "E", 1);
+	}
+
 	while (1) {
-		if (first == last) { // buffer empty
+		// loop until a valid command is received
+
+		if (first != last) { // buffer not empty
+			cmd = cmdbuf[++first % BUFSIZE];
+			cnt--;
+		}
+
+		else { // buffer empty
 			first = last = 0;
 
 			mm_log("send()", "E");
-
-			if (dupmsgs) {
-				write(1, "E", 1);
-			}
 
 			// select stuff
 			fd_set sel;
@@ -712,7 +720,7 @@ int mm_recv()
 				return -1;
 			}
 
-			nb_received = recv(client, buf, BUFSIZE, 0);
+			nb_received = recv(client, buf, BUFSIZE - cnt, 0);
 
 			// stop timer
 			gettimeofday(&tmp2, NULL);
@@ -738,26 +746,23 @@ int mm_recv()
 				// put extra chars in a buffer
 				for (i = 1; i < nb_received; i++) {
 					cmdbuf[++last % BUFSIZE] = buf[i];
+					cnt++;
 				}
 
 				cmd = buf[0];
 			}
-
-			if (dupmsgs) {
-				write(STDOUT_FILENO, "S", 1);
-			}
 		}
 		
-		else {
-			cmd = cmdbuf[++first % BUFSIZE];
-		}
-
 		if (cmd != '#') {
 			break;
 		} else {
 			fprintf(stderr, "Warning: '#' commands are NOT supported!\n");
 			continue;
 		}
+	}
+
+	if (dupmsgs) {
+		write(STDOUT_FILENO, "S", 1);
 	}
 
 	return cmd;
