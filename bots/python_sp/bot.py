@@ -107,7 +107,7 @@ while 1:
 					posc = c
 					posr = r
 					been_there_inc(glyphs, c, r)  # 'been there' count
-				elif (g != '@'):
+				elif (g != '@' and code >= 2344 and code <= 2410):
 					set_glyph(glyphs, c, r, g, code)
 			else:
 				break

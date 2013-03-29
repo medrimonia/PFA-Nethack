@@ -87,7 +87,7 @@ while 1:
 				if (g == '@' and code < 400):
 					posc = c
 					posr = r
-				elif (g != '@'):
+				elif (g != '@' and code >= 2344 and code <= 2410):
 					set_glyph(glyphs, c, r, g, code)
 			else:
 				break
