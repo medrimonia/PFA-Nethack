@@ -85,7 +85,7 @@ for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 		}
 		
 		# codes below 400 with @ as a glyph are codes used for the player
-		elsif ($c < 400 && $glyph eq '@') {
+		elsif ($c < 400 && $g eq '@') {
 			$btcnt->[$x]->[$y] += 1;
 			$max = ($max > $btcnt->[$x]->[$y]) ? $max : $btcnt->[$x]->[$y];
 		}
