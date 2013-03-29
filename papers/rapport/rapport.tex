@@ -665,7 +665,23 @@ sauf celui désactivant les monstres.
 \textbf{TODO David: configuration des patchs à appliquer pour chaque mode et
 	expliquer ce que ces patchs font + donner un exemple de patch avec détail
 	des lignes changées et l'effet sur le jeu.}
+
 \paragraph{Création de patchs :}
+
+Un patch est en fait le résultat d'un \verb!diff!\footnote{man diff(1)} entre
+deux version d'un fichier. Ce patch peut alors être appliqué avec la commande
+\verb!patch!\footnote{man patch(1)} à l'ancien fichier afin de donner le
+nouveau.
+Il existe plusieurs façon de créer un tel fichier, l'une d'entre elle utilise
+git et la commande \verb!git diff --patch!. Il est par exemple possible de
+créer un patch à partir de la différence entre le commit courant et le dernier
+commit avec la commande suivante :
+\begin{verbatim}
+    git diff --patch HEAD~1 > nom_du_patch.patch
+\end{verbatim}
+
+TODO: Un exemple détaillé de création d'un patch est disponible dans le manuel
+d'utilisation (\verb!papers/manuel/!).
 
 \subsection{Développement de bots.}
 
