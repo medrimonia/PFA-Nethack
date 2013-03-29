@@ -44,11 +44,8 @@ def build_cmd_list():
 					else:
 						cmds.append(keys[r-(posr-1)][c-(posc-1)])
 
-	
 	return cmds
 
-
-print "new game..."
 
 s = socket(AF_UNIX, SOCK_STREAM)
 if (len(sys.argv) < 2):
