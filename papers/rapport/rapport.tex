@@ -207,7 +207,7 @@ générer leur code.
 
 \paragraph{Fichier de replay :}
 Afin de pouvoir revoir une partie qui s'est jouée, le middle-man fournit une
-option permettant de sauvegarder les données envoyées au bot. Celles-ci
+option permettant de sauvegarder les données envoyés au bot. Celles-ci
 peuvent aussi être utilisées pour revoir une partie ou créer une
 visualisation de l'exploration à l'aide du programme {\verb|toTikz.pl|}.
 
@@ -516,8 +516,8 @@ aux fonctions de l'interface que nous avons développée vers celles d'une
 interface existante. Cependant, cela pose un problème non négligeable : les
 différentes interfaces graphiques s'autorisent des fonctions bloquantes
 (fenêtre de dialogue propres à chacune d'elles par exemple). A moins de
-supprimer ou d'adapter les fonctions gênantes, il n'est pas envisageable
-d'utiliser cette solution avec un bot.
+supprimer ou d'adapter les fonctions gênantes pour chacune d'elles, il n'est
+pas envisageable d'utiliser cette solution avec un bot.
 
 Une autre solution aurait été de permettre un affichage simple dans le
 terminal. Cela n'a pas été retenu car cela aurait consisté à faire des
@@ -682,15 +682,21 @@ bots et l'analyse de leurs performances.
 
 \textbf{TODO: David} Parler de l'extraction de la graine.
 
-\subsubsection{Revoir une partie}
+\subsubsection{Voir ou revoir une partie}
 
-Si la sauvegarde du replay a été activée lors du lancement du jeu (à l'aide de
-la variable d'environnement \verb!NH_MM_DUPMSGS!), un fichier nethackdir/replay
-est créé. Il contient tous les échanges de l'interface vers le bot, selon le
-même protocole, pour être capable de reconstituer le déroulement d'une partie.
+\paragraph{}
+En mettant la variable d'environnement \verb!NH_MM_DUPMSGS! à une valeur
+différente de 0 lors du lancement du jeu, le middleman dupliquera tous les
+messages envoyées au bot vers la sortie standard. Cette sortie peut être
+redirigée vers le programme \verb!dummy-client.pl! qui s'exécutera alors en
+'lecture seule' \footnote{\verb!dummy-client.pl! a plusieurs modes
+d'exécution} et interprétera le flux pour afficher la carte correspondante à
+la partie en cours.
 
-Le programme \verb!viewer.pl! permet d'interpréter ce fichier en décomposant
-son contenu par tour de jeu. Ses fonctionnalités sont :
+En redirigeant cette sortie vers un fichier (ou en lançant le script
+\verb!game_runner.sh! avec l'option \verb!-r!), le déroulement de la partie
+peut être sauvegardée.  Le programme \verb!viewer/viewer.pl! permet
+d'exploiter cette sauvegarde afin de visualiser la partie a posteriori. Ses fonctionnalités sont :
 \begin{itemize}
 	\item reconstitution tour par tour
 	\item revenir en arrière tour par tour
@@ -699,6 +705,7 @@ son contenu par tour de jeu. Ses fonctionnalités sont :
 		tours par seconde donné
 \end{itemize}
 
+\paragraph{}
 Un échange entre l'interface et le bot au tour $N$ ne permet pas de
 reconstituer l'état de la partie au tour $N$ car seules les mises à jour sont
 transmises. Il est donc nécessaire de traiter tous les échanges depuis le
@@ -720,7 +727,8 @@ arrière.
 
 \subsubsection{Aperçu du nombre de visites sur chaque case}
 
-\paragraph{} Le fichier nethackdir/replay peut également être utilisé dans d'autres buts.
+\paragraph{}
+Une sauvegarde peut également être utilisé dans d'autres buts.
 Par exemple, un simple programme comptant le nombre de visite sur chaque
 coordonnée permet de produire les images suivantes à l'aide de TikZ :
 
@@ -747,8 +755,8 @@ faite l'exploration :
 
 \begin{figure}[H]
 	\caption{Ordre d'exploration de deux niveaux par le bot diffusion. En
-	jaune les cases découvertes en premier, en bleu celles découvertes en
-dernier.}
+	jaune les cases \emph{découvertes} en premier, en bleu celles
+	\emph{découvertes} en dernier.}
 	\resizebox{\columnwidth}{!}{\input{../common/diffusion_tikz_exploration.tex}}
 \end{figure}
 
