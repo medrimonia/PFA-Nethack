@@ -30,10 +30,10 @@ fi
 #Extract chosen bot
 BOT=$(printf "$BOTS" | head -$choice | tail -1)
 
-BOTPATH="$(echo $BOT | cut -d\| -f1)"
+BOTPATH="$BOTDIR/$(echo $BOT | cut -d\| -f1)"
 LAUNCHER="$(echo $BOT | cut -d\| -f2)"
 BOTNAME="$(echo $BOT | cut -d\| -f3)"
 NBMOVES="$(echo $BOT | cut -d\| -f4)"
 
 #Run a game for chosen bot using game_runner.sh
-$RUNNER -b $BOTNAME -p $BOTPATH -c $LAUNCHER -m $NBMOVES -g 1
+$RUNNER -b $BOTNAME -p $BOTPATH -c $LAUNCHER -m $NBMOVES -g 1 -s

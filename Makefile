@@ -13,7 +13,7 @@ bots:
 	make -C bots
 
 run:
-	@./scripts/game_runner.sh
+	@./scripts/run_bot.sh
 
 doxygen:
 	make -C documentation

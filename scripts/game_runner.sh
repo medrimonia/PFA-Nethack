@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #default options
-NH_MAX_MOVES=20000
+NH_MAX_MOVES=200
 NH_BOT_NAME="java sp"
 NH_MM_LOGGING=0
 NH_MM_DUPMSGS=0
@@ -75,7 +75,7 @@ while getopts "g:m:b:p:c:d:lrhs" opt; do
 						NH_MM_DUPMSGS=1;
 						;;
 				s)
-						NH_MM_REPLAY=1;
+						NH_MM_DUPMSGS=1;
 						DISPLAY=1;
 						;;
 		esac
