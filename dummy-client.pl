@@ -39,6 +39,7 @@ if (! -t STDIN) {
 
 	displayloop($handle);
 	$handle->close();
+	exit 0;
 }
 
 # read data from a file (read only mode)
@@ -48,6 +49,7 @@ elsif ($opt_f) {
 
 	displayloop($handle);
 	$handle->close();
+	exit 0;
 }
 
 # true client, open a socket (default mode)
@@ -99,6 +101,7 @@ else {
 	}
 
 	$handle->close();
+	exit 0;
 }
 
 
