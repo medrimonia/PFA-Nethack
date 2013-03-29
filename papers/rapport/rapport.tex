@@ -477,7 +477,7 @@ existantes pour le jeu. Les principales fonctions appelées sont les suivantes
 \item \verb!NH_MM_SOCKPATH! : spécifier un chemin pour la socket unix
 	(permettant la communication entre NetHack et les bots) à créer. Par
 	défaut, le middleman créé {\verb|/tmp/mmsock|}.
-\item \verb!NH_MM_REPLAY! : si mise à une valeur différente de 0, cette
+\item \verb!NH_MM_DUPMSGS! : si mise à une valeur différente de 0, cette
 	variable active l'enregistrement de la partie dans le fichier
 	{\verb|nethackdir/replay|}. Désactivée par défaut.
 \item \verb!NH_MM_LOGGING! : si mise à une valeur différente de 0, cette
@@ -685,7 +685,7 @@ bots et l'analyse de leurs performances.
 \subsubsection{Revoir une partie}
 
 Si la sauvegarde du replay a été activée lors du lancement du jeu (à l'aide de
-la variable d'environnement \verb!NH_MM_REPLAY!), un fichier nethackdir/replay
+la variable d'environnement \verb!NH_MM_DUPMSGS!), un fichier nethackdir/replay
 est créé. Il contient tous les échanges de l'interface vers le bot, selon le
 même protocole, pour être capable de reconstituer le déroulement d'une partie.
 

@@ -86,7 +86,7 @@ comportement du jeu :
 
 \begin{itemize}
 \item \verb!NH_MM_SOCKPATH! : spécifier un chemin pour la socket unix (permettant la communication entre NetHack et les bots) à créer. Par défaut, le middleman créé \emph{/tmp/mmsock}.
-\item \verb!NH_MM_REPLAY! : si mise à une valeur différente de 0, cette
+\item \verb!NH_MM_DUPMSGS! : si mise à une valeur différente de 0, cette
 	variable active la duplication des messages envoyées au bot sur la sortie
 	standard (peut être utilisé pour rediriger vers \verb!dummy-client.pl!).
 	Désactivée par défaut.
@@ -153,7 +153,7 @@ terminaux différents.
 
 \section{Voir ou revoir une partie}
 
-En mettant la variable d'environnement \verb!NH_MM_REPLAY! à une valeur
+En mettant la variable d'environnement \verb!NH_MM_DUPMSGS! à une valeur
 différente de 0 lors du lancement du jeu, le middleman dupliquera tous les
 messages envoyées au bot vers la sortie standard. Cette sortie peut être
 redirigée vers le programme \verb!dummy-client.pl! qui s'exécutera alors en
@@ -163,7 +163,7 @@ la partie en cours. Exemple d'exécution :
 
 \begin{verbatim}
 # Dans un premier terminal :
-$ NH_MM_REPLAY=1 ./nethack-3.4.3/nethack 2> /dev/null 1| perl dummy-client.pl
+$ NH_MM_DUPMSGS=1 ./nethack-3.4.3/nethack 2> /dev/null 1| perl dummy-client.pl
 
 # Dans un second (utiliser le bot au choix) :
 $ java -jar bots/diffusion/Bot.jar
@@ -179,7 +179,7 @@ cette sauvegarde afin de visualiser la partie a posteriori. Voir le README
 correspondant. Exemple :
 
 \begin{verbatim}
-$ NH_MM_REPLAY=1 ./nethack-3.4.3/nethack 1> replay
+$ NH_MM_DUPMSGS=1 ./nethack-3.4.3/nethack > replay
 # Puis, une fois la partie terminée
 $ perl viewer/viewer.pl replay
 \end{verbatim}

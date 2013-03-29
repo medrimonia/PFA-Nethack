@@ -4,11 +4,12 @@
 NH_MAX_MOVES=200
 NH_BOT_NAME="java sp"
 NH_MM_LOGGING=0
-NH_MM_REPLAY=0
+NH_MM_DUPMSGS=0
 NH_DATABASE_PATH="/tmp/test.db"
 NB_GAMES=10
 BOT_PATH="bots/java_sp/Bot.jar"
 BOT_CMD="java -Djava.library.path=`locate libunix-java.so | xargs dirname` -jar"
+DISPLAY=0
 
 usage() {
 	echo "Usage: $0 [options]"
@@ -30,6 +31,8 @@ usage() {
 	echo -e "\t            (Default Desactivated)"
 	echo -e "\t-r          Activate the replay"
 	echo -e "\t            (Default Desactivated)"
+	echo -e "\t-s          Activate game display"
+	echo -e "\t            (Default Desactivated)"
 	echo "Exemple: $0 -b \"python sp\" -p \"bots/python_sp/bot.py\" -c \"python\""
 }
 
@@ -41,7 +44,7 @@ usage() {
 #p specifies the bot path
 #c specifies the bot launching cmd
 #d specifies the database path
-while getopts "g:m:b:p:c:d:lrh" opt; do
+while getopts "g:m:b:p:c:d:lrhs" opt; do
 		case $opt in
 				h)
 						usage;
@@ -69,7 +72,11 @@ while getopts "g:m:b:p:c:d:lrh" opt; do
 						NH_MM_LOGGING=1;
 						;;
 				r)
-						export NH_MM_REPLAY=1;
+						NH_MM_DUPMSGS=1;
+						;;
+				s)
+						NH_MM_DUPMSGS=1;
+						DISPLAY=1;
 						;;
 		esac
 done
@@ -77,6 +84,7 @@ done
 NH_MM_SOCKPATH="/tmp/mmsock"$$
 
 export NH_MM_SOCKPATH
+export NH_MM_DUPMSGS
 export NH_MAX_MOVES
 export NH_MM_LOGGING
 export NH_BOT_NAME
@@ -112,8 +120,16 @@ for ((i = 1; i <= NB_GAMES; i++))
 do
 		#Avoiding mm.log to grow too much in size
 		rm -f $TEST_FOLDER/$NH_DIR/nethackdir/mm.log
+
 		#Running nethack
-		$TEST_FOLDER/$NH_DIR/nethack >$TEST_FOLDER/nh_log &
+		if [ $NH_MM_DUPMSGS -eq 0 ]; then
+			$TEST_FOLDER/$NH_DIR/nethack 2> $TEST_FOLDER/nh_log&
+		elif [ $DISPLAY -eq 1 ]; then 
+			$TEST_FOLDER/$NH_DIR/nethack 2> $TEST_FOLDER/nh_log | perl ./dummy-client.pl&
+		else
+			$TEST_FOLDER/$NH_DIR/nethack 1> $TEST_FOLDER/"replay$i" 2> $TEST_FOLDER/nh_log&
+		fi
+
 		#Running bot
 		$BOT_CMD $TEST_FOLDER/$BOT_FILE $NH_MM_SOCKPATH >$TEST_FOLDER/bot_log
 		printf "\033[80DDone : %d of %d" $i $NB_GAMES
