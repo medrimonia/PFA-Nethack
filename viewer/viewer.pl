@@ -7,9 +7,23 @@ use Term::ReadKey;
 use Time::HiRes qw/sleep/;
 use Term::ANSIScreen qw/:cursor :screen/;
 
+my $usage = <<EOU;
+Usage: perl $0 <replay file>
+
+Commands are:
+  `j` : go to next turn
+  `k` : go to previous turn
+  `:` : show the prompt for more complex commands
+  `q` : quit
+
+The prompt accepts these commands:
+  `N` : goto turn number N.
+  `s N` : slideshow with N turns per second. Any key stops the slideshow.
+  `b N` : backward slideshow with N turns per second. Any key stops the slideshow.
+EOU
 
 if ($#ARGV < 0) {
-	print "Usage: perl $0 <replay file>\n";
+	print $usage;
 	exit;
 }
 
@@ -43,25 +57,24 @@ my @coms_reversed;  # array of glyphs that cancel those stored in @coms
 		my $start = $level_marks[$#level_marks];
 		print_glyphs($_, \@coms) for ($start .. $turn)
 	}
-}
 
+	sub print_glyphs {
+		local $| = 0;
+		my ($turn, $coms) = @_;
+		my $glyphs = $coms->[$turn];
 
-sub print_glyphs {
-	local $| = 0;
-	my ($turn, $coms) = @_;
-	my $glyphs = $coms->[$turn];
+		unless (defined $glyphs) {
+			carp "No glyphs!";
+			return;
+		}
+		
+		for (@$glyphs) {
+			my ($y, $x, $g) = @$_;
 
-	unless (defined $glyphs) {
-		carp "No glyphs!";
-		return;
-	}
-	
-	for (@$glyphs) {
-		my ($y, $x, $g) = @$_;
-
-		if (defined $g) {
-			locate $x+2, $y+1;
-			print $g;
+			if (defined $g) {
+				locate $x+2, $y+1;
+				print $g;
+			}
 		}
 	}
 }
@@ -249,3 +262,4 @@ while (1) {
 }
 
 ReadMode('normal');
+

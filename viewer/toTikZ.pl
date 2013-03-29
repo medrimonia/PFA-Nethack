@@ -4,6 +4,13 @@ use warnings;
 use Getopt::Std;
 use Scalar::Util qw(looks_like_number);
 
+my $usage = <<EOU;
+Usage: perl $0 [-f|-e] [-s <scale>] <replay file>
+	-f : generate full latex document with header, etc...
+	-s : scale pictures (default 0.3)
+	-e : level exploration mode
+EOU
+
 my $scale = 0.3;
 
 my $header = <<'EOH';
@@ -16,13 +23,11 @@ my $footer = <<'EOF';
 \end{document}
 EOF
 
-our ($opt_f, $opt_s);
-getopts("fs:");
+our ($opt_h, $opt_f, $opt_e, $opt_s);
+getopts("hfes:");
 
-if ($#ARGV < 0) {
-	print "Usage: perl $0 [-f] <replay file>\n";
-	print "\t -f : generate full latex document with header, etc...\n";
-	print "\t -s : scale pictures (default 0.3)\n";
+if ($#ARGV < 0 || $opt_h) {
+	print $usage;
 	exit;
 }
 
@@ -49,10 +54,18 @@ my $map = [];
 my $max = 1;
 my $btcnt = [];
 
+my $turn = 0;
+my $max_discov_turn = 0;
+my $discov_turn = [];
+
 for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
 	if ($tmp[$j] eq 'C') {
-		$offset += 25;
+		$offset += 23;
+	}
+
+	elsif ($tmp[$j] eq 'E') {
+		$turn++;
 	}
 
 	elsif (($tmp[$j] eq 'g') && ($j + 5 <= $#tmp)) {
@@ -61,9 +74,18 @@ for (my $j = 0, my $i = 0; $j <= $#tmp; $j++) {
 
 		$x += $offset;
 
-		if ($g ne '@') {
+		# glyphs codes between 2344 and 2410 are part of a dungeon. See the
+		# dumped symbol list.
+		if ($c >= 2344 && $c <= 2410 ) {
 			$map->[$x]->[$y] = $g;
-		} elsif ($c < 400) {
+			if (! defined $discov_turn->[$x]->[$y]) {
+				$max_discov_turn = $turn;
+				$discov_turn->[$x]->[$y] = $turn;
+			}
+		}
+		
+		# codes below 400 with @ as a glyph are codes used for the player
+		elsif ($c < 400 && $g eq '@') {
 			$btcnt->[$x]->[$y] += 1;
 			$max = ($max > $btcnt->[$x]->[$y]) ? $max : $btcnt->[$x]->[$y];
 		}
@@ -81,12 +103,26 @@ print '\begin{tikzpicture}', "[scale=$scale]\n";
 for my $x (0 .. $#{$map}) {
 	my $line = $map->[$x];
 	for my $y (0 .. $#{$line}) {
+		my $colorvalue;
 		my $glyph = $line->[$y];
-		my $cnt = $btcnt->[$x]->[$y];
-		my $color = (defined $cnt)
-			? int(100 * $cnt / $max)
-			: undef;
-		node($x, $y, $glyph, $color) if (defined $glyph);
+
+		next unless (defined $glyph);
+
+		if (defined $opt_e) {
+			my $cnt = $discov_turn->[$x]->[$y];
+			$colorvalue = (defined $cnt)
+				? int(100 * $cnt / $max_discov_turn)
+				: undef;
+			node($x, $y, $glyph, $colorvalue, "blue", "yellow");
+		}
+
+		else {
+			my $cnt = $btcnt->[$x]->[$y];
+			$colorvalue = (defined $cnt)
+				? int(100 * $cnt / $max)
+				: undef;
+			node($x, $y, $glyph, $colorvalue, "red", "yellow");
+		}
 	}
 }
 
@@ -98,13 +134,15 @@ if (defined $opt_f) {
 
 
 sub node {
-	my ($x, $y, $label, $color) = @_;
-	# Don't forget the rotation!
+	my ($x, $y, $label, $colorvalue, $color1, $color2) = @_;
+	$color1 //= "red";
+	$color2 //= "yellow";
 	print '\node ';
 
-	if (defined $color) {
-		print "[fill=red!$color!yellow] ";
+	if (defined $colorvalue) {
+		print "[fill=$color1!$colorvalue!$color2] ";
 	}
 	
+	# Don't forget the rotation!
 	print "at ($y, -$x) {\\verb!$label!};\n";
 }

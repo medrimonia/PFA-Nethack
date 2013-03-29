@@ -91,8 +91,7 @@ static winid winmapid;
 static FILE *log = NULL;
 static char use_logging = 0;
 
-static int replay = -1;
-static char record_replay = 0;
+static char dupmsgs = 0;
 
 static int timeout;
 static char *sockpath;
@@ -153,11 +152,6 @@ void mm_cleanup()
 		log = NULL;
 	}
 
-	if (replay > 0) {
-		close(replay);
-		replay = -1;
-	}
-
 	if (mmsock != -1) {
 		close(mmsock);
 		mmsock = -1;
@@ -173,10 +167,12 @@ void mm_cleanup()
 	struct timeval tvend, tvdiff;
 	gettimeofday(&tvend, NULL);
 	tvsub(&tvdiff, &tvend, &tvstart);
-	printf("Total execution time : ");
-	tvprint(&tvdiff); puts("");
-	printf("Bot execution time : ");
-	tvprint(&tvbot); puts("");
+	fprintf(stderr, "Total execution time : ");
+	tvprint(&tvdiff);
+	fprintf(stderr, "\n");
+	fprintf(stderr, "Bot execution time : ");
+	tvprint(&tvbot);
+	fprintf(stderr, "\n");
 }
 
 
@@ -201,11 +197,11 @@ void mm_init()
 		use_logging = atoi(str);
 	}
 
-	str = getenv("NH_MM_REPLAY");
+	str = getenv("NH_MM_DUPMSGS");
 	if (str == NULL) {
-		record_replay = 0;
+		dupmsgs = 0;
 	} else {
-		record_replay = atoi(str);
+		dupmsgs = atoi(str);
 	}
 
 	str = getenv("NH_MM_TIMEOUT");
@@ -234,15 +230,6 @@ void mm_init()
 
 		if (log == NULL) {
 			perror("fopen");
-		}
-	}
-
-	/* open replay file if enabled */
-	if (record_replay) {
-		replay = open("replay", O_CREAT | O_WRONLY | O_TRUNC, 0644);
-
-		if (replay == -1) {
-			perror("open");
 		}
 	}
 
@@ -277,7 +264,7 @@ void mm_init()
 	// loop until a client is connected
 	ssize_t size;
 	char buf[BUFSIZE];
-	puts("Waiting for a bot to connect...");
+	fprintf(stderr, "Waiting for a client to connect...\n");
 	while (client == -1) {
 		client = accept(mmsock, NULL, NULL);
 		if (client == -1) {
@@ -295,6 +282,7 @@ void mm_init()
 			}
 		}
 	}
+	fprintf(stderr, "Client connected.\n");
 
 	/* These are used to compute the ratio between nethack's execution time
 	 * and the bot's execution time */
@@ -372,8 +360,8 @@ mm_clear_nhwindow(window)
 
 	if (window == winmapid) {
 		write(client, "C", 1);
-		if (replay > 0) {
-			write(replay, "C", 1);
+		if (dupmsgs) {
+			write(1, "C", 1);
 		}
 	}
 }
@@ -523,8 +511,8 @@ mm_print_glyph(window, x, y, glyph)
 
 		send(client, buf, size + sizeof glyphcode, 0);
 
-		if (replay > 0) {
-			write(replay, buf, size + sizeof glyphcode);
+		if (dupmsgs) {
+			write(STDOUT_FILENO, buf, size + sizeof glyphcode);
 		}
 	}
 
@@ -620,7 +608,11 @@ mm_nh_poskey(x, y, mod)
 	// game.
 	if (old_moves == moves){
 		deadlock_detector++;
-		printf("No move since last nh_get_pos, dd = %d\n", deadlock_detector);
+		fprintf(
+			stderr,
+			"No move since last nh_get_pos, dd = %d\n",
+			deadlock_detector
+		);
 		if (deadlock_detector >= 20)
 			terminate(EXIT_SUCCESS);
 	}
@@ -690,8 +682,8 @@ int mm_recv()
 
 			mm_log("send()", "E");
 
-			if (replay > 0) {
-				write(replay, "E", 1);
+			if (dupmsgs) {
+				write(1, "E", 1);
 			}
 
 			// select stuff
@@ -751,8 +743,8 @@ int mm_recv()
 				cmd = buf[0];
 			}
 
-			if (replay > 0) {
-				write(replay, "S", 1);
+			if (dupmsgs) {
+				write(STDOUT_FILENO, "S", 1);
 			}
 		}
 		
@@ -803,5 +795,5 @@ void tvsub(
 
 void tvprint(const struct timeval *tv)
 {
-	printf("%g seconds", tv->tv_sec + (double)tv->tv_usec / 1000000);
+	fprintf(stderr, "%g seconds", tv->tv_sec + (double)tv->tv_usec / 1000000);
 }
