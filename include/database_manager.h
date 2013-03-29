@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * @file database_manager.h
  *
@@ -20,6 +21,7 @@
 
 #include "game_result.h"
 
+<<<<<<< HEAD
 /** 
  * @brief Create or open the database with the default name.
  *
@@ -28,6 +30,7 @@
  */
 int init_db_manager();
 
+<<<<<<< HEAD
 /** 
  * @brief Insert the game given as parameter in the database.
  *
