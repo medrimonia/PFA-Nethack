@@ -9,7 +9,7 @@ IFS=$'\n'
 i=1
 for line in $BOTS; do
 	printf "\t $i - "
-	echo $line  | cut -d\| -f1
+	echo $line  | cut -d\| -f3
 	i=$((i+1))
 done
 printf "\t $i - Quit\n"

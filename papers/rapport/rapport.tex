@@ -139,7 +139,7 @@ NetHack et de façon plus précise tout ce qui concerne la logique du jeu en
 faisant abstraction des diverses interfaces graphiques et portions dépendantes
 de l'architecture.
 
-\paragraph{Hook :}terme désignant ici un point d'entrée dans du code. Ce terme est
+\paragraph{Hook :}terme désignant un point d'entrée dans du code. Ce terme est
 employé pour évoquer les appels de fonction rajoutée dans le cœur du code
 de NetHack afin de pouvoir effectuer des traitements personnalisés. Les
 'hooks' permettent par exemple de récupérer des statistiques issues du
@@ -158,8 +158,16 @@ de ce projet, les portions de code sont ajoutées au code original de NetHack
 afin d'y ajouter des modules (via les 'hooks') et de personnaliser certaines
 fonctionnalités (voir 'Les modes de jeu').
 
-\paragraph{Les modes de jeu :} 
-\textbf{TODO David}
+\paragraph{Mode de jeu :}cadre défini dans lequel peuvent évoluer les bots.
+Cela correspond à un ensemble de modifications du jeu de base altérant
+certaines fonctionnalités (désactivation des monstres et de la faim, par
+exemple), d'actions autorisées pour les bots, de paramètres d'évaluation et de
+conditions de fin de jeu.
+Par exemple, un mode de recherche des portes secrètes est défini ; dans ce
+mode les monstres, la faim, les pièges et les objets (tout ce qui peut tuer ou
+encombrer le joueur) sont désactivés afin de concentrer l'intelligence des
+bots sur la recherche. Les bots sont donc plus facile à développer pour un
+mode de jeu donné.
 
 \section{Architecture finale}
 
@@ -197,12 +205,12 @@ socket unix, le protocole utilisé entre eux est détaillé dans ce rapport et d
 pouvoir permettre des créer des bots dans d'autres langages.
 
 
-\paragraph{Patches :}
-L'utilisation des patches permet de visualiser facilement quels sont les
+\paragraph{Patchs :}
+L'utilisation des patchs permet de visualiser facilement quels sont les
 modifications apportées à nethack. Pour une plus grande facilité de
 développement, mais aussi pour plus de clarté, nous avons utilisé autant que
 possibles des 'hooks', ceux-ci passant tous par pfamain afin de réduire au
-maximum le nombre d'include ajoutés dans les patches.
+maximum le nombre d'include ajoutés dans les patchs.
 
 \paragraph{Obtention de données par game statistics :}
 Afin d'obtenir les données internes au jeu, game statistics doit nécessairement
@@ -216,7 +224,7 @@ générer leur code.
 
 \paragraph{Fichier de replay :}
 Afin de pouvoir revoir une partie qui s'est jouée, le middle-man fournit une
-option permettant de sauvegarder les données envoyés au bot. Celles-ci
+option permettant de sauvegarder les données envoyées au bot. Celles-ci
 peuvent aussi être utilisées pour revoir une partie ou créer une
 visualisation de l'exploration à l'aide du programme {\verb|toTikz.pl|}.
 
@@ -603,6 +611,8 @@ soit patché pour prendre en compte nos ajouts et modifications.
 	expliquer ce que ces patchs font + donner un exemple de patch avec détail
 	des lignes changées et l'effet sur le jeu.}
 
+
+
 \subsection{Développement de bots.}
 
 \subsubsection{'Bot' contrôlé à la main}
@@ -610,7 +620,7 @@ soit patché pour prendre en compte nos ajouts et modifications.
 L'interface développée ne permet plus de jouer au jeu à la main et donc de
 tester nous même les modifications apportées au jeu. Nous avons donc développé
 un client adapté au protocole mis en place. Il s'agit du programme
-\verb!dummy-client.pl!. Il accepte les mêmes commandes que le jeu original et
+\verb!bots/dummy-client.pl!. Il accepte les mêmes commandes que le jeu original et
 nous a permis, entre autre, de tester l'effet des patchs sur une partie.
 
 
@@ -661,8 +671,8 @@ Afin d'utiliser ce bot dans les bonnes conditions, il est nécessaire d'avoir
 compilé une version du jeu dans laquelle le patch
 {\verb|patches/create_level.patch|} a été appliqué. Ce patch modifie le donjon
 de telle sorte que le premier niveau ne contienne qu'une seule salle de la
-forme décrite précédemment\footnote{Ce niveau ne contient pas d'escalier pour
-descendre dans les niveaux suivants.}.
+forme décrite précédemment (ce niveau ne contient pas d'escalier pour
+descendre dans les niveaux suivants).
 
 \subsubsection{Ajouter un bot}
 
@@ -670,17 +680,19 @@ Plusieurs facilités ont été offertes pour de futurs ajouts de bots. La
 première est la possibilité d'intégrer automatiquement la compilation de ce
 nouveau bots à celle des autres. En effet, un \verb!Makefile! se trouve dans le
 dossier \verb!bots/! et permet de compiler l'ensemble des bots pour lesquels
-cela est nécessaire\footnote{Par exemple les bots écris en Java.}. Lorsque la
+cela est nécessaire (par exemple les bots écris en Java). Lorsque la
 commande \verb!make! est exécutée depuis dossier, l'ensemble des sous dossiers
 est exploré automatiquement afin de repérer ceux possédant un fichier nommé
-\verb!Makefile!. Dans chacun de ces dossiers\footnote{Chaque dossier
-correspond à un bot particulier.} est exécutée la commande \verb!make! afin de
-compiler les sources du bot en question.
+\verb!Makefile!. Dans chacun de ces dossiers (correspondant à un bot
+particulier) est exécutée la commande \verb!make! afin de compiler les sources
+du bot en question.
 
 Ainsi, lors de la création d'un nouveau bot, il suffit de créer un dossier
 dédié à ce bot dans \verb!bots/! et d'écrire le fichier \verb!Makefile! qui
 permet de compiler ses sources, si besoin\footnote{Un bot écrit dans un
 langage interprété tel que Python n'aura pas besoin du \verb!Makefile!.}.
+
+TODO David : décrire le fichier bots.conf
 
 \subsection{Outils d'analyse et de deboguage}
 
@@ -697,8 +709,8 @@ bots et l'analyse de leurs performances.
 En mettant la variable d'environnement \verb!NH_MM_DUPMSGS! à une valeur
 différente de 0 lors du lancement du jeu, le middleman dupliquera tous les
 messages envoyées au bot vers la sortie standard. Cette sortie peut être
-redirigée vers le programme \verb!dummy-client.pl! qui s'exécutera alors en
-'lecture seule' \footnote{\verb!dummy-client.pl! a plusieurs modes
+redirigée vers le programme \verb!bots/dummy-client.pl! qui s'exécutera alors en
+'lecture seule' \footnote{\verb!bots/dummy-client.pl! a plusieurs modes
 d'exécution} et interprétera le flux pour afficher la carte correspondante à
 la partie en cours.
 

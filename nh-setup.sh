@@ -13,7 +13,7 @@ apply_default_patch () {
 }
 
 apply_patch_i () {
-    for i in `ls $patchdir/*.patch`; do
+    for i in $patchdir/*.patch; do
         read -p "Apply $i? [Y/n]" yn
 
         case $yn in
