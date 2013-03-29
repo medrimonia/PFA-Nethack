@@ -1752,7 +1752,14 @@ un bot. Cela permettrait de valider que le modèle de Nethack correspond bien au
 modèle théorique.
 
 \subsubsection{Générer des données utilisables par les bots}
-
+Comme expliqué dans la partie analyse, la probabilité absolue qu'une case
+contienne une porte secrète en fonction de sa position n'est pas directement
+exploitable. Comme l'environnement conditionne la probabilité, il est nécessaire
+de l'intégrer à l'étude, pour ce faire, le minimum est d'obtenir la probabilité
+en prenant en compte le type perçu de la case. L'idéal étant d'inclure d'autres
+paramètres, tel que le barycentre des cases découvertes au moment de la
+découverte de la porte secrète, indiquant ainsi dans quel direction l'on doit
+se diriger dans un état donné.
 
 \section{Conclusion}
 TODO
