@@ -125,7 +125,7 @@ do
 		if [ $NH_MM_DUPMSGS -eq 0 ]; then
 			$TEST_FOLDER/$NH_DIR/nethack 2> $TEST_FOLDER/nh_log&
 		elif [ $DISPLAY -eq 1 ]; then 
-			$TEST_FOLDER/$NH_DIR/nethack 2> $TEST_FOLDER/nh_log | perl ./dummy-client.pl&
+			$TEST_FOLDER/$NH_DIR/nethack 2> $TEST_FOLDER/nh_log | perl bots/dummy-client.pl&
 		else
 			$TEST_FOLDER/$NH_DIR/nethack 1> $TEST_FOLDER/"replay$i" 2> $TEST_FOLDER/nh_log&
 		fi
