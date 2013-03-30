@@ -186,9 +186,9 @@ de Nethack. Pour arriver à ce résultat, nous nous sommes servis du header
 \\
 Nous avons développé la majeure partie du code en {\em C}, mais certaines
 parties du code se sont tout de même révélées beaucoup plus simples à
-écrire en {\em bash}\footnote{Les scripts de générations de graphiques ou de
-  lancement d'un grand nombre de parties} ou en {\em perl}
-\footnote{Le viewer et l'outil toTikZ}, à cause de leur nature très variable
+écrire en {\em bash} (scripts de générations de graphiques ou de
+lancement d'un grand nombre de parties) ou en {\em Perl}
+(Le viewer et l'outil toTikZ), à cause de leur nature très variable
 et de la nature des tâches effectuées. Cependant, après avoir acquis plus
 d'expérience sur l'utilisation de gnuplot en {\em C}, il semble que transposer
 les codes de génération des graphiques en {\em C} pourrait assurer une
@@ -309,15 +309,14 @@ standard sur lequel on peut écrire ou lire du texte. L'esclave communique avec
 l'application et sert simplement de rapporteur entre la partie 'maître' et
 NetHack. Ainsi, le jeu est satisfait puisqu'il est lancé depuis un terminal et
 il peut maintenant être contrôlé depuis la partie 'master' du pty sur laquelle
-on souhaite brancher un bot \footnote{Plus de détails avec la page de manuel
-pty(7)}.
+on souhaite brancher un bot (cf. page de manuel pty(7)).
 
 
 \subsubsection*{Décomposition de l'affichage}
 
 Lorsqu'il est lancé depuis un terminal, l'interface ASCII détecte le nombre de
 lignes et de colonnes disponibles afin de faire des défilements ou des
-superpositions de menus lorsque nécessaire \footnote{voir libtermcap}. Cela
+superpositions de menus lorsque nécessaire (voir libtermcap). Cela
 pose problème avec la méthode consistant à interpréter les séquences
 d'échappement car il faut être capable détecter lorsque deux éléments se
 chevauchent.
@@ -824,9 +823,8 @@ En mettant la variable d'environnement \verb!NH_MM_DUPMSGS! à une valeur
 différente de 0 lors du lancement du jeu, le middleman dupliquera tous les
 messages envoyées au bot vers la sortie standard. Cette sortie peut être
 redirigée vers le programme \verb!bots/dummy-client.pl! qui s'exécutera alors en
-'lecture seule' \footnote{\verb!bots/dummy-client.pl! a plusieurs modes
-d'exécution} et interprétera le flux pour afficher la carte correspondant à
-la partie en cours.
+'lecture seule' (ce programme a plusieurs modes d'exécution) et interprétera
+le flux pour afficher la carte correspondant à la partie en cours.
 
 En redirigeant cette sortie vers un fichier (ou en lançant le script
 \verb!game_runner.sh! avec l'option \verb!-r!), le déroulement de la partie
