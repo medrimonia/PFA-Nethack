@@ -70,14 +70,15 @@ Un script \verb!nh-setup.sh! permet de télécharger, patcher et compiler le jeu
 pour linux avec les modifications apportées dans le cadre du projet.
 Avant la compilation, l'utilisateur doit répondre à quelques questions rapides
 pour renseigner les patchs qu'il souhaite appliquer. À l'issue de la
-compulation, le jeu sera installé dans le répertoire courrant.
+compilation, le jeu sera installé dans le répertoire courant.
 
-\textbf{TODO: David} configuration des patchs appliqués par défaut?
+Deux choix sont offert pour appliquer les patchs : soit appliquer un ensemble
+de patchs par défaut (ensemble des patchs listés dans le fichier
+\verb!patches/patch.conf!), soit choisir pour chaque patchs du dossier
+\verb!patches/! s'il doit être appliqué ou non.
 
 Certains des bots fournis nécessitent d'être compilés avant de pouvoir être
 utilisés. C'est le cas des bots écrits en Java.
-
-
 
 \section{Paramétrer l'exécution de NetHack}
 
@@ -451,12 +452,41 @@ Pour définir un mode de jeu particulier voici ce qu'il faut faire :
 	\item Modifier si besoin le middleman afin, par exemple, d'ajouter des choses au protocole de communication entre les bots et le noyau de NetHack.
 \end{itemize}
 
-\section{Créer un patch} \label{sec:creer-patch}
-
+\section{Créer et ajouter un patch} \label{sec:creer-patch}
+TODO
 \textbf{\_\_Exemple de successions de commandes permettant de créer un patch\_\_}.
 
-\section{Ajouter des niveaux spéciaux}
+Une fois le patch créé, il peut être ajouté dans le dossier \verb!install/!
+(pour les patchs nécessaire au fonctionnement du projet) ou \verb!patches/!
+(pour les patchs facultatifs tels que ceux qui servent à définir un mode de
+jeu).
+Les patchs sont automatiquement détectés dans ces deux dossiers par le script
+d'installation \verb!nh-setup.sh! du moment que leur nom est de la forme
+\verb!<nom_du_patch>.patch!. Pour les patchs du dossier \verb!patches/!, il
+est possible de les rendre applicable par défaut en ajoutant leur nom au
+fichier \verb!patches/patch.conf!. 
 
+Il est possible de modifier la recherche automatique des patchs nécessaires en
+modifiant les lignes suivantes du script \verb!nh-setup.sh! (à partir de la
+ligne 67):
+\begin{verbatim}
+    for installpatch in install/*.patch; do
+        patch -p0 < $installpatch
+    done
+\end{verbatim}
+
+Il est par exemple possible d'ajouter un nouveau dossier \verb!new_patches/!
+dans lequel rechercher les patchs nécessaire en remplaçant la première des
+lignes par :
+\begin{verbatim}
+    for installpatch in install/*.patch new_patches/*.patch; do
+\end{verbatim}
+
+De manière similaire la recherche automatique des patchs facultatifs peut être
+modifiés à partir de la ligne 16 du fichier \verb!nh-setup.sh!.
+
+\section{Ajouter des niveaux spéciaux}
+TODO
 \url{http://nethack.wikia.com/wiki/Des-file\_format#SUBROOM}
 
 \chapter{Dysfonctionnements connus}

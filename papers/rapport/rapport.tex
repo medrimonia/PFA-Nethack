@@ -638,27 +638,6 @@ les placer dans le dossier \verb!install/!. Le nom de ces patchs doit être de
 la forme \verb!<nom_du_patch>.patch! afin d'être automatiquement détecté par
 le script d'installation \verb!nh-setup.sh!. 
 
-% -----------------------------------------------------------------------
-% -----------------------------------------------------------------------
-% A mon avis ce qui suit n'est pas utile. Ca a sa place dans le manuel
-% -----------------------------------------------------------------------
-% -----------------------------------------------------------------------
-% Il est possible de modifier la
-% recherche automatique des patchs en modifiant les lignes suivantes du script
-% \verb!nh-setup.sh! (à partir de la ligne 67):
-% \begin{verbatim}
-%     for installpatch in install/*.patch; do
-%         patch -p0 < $installpatch
-%     done
-% \end{verbatim}
-% 
-% Il est par exemple possible d'ajouter un nouveau dossier \verb!new_patches/!
-% dans lequel rechercher les patchs nécessaire en remplaçant la première des
-% lignes par :
-% \begin{verbatim}
-%     for installpatch in install/*.patch new_patches/*.patch; do
-% \end{verbatim}
-
 Les patchs facultatifs sont traités différemment lors du processus
 d'installation et sont regroupés dans le dossier \verb!patches/!. Le script
 \verb!nh-setup.sh! précise deux manières d'appliquer ces patchs avant la
@@ -686,12 +665,6 @@ qu'il ne contienne qu'un niveau spécial. Définir un nouveau mode de jeu
 devient alors facile, par exemple un mode combat utiliserait tous les patchs
 sauf celui désactivant les monstres.
 
-\paragraph{Exemple de patch}
-
-\textbf{TODO David: configuration des patchs à appliquer pour chaque mode et
-	expliquer ce que ces patchs font + donner un exemple de patch avec détail
-	des lignes changées et l'effet sur le jeu.}
-
 \paragraph{Création de patchs :}
 
 Un patch est en fait le résultat d'un \verb!diff! entre
@@ -705,7 +678,7 @@ commit avec la commande suivante :
     git diff --patch HEAD~1 > nom_du_patch.patch
 \end{verbatim}
 
-TODO: Un exemple détaillé de création d'un patch est disponible dans le manuel
+Un exemple détaillé de création d'un patch est disponible dans le manuel
 d'utilisation (\verb!papers/manuel/!).
 
 \subsection{Développement de bots.}
