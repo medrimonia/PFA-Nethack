@@ -51,8 +51,8 @@
   \begin{flushright}
     \large
     \emph{Responsables :}\\
-    Pédagogique - M.~Renault\\
-    Client - M.~Le Borgne\\
+    Pédagogique - David Renault\\
+    Client - Yvan Le Borgne\\
   \end{flushright}
 \end{center}
 
@@ -611,7 +611,7 @@ Nous avons définis deux catégories de patchs : nécessaires ou facultatifs.
 Des patchs sont nécessaires lorsqu'ils permettent le fonctionnement des
 modules que nous avons ajoutés (ce sont notamment les patchs ajoutant des
 points d'entrée). Les patchs facultatifs sont majoritairement ceux qui
-définissent les modes de jeu or il est tout à fait possible de faire jouer les
+définissent les modes de jeu, or il est tout à fait possible de faire jouer les
 bots sur une version de nethack dans laquelle aucun danger n'est désactivé,
 ces derniers mourront plus rapidement.
 
@@ -621,21 +621,28 @@ Si de nouveaux modules devaient être ajoutés au projet, il faudrait donc crée
 les patchs correspondant (la création d'un patch est expliquée plus loin) et
 les placer dans le dossier \verb!install/!. Le nom de ces patchs doit être de
 la forme \verb!<nom_du_patch>.patch! afin d'être automatiquement détectés par
-le script d'installation \verb!nh-setup.sh!. Il est possible de modifier la
-recherche automatique des patchs en modifiant les lignes suivantes du script
-\verb!nh-setup.sh! (à partir de la ligne 67):
-\begin{verbatim}
-    for installpatch in install/*.patch; do
-        patch -p0 < $installpatch
-    done
-\end{verbatim}
+le script d'installation \verb!nh-setup.sh!. 
 
-Il est par exemple possible d'ajouter un nouveau dossier \verb!new_patches/!
-dans lequel rechercher les patchs nécessaire en remplaçant la première des
-lignes par :
-\begin{verbatim}
-    for installpatch in install/*.patch new_patches/*.patch; do
-\end{verbatim}
+% -----------------------------------------------------------------------
+% -----------------------------------------------------------------------
+% A mon avis ce qui suit n'est pas utile. Ca a sa place dans le manuel
+% -----------------------------------------------------------------------
+% -----------------------------------------------------------------------
+% Il est possible de modifier la
+% recherche automatique des patchs en modifiant les lignes suivantes du script
+% \verb!nh-setup.sh! (à partir de la ligne 67):
+% \begin{verbatim}
+%     for installpatch in install/*.patch; do
+%         patch -p0 < $installpatch
+%     done
+% \end{verbatim}
+% 
+% Il est par exemple possible d'ajouter un nouveau dossier \verb!new_patches/!
+% dans lequel rechercher les patchs nécessaire en remplaçant la première des
+% lignes par :
+% \begin{verbatim}
+%     for installpatch in install/*.patch new_patches/*.patch; do
+% \end{verbatim}
 
 Les patchs facultatifs sont traités différemment lors du processus
 d'installation et sont regroupés dans le dossier \verb!patches/!. Le script
@@ -648,13 +655,16 @@ existant en les plaçant dans le dossier \verb!patches/! et en les ajoutant
 éventuellement à la liste des patchs à appliquer par défaut dans le fichier
 \verb!patches/patch.conf!.
 
-Les patchs (facultatifs) servant à définir des modes de jeu ont été créés de
+Les patchs facultatifs servant à définir des modes de jeu ont été créés de
 manière à modifier chacun un aspect particulier du jeu. Par exemple un patch
-sert à désactiver les monstres, un autre désactive les pièges, etc. Ce
-découpage en petits patchs permet de pouvoir les réutiliser d'un mode de jeu à
-un autre, ainsi notre mode de jeu de recherche des portes secrète décrit
-précédemment utilise un sous-ensemble de ces patchs. Un autre mode de
-recherche de porte secrète spécifique à la recherche dans une salle utilise ce
+sert à désactiver les monstres, un autre désactive les pièges, etc. Ils ont
+été conçus en gardant à l'esprit qu'il fallait éviter toute collision entre
+deux patchs et donc les modifications qu'un seul d'entre eux apporte doit être
+minimal. Ce découpage en petits patchs permet de pouvoir les réutiliser d'un
+mode de jeu à un autre, ainsi notre mode de jeu de recherche des portes
+secrète décrit précédemment utilise un sous-ensemble de ces patchs. Un autre
+mode de recherche de porte secrète spécifique à la recherche dans une salle
+utilise ce
 même sous-ensemble de patchs plus un autre patch modifiant le donjon pour
 qu'il ne contienne qu'un niveau spécial. Définir un nouveau mode de jeu
 devient alors facile, par exemple un mode combat utiliserait tous les patchs
@@ -668,11 +678,10 @@ sauf celui désactivant les monstres.
 
 \paragraph{Création de patchs :}
 
-Un patch est en fait le résultat d'un \verb!diff!\footnote{man diff(1)} entre
+Un patch est en fait le résultat d'un \verb!diff! entre
 deux version d'un fichier. Ce patch peut alors être appliqué avec la commande
-\verb!patch!\footnote{man patch(1)} à l'ancien fichier afin de donner le
-nouveau.
-Il existe plusieurs façon de créer un tel fichier, l'une d'entre elle utilise
+\verb!patch! à l'ancien fichier afin de donner le nouveau.
+Il existe plusieurs façon de créer un tel fichier, l'une d'entre elles utilise
 git et la commande \verb!git diff --patch!. Il est par exemple possible de
 créer un patch à partir de la différence entre le commit courant et le dernier
 commit avec la commande suivante :
@@ -759,10 +768,19 @@ du bot en question.
 
 Ainsi, lors de la création d'un nouveau bot, il suffit de créer un dossier
 dédié à ce bot dans \verb!bots/! et d'écrire le fichier \verb!Makefile! qui
-permet de compiler ses sources, si besoin\footnote{Un bot écrit dans un
-langage interprété tel que Python n'aura pas besoin du \verb!Makefile!.}.
+permet de compiler ses sources, si besoin (un bot écrit dans un
+langage interprété tel que Python n'aura pas besoin du \verb!Makefile!).
 
-TODO David : décrire le fichier bots.conf
+De plus, un script (\verb!scripts/run_bot.sh!) a été créé pour simplifier le
+lancement du jeu et des bots. Ce script s'appuie sur le fichier de configuration
+\verb!bots/bots.conf! qui liste les paramètres d'exécution pour chaque bot.
+Ainsi, lorsqu'un \verb!make run! (utilisant le script sus-cité) est lancé
+depuis la racine du projet, une liste de bots est affichée à partir de ce
+fichier de configuration. À chaque ligne de la liste correspond un numéro à
+entrer pour sélectionner le bot à lancer. L'exécution du bot sur une partie
+est alors affichée. Pour ajouter un bot à cette liste de sélection, il suffit
+donc de rajouter la ligne correspondante dans le fichier \verb!bots/bots.conf!, 
+le format de chaque ligne est décrit en en-tête du fichier.
 
 \subsection{Outils d'analyse et de deboguage}
 
@@ -849,6 +867,13 @@ faite l'exploration :
 	jaune les cases \emph{découvertes} en premier, en bleu celles
 	\emph{découvertes} en dernier.}
 	\resizebox{\columnwidth}{!}{\input{../common/diffusion_tikz_exploration.tex}}
+\end{figure}
+
+\begin{figure}[H]
+	\caption{Ordre d'exploration de deux niveaux par le bot python. En
+	jaune les cases \emph{découvertes} en premier, en bleu celles
+	\emph{découvertes} en dernier.}
+	\resizebox{\columnwidth}{!}{\input{../common/pythonsp_tikz_exploration.tex}}
 \end{figure}
 
 
@@ -1581,8 +1606,31 @@ effectuer afin d'arriver à portée de la porte secrète (dont on ignore la
 position).
 
 \section{Documentation}
-TODO: manuel d'utilisation, nombreux README, commentaires de
-code (hors Doxygen), etc.
+De la documentation a été déployée à plusieurs niveaux autour de ce projet.
+Des fichiers {\em readme} aux commentaires dans le code, celle-ci se présente
+sous plusieurs formes et est adressée à des types différents de public.
+
+\subsection{Readme}
+
+Les fichiers \verb!README.md! s'adressent aux utilisateurs du projet, ils
+expliquent commentent l'installer, l'organisation de l'arborescence, quels
+sont les dépendances et comment utiliser les divers outils.
+
+Ces fichiers sont placés à différents endroits (dont la racine du projet) et
+sont écrit en Markdown, un langage à la syntaxe facile à lire permettant
+une mise en forme particulière par GitHub (hébergeant notre projet), pour un
+meilleur confort de lecture.
+
+\subsection{Manuel d'utilisation}
+
+Un manuel d'utilisation est plutôt adressée aux utilisateurs du projet mais
+donne également des pistes pour modifier certaines fonctionnalités et a donc
+un intérêt pour des développeurs du projet.
+Par rapport aux readme, le manuel donne une vue plus globale de l'utilisation
+du projet et fournit des détails supplémentaires. Celui-ci a été écrit en
+\LaTeX{} et est fourni en fichier pdf.
+
+\subsection{Doxygen}
 
 Doxygen a été utilisé afin de générer de façon automatique une documentation
 destinée à de prochains développeurs à partir des commentaires placés dans le
@@ -1607,10 +1655,17 @@ Les commentaires utilisés respectent le format suivant :
 Le choix de rassembler tout les commentaires dans les fichiers d'en-tête n'est
 pas anodin, cela facilite la lecture des commentaires dans le code source et
 évite de 'polluer' les fichiers \verb!'.c'!, ce qui rendrait la navigation
-plus difficile\footnote{Une autre pratique commune est le placement des
-détails d'implémentation dans les fichiers \verb!'.c'! et la description de
-l'utilité générale des fonctions dans les fichiers d'en-tête, cependant nous
-n'avons pas privilégié cette approche ici.}.
+plus difficile. Une autre pratique commune est le placement des détails
+d'implémentation dans les fichiers \verb!'.c'! et la description de l'utilité
+générale des fonctions dans les fichiers d'en-tête, cependant nous n'avons pas
+privilégié cette approche ici.
+
+\subsection{Commentaires de code}
+
+D'autres commentaires ont été écrit dans les fichiers \verb!'.c'! mais ne sont
+pas utilisés par Doxygen. Ces commentaires servent à donner des détails sur
+certaines portions de code dans le but de faciliter la lecture de celles-ci.
+Ces commentaires sont à l'attention des développeurs seulement.
 
 \section{Tests}
 Bien que nous n'ayons pas développés à proprement parler de tests unitaires au
@@ -1646,7 +1701,8 @@ de sept personnes, une séparation a eu lieu à mi-parcours, et c'est à trois q
 s'est déroulée la phase de développement. Sans s'attarder sur les raisons de
 cette séparation, il est nécessaire de l'évoquer afin de comprendre les
 comparaisons qui seront faîtes.
-\subsection{Utilisation de git :}
+
+\subsection{Utilisation de git}
 Lors de la première partie du projet, nous avions trois profils différents par
 rapport à git :
 \begin{itemize}
@@ -1675,7 +1731,7 @@ bots acceptent ce changement.
 Nous avons aussi utilisé les {\em issues} github pour noter les problèmes qui
 apparaissaient, entre autre afin de ne pas oublier qu'ils n'étaient pas traités.
 
-\subsection{Différences d'organisation :}
+\subsection{Différences d'organisation}
 Le fait que l'équipe ait été séparée en deux a modifié la nature du projet et
 des difficultés auxquels nous avons du faire face. Il est en effet évident que
 les problématiques de gestion de groupe qui se posent lors du développement à
@@ -1762,8 +1818,8 @@ Nethack le risque que des niveaux spécifiques soient utilisés, s'assurant ains
 que tous les niveaux sont générés aléatoirement.
 \\
 La définition des donjons et de l'utilisation de niveaux spéciaux se fait dans
-le fichier \verb!dat/dungeon.def! de
-NetHack\footnote{\verb!http://nethack.wikia.com/wiki/Dungeon.def_format!}. Il
+un des fichiers de NetHack : \verb!dat/dungeon.def!
+\footnote{\verb!http://nethack.wikia.com/wiki/Dungeon.def_format!}. Il
 est donc possible de désactiver les niveaux spéciaux en modifiant ce fichier.
 Cependant NetHack ayant des comportements parfois abscons, nous ne pouvons
 garantir le fonctionnement du jeu sans niveaux spéciaux, notamment du fait des
@@ -1898,6 +1954,39 @@ découverte de la porte secrète, indiquant ainsi dans quel direction l'on doit
 se diriger dans un état donné.
 
 \section{Conclusion}
-TODO
+
+Au cours de ce projet nous avons adopté une méthode de développement
+personnalisée et plutôt libre, basées sur des rencontres régulières avec notre
+client afin d'avoir des retours fréquents et pour plus de souplesse. Durant
+ces réunions (se déroulant environ touts les deux semaines au début, puis plus
+espacées par la suite) nous présentions ce qui avait été fait jusqu'à présent
+et discutions de nouveaux objectifs potentiels. Cette méthode s'apparente aux
+méthodes agiles mais diffère de certaines d'entre elles, telle que Scrum, qui
+sont basées sur des itérations (ou sprint pour Scrum) à l'issue desquelles un
+délivrable partiel est fourni. Nous préférions avoir plus de liberté dans
+notre développement avec pour inspiration les attentes de notre client.
+
+\paragraph{}
+Une autre caractéristique de notre projet est l'utilisation de plusieurs
+langages différents afin de simplifier le développement.
+En effet, le module de visualisation des parties jouées par exemple a été écrit
+en perl car il aurait demandé un temps de développement plus conséquent pour
+être écrite en C (il aurait fallu gérer des contraintes bas niveau qui
+pouvaient être gérées simplement en perl). De plus, de nombreux scripts bash
+sont utilisés, que ce soit pour l'installation du projet comme pour la
+production de graphes. Il est donc parfois nécessaire de lire les \verb!README!
+pour comprendre leur utilité et savoir les utiliser (pour la plupart des
+scripts une option \verb!-h! affiche une aide à l'utilisation). Ces choix ont
+été fait car après concertation avec notre client, Monsieur Le Borgne, il a
+semblé préférable de concentrer le développement sur la créations de nombreux
+outils statistiques afin de pouvoir évaluer selon différents critères les bots
+et faire des comparaisons entre plusieurs bots.
+
+Avec du temps supplémentaire, nous aurions pu développer une unité plus
+user-friendly pour ce qui est de l'exploitation des statistiques collectées
+dans la base de données à l'issue des parties jouée. Regrouper l'ensemble des
+fonctionnalités des scripts sous la forme d'un logiciel avec une interface
+graphique pourrait faire l'objet d'une amélioration en cas de reprise du
+projet.
 
 \end{document}
