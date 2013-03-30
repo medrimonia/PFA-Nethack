@@ -1561,8 +1561,31 @@ effectuer afin d'arriver à portée de la porte secrète (dont on ignore la
 position).
 
 \section{Documentation}
-TODO: manuel d'utilisation, nombreux README, commentaires de
-code (hors Doxygen), etc.
+De la documentation a été déployée à plusieurs niveaux autour de ce projet.
+Des fichiers {\em readme} aux commentaires dans le code, celle-ci se présente
+sous plusieurs formes et est adressée à des types différents de public.
+
+\subsection{Readme}
+
+Les fichiers \verb!README.md! s'adressent aux utilisateurs du projet, ils
+expliquent commentent l'installer, l'organisation de l'arborescence, quels
+sont les dépendances et comment utiliser les divers outils.
+
+Ces fichiers sont placés à différents endroits (dont la racine du projet) et
+sont écrit en Markdown, un langage à la syntaxe facile à lire permettant
+une mise en forme particulière par GitHub (hébergeant notre projet), pour un
+meilleur confort de lecture.
+
+\subsection{Manuel d'utilisation}
+
+Un manuel d'utilisation est plutôt adressée aux utilisateurs du projet mais
+donne également des pistes pour modifier certaines fonctionnalités et a donc
+un intérêt pour des développeurs du projet.
+Par rapport aux readme, le manuel donne une vue plus globale de l'utilisation
+du projet et fournit des détails supplémentaires. Celui-ci a été écrit en
+\LaTeX{} et est fourni en fichier pdf.
+
+\subsection{Doxygen}
 
 Doxygen a été utilisé afin de générer de façon automatique une documentation
 destinée à de prochains développeurs à partir des commentaires placés dans le
@@ -1587,10 +1610,17 @@ Les commentaires utilisés respectent le format suivant :
 Le choix de rassembler tout les commentaires dans les fichiers d'en-tête n'est
 pas anodin, cela facilite la lecture des commentaires dans le code source et
 évite de 'polluer' les fichiers \verb!'.c'!, ce qui rendrait la navigation
-plus difficile\footnote{Une autre pratique commune est le placement des
-détails d'implémentation dans les fichiers \verb!'.c'! et la description de
-l'utilité générale des fonctions dans les fichiers d'en-tête, cependant nous
-n'avons pas privilégié cette approche ici.}.
+plus difficile. Une autre pratique commune est le placement des détails
+d'implémentation dans les fichiers \verb!'.c'! et la description de l'utilité
+générale des fonctions dans les fichiers d'en-tête, cependant nous n'avons pas
+privilégié cette approche ici.
+
+\subsection{Commentaires de code}
+
+D'autres commentaires ont été écrit dans les fichiers \verb!'.c'! mais ne sont
+pas utilisés par Doxygen. Ces commentaires servent à donner des détails sur
+certaines portions de code dans le but de faciliter la lecture de celles-ci.
+Ces commentaires sont à l'attention des développeurs seulement.
 
 \section{Tests}
 Bien que nous n'ayons pas développés à proprement parler de tests unitaires au
