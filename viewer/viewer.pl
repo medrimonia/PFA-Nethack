@@ -20,6 +20,11 @@ The prompt accepts these commands:
   `N` : goto turn number N.
   `s N` : slideshow with N turns per second. Any key stops the slideshow.
   `b N` : backward slideshow with N turns per second. Any key stops the slideshow.
+ 
+Note : 'turns' are not in-game turns, they are communication turns. This means
+that each time NetHacks' kernel wait for a command counts as a turn. For
+instance, "jjj" counts as 3 turns, "3j" counts as 2 turns. However actions
+that are followed by a direction count as 1 turn ("oj", "^Dk", etc).
 EOU
 
 if ($#ARGV < 0) {
