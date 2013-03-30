@@ -71,7 +71,7 @@ int update_db_time();
  * Only a dozen of transaction can be done by second.
  * Nested start_transaction must absolutely be avoided
  *
- * WARNING : Comportment hasn't been tested if database is used simultaneously
+ * \warning Comportment hasn't been tested if database is used simultaneously
  *           with another API.
  */
 void start_transaction();
