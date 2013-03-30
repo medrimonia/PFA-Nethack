@@ -624,6 +624,10 @@ mm_nh_poskey(x, y, mod)
 	//TODO check moves evolution in order to check if there's deadlock
 	mm_log("mm_nh_poskey", "");
 	
+	if (dupmsgs) {
+		write(STDOUT_FILENO, "ES", 2);
+	}
+
 	int cmd = mm_recv();
 
 	if (cmd < 0) {
@@ -676,10 +680,6 @@ int mm_recv()
 	ssize_t size;
 	char buf[BUFSIZE];
 	int i, cmd, nb_received;
-
-	if (dupmsgs) {
-		write(STDOUT_FILENO, "E", 1);
-	}
 
 	while (1) {
 		// loop until a valid command is received
@@ -759,10 +759,6 @@ int mm_recv()
 			fprintf(stderr, "Warning: '#' commands are NOT supported!\n");
 			continue;
 		}
-	}
-
-	if (dupmsgs) {
-		write(STDOUT_FILENO, "S", 1);
 	}
 
 	return cmd;
