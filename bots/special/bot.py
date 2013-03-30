@@ -1,6 +1,6 @@
+import sys
 import time
 import struct
-import string
 import random
 from socket import *
 
@@ -9,31 +9,50 @@ from nhmap import *
 posc = 0
 posr = 0
 
+map_width = 80; # default
+map_height = 21; # default
+glyphs = new_map(map_width, map_height)
+
 keys = [['k', 0, -1], ['l', 1, 0], ['j', 0, 1], ['h', -1, 0]]
 pos = 0
 search_nb = 3          #number of searches on each tile
 search_step = 2        #lunch searches every 2 tiles
 
-print "new game..."
 
+retries = 0;
+connected = False
 s = socket(AF_UNIX, SOCK_STREAM)
-if (len(sys.argv) < 2):
-	s.connect("/tmp/mmsock")
-else:
-	s.connect(sys.argv[1])
+
+while (not connected):
+	try:
+		if (len(sys.argv) < 2):
+			s.connect("/tmp/mmsock")
+		else:
+			s.connect(sys.argv[1])
+		connected = True
+	except error:
+		print "Could not connect. Will try again in 1 second"
+		retries += 1
+		time.sleep(1)
+	
+	if (retries >= 10):
+		print "Could not connect after 10 attempts, exiting."
+		sys.exit(1)
 
 data = []
 random.seed()
 cmds = []
 tile_index = 0
 
-map_width = 80; # default
-map_height = 21; # default
-glyphs = new_map(map_width, map_height)
-
 while 1:
 	
-	received = s.recv(128)
+	try:
+		received = s.recv(128)
+	except error:
+		print "Disconnected"
+		s.close()
+		sys.exit(1)
+
 	data.extend(received)
 	dlen = len(data)
 
@@ -42,8 +61,13 @@ while 1:
 
 	i = 0
 	while (i < dlen):
-		if (data[i] == 'S' or data[i] == 'C'):
+		if (data[i] == 'S'):
 			i += 1
+			continue
+
+		elif (data[i] == 'C'):
+			i += 1;
+			glyphs = new_map(map_width, map_height)
 			continue
 
 		elif (data[i] == 'E'):
@@ -60,8 +84,6 @@ while 1:
 			cmd = cmds[0]
 			cmds = cmds[1:]
 			s.sendall(cmd)
-			#print cmds
-			#print cmd
 			#dump_map(glyphs)
 			#dump_been_there(glyphs)
 			#time.sleep(0.05)
@@ -81,11 +103,12 @@ while 1:
 				r = ord(data[i+2])
 				g = data[i+3]
 				code = struct.unpack('H', ''.join(data[i+4:i+6]))[0]
-				set_glyph(glyphs, c, r, g, code)
 				i += 6
 				if (g == '@' and code < 400):
 					posc = c
 					posr = r
+				elif (g != '@' and code >= 2344 and code <= 2410):
+					set_glyph(glyphs, c, r, g, code)
 			else:
 				break
 
