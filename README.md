@@ -2,7 +2,7 @@ PFA-Nethack
 ===========
 
 Nethack-3.4.3 can be downloaded, installed and patched for mods with the
-nh-setup.sh script.
+nh-setup.sh script. A Makefile is also provided for simpler usage.
 
 The folder 'architecture' contains more informations about the architecture and
 the database used to store all the games details.
@@ -30,7 +30,8 @@ graphs or other utilities based on our programs. Every script is described in
 'scripts/README.md'
 
 The folder 'viewer' contains a program called `viewer.pl` which can show
-replays of games played by bots.
+replays of games played by bots. It also contains a program called `toTikZ.pl`
+which can produce beautiful images summaring bots movements during a game.
 
 
 ## Used package
