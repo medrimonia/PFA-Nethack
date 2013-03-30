@@ -768,10 +768,19 @@ du bot en question.
 
 Ainsi, lors de la création d'un nouveau bot, il suffit de créer un dossier
 dédié à ce bot dans \verb!bots/! et d'écrire le fichier \verb!Makefile! qui
-permet de compiler ses sources, si besoin\footnote{Un bot écrit dans un
-langage interprété tel que Python n'aura pas besoin du \verb!Makefile!.}.
+permet de compiler ses sources, si besoin (un bot écrit dans un
+langage interprété tel que Python n'aura pas besoin du \verb!Makefile!).
 
-TODO David : décrire le fichier bots.conf
+De plus, un script (\verb!scripts/run_bot.sh!) a été créé pour simplifier le
+lancement du jeu et des bots. Ce script s'appuie sur le fichier de configuration
+\verb!bots/bots.conf! qui liste les paramètres d'exécution pour chaque bot.
+Ainsi, lorsqu'un \verb!make run! (utilisant le script sus-cité) est lancé
+depuis la racine du projet, une liste de bots est affichée à partir de ce
+fichier de configuration. À chaque ligne de la liste correspond un numéro à
+entrer pour sélectionner le bot à lancer. L'exécution du bot sur une partie
+est alors affichée. Pour ajouter un bot à cette liste de sélection, il suffit
+donc de rajouter la ligne correspondante dans le fichier \verb!bots/bots.conf!, 
+le format de chaque ligne est décrit en en-tête du fichier.
 
 \subsection{Outils d'analyse et de deboguage}
 
@@ -1552,8 +1561,31 @@ effectuer afin d'arriver à portée de la porte secrète (dont on ignore la
 position).
 
 \section{Documentation}
-TODO: manuel d'utilisation, nombreux README, commentaires de
-code (hors Doxygen), etc.
+De la documentation a été déployée à plusieurs niveaux autour de ce projet.
+Des fichiers {\em readme} aux commentaires dans le code, celle-ci se présente
+sous plusieurs formes et est adressée à des types différents de public.
+
+\subsection{Readme}
+
+Les fichiers \verb!README.md! s'adressent aux utilisateurs du projet, ils
+expliquent commentent l'installer, l'organisation de l'arborescence, quels
+sont les dépendances et comment utiliser les divers outils.
+
+Ces fichiers sont placés à différents endroits (dont la racine du projet) et
+sont écrit en Markdown, un langage à la syntaxe facile à lire permettant
+une mise en forme particulière par GitHub (hébergeant notre projet), pour un
+meilleur confort de lecture.
+
+\subsection{Manuel d'utilisation}
+
+Un manuel d'utilisation est plutôt adressée aux utilisateurs du projet mais
+donne également des pistes pour modifier certaines fonctionnalités et a donc
+un intérêt pour des développeurs du projet.
+Par rapport aux readme, le manuel donne une vue plus globale de l'utilisation
+du projet et fournit des détails supplémentaires. Celui-ci a été écrit en
+\LaTeX{} et est fourni en fichier pdf.
+
+\subsection{Doxygen}
 
 Doxygen a été utilisé afin de générer de façon automatique une documentation
 destinée à de prochains développeurs à partir des commentaires placés dans le
@@ -1578,10 +1610,17 @@ Les commentaires utilisés respectent le format suivant :
 Le choix de rassembler tout les commentaires dans les fichiers d'en-tête n'est
 pas anodin, cela facilite la lecture des commentaires dans le code source et
 évite de 'polluer' les fichiers \verb!'.c'!, ce qui rendrait la navigation
-plus difficile\footnote{Une autre pratique commune est le placement des
-détails d'implémentation dans les fichiers \verb!'.c'! et la description de
-l'utilité générale des fonctions dans les fichiers d'en-tête, cependant nous
-n'avons pas privilégié cette approche ici.}.
+plus difficile. Une autre pratique commune est le placement des détails
+d'implémentation dans les fichiers \verb!'.c'! et la description de l'utilité
+générale des fonctions dans les fichiers d'en-tête, cependant nous n'avons pas
+privilégié cette approche ici.
+
+\subsection{Commentaires de code}
+
+D'autres commentaires ont été écrit dans les fichiers \verb!'.c'! mais ne sont
+pas utilisés par Doxygen. Ces commentaires servent à donner des détails sur
+certaines portions de code dans le but de faciliter la lecture de celles-ci.
+Ces commentaires sont à l'attention des développeurs seulement.
 
 \section{Tests}
 Bien que nous n'ayons pas développés à proprement parler de tests unitaires au
@@ -1890,7 +1929,7 @@ en perl car il aurait demandé un temps de développement plus conséquent pour
 être écrite en C (il aurait fallu gérer des contraintes bas niveau qui
 pouvaient être gérées simplement en perl). De plus, de nombreux scripts bash
 sont utilisés, que ce soit pour l'installation du projet comme pour la
-production de graphes. Il est donc parfois nécessaire de lire les README
+production de graphes. Il est donc parfois nécessaire de lire les \verb!README!
 pour comprendre leur utilité et savoir les utiliser (pour la plupart des
 scripts une option \verb!-h! affiche une aide à l'utilisation). Ces choix ont
 été fait car après concertation avec notre client, Monsieur Le Borgne, il a

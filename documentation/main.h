@@ -11,7 +11,7 @@
  * and to evaluate them. It has been built to be compatible with UNIX systems
  * but could be ported to others systems with some modifications.
  *
- * @section Downloading the project
+ * @section download Downloading the project
  *
  * Our project can be found on the following repository:
  * https://github.com/medrimonia/PFA-Nethack/
@@ -46,10 +46,11 @@
  *
  * @section Modules
  *
- * The src folder contains the following files :
- * - @link database_manager.c @endlink (TODO: little description)
- * - @link game_result.c      @endlink (TODO: little description)
- * - @link game_statistics.c  @endlink (TODO: little description)
- * - @link middleman.c        @endlink (TODO: little description)
- * - @link pfamain.c          @endlink (TODO: little description)
+ * You will find detailed explanations of the main functions in the following
+ * files :
+ * - @link database_manager.h @endlink
+ * - @link game_result.h      @endlink
+ * - @link game_statistics.h  @endlink
+ * - @link middleman.h        @endlink
+ * - @link pfamain.h          @endlink
  */
