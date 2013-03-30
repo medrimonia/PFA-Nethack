@@ -189,13 +189,14 @@ encombrer le joueur) sont désactivés afin de concentrer l'intelligence des
 bots sur la recherche. Les bots sont donc plus faciles à développer pour un
 mode de jeu donné.
 
+\pagebreak
 \section{Architecture finale}
 
 Bien que le développement du projet ait majoritairement suivi le schéma
 défini dans le document de spécification, certains détails ont légèrement
 changé. Par exemple, un effort a été fait pour réduire autant que possible
 le nombre de références à des fichiers externes dans les patchs sur le noyau
-de Nethack. Pour arriver à ce résultat, nous nous sommes servis du header
+de NetHack. Pour arriver à ce résultat, nous nous sommes servis du header
 {\verb|pfa_main.h|} comme point d'entrée.
 \footnote{Il est facile de vérifier les dépendances ajoutées à l'aide de
   l'instruction suivante :\\
@@ -227,14 +228,14 @@ pouvoir permettre des créer des bots dans d'autres langages.
 
 \paragraph{Patchs :}
 L'utilisation des patchs permet de visualiser facilement quels sont les
-modifications apportées à nethack. Pour une plus grande facilité de
+modifications apportées à NetHack. Pour une plus grande facilité de
 développement, mais aussi pour plus de clarté, nous avons utilisé autant que
 possibles des 'hooks', ceux-ci passant tous par pfamain afin de réduire au
 maximum le nombre d'include ajoutés dans les patchs.
 
 \paragraph{Obtention de données par game statistics :}
 Afin d'obtenir les données internes au jeu, game statistics doit nécessairement
-se servir d'une part du code existant de nethack, afin de connaître le nombre de
+se servir d'une part du code existant de NetHack, afin de connaître le nombre de
 cases explorables par exemple.
 
 \paragraph{Gestion de la base de données :}
@@ -251,9 +252,10 @@ visualisation de l'exploration à l'aide du programme {\verb|toTikz.pl|}.
 \paragraph{Scripts :}
 Même s'ils ne sont pas présentés sur ce schéma car ils ne font pas partie
 intégrante du logiciel, des scripts bash permettent de créer des graphiques à
-partir de base de données qui ont été alimentées par cette version de nethack.
+partir de base de données qui ont été alimentées par cette version de NetHack.
 
 
+\pagebreak
 \section{Environnement de création de bots}
 
 \subsection{Prototypage}
@@ -552,7 +554,7 @@ graphiques, une solution aurait donc très bien pu être de rediriger les appels
 aux fonctions de l'interface que nous avons développée vers celles d'une
 interface existante. Cependant, cela pose un problème non négligeable : les
 différentes interfaces graphiques s'autorisent des fonctions bloquantes
-(fenêtre de dialogue propres à chacune d'elles par exemple). A moins de
+(fenêtre de dialogue propres à chacune d'elles par exemple). À moins de
 supprimer ou d'adapter les fonctions gênantes pour chacune d'elles, il n'est
 pas envisageable d'utiliser cette solution avec un bot.
 
@@ -563,14 +565,14 @@ dupliquer le travail que le bot doit déjà faire de lui même.
 
 La solution retenue fut de dupliquer les échanges entre l'interface et le bot
 et de les faire interpréter par un client ayant la capacité de reconstituer la
-carte en l'utilisant en 'lecture seule'. C'est à dire que l'envoie de
+carte en l'utilisant en 'lecture seule'. C'est-à-dire que l'envoie de
 commande est désactivé et qu'il ne fait que lire et afficher la carte
 transmise. Ce client est présenté brièvement ci-après.
 
 
 \paragraph{} Le protocole de communication entre un bot et le jeu a été
 modifié depuis le prototype. L'interface retransmet à l'identique au noyau de
-NetHack les commandes transmises par le bot. C'est à dire que le client doit
+NetHack les commandes transmises par le bot. C'est-à-dire que le client doit
 utiliser les commandes originales du jeu et que le langage faisant abstraction
 de celles-ci a été abandonné. Exception est faite des commandes commençant par
 '\verb!#!' qui ne sont pas supportées. Ceci est dû au code original de NetHack
@@ -643,7 +645,7 @@ Des patchs sont nécessaires lorsqu'ils permettent le fonctionnement des
 modules que nous avons ajoutés (ce sont notamment les patchs ajoutant des
 points d'entrée). Les patchs facultatifs sont majoritairement ceux qui
 définissent les modes de jeu, or il est tout à fait possible de faire jouer les
-bots sur une version de nethack dans laquelle aucun danger n'est désactivé,
+bots sur une version de NetHack dans laquelle aucun danger n'est désactivé,
 ces derniers mourront plus rapidement.
 
 Les patchs nécessaires sont automatiquement appliqués au code de NetHack lors
@@ -952,7 +954,7 @@ celui-ci n'étant pas trop volumineux, il était parfaitement concevable de nous
 \subsubsection{Scripts de génération de graphiques}
 
 Afin de visualiser les performances des différents bots, de pouvoir les comparer
-facilement et de pouvoir vérifier statistiquement des propriétés de nethack,
+facilement et de pouvoir vérifier statistiquement des propriétés de NetHack,
 nous avons mis en place des scripts permettant de générer de façon automatique
 différents graphiques à partir d'une base de données. Ces graphiques se séparent
 en trois catégories principales :
@@ -966,7 +968,7 @@ en trois catégories principales :
   différentes stratégies par rapport à des objectifs.
 \item Les graphiques analysant des données qui ne sont pas spécifiques au bot
   afin de permettre de vérifier certaines propriétés ou d'observer la
-  distribution de certains événements aléatoires propres à nethack.
+  distribution de certains événements aléatoires propres à NetHack.
 \end{itemize}
 Tous les graphiques sont générés à l'aide de {\em gnuplot}, le type de sortie
 peut facilement être modifié et permet ainsi de convenir à ce qui est attendu
@@ -994,7 +996,7 @@ répartition
 que pour les performances du bot, il génère un graphique similaire pour le
 résultat
 maximal de chaque caractéristique, ce qui permet aussi d'observer la répartition
-de celle-ci pour nethack. Nous avons ainsi constaté que la plupart des
+de celle-ci pour NetHack. Nous avons ainsi constaté que la plupart des
 caractéristiques \footnote{Nombre de portes secrètes présentes sur un niveau,
 nombre de couloirs secrets présents sur un niveau et nombre de cases
 explorables} que nous avons observées suivaient une distribution ayant en tout
@@ -1065,13 +1067,14 @@ L'utilité exacte de ce type de graphiques sera approfondie dans la partie
 {\em Analyses}.
 
 
+\pagebreak
 \section{Analyses}
 
 Le code fourni nous a permis non seulement de comparer l'efficacité des bots
 existants dans différents modes de jeu, mais aussi d'analyser certains aspects
-de nethack. Pour tous ces tests, nous n'avons finalement utilisé qu'un seul
+de NetHack. Pour tous ces tests, nous n'avons finalement utilisé qu'un seul
 ensemble de patchs, celui associé à l'exploration. Les modifications de
-l'expérience de jeu par rapport à la version originale de nethack sont les
+l'expérience de jeu par rapport à la version originale de NetHack sont les
 suivantes :
 
 \begin{itemize}
@@ -1234,9 +1237,9 @@ Pour un temps de calcul du même ordre que le bot aléatoire, le bot
 Cependant, il n'est pas fait pour être adapté à des changements d'objectifs
 rapidement contrairement au bot {\em diffusion} qui obtient des scores
 d'exploration élevés tout en permettant de changer les buts très facilement. Ces
-avantages ont en revanche un coût en complexité très élevé \footnote{ Il devrait
+avantages ont en revanche un coût en complexité très élevé (il devrait
 néanmoins être possible d'améliorer grandement le temps d'exécution de ce bot
-avec des solutions algorithmiques plus poussées.}.
+avec des solutions algorithmiques plus poussées).
 
 \subsection{Éléments indépendants des bots}
 Certaines de nos analyses ne concernaient pas des bots, mais le jeu lui-même. En
@@ -1321,7 +1324,7 @@ plus de couloirs au centre de la pièce que dans les bords, comme évoqué dans 
 paragraphe {\em Événements indépendants}}.
 \\
 Ces observations encouragent aussi à approfondir les recherches générales sur
-Nethack afin de pouvoir les utiliser pour améliorer des bots.
+NetHack afin de pouvoir les utiliser pour améliorer des bots.
 
 \subsection{Problème simplifié : sortie d'une salle}
 
@@ -1647,6 +1650,7 @@ recherches, il reste tout de même un nombre de mouvement non négligeable à
 effectuer afin d'arriver à portée de la porte secrète (dont on ignore la
 position).
 
+\pagebreak
 \section{Documentation}
 De la documentation a été déployée à plusieurs niveaux autour de ce projet.
 Des fichiers {\em readme} aux commentaires dans le code, celle-ci se présente
@@ -1709,6 +1713,7 @@ pas utilisés par Doxygen. Ces commentaires servent à donner des détails sur
 certaines portions de code dans le but de faciliter la lecture de celles-ci.
 Ces commentaires sont à l'attention des développeurs seulement.
 
+\pagebreak
 \section{Tests}
 Bien que nous n'ayons pas développés à proprement parler de tests unitaires au
 cours de notre projet, nous n'avons pas négligé le fait de tester notre code. Au
@@ -1731,6 +1736,7 @@ dysfonctionnements qui provenaient des bots afin de les corriger. Le module de
 visualisation de l'exploration {\em toTikz} permet aussi de mieux comprendre les
 problèmes du bot.
 
+\pagebreak
 \section{Travail en équipe, organisation}
 
 Bien que la conception du programme se soit effectuée au sein d'un groupe
@@ -1791,7 +1797,7 @@ collaborer et à apprendre les uns des autres.
 \subsection{Conventions}
 Comme une partie de notre projet consiste à créer des patchs et à s'insérer dans
 du code existant, il nous semblait naturel de chercher à adopter les conventions
-utilisées par Nethack afin d'obtenir une certaine homogéneité dans celui-ci.
+utilisées par NetHack afin d'obtenir une certaine homogéneité dans celui-ci.
 Les standards de codage variant à l'intérieur du projet et étant assez loin de
 ceux auxquels nous sommes habitués, nous avons donc décidé trouver un juste
 milieu en s'axant sur certains critères.
@@ -1802,10 +1808,10 @@ milieu en s'axant sur certains critères.
   commentaires que pour les readme. Ce choix permet d'éviter de trop mélanger
   les appellations.
 \item {\em L'utilisation des tabulations et des espaces :}\\
-  Nethack mêlant les tabulations et les espaces, nous avons décidé de vérifier
+  NetHack mêlant les tabulations et les espaces, nous avons décidé de vérifier
   que quelque soit la taille d'affichage de la tabulation, nos patchs modifient
   le code de façon cohérente avec le code environnant. Pour le code extérieur à
-  Nethack, nous avons choisi d'utiliser des tabulations pour marquer
+  NetHack, nous avons choisi d'utiliser des tabulations pour marquer
   l'indentation et des espaces pour l'alignement, permettant ainsi aux
   utilisateurs de visualiser le code avec l'indentation qu'ils préfèrent, sans
   pour autant gâcher les alignements.
@@ -1818,7 +1824,7 @@ milieu en s'axant sur certains critères.
 \item {\em Le nommage des variables et des fonctions :}\\
   Mis à part pour le code des bots en java qui suit un nommage CamelCase,
   nous avons décidé d'adopté un nommage à base d'underscore, comme utilisé dans
-  nethack.
+  NetHack.
 \item {\em Les accolades}\\
   Nous avons uniformisés le positionnement des accolades afin de faciliter la
   lecture du code.
@@ -1829,6 +1835,7 @@ respecter, néanmoins, nous avons plus considérés ces règles comme des sortes
 guides que comme une procédure stricte, il existe donc certainement des
 exceptions à celles-ci dans le projet.
 
+\pagebreak
 \section{Améliorations possibles}
 Ce projet peut servir de base pour essayer différents bots d'exploration,
 et pour valider leur efficacité par des expériences pratiques. Il peut aussi
@@ -1837,21 +1844,21 @@ encore d'étude théorique. Plusieurs de ces perspectives de continuation seront
 décrites ici afin de donner des pistes à quiconque souhaiterait enrichir ce
 projet.
 
-\subsection{Fonctionnement de Nethack}
+\subsection{Fonctionnement de NetHack}
 \subsubsection{Désactiver les niveaux spéciaux}
 Aucun des patchs que nous avons créé ne modifie la génération des niveaux
 original. Si ce fait ne nous a pas posé de problèmes lorsque les bots se
 limitaient à l'exploration du premier niveau, cela s'est révélé être un problème
 lorsque le but donné aux bots était de descendre dans le niveau le plus bas
 possible. En effet, il se retrouvait toujours arrêté par des niveaux prédéfinis
-qui présentait une spécificité\footnote{Pour certains niveaux, il était
+qui présentait une spécificité (pour certains niveaux, il était
 nécessaire d'accomplir une quête pour pouvoir déverrouiller des portes, ces
 interactions n'étant pas spécifiées par notre protocole, il était impossible que
-le bot atteigne le niveau suivant.}.
+le bot atteigne le niveau suivant).
 \\
 Si l'on souhaite atteindre le niveau le plus profond sans demander aux bots de
 faire ces interactions, il peut être nécessaire de désactiver dans le noyau de
-Nethack le risque que des niveaux spécifiques soient utilisés, s'assurant ainsi
+NetHack le risque que des niveaux spécifiques soient utilisés, s'assurant ainsi
 que tous les niveaux sont générés aléatoirement.
 \\
 La définition des donjons et de l'utilisation de niveaux spéciaux se fait dans
@@ -1915,16 +1922,16 @@ contenu des niveaux. Ajouter des modes où le personnage devrait par exemple
 combattre ou encore ramasser le plus d'or possible permettrait une plus grande
 diversité et peut-être qu'en combinant les différents bots ensemble, il serait
 possible d'obtenir un bot capable d'explorer une version non-modifiée de
-Nethack.
+NetHack.
 
 \subsubsection{Résoudre le problème du sémaphore}
 Dans la version actuelle du projet, lorsqu'un utilisateur tue un processus de
-Nethack alors que celui-ci était en train d'écrire dans la base de donnée, il se
+NetHack alors que celui-ci était en train d'écrire dans la base de donnée, il se
 termine immédiatement, sans même prendre le temps de libérer le sémaphore qu'il
 a bloqué en entrant dans la section critique qu'est l'ajout d'une entrée à la
 base de données. À l'aide d'un gestionnaire de signaux, il est peut-être
 possible d'assurer le fait que le sémaphore soit tout de même libéré avant
-l'extinction de Nethack. Comme cette zone critique contient des appels à des
+l'extinction de NetHack. Comme cette zone critique contient des appels à des
 fonctions appartenant à la bibliothèque {\verb|sqlite3|}, il est envisageable
 que la gestion des signaux de celle-ci interfère avec celle définie pour régler
 le problème du sémaphore.
@@ -1934,9 +1941,9 @@ Lorsqu'une série de partie intensive est lancée à partir d'un script, les
 historiques permettant de rejouer une partie ne peuvent pas être conservés.
 Fournir aux utilisateurs une fonctionnalité leur permettant de pouvoir revoir la
 partie sans avoir à la rejouer peut se révéler utile, pour cela, il est possible
-soit d'utiliser une variable d'environnement pour transmettre à Nethack le
+soit d'utiliser une variable d'environnement pour transmettre à NetHack le
 chemin désiré pour ce fichier. Soit de déplacer ce fichier après chaque
-exécution de Nethack afin de le conserver.
+exécution de NetHack afin de le conserver.
 
 \subsection{Bots}
 \subsubsection{Diminuer le temps de calcul du bot diffusion}
@@ -1959,7 +1966,7 @@ public, développer des starter packages dans d'autres langages permettrait un
 plus grand choix pour les utilisateurs.
 
 \subsubsection{Complexifier le problème}
-Afin de s'approcher de la résolution réelle de Nethack, il est possible
+Afin de s'approcher de la résolution réelle de NetHack, il est possible
 d'ajouter peu à peu des difficultés, par exemple en réintroduisant le fait que
 les portes ouvertes ne disparaissent pas ou les monstres.
 
@@ -1976,7 +1983,7 @@ maximale en essayant d'optimiser encore un bot sur ce problème, en lui faisant
 appliquer une routine à l'aide d'un programme à l'image de celui qui permet de
 calculer le nombre de recherches minimales. Cette version théorique pourrait
 aussi être comparée à la version pratique en implémentant la même stratégie dans
-un bot. Cela permettrait de valider que le modèle de Nethack correspond bien au
+un bot. Cela permettrait de valider que le modèle de NetHack correspond bien au
 modèle théorique.
 
 \subsubsection{Générer des données utilisables par les bots}
@@ -1989,6 +1996,7 @@ paramètres, tel que le barycentre des cases découvertes au moment de la
 découverte de la porte secrète, indiquant ainsi dans quel direction l'on doit
 se diriger dans un état donné.
 
+\pagebreak
 \section{Conclusion}
 
 Au cours de ce projet nous avons adopté une méthode de développement
@@ -2006,9 +2014,9 @@ notre développement avec pour inspiration les attentes de notre client.
 Une autre caractéristique de notre projet est l'utilisation de plusieurs
 langages différents afin de simplifier le développement.
 En effet, l'outil de visualisation des parties jouées par exemple a été écrit
-en perl car il aurait demandé un temps de développement plus conséquent pour
+en Perl car il aurait demandé un temps de développement plus conséquent pour
 être écrit en C (il aurait fallu gérer des contraintes bas niveau qui
-pouvaient être gérées simplement en perl). De plus, de nombreux scripts bash
+pouvaient être gérées simplement en Perl). De plus, de nombreux scripts bash
 sont utilisés, que ce soit pour l'installation du projet comme pour la
 production de graphes. Il est donc parfois nécessaire de lire les \verb!README!
 pour comprendre leur utilité et savoir les utiliser (pour la plupart des
@@ -2020,7 +2028,7 @@ et faire des comparaisons entre plusieurs bots.
 
 Avec du temps supplémentaire, nous aurions pu développer une unité plus
 user-friendly pour ce qui est de l'exploitation des statistiques collectées
-dans la base de données à l'issue des parties jouée. Regrouper l'ensemble des
+dans la base de données à l'issue des parties jouées. Regrouper l'ensemble des
 fonctionnalités des scripts sous la forme d'un logiciel avec une interface
 graphique pourrait faire l'objet d'une amélioration en cas de reprise du
 projet.
