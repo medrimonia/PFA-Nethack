@@ -768,10 +768,19 @@ du bot en question.
 
 Ainsi, lors de la création d'un nouveau bot, il suffit de créer un dossier
 dédié à ce bot dans \verb!bots/! et d'écrire le fichier \verb!Makefile! qui
-permet de compiler ses sources, si besoin\footnote{Un bot écrit dans un
-langage interprété tel que Python n'aura pas besoin du \verb!Makefile!.}.
+permet de compiler ses sources, si besoin (un bot écrit dans un
+langage interprété tel que Python n'aura pas besoin du \verb!Makefile!).
 
-TODO David : décrire le fichier bots.conf
+De plus, un script (\verb!scripts/run_bot.sh!) a été créé pour simplifier le
+lancement du jeu et des bots. Ce script s'appuie sur le fichier de configuration
+\verb!bots/bots.conf! qui liste les paramètres d'exécution pour chaque bot.
+Ainsi, lorsqu'un \verb!make run! (utilisant le script sus-cité) est lancé
+depuis la racine du projet, une liste de bots est affichée à partir de ce
+fichier de configuration. À chaque ligne de la liste correspond un numéro à
+entrer pour sélectionner le bot à lancer. L'exécution du bot sur une partie
+est alors affichée. Pour ajouter un bot à cette liste de sélection, il suffit
+donc de rajouter la ligne correspondante dans le fichier \verb!bots/bots.conf!, 
+le format de chaque ligne est décrit en en-tête du fichier.
 
 \subsection{Outils d'analyse et de deboguage}
 
@@ -1890,7 +1899,7 @@ en perl car il aurait demandé un temps de développement plus conséquent pour
 être écrite en C (il aurait fallu gérer des contraintes bas niveau qui
 pouvaient être gérées simplement en perl). De plus, de nombreux scripts bash
 sont utilisés, que ce soit pour l'installation du projet comme pour la
-production de graphes. Il est donc parfois nécessaire de lire les README
+production de graphes. Il est donc parfois nécessaire de lire les \verb!README!
 pour comprendre leur utilité et savoir les utiliser (pour la plupart des
 scripts une option \verb!-h! affiche une aide à l'utilisation). Ces choix ont
 été fait car après concertation avec notre client, Monsieur Le Borgne, il a
