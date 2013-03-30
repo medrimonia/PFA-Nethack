@@ -209,7 +209,7 @@ void mm_init()
 		timeout = 2;
 	} else {
 		rv = atoi(str);
-		if (rv > 0) {
+		if (rv != 0) {
 			timeout = rv;
 		}
 	}
@@ -694,15 +694,6 @@ int mm_recv()
 
 			mm_log("send()", "E");
 
-			// select stuff
-			fd_set sel;
-			struct timeval tvtimeout;
-
-			FD_ZERO(&sel);
-			FD_SET(client, &sel);
-			tvtimeout.tv_usec = 0;
-			tvtimeout.tv_sec  = timeout;
-
 			// start timer
 			struct timeval tmp1, tmp2;
 			gettimeofday(&tmp1, NULL);
@@ -713,7 +704,19 @@ int mm_recv()
 				return -1;
 			}
 
-			select(client+1, &sel, NULL, NULL, &tvtimeout);
+			// select stuff
+			fd_set sel;
+			FD_ZERO(&sel);
+			FD_SET(client, &sel);
+
+			if (timeout < 0) {
+				select(client+1, &sel, NULL, NULL, NULL);
+			} else {
+				struct timeval tvtimeout;
+				tvtimeout.tv_usec = 0;
+				tvtimeout.tv_sec  = timeout;
+				select(client+1, &sel, NULL, NULL, &tvtimeout);
+			}
 
 			if (!FD_ISSET(client, &sel)) {
 				mm_log("select()", "Client timeout.");
