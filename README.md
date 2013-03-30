@@ -44,12 +44,15 @@ Here's the list of the packages required for the provided bots programmed in Jav
 
 If you wish to download our project (either to use it or to participate), run
 this command from the directory where you want the project to be downloaded:
+
 `git clone https://github.com/medrimonia/PFA-Nethack.git`
 
 ## Compiling
 
 The pached version of NetHack binary can be built using the script nh-setup.sh.
-For more convenience a Makefile is available, thus just run `make`.
+For more convenience a Makefile is available, thus just run:
+
+`make`
 
 Some bots need to be built by using the appropriate script. Again, Makefiles
 are provided and all the bots can be built by just running `make bots` from
@@ -62,9 +65,11 @@ run (refer to the appropriate README).
 
 Once the project is compiled you can start to play with the modified version
 of NetHack by using:
+
 `make play`
 
 You can also select a bot and see its movements by using:
+
 `make run`
 
 ## Further development
