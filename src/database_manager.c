@@ -1,9 +1,11 @@
+#include <errno.h>
 #include <fcntl.h>
 #include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #include <sqlite3.h>
 
@@ -202,8 +204,24 @@ int init_db_manager(){
 
 	int result;
 
-	// Opening database
-	sem_wait(sem);
+	// Initializing the timed out value 
+	struct timespec ts;
+	if (clock_gettime(CLOCK_REALTIME, &ts) == -1) {
+		perror("clock_gettime");
+		exit(EXIT_FAILURE);
+	}
+	#define TIMEOUT_DB 5
+	ts.tv_sec += TIMEOUT_DB;
+
+	// Locking access to the database
+	if (sem_timedwait(sem, &ts) == -1){
+		if (errno == ETIMEDOUT)
+			printf("Failed to access to the database, try to remove semaphore.\n");
+		else
+			perror("sem_timedwait");
+		exit(EXIT_FAILURE);
+	}
+	// Opening the database
 	result = sqlite3_open_v2(db_name,
 	                         &db,
 	                         SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
