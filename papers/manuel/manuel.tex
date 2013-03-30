@@ -551,6 +551,32 @@ lignes par :
 De manière similaire la recherche automatique des patchs facultatifs peut être
 modifiés à partir de la ligne 16 du fichier \verb!nh-setup.sh!.
 
+\subsection{En cas de problème}
+
+Il se peut que les patchs créés n'aient pas exactement la bonne forme, il est
+conseillé de tester un patch avant de l'ajouter au projet. Le problème suivant
+peut apparaitre sur le patch créé : l'en-tête du patch pour chaque fichier n'a
+pas la bonne forme. 
+
+Cette en-tête devraient être de la forme suivante :
+
+\begin{verbatim}
+diff --git nethack-3.4.3.b/src/eat.c nethack-3.4.3/src/eat.c
+index 12e8d9b..bc90f7c 100644
+--- nethack-3.4.3.b/src/eat.c
++++ nethack-3.4.3/src/eat.c
+\end{verbatim}
+
+Il est possible que le patch créé ait la forme suivante :
+\begin{verbatim}
+diff --git a/nethack-3.4.3/src/eat.c b/nethack-3.4.3/src/eat.c
+index 12e8d9b..bc90f7c 100644
+--- a/nethack-3.4.3/src/eat.c
++++ b/nethack-3.4.3/src/eat.c
+\end{verbatim}
+Si c'est le cas, la correction des chemins dans le patch devrait résoudre les
+problèmes d'application de ce dernier.
+
 \section{Ajouter des niveaux spéciaux}
 
 NetHack utilise des fichiers décrivant des niveaux spéciaux lors de la
