@@ -4,9 +4,6 @@ PFA-Nethack
 Nethack-3.4.3 can be downloaded, installed and patched for mods with the
 nh-setup.sh script.
 
-The folder 'collected_data' contains some games databases and some graphs
-illustrating their content.
-
 The folder 'architecture' contains more informations about the architecture and
 the database used to store all the games details.
 
