@@ -458,9 +458,21 @@ Pour définir un mode de jeu particulier voici ce qu'il faut faire :
 \section{Créer et ajouter un patch} \label{sec:creer-patch}
 
 \subsection{Créer un patch}
-Il existe plusieurs manières de créer un patch, il méthode décrite ici utilise
-\verb!git!, c'est la méthode que nous avons utilisé pour créer les divers
-patchs utilisés dans ce projet.
+Il existe plusieurs manières de créer un patch, la méthode habituelle consiste
+à utiliser la commande diff :
+
+\begin{verbatim}
+    $ diff -Nur path/to/old/version path/to/new/version > my-patch.patch
+\end{verbatim}
+
+Cette commande créé le patch nommé \verb!my-patch.patch! à partir de deux
+dossiers l'un contenant l'ancienne version des fichiers et l'autre contenant
+la nouvelle version. Cette commande peut également entre appliquée à deux
+fichiers afin de produire le patch permettant de passer de l'un à l'autre.
+
+\paragraph{}
+Une seconde méthode décrite ici utilise \verb!git!, c'est la méthode que nous
+avons utilisé pour créer les divers patchs utilisés dans ce projet.
 
 Nous allons supposer être dans la branche \verb!dev! ; les étapes principales
 consistent à créer une nouvelle branche, effectuer les modifications
