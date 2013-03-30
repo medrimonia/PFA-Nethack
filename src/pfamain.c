@@ -12,7 +12,7 @@
 void
 pfa_setrandom(void)
 {
-	char * seed_s = nh_getenv("SEED");
+	char * seed_s = nh_getenv("NH_SEED");
 	int seed;
 	if (seed_s == NULL) {
 #ifdef RANDOM	/* srandom() from sys/share/random.c */

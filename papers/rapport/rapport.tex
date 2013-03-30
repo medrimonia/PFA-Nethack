@@ -110,6 +110,9 @@ TODO
 -> Ensembles de donjons, de niveau, de cases, etc.
 -> monstres, pièges, faims, quêtes, objets, personnages, etc.
 
+-> À chaque fois qu'on lance le jeu, des donjons différents sont construits
+avec des niveaux différents.
+
 \subsubsection*{Commandes principales}
 
 Les commandes les plus utilisées pour l'exploration d'un niveau sont les suivantes :
@@ -190,9 +193,9 @@ et de la nature des tâches effectuées. Cependant, après avoir acquis plus
 d'expérience sur l'utilisation de gnuplot en {\em C}, il semble que transposer
 les codes de génération des graphiques en {\em C} pourrait assurer une
 meilleure maintenabilité\footnote{Nous n'avons pas fourni cet effort car en
-discutant avec le client, nous avons compris qu'il préférait obtenir plus de
-graphiques fournissant des informations que d'avoir une génération de graphe
-en {\em C} mais moins complète}.
+discutant avec M. Le Borgne, nous avons compris qu'il préférait obtenir
+plus de graphiques fournissant des informations que d'avoir une génération de
+graphe en {\em C} mais moins complète}.
 
 \begin{figure}[H]
   \center{\includegraphics[width=\textwidth]{architecture-finale.png}}
@@ -438,7 +441,7 @@ abstraction des commandes au clavier de NetHack :
 
 \subsubsection{Interface finale : Middleman}
 
-\paragraph{}À la demande du client et du responsable pédagogique,
+\paragraph{}À la demande de M. Le Borgne et de M. Renault,
 l'utilisation d'une interface intégrée directement dans le jeu fut
 implémentée. Elle permet d'économiser une étape d'entrée/sortie lors de la
 communication avec un bot mais a le désavantage de rendre impossible
@@ -803,7 +806,43 @@ bots et l'analyse de leurs performances.
 
 \subsubsection{Rejouer une partie}
 
-\textbf{TODO: David} Parler de l'extraction de la graine.
+Une des premières nécessités qui est apparue a été d'avoir la possibilité de
+rejouer des parties déjà jouées. Cela a plusieurs intérêt, le premier étant de
+pouvoir faire jouer plusieurs bots différents dans des conditions identiques
+pour les comparer (en pratique nous avons préféré lancer les bots sur un grand
+nombres de parties afin d'effectuer des comparaisons plus globales). Un autre
+intérêt est lié au fait qu'il arrive d'observer, à partir des statistiques
+récoltées sur un grand nombre de parties, des cas singuliers (performances
+exceptionnelles d'un bot, bot bloqué, etc.). Or lorsqu'une collecte de
+statistiques est effectuée, les parties sont jouées par les bots sans
+affichage afin d'exécuter un maximum de partie en un temps réduit. On peut
+alors vouloir rejouer les parties singulières, repérées par les statistiques,
+avec un affichage pour comprendre ce qui s'est passé. Un dernier intérêt à la
+possibilité de rejouer des parties est la possibilité - lorsqu'un bug est
+apparu sur une partie particulière et a été corrigé - de vérifier que ce bug
+n'apparait plus.
+
+\paragraph{}
+Plusieurs solutions sont apparues pour résoudre cette attente, la première est
+de construire un fichier de log pour chaque partie, stockant suffisamment
+d'informations pour pouvoir rejouer la partie entièrement. Cette solution
+n'est clairement pas optimale car cela produirait des fichiers volumineux et
+lorsqu'un grand nombre de statistiques sont récoltées (disons 10000), cela
+fait autant de fichier à stocker, demandant ainsi beaucoup d'espace disque.
+La solution retenue est plus subtile, elle consiste à stocker la graine
+utilisée par NetHack pour initialiser son générateur de nombres aléatoires.
+NetHack utilise de base la fonction {\em C time} pour cela et nous avons
+modifié le code de NetHack pour stocker cette graine à chaque partie et pour
+pouvoir spécifier cette graine - via une variable d'environnement - lorsque
+l'on veut rejouer une partie (cela correspond à un des patchs nécessaires).
+
+Par la suite, la gestion de la graine a été amélioré afin de pouvoir jouer
+plusieurs parties par seconde. En effet, la fonction {\em time} retourne un
+nombre de secondes écoulées depuis une certaine date, ce qui fait que
+des parties jouées dans la même seconde étaient générées à partir de la même
+graine et étaient identiques. Ainsi, la fonction {\em gettimeofday} a été
+utilisée pour obtenir plus de précisions sur le temps écoulé et permettre de
+jouer jusqu'à 100 parties par secondes avec des graines différentes.
 
 \subsubsection{Voir ou revoir une partie}
 
@@ -1986,7 +2025,7 @@ sont utilisés, que ce soit pour l'installation du projet comme pour la
 production de graphes. Il est donc parfois nécessaire de lire les \verb!README!
 pour comprendre leur utilité et savoir les utiliser (pour la plupart des
 scripts une option \verb!-h! affiche une aide à l'utilisation). Ces choix ont
-été fait car après concertation avec notre client, Monsieur Le Borgne, il a
+été fait car après concertation avec notre client, M. Le Borgne, il a
 semblé préférable de concentrer le développement sur la créations de nombreux
 outils statistiques afin de pouvoir évaluer selon différents critères les bots
 et faire des comparaisons entre plusieurs bots.
@@ -1997,5 +2036,12 @@ dans la base de données à l'issue des parties jouée. Regrouper l'ensemble des
 fonctionnalités des scripts sous la forme d'un logiciel avec une interface
 graphique pourrait faire l'objet d'une amélioration en cas de reprise du
 projet.
+
+\paragraph{}
+Enfin, le projet a été développé dans l'optique d'un fonctionnement sur la
+plupart des systèmes UNIX. Des facilités ont ainsi pu être utilisées, telles
+que les sockets unix, mais la compatibilité avec d'autres systèmes tels que
+Windows n'a pas été assurée. Retrouver cette compatibilité pourrait faire
+l'objet d'une autre amélioration du projet.
 
 \end{document}
