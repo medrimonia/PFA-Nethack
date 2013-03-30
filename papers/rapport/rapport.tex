@@ -575,7 +575,7 @@ nous avons établi les règles suivantes :
 \end{itemize}
 
 
-\subsubsection*{Développement par les patchs}
+\subsubsection{Développement par les patchs}
 
 \paragraph{} L'un de nos objectifs était d'adapter NetHack en ayant la plus
 petite empreinte possible sur le code existant. C'est dans ce but que nous
@@ -607,11 +607,81 @@ automatisé pour qu'à partir d'une archive originale de NetHack le code source
 soit patché pour prendre en compte nos ajouts et modifications.
 
 \paragraph{} 
+Nous avons définis deux catégories de patchs : nécessaires ou facultatifs.
+Des patchs sont nécessaires lorsqu'ils permettent le fonctionnement des
+modules que nous avons ajoutés (ce sont notamment les patchs ajoutant des
+points d'entrée). Les patchs facultatifs sont majoritairement ceux qui
+définissent les modes de jeu or il est tout à fait possible de faire jouer les
+bots sur une version de nethack dans laquelle aucun danger n'est désactivé,
+ces derniers mourront plus rapidement.
+
+Les patchs nécessaires sont automatiquement appliqués au code de NetHack lors
+de la compilation du projet et sont regroupés dans le dossier \verb!install/!.
+Si de nouveaux modules devaient être ajoutés au projet, il faudrait donc créer
+les patchs correspondant (la création d'un patch est expliquée plus loin) et
+les placer dans le dossier \verb!install/!. Le nom de ces patchs doit être de
+la forme \verb!<nom_du_patch>.patch! afin d'être automatiquement détectés par
+le script d'installation \verb!nh-setup.sh!. Il est possible de modifier la
+recherche automatique des patchs en modifiant les lignes suivantes du script
+\verb!nh-setup.sh! (à partir de la ligne 67):
+\begin{verbatim}
+    for installpatch in install/*.patch; do
+        patch -p0 < $installpatch
+    done
+\end{verbatim}
+
+Il est par exemple possible d'ajouter un nouveau dossier \verb!new_patches/!
+dans lequel rechercher les patchs nécessaire en remplaçant la première des
+lignes par :
+\begin{verbatim}
+    for installpatch in install/*.patch new_patches/*.patch; do
+\end{verbatim}
+
+Les patchs facultatifs sont traités différemment lors du processus
+d'installation et sont regroupés dans le dossier \verb!patches/!. Le script
+\verb!nh-setup.sh! précise deux manières d'appliquer ces patchs avant la
+compilation du projet : soit en appliquant directement l'ensemble des patchs
+listés dans le fichier \verb!patches/patch.conf!, soit en choisissant un à un
+les patchs à appliquer parmi tous ceux du dossier \verb!patches/!.
+D'autres patchs facultatifs peuvent facilement être intégré à l'ensemble déjà
+existant en les plaçant dans le dossier \verb!patches/! et en les ajoutant
+éventuellement à la liste des patchs à appliquer par défaut dans le fichier
+\verb!patches/patch.conf!.
+
+Les patchs (facultatifs) servant à définir des modes de jeu ont été créés de
+manière à modifier chacun un aspect particulier du jeu. Par exemple un patch
+sert à désactiver les monstres, un autre désactive les pièges, etc. Ce
+découpage en petits patchs permet de pouvoir les réutiliser d'un mode de jeu à
+un autre, ainsi notre mode de jeu de recherche des portes secrète décrit
+précédemment utilise un sous-ensemble de ces patchs. Un autre mode de
+recherche de porte secrète spécifique à la recherche dans une salle utilise ce
+même sous-ensemble de patchs plus un autre patch modifiant le donjon pour
+qu'il ne contienne qu'un niveau spécial. Définir un nouveau mode de jeu
+devient alors facile, par exemple un mode combat utiliserait tous les patchs
+sauf celui désactivant les monstres.
+
+\paragraph{Exemple de patch}
+
 \textbf{TODO David: configuration des patchs à appliquer pour chaque mode et
 	expliquer ce que ces patchs font + donner un exemple de patch avec détail
 	des lignes changées et l'effet sur le jeu.}
 
+\paragraph{Création de patchs :}
 
+Un patch est en fait le résultat d'un \verb!diff!\footnote{man diff(1)} entre
+deux version d'un fichier. Ce patch peut alors être appliqué avec la commande
+\verb!patch!\footnote{man patch(1)} à l'ancien fichier afin de donner le
+nouveau.
+Il existe plusieurs façon de créer un tel fichier, l'une d'entre elle utilise
+git et la commande \verb!git diff --patch!. Il est par exemple possible de
+créer un patch à partir de la différence entre le commit courant et le dernier
+commit avec la commande suivante :
+\begin{verbatim}
+    git diff --patch HEAD~1 > nom_du_patch.patch
+\end{verbatim}
+
+TODO: Un exemple détaillé de création d'un patch est disponible dans le manuel
+d'utilisation (\verb!papers/manuel/!).
 
 \subsection{Développement de bots.}
 

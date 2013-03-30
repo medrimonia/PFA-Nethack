@@ -64,11 +64,9 @@ if [ $reuse = 0 ]; then
     cd $nhdir
     sh sys/unix/setup.sh
     cd ..
-    patch -p0 < install/linux_install.patch
-	patch -p0 < install/pfamain.patch
-	patch -p0 < install/middleman.patch
-	patch -p0 < install/game_statistics.patch
-	patch -p0 < install/game_seed.patch
+	for installpatch in install/*.patch; do
+		patch -p0 < $installpatch
+	done
 	echo "Replacing $nhdir/src/Makefile..."
 	cp -r install/nh/* $nhdir
 fi
