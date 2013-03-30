@@ -85,16 +85,16 @@ base au développement de bots pour NetHack puis, dans un second temps, de
 fournir des méthodes d'évaluation de ces bots. Pour cela la modification du code
 de NetHack est nécessaire afin d'établir un moyen de communication entre le
 noyau du jeu et les bots ; NetHack étant un jeu écrit en C et sous licence
-libre, son code source est disponibles et modifiable. Afin d'évaluer les bots
+libre, son code source est disponible et modifiable. Afin d'évaluer les bots
 différents outils de benchmarking ont été mis en place ; ces outils reposent
 sur la récupération de données et le stockage de celles-ci afin d'effectuer
-des statistiques et produire des graphiques de comparaison.
+des statistiques et de produire des graphiques de comparaison.
 Par ailleurs, un certain nombre de simplifications du jeu original ont été
-opérées dans le but de faciliter le développement des bots et permettre
+opérées dans le but de faciliter le développement des bots et de permettre
 l'étude de problèmes plus spécifiques.  
 
 Le projet consiste donc en un ensemble de modifications du code du jeu
-original, d'ajout d'outils, de fonctionnalités et d'études théorique.
+original, d'ajouts d'outils, de fonctionnalités et d'études théorique.
 
 Au travers de ce rapport, nous allons commencer par détailler un peu le jeu.
 Par la suite, nous présenterons l'architecture du projet dans son ensemble afin
@@ -102,7 +102,7 @@ de donner une meilleure idée des différentes parties qui le composent. Celles-
 seront détaillées par la suite. Nous présenterons ensuite le résultat des
 analyses que nous avons effectuées en nous basant sur les données des parties
 jouées par nos bots. Pour conclure, nous présenterons certaines fonctionnalités
-qui pourraient être ajoutées au projet si par la suite, quelqu'un venait à le
+qui pourraient être ajoutées au projet si, par la suite, quelqu'un venait à le
 reprendre.
 
 \subsection*{Description du jeu}
@@ -166,13 +166,13 @@ conditions de fin de jeu.
 Par exemple, un mode de recherche des portes secrètes est défini ; dans ce
 mode les monstres, la faim, les pièges et les objets (tout ce qui peut tuer ou
 encombrer le joueur) sont désactivés afin de concentrer l'intelligence des
-bots sur la recherche. Les bots sont donc plus facile à développer pour un
+bots sur la recherche. Les bots sont donc plus faciles à développer pour un
 mode de jeu donné.
 
 \section{Architecture finale}
 
 Bien que le développement du projet ait majoritairement suivi le schéma
-défini dans le document de spécification, certaines détails ont légèrement
+défini dans le document de spécification, certains détails ont légèrement
 changé. Par exemple, un effort a été fait pour réduire autant que possible
 le nombre de références à des fichiers externes dans les patchs sur le noyau
 de Nethack. Pour arriver à ce résultat, nous nous sommes servis du header
@@ -540,6 +540,7 @@ Une autre solution aurait été de permettre un affichage simple dans le
 terminal. Cela n'a pas été retenu car cela aurait consisté à faire des
 traitements supplémentaires pour reconstituer la carte et cela reviendrait à
 dupliquer le travail que le bot doit déjà faire de lui même.
+%TODO solution retenue actuellement, à détailler
 
 \paragraph{} Le protocole de communication entre un bot et le jeu a été
 modifié depuis le prototype. L'interface retransmet à l'identique au noyau de
@@ -581,7 +582,7 @@ nous avons établi les règles suivantes :
 petite empreinte possible sur le code existant. C'est dans ce but que nous
 avons opté pour l'installation de 'hooks' dans le code source faisant appels à
 nos fonctions définies dans leur propre emplacement, dans un répertoire
-séparé. Ces points d'entrés sont placés à des endroits stratégiques :
+séparé. Ces points d'entrée sont placés à des endroits stratégiques :
 \begin{itemize}
 	\item Le premier est installé dans la fonction \verb!moveloop()! de
 		\verb!allmain.c! du jeu qui est exécutée par toutes les architectures
@@ -597,6 +598,10 @@ séparé. Ces points d'entrés sont placés à des endroits stratégiques :
 		donner l'occasion de terminer proprement (libération de la mémoire,
 		fermeture des fichiers, etc.). Il fait appel à \verb!pfa_end()!.
 \end{itemize}
+
+Outre ces points d'entrée génériques, quelques points d'entrée spécifiques
+ont été ajouté afin de permettre par exemple de traiter les détections de
+porte secrètes ou la création d'un nouveau niveau.
 
 \paragraph{} Nous souhaitions également pouvoir livrer nos modifications
 indépendamment du jeu lui même. Nous avons donc utilisé un système de patchs
@@ -620,7 +625,7 @@ de la compilation du projet et sont regroupés dans le dossier \verb!install/!.
 Si de nouveaux modules devaient être ajoutés au projet, il faudrait donc créer
 les patchs correspondant (la création d'un patch est expliquée plus loin) et
 les placer dans le dossier \verb!install/!. Le nom de ces patchs doit être de
-la forme \verb!<nom_du_patch>.patch! afin d'être automatiquement détectés par
+la forme \verb!<nom_du_patch>.patch! afin d'être automatiquement détecté par
 le script d'installation \verb!nh-setup.sh!. 
 
 % -----------------------------------------------------------------------
@@ -659,8 +664,9 @@ Les patchs facultatifs servant à définir des modes de jeu ont été créés de
 manière à modifier chacun un aspect particulier du jeu. Par exemple un patch
 sert à désactiver les monstres, un autre désactive les pièges, etc. Ils ont
 été conçus en gardant à l'esprit qu'il fallait éviter toute collision entre
-deux patchs et donc les modifications qu'un seul d'entre eux apporte doit être
-minimal. Ce découpage en petits patchs permet de pouvoir les réutiliser d'un
+deux patchs et donc les modifications qu'un seul d'entre eux apporte doivent
+être minimales.
+Ce découpage en petits patchs permet de pouvoir les réutiliser d'un
 mode de jeu à un autre, ainsi notre mode de jeu de recherche des portes
 secrète décrit précédemment utilise un sous-ensemble de ces patchs. Un autre
 mode de recherche de porte secrète spécifique à la recherche dans une salle
@@ -710,13 +716,13 @@ de la carte et la vérification de la validité des mouvements.
 \\
 Ce bot se contente de lister les actions possibles et d'en choisir une de façon
 aléatoire, avec tout de même certaines actions prioritaires. Cette base permet
-de pouvoir tester différentes stratégie sans avoir à implémenter à nouveau la
+de pouvoir tester différentes stratégies sans avoir à implémenter à nouveau la
 réception et l'envoi de message aux bots.
 
 \subsubsection{Le bot diffusion}
-Le principe de ce bot est d'établir des scores pour chaque cases et de diffuser
+Le principe de ce bot est d'établir des scores pour chaque case et de diffuser
 ensuite les valeurs à tous les voisins, ainsi la principale différence avec les
-autres bots est que la complexité est bien plus élevée étant donnée que pour
+autres bots est que la complexité est bien plus élevée étant donné que pour
 choisir la prochaine action, il n'y a pas que le voisinage immédiat qui est
 observé. Ce surcoût de temps permet en revanche d'avoir des meilleurs résultats
 et la possibilité de modifier les scores facilement permet de changer les
@@ -757,10 +763,11 @@ descendre dans les niveaux suivants).
 
 Plusieurs facilités ont été offertes pour de futurs ajouts de bots. La
 première est la possibilité d'intégrer automatiquement la compilation de ce
-nouveau bots à celle des autres. En effet, un \verb!Makefile! se trouve dans le
+nouveau bot à celle des autres. En effet, un \verb!Makefile! se trouve dans le
 dossier \verb!bots/! et permet de compiler l'ensemble des bots pour lesquels
 cela est nécessaire (par exemple les bots écris en Java). Lorsque la
-commande \verb!make! est exécutée depuis dossier, l'ensemble des sous dossiers
+commande \verb!make! est exécutée depuis ce dossier, l'ensemble des sous
+dossiers
 est exploré automatiquement afin de repérer ceux possédant un fichier nommé
 \verb!Makefile!. Dans chacun de ces dossiers (correspondant à un bot
 particulier) est exécutée la commande \verb!make! afin de compiler les sources
@@ -799,7 +806,7 @@ différente de 0 lors du lancement du jeu, le middleman dupliquera tous les
 messages envoyées au bot vers la sortie standard. Cette sortie peut être
 redirigée vers le programme \verb!bots/dummy-client.pl! qui s'exécutera alors en
 'lecture seule' \footnote{\verb!bots/dummy-client.pl! a plusieurs modes
-d'exécution} et interprétera le flux pour afficher la carte correspondante à
+d'exécution} et interprétera le flux pour afficher la carte correspondant à
 la partie en cours.
 
 En redirigeant cette sortie vers un fichier (ou en lançant le script
@@ -948,8 +955,10 @@ produits par ce script.
 \end{figure}
 
 \subparagraph{Observation de caractéristiques du jeu}
-Il est important de noter que ce script ne génère pas des graphes de répartition
-que pour les performances du bot, il génère un graph similaire pour le résultat
+Il est important de noter que ce script ne génère pas des graphiques de
+répartition
+que pour les performances du bot, il génère un graphique similaire pour le
+résultat
 maximal de chaque caractéristique, ce qui permet aussi d'observer la répartition
 de celle-ci pour nethack. Nous avons ainsi constaté que la plupart des
 caractéristiques \footnote{Nombre de portes secrètes présentes sur un niveau,
@@ -988,14 +997,14 @@ Afin de comparer les performances des bots dans différents domaines, nous
 avons écrit un script générant des graphiques permettant de visualiser
 facilement les différences de résultats entre les différents bots. Celui-ci
 génère un graphe par caractéristique observée, permettant ainsi de réduire le
-nombre de manipulations à effectuer. Ce type de graphes étant utilisé pour
+nombre de manipulations à effectuer. Ce type de graphiques étant utilisé pour
 comparer les bots, plusieurs exemples seront présents dans la partie
 {\em Analyses}.
 
 Il est possible de donner des noms différents au même bot au fur et à mesure
 qu'il évolue, en ajoutant des données à la même base, ainsi il est possible de
 mesurer l'amélioration des performances. Ce raisonnement s'applique aussi à
-des modifications de paramètres sur le bot diffusion par exemple, ce qui
+des modifications de paramètres sur le bot {\em diffusion}, ce qui
 pourrait permettre par exemple de faire de l'apprentissage sur les différents
 paramètres afin de trouver les valeurs idéales. Le problème du bot diffusion
 étant que lancer de nombreuses parties demande un temps d'exécution important.
@@ -1179,7 +1188,7 @@ ce niveau est plus facile à franchir que les autres en moyenne. Cette différen
 peut s'expliquer par le fait que la probabilité d'obtenir un niveau spécial doit
 être plus faible à cette profondeur. On observe aussi qu'à aucun cas, un niveau
 inférieur au niveau 18 a été atteint, ce qui est probablement dû à la présence
-obligatoire de certains niveaux.
+obligatoire de certains niveaux spécifique à une profondeur donnée.
 \\
 Par la pratique, en regardant le déroulement des parties, nous avons pu aussi
 constater que la majorité des problèmes provenaient effectivement de niveaux
@@ -1689,6 +1698,7 @@ visualisation de l'exploration {\em toTikz} permet aussi de mieux comprendre les
 problèmes du bot.
 
 \subsection*{Repérage des problèmes}
+%TODO ?
 Utilisation du viewer pour comprendre ce qui ne va pas, utilisation de gdb,
 quelques tentatives infructueuses de test de couverture (gcov), de profilage
 (gprof) et mémoire (valgrind).
