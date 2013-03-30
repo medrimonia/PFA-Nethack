@@ -194,20 +194,20 @@ nombre de tours passés sur chaque case des niveaux visités. Utilisé sans
 option, ce programme ne génèrera que la portion de code TikZ correspondant à
 la carte. Utilisé avec l'option \verb!-f!, un document latex complet qui peut
 alors être passé à \verb!pdflatex! sera généré.
+L'option \verb!-e! de ce programme génère un autre type de carte
+qui permet de visualiser l'ordre dans lequel s'est faite l'exploration.
 
 \begin{figure}[h]
 	\caption{Nombre de visites sur chaque case sur deux niveaux du starter package java. En blanc les cases non visitées, en jaune clair les cases visitées peu de fois, en rouge les cases visitées un grand nombre de fois.}
 	\resizebox{\columnwidth}{!}{\input{../common/javasp_tikz_exemple.tex}}
 \end{figure}
 
-\paragraph{} L'option \verb!-e! de ce programme permet de visualiser dans quel
-ordre s'est faite l'exploration :
 
 \begin{figure}[H]
-	\caption{Ordre d'exploration de deux niveaux par le bot diffusion. En
+	\caption{Ordre d'exploration de deux niveaux par le bot python. En
 	jaune les cases découvertes en premier, en bleu celles découvertes en
 dernier.}
-	\resizebox{\columnwidth}{!}{\input{../common/diffusion_tikz_exploration.tex}}
+	\resizebox{\columnwidth}{!}{\input{../common/pythonsp_tikz_exploration.tex}}
 \end{figure}
 
 
@@ -286,6 +286,10 @@ L'interface développée ne permet plus de jouer au jeu à la main. Nous avons
 alors développé un client adapté au protocole mis en place. Il s'agit du
 programme \verb!bots/dummy-client.pl!. Il accepte les mêmes commandes que le jeu
 original.
+
+Ce client peut également être utilisé pour visualier une partie en cours jouée
+par un bot. Cf. la section \emph{Voir ou revoir une partie}.
+
 
 \section{Le starter package java}
 Afin de pouvoir rapidement commencer à coder des bots, un \emph{starter package}
@@ -396,7 +400,11 @@ Quant au protocole concernant les échanges depuis l'interface vers le bot, nous
 \begin{itemize}
 	\item \verb!S! marque le début d'une transmission
 	\item \verb!E! marque la fin d'une transmission et indique que l'interface attend une commande du client.
-	\item \verb!g<x><y><glyph><code>! indique qu'un élément du jeu représenté par le caractère \verb!glyph! et ayant pour code identificateur \verb!code! se trouve aux coordonnées \verb!(x, y)!.
+	\item \verb!g<x><y><glyph><code>! indique qu'un élément du jeu représenté
+		par le caractère \verb!glyph! et ayant pour code identificateur
+		\verb!code! se trouve aux coordonnées \verb!(x, y)!. \verb!x! et
+		\verb!y! sont des entiers sur un octet; \verb!glyph! est un caractère;
+		\verb!code! est un entier codé sur deux octets.
 	\item \verb!C! indique que la carte doit être effacée. Un bot peut interpréter cette information comme étant un changement d'étage réussi s'il venait d'envoyer une commande descente ou montée d'escalier.
 \end{itemize}
 

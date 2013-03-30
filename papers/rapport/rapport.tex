@@ -906,7 +906,6 @@ par ligne de commande. Le grand avantage pour notre situation est aussi que les
 bases de données {\em sqlite3} se présentent sous la forme d'un unique fichier,
 celui-ci n'étant pas trop volumineux, il était parfaitement concevable de nous
 échanger les bases de données de manière simple.
-%TODO Parler des .def etc?
 
 
 \subsubsection{Scripts de génération de graphiques}
@@ -1103,7 +1102,7 @@ secrètes, cependant en s'attardant un peu plus sur le graphique, on s'aperçoit
 que la différence entre les bots est plus importante. Ceci peut être expliqué
 par le fait que le bot {\em diffusion} accorde une priorité plus grande aux
 couloirs aboutissant à des cul-de-sac et que le bot {\em python-sp} une fois
-bloqué aura tendance à faire de nombreuses recherches, %TODO verify by Benoit
+bloqué aura tendance à faire de nombreuses recherches,
 en revanche, le bot aléatoire aura tendance à faire très peu de recherche dans
 ces emplacements là\footnote{Cette différence est illustrée dans la partie
 {\em Aperçu du nombre de visites sur chaque case}.}.
@@ -1139,7 +1138,55 @@ graphique}.
 
 \subsection{Descente dans les niveaux}
 
-TODO Données manquantes.
+Afin d'évaluer des bots avec un autre objectif, nous avons donné à tous la
+possibilité de changer de niveau et nous avons comparé le niveau qu'ils
+atteignaient en moyenne. Les changements effectués sur les bots ont été assez
+légers étant donné que pour le bot {\em diffusion}, il a suffit d'ajouter un
+score très élevé à l'action de descendre et d'autoriser celle-ci uniquement sur
+les cases correspondantes. Pour le bot python, la même importance est accordée
+ à la descente d'un niveau qu'à la visite d'une case adjacente. Pour le bot
+ aléatoire java, nous avons choisi de simplement le
+faire descendre s'il passait sur une case le permettant. En lançant un grand
+nombre de parties, nous avons pu observer les résultats suivants.
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{graph_level_reached.png}}
+  \caption{\label{fig:level_reached} Niveau moyen atteint en fonction du nombre
+  de mouvements autorisés.}
+\end{figure}
+
+Pour ce type d'objectif, on s'aperçoit que la capacité du bot {\em diffusion} à
+trouver des chemins menant à des objectifs (à l'aide de la propagation) créé une
+bien plus grande différence que lors de la recherche de porte secrètes. On peut
+aussi constater que les performances du bot {\em python-sp} sont amplement
+supérieures à celle du bot aléatoire, bien qu'ils aient la même politique en ce
+qui concerne la descente de niveau. Cette différence s'explique par le fait que
+le bot {\em python-sp} explore plus rapidement le niveau, la probabilité qu'il
+soit passé par la case menant au niveau inférieur à un moment donné est donc
+supérieure.
+\\
+Bien qu'il soit intéressant de comparer les bots entre eux, si l'on souhaite
+améliorer un bot, il est intéressant de comprendre ce qui bloque sa progression.
+Afin d'illustrer cette problématique, nous allons observer la distribution des
+résultats sur un ensemble de parties du bot {\em diffusion}.
+
+\begin{figure}[H]
+  \center{\includegraphics[width=\textwidth]{impulse_level_reached.png}}
+  \caption{\label{fig:impulse_level_reached} Sur des parties avec 10'000
+  mouvements autorisé, distribution du niveau maximal atteint.}
+\end{figure}
+
+Une différence flagrante qui s'impose est qu'après 10'000 mouvements, il est
+très peu probable que le niveau maximal atteint soit le 14. Cela signifie que
+ce niveau est plus facile à franchir que les autres en moyenne. Cette différence
+peut s'expliquer par le fait que la probabilité d'obtenir un niveau spécial doit
+être plus faible à cette profondeur. On observe aussi qu'à aucun cas, un niveau
+inférieur au niveau 18 a été atteint, ce qui est probablement dû à la présence
+obligatoire de certains niveaux.
+\\
+Par la pratique, en regardant le déroulement des parties, nous avons pu aussi
+constater que la majorité des problèmes provenaient effectivement de niveaux
+spéciaux.
 
 \subsection{Évaluation des bots}
 Pour un temps de calcul du même ordre que le bot aléatoire, le bot
@@ -1911,7 +1958,7 @@ se diriger dans un état donné.
 \section{Conclusion}
 
 Au cours de ce projet nous avons adopté une méthode de développement
-personnalisée et plutôt libre, basées sur des rencontres régulières avec notre
+personnalisée et plutôt libre, basée sur des rencontres régulières avec notre
 client afin d'avoir des retours fréquents et pour plus de souplesse. Durant
 ces réunions (se déroulant environ touts les deux semaines au début, puis plus
 espacées par la suite) nous présentions ce qui avait été fait jusqu'à présent
@@ -1924,9 +1971,9 @@ notre développement avec pour inspiration les attentes de notre client.
 \paragraph{}
 Une autre caractéristique de notre projet est l'utilisation de plusieurs
 langages différents afin de simplifier le développement.
-En effet, le module de visualisation des parties jouées par exemple a été écrit
+En effet, l'outil de visualisation des parties jouées par exemple a été écrit
 en perl car il aurait demandé un temps de développement plus conséquent pour
-être écrite en C (il aurait fallu gérer des contraintes bas niveau qui
+être écrit en C (il aurait fallu gérer des contraintes bas niveau qui
 pouvaient être gérées simplement en perl). De plus, de nombreux scripts bash
 sont utilisés, que ce soit pour l'installation du projet comme pour la
 production de graphes. Il est donc parfois nécessaire de lire les \verb!README!
