@@ -44,8 +44,8 @@
   \begin{flushright}
     \large
     \emph{Responsables :}\\
-    Pédagogique - M.~Renault\\
-    Client - M.~Le Borgne\\
+    Pédagogique - David Renault\\
+    Client - Yvan Le Borgne\\
   \end{flushright}
 \end{center}
 
@@ -67,7 +67,10 @@
 \section{Génération des exécutables}
 
 Un script \verb!nh-setup.sh! permet de télécharger, patcher et compiler le jeu
-pour linux avec les modifications apportées dans le cadre du projet.
+pour linux avec les modifications apportées dans le cadre du projet. Un
+Makefile est également disponible pour rendre plus simple d'installation du
+projet, il suffit alors de lancer la commande \verb!make! depuis un terminal
+en étant placé à la racine du projet.
 Avant la compilation, l'utilisateur doit répondre à quelques questions rapides
 pour renseigner les patchs qu'il souhaite appliquer. À l'issue de la
 compilation, le jeu sera installé dans le répertoire courant.
@@ -96,7 +99,7 @@ comportement du jeu :
 \item \verb!NH_MAX_MOVES! :
   Ce paramètre spécifie le nombre de mouvement maximal autorisé au bot, sachant
   que le bot n'est pas sensé mourir, c'est la définition de ce paramètre qui
-  spécifiera la durée de la partie. Par défaut, cette variable vaut 20000.
+  spécifiera la durée de la partie. Par défaut, cette variable vaut 200.
 \item \verb!NH_DATABASE_PATH! :
   Spécifie le chemin d'accès pour la base de données à laquelle les résultats
   seront ajoutés. Par défaut, ce chemin vaut \emph{/tmp/test.db}.
@@ -335,8 +338,8 @@ Afin d'utiliser ce bot dans les bonnes conditions, il est nécessaire d'avoir
 compilé une version du jeu dans laquelle le patch
 \emph{patches/create\_level.patch} a été appliqué. Ce patch modifie le donjon
 de telle sorte que le premier niveau ne contienne qu'une seule salle de la
-forme décrite précédemment\footnote{ce niveau ne contient pas d'escalier pour descendre
-dans les niveaux suivants}.
+forme décrite précédemment (ce niveau ne contient pas d'escalier pour
+descendre dans les niveaux suivants).
 
 \chapter{Description technique}
 \section{Les patchs du noyau de NetHack}
@@ -446,15 +449,66 @@ désactivation des autres sources de mort que les montres.
 
 Pour définir un mode de jeu particulier voici ce qu'il faut faire :
 \begin{itemize}
-	\item Créer l'ensemble des patchs (cf. section numéro~\ref{sec:creer-patch} page~\pageref{sec:creer-patch}) modifiant le noyau de NetHack et nécessaires au mode de jeu.
-	\item Ajouter des entrées dans la base de données pour les nouvelles données/statistiques à relever (cf. section numéro~\ref{sec:modif-bdd} page~\pageref{sec:modif-bdd}).
-	\item Créer de nouveaux bots spécifiques à ce mode de jeu (cf. section numéro~\ref{sec:creer-bot} page~\pageref{sec:creer-bot}).
+	\item Créer l'ensemble des patchs (cf. section numéro~\ref{sec:creer-patch}) modifiant le noyau de NetHack et nécessaires au mode de jeu.
+	\item Ajouter des entrées dans la base de données pour les nouvelles données/statistiques à relever (cf. section numéro~\ref{sec:modif-bdd}).
+	\item Créer de nouveaux bots spécifiques à ce mode de jeu (cf. section numéro~\ref{sec:creer-bot}).
 	\item Modifier si besoin le middleman afin, par exemple, d'ajouter des choses au protocole de communication entre les bots et le noyau de NetHack.
 \end{itemize}
 
 \section{Créer et ajouter un patch} \label{sec:creer-patch}
-TODO
-\textbf{\_\_Exemple de successions de commandes permettant de créer un patch\_\_}.
+
+\subsection{Créer un patch}
+Il existe plusieurs manières de créer un patch, il méthode décrite ici utilise
+\verb!git!, c'est la méthode que nous avons utilisé pour créer les divers
+patchs utilisés dans ce projet.
+
+Nous allons supposer être dans la branche \verb!dev! ; les étapes principales
+consistent à créer une nouvelle branche, effectuer les modifications
+nécessaires, créer le patch et le rapatrier dans la branche \verb!dev!.
+
+Tout d'abord, créons une nouvelle branche (nommée \verb!newpatch!) et plaçons nous y, la commande
+suivante permet de faire les deux à la fois :
+\begin{verbatim}
+    $ git checkout -b newpatch
+\end{verbatim}
+
+Supposons que les fichiers à modifier ne soient pas sur le dépôt du projet, il
+est nécessaire de les ajouter à la branche courante :
+\begin{verbatim}
+    $ git add fichier1 fichier2 ...
+    $ git commit -m "Original sources"
+\end{verbatim}
+
+Maintenant les modifications voulues peuvent être appliquées aux fichiers. Une
+fois cela fait, on peut ajouter la nouvelle version des fichiers au dépôt :
+\begin{verbatim}
+    $ git add -u
+    $ git commit -m "Changes done"
+\end{verbatim}
+
+Il est temps de créer le patch à partir des différences entre ces deux
+versions :
+\begin{verbatim}
+    $ git diff --patch HEAD~1 > my-patch.patch
+\end{verbatim}
+
+Retournons dans la branche \verb!dev! et ajoutons y le patch :
+\begin{verbatim}
+    $ git checkout dev
+    $ git add my-patch.patch
+    $ git commit -m "My new patch"
+\end{verbatim}
+
+Et voilà, le patch est créé, maintenant il peut être déplacé au bon endroit
+afin de l'intégrer au projet (voir la section suivante).
+Pour déplacer le patch et répercuter les changements sur le dépôt, les
+commandes suivantes peuvent être utilisées :
+\begin{verbatim}
+    $ git mv my-patch.patch path/to/the/right/place
+    $ git commit -m "Patch moved to the right place"
+\end{verbatim}
+
+\subsection{Rendre un patch utilisable}
 
 Une fois le patch créé, il peut être ajouté dans le dossier \verb!install/!
 (pour les patchs nécessaire au fonctionnement du projet) ou \verb!patches/!
