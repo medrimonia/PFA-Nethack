@@ -540,8 +540,78 @@ De manière similaire la recherche automatique des patchs facultatifs peut être
 modifiés à partir de la ligne 16 du fichier \verb!nh-setup.sh!.
 
 \section{Ajouter des niveaux spéciaux}
-TODO
-\url{http://nethack.wikia.com/wiki/Des-file\_format#SUBROOM}
+
+NetHack utilise des fichiers décrivant des niveaux spéciaux lors de la
+création des donjons. Il est possible de créer ses propres niveaux spéciaux en
+utilisant le langage créé par les développeur du jeu. Plusieurs étapes sont
+nécessaires avant de voir son propre niveau intégré au donjon : créer le
+fichier, modifier le fichier \verb!dungeon.def! qui décrit la composition des
+donjons et modifier divers fichiers de NetHack permettant notamment la
+compilation du fichier en un autre langage pouvant interprété comme un niveau
+du jeu.
+
+\paragraph{}
+Tout d'abord voici quelques indications concernant la création du fichier. Le
+fichier doit être placé dans le sous-dossier \verb!dat/! de NetHack et son nom
+doit être de la forme \verb!toto.des!. Un fichier peut décrire plusieurs
+niveau et il existe une grande variété de mots-clés pouvant être utilisés pour
+décrire avec précision l'apparence et le contenu des niveaux. Ici un exemple
+minimaliste va être donné en tant qu'introduction à la construction des
+niveaux spéciaux, pour plus de détails sur la création de niveaux spéciaux il
+est possible de se référer à la page suivante :
+
+\url{http://nethack.wikia.com/wiki/Des-file\_format}
+
+Nous allons commenter l'exemple suivant :
+\begin{verbatim}
+    LEVEL: "ring"
+    ROOM: "ordinary" , lit, (3,3), (center,center), (10,10)
+    DOOR: true, closed, random, random
+\end{verbatim}
+
+Ces trois lignes permettent de créer un niveau contenant une salle et une
+porte cachée. La première ligne indique le nom donné au fichier compilé,
+lorsque le fichier décrit plusieurs niveaux différents, plusieurs fichiers
+différents seront générés, chaque niveau décrit devra donc contenir une ligne
+telle que celle-ci pour donner le nom du fichier généré correspondant.
+
+La deuxième ligne signifie que le niveau contient une salle, le format est le
+suivant :
+
+\begin{verbatim}
+    ROOM: "type", éclairage, position approximative, alignement sur cette position, taille
+\end{verbatim}
+
+Dans notre exemple la salle est normale, toutes les cases sont éclairées, sa
+position est centrée sur le niveau et elle fait 10*10 cases. Pour plus de
+détails sur les paramètres possibles : 
+
+\url{http://nethack.wikia.com/wiki/Des-file_format#ROOM}
+
+Enfin la troisième ligne indique que la salle précédente contient une porte.
+Voici le format utilisé :
+
+\begin{verbatim}
+    DOOR: secrète, état, mur(north, east, south, west ou random), position
+\end{verbatim}
+
+La salle contient donc une porte secrète, fermée et placée sur l'un des quatre
+murs de façon aléatoire.
+
+\paragraph{}
+Une fois la description du niveau écrite, il faut demander à NetHack de
+l'intégrer aux donjon, pour cela il est nécessaire de modifier le fichier
+\verb!dat/dungeon.def!. Le format de ce fichier est détaillé ici :
+
+\url{http://nethack.wikia.com/wiki/Dungeon.def_format}
+
+D'autres fichiers doivent être modifiés à divers endroit de l'arborescence de
+NetHack pour demander la compilation du fichier de description en les fichiers
+correspondants.
+Pour connaître les détails des fichiers à modifier et des modifications à
+apporter, il est possible de se référer au patch
+\verb!patches/create_level.patch! que nous avons créé afin d'intégrer un
+niveau spécial \verb!ring.des! à NetHack.
 
 \chapter{Dysfonctionnements connus}
 \section{Sémaphore bloquée de façon permanente}
