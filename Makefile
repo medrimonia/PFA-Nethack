@@ -16,6 +16,7 @@ run:
 	@./scripts/run_bot.sh
 
 play:
+	@NH_MM_TIMEOUT=-1
 	@./nethack-3.4.3/nethack 2> /tmp/nh_log&
 	@perl bots/dummy-client.pl 2> /tmp/bot_log
 
