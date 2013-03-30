@@ -611,7 +611,7 @@ Nous avons définis deux catégories de patchs : nécessaires ou facultatifs.
 Des patchs sont nécessaires lorsqu'ils permettent le fonctionnement des
 modules que nous avons ajoutés (ce sont notamment les patchs ajoutant des
 points d'entrée). Les patchs facultatifs sont majoritairement ceux qui
-définissent les modes de jeu or il est tout à fait possible de faire jouer les
+définissent les modes de jeu, or il est tout à fait possible de faire jouer les
 bots sur une version de nethack dans laquelle aucun danger n'est désactivé,
 ces derniers mourront plus rapidement.
 
@@ -621,21 +621,28 @@ Si de nouveaux modules devaient être ajoutés au projet, il faudrait donc crée
 les patchs correspondant (la création d'un patch est expliquée plus loin) et
 les placer dans le dossier \verb!install/!. Le nom de ces patchs doit être de
 la forme \verb!<nom_du_patch>.patch! afin d'être automatiquement détectés par
-le script d'installation \verb!nh-setup.sh!. Il est possible de modifier la
-recherche automatique des patchs en modifiant les lignes suivantes du script
-\verb!nh-setup.sh! (à partir de la ligne 67):
-\begin{verbatim}
-    for installpatch in install/*.patch; do
-        patch -p0 < $installpatch
-    done
-\end{verbatim}
+le script d'installation \verb!nh-setup.sh!. 
 
-Il est par exemple possible d'ajouter un nouveau dossier \verb!new_patches/!
-dans lequel rechercher les patchs nécessaire en remplaçant la première des
-lignes par :
-\begin{verbatim}
-    for installpatch in install/*.patch new_patches/*.patch; do
-\end{verbatim}
+% -----------------------------------------------------------------------
+% -----------------------------------------------------------------------
+% A mon avis ce qui suit n'est pas utile. Ca a sa place dans le manuel
+% -----------------------------------------------------------------------
+% -----------------------------------------------------------------------
+% Il est possible de modifier la
+% recherche automatique des patchs en modifiant les lignes suivantes du script
+% \verb!nh-setup.sh! (à partir de la ligne 67):
+% \begin{verbatim}
+%     for installpatch in install/*.patch; do
+%         patch -p0 < $installpatch
+%     done
+% \end{verbatim}
+% 
+% Il est par exemple possible d'ajouter un nouveau dossier \verb!new_patches/!
+% dans lequel rechercher les patchs nécessaire en remplaçant la première des
+% lignes par :
+% \begin{verbatim}
+%     for installpatch in install/*.patch new_patches/*.patch; do
+% \end{verbatim}
 
 Les patchs facultatifs sont traités différemment lors du processus
 d'installation et sont regroupés dans le dossier \verb!patches/!. Le script
@@ -648,13 +655,16 @@ existant en les plaçant dans le dossier \verb!patches/! et en les ajoutant
 éventuellement à la liste des patchs à appliquer par défaut dans le fichier
 \verb!patches/patch.conf!.
 
-Les patchs (facultatifs) servant à définir des modes de jeu ont été créés de
+Les patchs facultatifs servant à définir des modes de jeu ont été créés de
 manière à modifier chacun un aspect particulier du jeu. Par exemple un patch
-sert à désactiver les monstres, un autre désactive les pièges, etc. Ce
-découpage en petits patchs permet de pouvoir les réutiliser d'un mode de jeu à
-un autre, ainsi notre mode de jeu de recherche des portes secrète décrit
-précédemment utilise un sous-ensemble de ces patchs. Un autre mode de
-recherche de porte secrète spécifique à la recherche dans une salle utilise ce
+sert à désactiver les monstres, un autre désactive les pièges, etc. Ils ont
+été conçus en gardant à l'esprit qu'il fallait éviter toute collision entre
+deux patchs et donc les modifications qu'un seul d'entre eux apporte doit être
+minimal. Ce découpage en petits patchs permet de pouvoir les réutiliser d'un
+mode de jeu à un autre, ainsi notre mode de jeu de recherche des portes
+secrète décrit précédemment utilise un sous-ensemble de ces patchs. Un autre
+mode de recherche de porte secrète spécifique à la recherche dans une salle
+utilise ce
 même sous-ensemble de patchs plus un autre patch modifiant le donjon pour
 qu'il ne contienne qu'un niveau spécial. Définir un nouveau mode de jeu
 devient alors facile, par exemple un mode combat utiliserait tous les patchs
@@ -668,11 +678,10 @@ sauf celui désactivant les monstres.
 
 \paragraph{Création de patchs :}
 
-Un patch est en fait le résultat d'un \verb!diff!\footnote{man diff(1)} entre
+Un patch est en fait le résultat d'un \verb!diff! entre
 deux version d'un fichier. Ce patch peut alors être appliqué avec la commande
-\verb!patch!\footnote{man patch(1)} à l'ancien fichier afin de donner le
-nouveau.
-Il existe plusieurs façon de créer un tel fichier, l'une d'entre elle utilise
+\verb!patch! à l'ancien fichier afin de donner le nouveau.
+Il existe plusieurs façon de créer un tel fichier, l'une d'entre elles utilise
 git et la commande \verb!git diff --patch!. Il est par exemple possible de
 créer un patch à partir de la différence entre le commit courant et le dernier
 commit avec la commande suivante :
