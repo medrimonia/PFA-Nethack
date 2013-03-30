@@ -51,8 +51,8 @@
   \begin{flushright}
     \large
     \emph{Responsables :}\\
-    Pédagogique - M.~Renault\\
-    Client - M.~Le Borgne\\
+    Pédagogique - David Renault\\
+    Client - Yvan Le Borgne\\
   \end{flushright}
 \end{center}
 
@@ -1717,8 +1717,8 @@ Nethack le risque que des niveaux spécifiques soient utilisés, s'assurant ains
 que tous les niveaux sont générés aléatoirement.
 \\
 La définition des donjons et de l'utilisation de niveaux spéciaux se fait dans
-le fichier \verb!dat/dungeon.def! de
-NetHack\footnote{\verb!http://nethack.wikia.com/wiki/Dungeon.def_format!}. Il
+un des fichiers de NetHack : \verb!dat/dungeon.def!
+\footnote{\verb!http://nethack.wikia.com/wiki/Dungeon.def_format!}. Il
 est donc possible de désactiver les niveaux spéciaux en modifiant ce fichier.
 Cependant NetHack ayant des comportements parfois abscons, nous ne pouvons
 garantir le fonctionnement du jeu sans niveaux spéciaux, notamment du fait des
@@ -1853,6 +1853,39 @@ découverte de la porte secrète, indiquant ainsi dans quel direction l'on doit
 se diriger dans un état donné.
 
 \section{Conclusion}
-TODO
+
+Au cours de ce projet nous avons adopté une méthode de développement
+personnalisée et plutôt libre, basées sur des rencontres régulières avec notre
+client afin d'avoir des retours fréquents et pour plus de souplesse. Durant
+ces réunions (se déroulant environ touts les deux semaines au début, puis plus
+espacées par la suite) nous présentions ce qui avait été fait jusqu'à présent
+et discutions de nouveaux objectifs potentiels. Cette méthode s'apparente aux
+méthodes agiles mais diffère de certaines d'entre elles, telle que Scrum, qui
+sont basées sur des itérations (ou sprint pour Scrum) à l'issue desquelles un
+délivrable partiel est fourni. Nous préférions avoir plus de liberté dans
+notre développement avec pour inspiration les attentes de notre client.
+
+\paragraph{}
+Une autre caractéristique de notre projet est l'utilisation de plusieurs
+langages différents afin de simplifier le développement.
+En effet, le module de visualisation des parties jouées par exemple a été écrit
+en perl car il aurait demandé un temps de développement plus conséquent pour
+être écrite en C (il aurait fallu gérer des contraintes bas niveau qui
+pouvaient être gérées simplement en perl). De plus, de nombreux scripts bash
+sont utilisés, que ce soit pour l'installation du projet comme pour la
+production de graphes. Il est donc parfois nécessaire de lire les README
+pour comprendre leur utilité et savoir les utiliser (pour la plupart des
+scripts une option \verb!-h! affiche une aide à l'utilisation). Ces choix ont
+été fait car après concertation avec notre client, Monsieur Le Borgne, il a
+semblé préférable de concentrer le développement sur la créations de nombreux
+outils statistiques afin de pouvoir évaluer selon différents critères les bots
+et faire des comparaisons entre plusieurs bots.
+
+Avec du temps supplémentaire, nous aurions pu développer une unité plus
+user-friendly pour ce qui est de l'exploitation des statistiques collectées
+dans la base de données à l'issue des parties jouée. Regrouper l'ensemble des
+fonctionnalités des scripts sous la forme d'un logiciel avec une interface
+graphique pourrait faire l'objet d'une amélioration en cas de reprise du
+projet.
 
 \end{document}
