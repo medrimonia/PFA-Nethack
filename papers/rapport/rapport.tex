@@ -1140,8 +1140,10 @@ possibilité de changer de niveau et nous avons comparé le niveau qu'ils
 atteignaient en moyenne. Les changements effectués sur les bots ont été assez
 légers étant donné que pour le bot {\em diffusion}, il a suffit d'ajouter un
 score très élevé à l'action de descendre et d'autoriser celle-ci uniquement sur
-les cases correspondantes, pour les autres, nous avons choisi de simplement les
-faire descendre s'ils passaient sur une case le permettant. En lançant un grand
+les cases correspondantes. Pour le bot python, la même importance est accordée
+ à la descente d'un niveau qu'à la visite d'une case adjacente. Pour le bot
+ aléatoire java, nous avons choisi de simplement le
+faire descendre s'il passait sur une case le permettant. En lançant un grand
 nombre de parties, nous avons pu observer les résultats suivants.
 
 \begin{figure}[H]
@@ -1953,7 +1955,7 @@ se diriger dans un état donné.
 \section{Conclusion}
 
 Au cours de ce projet nous avons adopté une méthode de développement
-personnalisée et plutôt libre, basées sur des rencontres régulières avec notre
+personnalisée et plutôt libre, basée sur des rencontres régulières avec notre
 client afin d'avoir des retours fréquents et pour plus de souplesse. Durant
 ces réunions (se déroulant environ touts les deux semaines au début, puis plus
 espacées par la suite) nous présentions ce qui avait été fait jusqu'à présent
@@ -1966,9 +1968,9 @@ notre développement avec pour inspiration les attentes de notre client.
 \paragraph{}
 Une autre caractéristique de notre projet est l'utilisation de plusieurs
 langages différents afin de simplifier le développement.
-En effet, le module de visualisation des parties jouées par exemple a été écrit
+En effet, l'outil de visualisation des parties jouées par exemple a été écrit
 en perl car il aurait demandé un temps de développement plus conséquent pour
-être écrite en C (il aurait fallu gérer des contraintes bas niveau qui
+être écrit en C (il aurait fallu gérer des contraintes bas niveau qui
 pouvaient être gérées simplement en perl). De plus, de nombreux scripts bash
 sont utilisés, que ce soit pour l'installation du projet comme pour la
 production de graphes. Il est donc parfois nécessaire de lire les \verb!README!
