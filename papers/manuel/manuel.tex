@@ -381,7 +381,10 @@ secrets trouvés.} est aussi disponible afin de faciliter l'utilisation de celle
 \end{figure}
 
 \chapter{Apporter ses propres modifications au code existant}
+
 \section{Modifier du code source contenu dans les hooks}
+
+\paragraph{}
 Il est aisé de modifier du code source à l'intérieur des différents hooks
 fournis car le script \emph{nh-setup.sh} permet de générer l'exécutable
 \emph{nethack} en recompilant tous les fichiers sources nécessaires. Ainsi, il n'y aura
@@ -392,6 +395,12 @@ compte. Comme le fichier Makefile n'est pas recopié par défaut vers sa
 destination, il faudra aussi spécifier à NetHack que l'on ne souhaite pas
 réutiliser le code existant (ou copier le Makefile avant afin de gagner du temps
 de compilation).
+
+\paragraph{}
+Attention: la sortie standard est réservée à l'interface. Utiliser la sortie
+standard pour afficher toute autre chose que les échanges entre l'interface et
+le bot rendra inutilisatble tous les outils s'appuyant sur la duplication de
+ces échanges grâce à la variable d'environement \verb!NH_MM_DUPMSGS!.
 
 
 \section{Considérations pour la création de bots} \label{sec:creer-bot}
