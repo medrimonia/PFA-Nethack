@@ -1,8 +1,8 @@
 #!/bin/bash
 
-BOTDIR=$(readlink -f $(find .. -name bots))
+BOTDIR=$(readlink -f $(find . -name bots))
 BOTS=$(grep "^[^#]" $BOTDIR/bots.conf)
-RUNNER=$(readlink -f $(find .. -name game_runner.sh))
+RUNNER=$(readlink -f $(find . -name game_runner.sh))
 
 #We want the line feed as a separator
 IFS=$'\n'
@@ -30,10 +30,15 @@ fi
 #Extract chosen bot
 BOT=$(printf "$BOTS" | head -$choice | tail -1)
 
+BOTNAME="$(echo $BOT | cut -d\| -f3)"
 BOTPATH="$BOTDIR/$(echo $BOT | cut -d\| -f1)"
 LAUNCHER="$(echo $BOT | cut -d\| -f2)"
-BOTNAME="$(echo $BOT | cut -d\| -f3)"
 NBMOVES="$(echo $BOT | cut -d\| -f4)"
 
+if [ ${BOTNAME:-empty} == "empty" ]; then BOTNAMEOPT=""; else BOTNAMEOPT="-b $BOTNAME"; fi
+if [ ${BOTPATH:-empty} == "empty" ]; then BOTPATHOPT=""; else BOTPATHOPT="-p $BOTPATH"; fi
+if [ ${LAUNCHER:-empty} == "empty" ]; then LAUNCHEROPT=""; else LAUNCHEROPT="-c $LAUNCHER"; fi
+if [ ${NBMOVES:-empty} == "empty" ]; then NBMOVESOPT=""; else NBMOVESOPT="-m $NBMOVES"; fi
+
 #Run a game for chosen bot using game_runner.sh
-$RUNNER -b $BOTNAME -p $BOTPATH -c $LAUNCHER -m $NBMOVES -g 1 -s
+$RUNNER $BOTNAMEOPT $BOTPATHOPT $LAUNCHEROPT $NBMOVESOPT -g 1 -s
